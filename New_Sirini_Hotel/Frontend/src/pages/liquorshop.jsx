@@ -2,6 +2,8 @@ import React from 'react'
 
 export default function liquorshop() {
   return (
-    <div>liquorshop</div>
+    <div>
+      <h1>liquorshop</h1>
+      </div>
   )
 }
