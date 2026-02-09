@@ -3,49 +3,80 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import { Link } from 'react-router-dom';
+import logo from '../assets/logo.png';
 
 export default function HeaderComponent() {
   return (
 
-    <Navbar
-      expand="lg"
-      className="fixed top-0 left-0 w-full bg-[#1E272C] text-white z-50 py-6"
-      variant="dark"
+    <header className="w-full bg-black border border-cyan-400">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex items-center justify-between h-24">
+
+          {/* Left Section */}
+          <div className="flex items-center gap-4">
+            <img
+              src={logo}
+              alt="New Sirini Hotel"
+              className="w-14 h-14 object-contain"
+            />
+            <h1 className="text-white text-2xl font-serif tracking-wide">
+              New Sirini Hotel
+            </h1>
+          </div>
+
+          {/* Navigation */}
+          <nav>
+            <ul className="flex items-center gap-10 text-lg font-medium">
+  <li>
+    <Link
+      to="/homepage"
+      className="text-white no-underline hover:text-yellow-400 cursor-pointer"
     >
+      Home
+    </Link>
+  </li>
 
-      <Container>
-        <Navbar.Brand as={Link} to="./homepage">
-          New Sirini Hotel
-        </Navbar.Brand>
+  <li>
+    <Link
+      to="/receptionhall"
+      className="text-white no-underline hover:text-yellow-400 cursor-pointer"
+    >
+      Reception Hall
+    </Link>
+  </li>
 
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+  <li>
+    <Link
+      to="/resturant"
+      className="text-white no-underline hover:text-yellow-400 cursor-pointer"
+    >
+      Resturant
+    </Link>
+  </li>
 
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link as={Link} to="/home">
-              Home
-            </Nav.Link>
+  <li>
+    <Link
+      to="/rooms"
+      className="text-white no-underline hover:text-yellow-400 cursor-pointer"
+    >
+      Rooms
+    </Link>
+  </li>
 
-            <Nav.Link as={Link} to="./resturant">
-              Resturant
-            </Nav.Link>
+  <li>
+    <Link
+      to="/LiquorShop"
+      className="text-white no-underline hover:text-yellow-400 cursor-pointer"
+    >
+      Liquor Shop
+    </Link>
+  </li>
+</ul>
 
-            <Nav.Link as={Link} to="./LiquorShop">
-              Liquor Shop
-            </Nav.Link>
+          </nav>
 
-            <Nav.Link as={Link} to="./receptionhall">
-              Reception Hall
-            </Nav.Link>
-
-            <Nav.Link as={Link} to="./rooms">
-              Rooms
-            </Nav.Link>
-
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
-
+        </div>
+      </div>
+    </header>
   )
 }
