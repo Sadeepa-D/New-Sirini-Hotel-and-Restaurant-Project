@@ -30,7 +30,7 @@ export default function HeaderComponent() {
   <li>
     <Link
       to="/homepage"
-      className="text-white no-underline hover:text-yellow-400 cursor-pointer"
+      className="text-white hover:text-orange-400 cursor-pointer no-underline " //hover:text-orange-400 cursor-pointer no-underline
     >
       Home
     </Link>
