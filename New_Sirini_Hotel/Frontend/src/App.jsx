@@ -16,7 +16,7 @@ function App() {
       {/* header */}
       <HeaderComponent />
 
-      <div className="pt-20">
+      <div>
         <Routes>
           <Route path="/receptionhall" element={<Receptionhall />} />
           <Route path="/resturant" element={<Resturant />} />

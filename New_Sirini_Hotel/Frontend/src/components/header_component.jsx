@@ -8,7 +8,7 @@ import logo from '../assets/logo.png';
 export default function HeaderComponent() {
   return (
 
-    <header className="w-full bg-black border border-cyan-400">
+    <header className="w-full bg-black">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between h-24">
 
@@ -50,7 +50,7 @@ export default function HeaderComponent() {
       to="/resturant"
       className="text-white no-underline hover:text-yellow-400 cursor-pointer"
     >
-      Resturant
+      Restaurant
     </Link>
   </li>
 
