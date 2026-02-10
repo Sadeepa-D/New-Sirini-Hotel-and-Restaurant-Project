@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Registration = () => {
   const navigate = useNavigate();
@@ -14,16 +15,16 @@ const Registration = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+    // Clear error for this field when typing
+    if (errors[e.target.name]) {
+      setErrors({
+        ...errors,
+        [e.target.name]: null,
+      });
     }
   };
 
@@ -76,9 +77,29 @@ const Registration = () => {
     setIsLoading(true);
 
     try {
-      setTimeout(() => {
-        navigate("/login");
-      }, 1000);
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/register`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            Phone: formData.phone,
+            password: formData.password,
+          }),
+        },
+      );
+      const data = await response.json();
+
+      if (!response.ok) {
+        setErrors({ submit: data.message || "Registration failed" });
+        toast.error(data.message || "Registration failed!");
+        return;
+      }
+
+      toast.success("Registration successful!");
+      navigate("/");
     } catch (error) {
       setErrors({ submit: "Registration failed. Please try again." });
     } finally {
