@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 const Registration = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -19,7 +22,7 @@ const Registration = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
-    // Clear error for this field when typing
+
     if (errors[e.target.name]) {
       setErrors({
         ...errors,
@@ -78,7 +81,7 @@ const Registration = () => {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/register`,
+        `${API_URL}/api/register`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
