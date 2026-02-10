@@ -18,6 +18,11 @@ const userSchema = mongoose.Schema(
       required: [true, "please add Your Phone Number"],
       unique: true,
     },
+    Role: {
+      type: String,
+      enum: ["user", "admin","manager"],
+      default: "user",
+    },
     password: {
       type: String,
       required: [true, "Please add a Password"],
