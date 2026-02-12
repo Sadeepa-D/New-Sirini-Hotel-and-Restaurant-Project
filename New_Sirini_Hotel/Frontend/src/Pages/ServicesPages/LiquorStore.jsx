@@ -230,12 +230,12 @@ const LiquorStore = () => {
 
             {/* Right: Price Filter */}
             <div className="w-full md:w-1/3 flex justify-center md:justify-end order-3">
-              <div className="flex items-center gap-4 bg-yellow-500 px-5 py-3 rounded-xl shadow-md border border-neutral-100">
-                <span className=" text-sm text-black font-semibold text-neutral-600 uppercase tracking-wider">
+              <div className="flex items-center gap-2 md:gap-4 bg-yellow-500 px-3 md:px-5 py-3 rounded-xl shadow-md border border-neutral-100 max-w-full overflow-x-auto">
+                <span className="text-xs md:text-sm text-black font-semibold uppercase tracking-wider whitespace-nowrap">
                   Price
                 </span>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-bold text-amber-600 min-w-[3ch] text-black">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <span className="text-xs md:text-sm font-bold text-black min-w-[3ch]">
                     ${priceRange[0]}
                   </span>
                   <input
@@ -246,9 +246,9 @@ const LiquorStore = () => {
                     onChange={(e) =>
                       setPriceRange([0, parseInt(e.target.value)])
                     }
-                    className="w-32 accent-black cursor-pointer"
+                    className="w-20 md:w-32 accent-black cursor-pointer"
                   />
-                  <span className="text-sm font-bold text-amber-600 min-w-[4ch] text-black">
+                  <span className="text-xs md:text-sm font-bold text-black min-w-[4ch]">
                     ${priceRange[1]}
                   </span>
                 </div>

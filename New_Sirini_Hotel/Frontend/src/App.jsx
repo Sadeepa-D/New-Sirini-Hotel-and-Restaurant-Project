@@ -4,10 +4,10 @@ import Login from "./Pages/Login";
 import Registration from "./Pages/Registration";
 import MainPage from "./Pages/MainPage";
 import Header from "./Components/Header";
+import Footer from "./Components/Footer";
 import Liquor from "./Pages/ServicesPages/LiquorStore";
 import { Admin } from "./Pages/Admin";
 import { Manager } from "./Pages/Manager";
-
 
 export const App = () => {
   return (
@@ -22,7 +22,7 @@ export const App = () => {
         <Route path="/manager" element={<Manager />} />
         <Route path="liquor" element={<Liquor />} />
       </Routes>
-      
+      <Footer />
     </>
   );
 };
