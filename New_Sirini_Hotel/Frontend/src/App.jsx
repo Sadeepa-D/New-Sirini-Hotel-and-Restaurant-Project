@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Login from "./Pages/Login";
 import Registration from "./Pages/Registration";
-import { MainPage } from "./Pages/MainPage";
+import MainPage from "./Pages/MainPage";
 import { Admin } from "./Pages/Admin";
 import { Manager } from "./Pages/Manager";
 
