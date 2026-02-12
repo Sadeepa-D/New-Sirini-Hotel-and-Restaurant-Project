@@ -20,31 +20,31 @@ function Header() {
         <nav className="ml-auto flex items-center gap-12">
           <Link
             to="/main"
-            className="text-white hover:text-yellow-500 transition-colors hover:scale-110"
+            className="text-white hover:text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
           >
             Home
           </Link>
           <Link
             to="/services"
-            className="text-white hover:text-yellow-600 transition-colors hover:scale-110"
+            className="text-white hover:text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
           >
             Services
           </Link>
           <Link
             to="/gallery"
-            className="text-white hover:text-yellow-600 transition-colors hover:scale-110"
+            className="text-white hover:text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
           >
             Gallery
           </Link>
           <Link
             to="/about"
-            className="text-white hover:text-yellow-600 transition-colors hover:scale-110"
+            className="text-white hover:text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
           >
             About Us
           </Link>
           <Link
             to="/contact"
-            className="text-white hover:text-yellow-600 transition-colors hover:scale-110"
+            className="text-white hover:text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
           >
             Contact Us
           </Link>
