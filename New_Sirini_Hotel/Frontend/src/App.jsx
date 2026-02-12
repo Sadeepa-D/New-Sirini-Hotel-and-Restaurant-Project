@@ -3,12 +3,14 @@ import { Toaster } from "react-hot-toast";
 import Login from "./Pages/Login";
 import Registration from "./Pages/Registration";
 import MainPage from "./Pages/MainPage";
+import Header from "./Components/Header";
 import { Admin } from "./Pages/Admin";
 import { Manager } from "./Pages/Manager";
 
 export const App = () => {
   return (
     <>
+    <Header />
       <Toaster position="top-right" reverseOrder={false} />{" "}
       <Routes>
         <Route path="/" element={<Login />} />

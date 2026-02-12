@@ -4,7 +4,6 @@ import toast from "react-hot-toast";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-
 const Registration = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -80,19 +79,16 @@ const Registration = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(
-        `${API_URL}/api/register`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            Phone: formData.phone,
-            password: formData.password,
-          }),
-        },
-      );
+      const response = await fetch(`${API_URL}/api/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          Phone: formData.phone,
+          password: formData.password,
+        }),
+      });
       const data = await response.json();
 
       if (!response.ok) {
@@ -264,7 +260,7 @@ const Registration = () => {
 
         <div className="mt-6 text-center">
           <Link
-            to="/"
+            to="/main"
             className="inline-flex items-center text-amber-100/60 hover:text-amber-400 transition-colors text-sm"
           >
             <svg

@@ -200,7 +200,7 @@ const Login = ({ onLogin }) => {
 
         <div className="mt-6 text-center">
           <Link
-            to="/"
+            to="/main"
             className="inline-flex items-center text-amber-100/60 hover:text-amber-400 transition-colors text-sm"
           >
             <svg
