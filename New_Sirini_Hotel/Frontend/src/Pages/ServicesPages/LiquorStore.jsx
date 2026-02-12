@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import LiqourCard from "../../Components/LiqourCard";
-import LiquorComparisonComp from "../../Components/LiquorComparisonComp";
-import LiquorDetailsComp from "../../Components/LIquorDetailsComp";
+import LiqourCard from "../../Components/LiqourStore/LiqourCard";
+import LiquorComparisonComp from "../../Components/LiqourStore/LiquorComparisonComp";
+import LiquorDetailsComp from "../../Components/LiqourStore/LIquorDetailsComp";
 
 const LiquorStore = () => {
   const [selectedDrink, setSelectedDrink] = useState(null);

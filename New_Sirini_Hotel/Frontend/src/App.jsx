@@ -6,8 +6,8 @@ import MainPage from "./Pages/MainPage";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import Liquor from "./Pages/ServicesPages/LiquorStore";
-import { Admin } from "./Pages/Admin";
-import { Manager } from "./Pages/Manager";
+import { Admin } from "./Pages/Administration/Admin";
+import { Manager } from "./Pages/Administration/Manager";
 
 export const App = () => {
   return (
