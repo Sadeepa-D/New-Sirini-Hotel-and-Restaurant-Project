@@ -7,6 +7,7 @@ import Header from "./Components/Header";
 import { Admin } from "./Pages/Admin";
 import { Manager } from "./Pages/Manager";
 
+
 export const App = () => {
   return (
     <>
@@ -19,6 +20,7 @@ export const App = () => {
         <Route path="/admin" element={<Admin />} />
         <Route path="/manager" element={<Manager />} />
       </Routes>
+      
     </>
   );
 };
