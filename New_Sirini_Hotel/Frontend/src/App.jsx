@@ -20,7 +20,7 @@ export const App = () => {
         <Route path="/main" element={<MainPage />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/manager" element={<Manager />} />
-        <Route path="liquor" element={<Liquor />} />
+        <Route path="/liquor" element={<Liquor />} />
       </Routes>
       <Footer />
     </>
