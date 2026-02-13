@@ -33,6 +33,7 @@ const DrinkCard = ({ drink, onClick }) => {
           </p>
         </div>
 
+
         {/* Status */}
         <div className="mt-auto">
           <span className="text-green-300 font-bold uppercase tracking-widest text-sm animate-pulse drop-shadow-md">
