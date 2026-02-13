@@ -23,7 +23,8 @@ export const App = () => {
         <Route path="/manager" element={<Manager />} />
         <Route path="/liquor" element={<Liquor />} />
       </Routes>
-      
+              <Footer />
+
     </>
   );
 };
