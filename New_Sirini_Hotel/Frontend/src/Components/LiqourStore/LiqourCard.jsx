@@ -4,7 +4,7 @@ const DrinkCard = ({ drink, onClick }) => {
   return (
     <div
       onClick={() => onClick(drink)}
-      className="group relative w-[280px] h-[350px] rounded-2xl overflow-hidden shadow-lg transition-transform duration-300 hover:scale-[1.02] cursor-pointer bg-white"
+      className="group relative w-full h-[350px] rounded-2xl overflow-hidden shadow-lg transition-transform duration-300 hover:scale-[1.02] cursor-pointer bg-white"
     >
       {/* Image Section */}
       <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-white relative z-0">

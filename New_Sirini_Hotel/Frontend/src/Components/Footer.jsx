@@ -1,24 +1,25 @@
-import React from 'react'
+import React from "react";
 import { FaFacebookF, FaInstagram } from "react-icons/fa";
 import { MdLocationOn, MdPhone, MdEmail } from "react-icons/md";
+import { Link } from "react-router-dom";
 
 function Footer() {
   return (
-
-   <footer className="bg-black text-white px-8 py-12">
+    <footer className="bg-black text-white px-8 py-3">
       <div className="max-w-7xl mx-auto">
-        
         {/* main footer content */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-8">
-          
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-8 mt-8">
           {/* About Section */}
           <div>
             <h2 className="text-white font-serif text-4xl mb-4 leading-tight">
-              New Sirini<br />Hotel
+              New Sirini
+              <br />
+              Hotel
             </h2>
             <p className="text-gray-300 text-sm leading-relaxed mb-6">
-              New Sirni Hotel in Kamburupitiya, Sri Lanka offers comfortable rooms, 
-              quality dining, liquor services, and event spaces for weddings and celebrations
+              New Sirni Hotel in Kamburupitiya, Sri Lanka offers comfortable
+              rooms, quality dining, liquor services, and event spaces for
+              weddings and celebrations
             </p>
             <div className="flex gap-3">
               <a
@@ -39,7 +40,7 @@ function Footer() {
           </div>
 
           {/* Discover Section */}
-          <div className="ml-25">
+          <div className="md:ml-25">
             <h3 className="text-white font-bold text-xl mb-6">Discover</h3>
             <ul className="space-y-3">
               <li>
@@ -67,12 +68,12 @@ function Footer() {
                 </a>
               </li>
               <li>
-                <a
-                  href="#liquor"
+                <Link
+                  to="/liquor"
                   className="text-gray-300 hover:text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
                 >
                   Liquor
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -120,8 +121,7 @@ function Footer() {
         </div>
       </div>
     </footer>
-    
   );
 }
 
-export default Footer
+export default Footer;
