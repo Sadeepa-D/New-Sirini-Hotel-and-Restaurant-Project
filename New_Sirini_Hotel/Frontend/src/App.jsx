@@ -1,36 +1,29 @@
-import { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-//import './App.css'
-import Receptionhall from './Pages/receptionhall'
-import Resturant from './Pages/resturant'
-import Rooms from './Pages/rooms'
-import LiquorShop from './Pages/liquorshop'
-import HeaderComponent from './components/header_component';
-import FooterComponent from './components/footer_component';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import Login from "./Pages/Login";
+import Registration from "./Pages/Registration";
+import MainPage from "./Pages/MainPage";
+import Header from "./Components/Header";
+import Footer from "./Components/Footer";
+import Liquor from "./Pages/ServicesPages/LiquorStore";
+import { Admin } from "./Pages/Administration/Admin";
+import { Manager } from "./Pages/Administration/Manager";
 
-
-function App() {
+export const App = () => {
   return (
-    <Router>
-      {/* header */}
-      <HeaderComponent />
-
-      <div>
-        <Routes>
-          <Route path="/receptionhall" element={<Receptionhall />} />
-          <Route path="/resturant" element={<Resturant />} />
-          <Route path="/rooms" element={<Rooms />} />
-          <Route path="/LiquorShop" element={<LiquorShop />} />
-        </Routes>
-      </div>
-      
-      {/* Footer */}
-      <FooterComponent />
-    </Router>
-
+    <>
+      <Header />
+      <Toaster position="top-right" reverseOrder={false} />{" "}
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Registration />} />
+        <Route path="/main" element={<MainPage />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/manager" element={<Manager />} />
+        <Route path="/liquor" element={<Liquor />} />
+      </Routes>
+      <Footer />
+    </>
   );
-}
-
-
-export default App
+};
+export default App;
