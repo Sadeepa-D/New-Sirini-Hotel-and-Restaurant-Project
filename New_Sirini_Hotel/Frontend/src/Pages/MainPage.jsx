@@ -21,6 +21,7 @@ const NewSiriniHotel = () => {
       title: "Restaurant",
       desc: "Delicious food made with fresh ingredients.",
       img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=400",
+      path: "/restaurant",
     },
     {
       title: "Liquor",
