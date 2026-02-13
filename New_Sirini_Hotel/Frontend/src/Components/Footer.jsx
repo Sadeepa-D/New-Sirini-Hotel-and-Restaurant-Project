@@ -60,12 +60,12 @@ function Footer() {
                 </a>
               </li>
               <li>
-                <a
-                  href="#restaurant"
+                <Link
+                  to="/restaurant"
                   className="text-gray-300 hover:text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
                 >
                   Restaurant
-                </a>
+                </Link>
               </li>
               <li>
                 <Link

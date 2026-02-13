@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Logo from "../assets/logo.jpeg";
 
 const NewSiriniHotel = () => {
   const navigate = useNavigate();
@@ -16,11 +15,13 @@ const NewSiriniHotel = () => {
       title: "Rooms",
       desc: "Comfortable rooms designed for rest and relaxation.",
       img: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=400",
+      path: "/rooms",
     },
     {
       title: "Restaurant",
       desc: "Delicious food made with fresh ingredients.",
       img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=400",
+      path: "/resturant",
     },
     {
       title: "Liquor",
@@ -45,11 +46,11 @@ const NewSiriniHotel = () => {
           <h1 className="text-4xl md:text-6xl font-light mb-4">
             New Sirini Hotel
           </h1>
-          <img
+          {/* <img
             src={Logo}
             alt="New Sirini Hotel Logo"
             className="w-50 h-50 mx-auto mb-4 object-contain"
-          />
+          /> */}
           <p className="text-lg md:text-xl italic tracking-widest border-t border-b border-white py-2">
             Stay, Relax, Enjoy
           </p>
@@ -64,9 +65,8 @@ const NewSiriniHotel = () => {
             <div
               key={idx}
               onClick={() => service.path && navigate(service.path)}
-              className={`relative h-96 rounded-2xl overflow-hidden shadow-xl group hover:scale-[1.02] transition-all duration-300 ${
-                service.path ? "cursor-pointer" : ""
-              }`}
+              className={`relative h-96 rounded-2xl overflow-hidden shadow-xl group hover:scale-[1.02] transition-all duration-300 ${service.path ? "cursor-pointer" : ""
+                }`}
             >
               <img
                 src={service.img}

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import logo from "../assets/Logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
 
@@ -20,11 +19,11 @@ function Header() {
       <div className="w-full px-4 flex items-center justify-between">
         {/* Logo and Title */}
         <div className="flex items-center gap-2">
-          <img
+          {/* <img
             src={logo}
             alt="New Sirini Hotel Logo"
             className="h-16 md:h-20 object-contain"
-          />
+          /> */}
           <h1 className="text-white font-serif text-xl md:text-2xl italic">
             New Sirini Hotel
           </h1>
@@ -38,12 +37,12 @@ function Header() {
           >
             Home
           </Link>
-          <Link
-            to="/services"
+          <a
+            href="/main#services"
             className="text-white hover:text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
           >
             Services
-          </Link>
+          </a>
           <Link
             to="/gallery"
             className="text-white hover:text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
@@ -105,13 +104,13 @@ function Header() {
             >
               Home
             </Link>
-            <Link
-              to="/services"
+            <a
+              href="/main#services"
               onClick={closeMenu}
               className="text-white text-xl hover:text-yellow-600 transition-colors"
             >
               Services
-            </Link>
+            </a>
             <Link
               to="/gallery"
               onClick={closeMenu}
