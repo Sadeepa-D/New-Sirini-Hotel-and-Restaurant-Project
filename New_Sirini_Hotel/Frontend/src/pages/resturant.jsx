@@ -1,7 +1,4 @@
 import React from "react";
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
-import Placeholder from 'react-bootstrap/Placeholder'
 import { useState } from "react"
 import { Container } from 'react-bootstrap';
 import resturantImg from "../assets/resturant.png";
