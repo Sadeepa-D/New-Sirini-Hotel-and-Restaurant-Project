@@ -78,7 +78,7 @@ function Header() {
         </nav>
 
         {/* Desktop Auth Buttons */}
-        <div className="hidden md:flex items-center gap-2 ml-10">
+        <div className="hidden md:flex items-center gap-2 ml-11">
           <button
             onClick={() => navigate("/")}
             className="w-28 py-1.5 border border-white text-white rounded
