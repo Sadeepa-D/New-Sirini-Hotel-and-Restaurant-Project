@@ -9,6 +9,8 @@ import Footer from "./Components/Footer";
 import Liquor from "./Pages/ServicesPages/LiquorStore";
 import { Admin } from "./Pages/Administration/Admin";
 import { Manager } from "./Pages/Administration/Manager";
+import Rooms from "./Pages/ServicesPages/Rooms";
+
 
 export const App = () => {
   return (
@@ -22,8 +24,9 @@ export const App = () => {
         <Route path="/admin" element={<Admin />} />
         <Route path="/manager" element={<Manager />} />
         <Route path="/liquor" element={<Liquor />} />
+        <Route path="/rooms" element={<Rooms />} />
       </Routes>
-              <Footer />
+      <Footer />
 
     </>
   );
