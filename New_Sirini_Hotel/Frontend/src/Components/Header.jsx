@@ -78,12 +78,12 @@ function Header() {
         </nav>
 
         {/* Desktop Auth Buttons */}
-        <div className="hidden md:flex items-center gap-2 ml-6">
+        <div className="hidden md:flex items-center gap-2 ml-10">
           <button
             onClick={() => navigate("/")}
             className="w-28 py-1.5 border border-white text-white rounded
                        hover:bg-yellow-500 hover:text-black hover:border-yellow-500
-                       transition-colors duration-300"
+                       transition-colors duration-600"
           >
             Sign in
           </button>
@@ -91,7 +91,7 @@ function Header() {
             onClick={() => navigate("/register")}
             className="w-28 py-1.5 border border-white text-white rounded
                        hover:bg-yellow-500 hover:text-black hover:border-yellow-500
-                       transition-colors duration-300"
+                       transition-colors duration-600"
           >
             Sign up
           </button>
