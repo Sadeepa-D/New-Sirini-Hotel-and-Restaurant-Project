@@ -7,6 +7,8 @@ import MainPage from "./Pages/MainPage";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import Liquor from "./Pages/ServicesPages/LiquorStore";
+import LiquorManagment from "./Components/OperationManager/Liquor/LiquorMngHome";
+import OperationManager from "./Pages/Administration/OperationManager";
 import { Admin } from "./Pages/Administration/Admin";
 import { Manager } from "./Pages/Administration/Manager";
 import Rooms from "./Pages/ServicesPages/Rooms";
@@ -15,7 +17,6 @@ import Rooms from "./Pages/ServicesPages/Rooms";
 export const App = () => {
   return (
     <>
-      <Header />
       <Toaster position="top-right" reverseOrder={false} />{" "}
       <Routes>
         <Route path="/" element={<Login />} />
@@ -24,6 +25,12 @@ export const App = () => {
         <Route path="/admin" element={<Admin />} />
         <Route path="/manager" element={<Manager />} />
         <Route path="/liquor" element={<Liquor />} />
+        <Route path="/operationmanager" element={<OperationManager />} />
+        <Route
+          path="/operationmanager/liquormanagment"
+          element={<LiquorManagment />}
+        />
+      </Routes>
         <Route path="/rooms" element={<Rooms />} />
       </Routes>
       <Footer />
