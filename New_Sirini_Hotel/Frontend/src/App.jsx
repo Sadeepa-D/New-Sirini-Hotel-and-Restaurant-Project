@@ -7,6 +7,7 @@ import MainPage from "./Pages/MainPage";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import Liquor from "./Pages/ServicesPages/LiquorStore";
+import LiquorManagment from "./Components/OperationManager/Liquor/LiquorMngHome";
 import OperationManager from "./Pages/Administration/OperationManager";
 import { Admin } from "./Pages/Administration/Admin";
 import { Manager } from "./Pages/Administration/Manager";
@@ -23,6 +24,10 @@ export const App = () => {
         <Route path="/manager" element={<Manager />} />
         <Route path="/liquor" element={<Liquor />} />
         <Route path="/operationmanager" element={<OperationManager />} />
+        <Route
+          path="/operationmanager/liquormanagment"
+          element={<LiquorManagment />}
+        />
       </Routes>
     </>
   );

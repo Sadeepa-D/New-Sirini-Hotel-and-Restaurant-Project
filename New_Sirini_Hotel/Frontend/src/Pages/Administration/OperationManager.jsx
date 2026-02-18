@@ -2,16 +2,13 @@ import React, { useState } from "react";
 import Logo from "../../assets/Logo.png";
 import {
   Home,
-  CalendarDays,
-  BedDouble,
-  Utensils,
   BadgeDollarSign,
-  Settings,
+  BottleWine,
+  Utensils,
+  LogOut,
   Menu,
-  X,
 } from "lucide-react";
 
-// --- Placeholder Components for Navigation ---
 const Bookings = () => (
   <div className="p-6 text-gray-600">
     Bookings Component (Mount your data here)
@@ -27,30 +24,27 @@ const Orders = () => (
     Orders Component (Mount your data here)
   </div>
 );
-const Revenue = () => (
+const LiquorItems = () => (
   <div className="p-6 text-gray-600">
-    Revenue Component (Mount your data here)
+    Liquor Items Component (Mount your data here)
   </div>
 );
-const Setting = () => (
+
+const RestrauntItems = () => (
   <div className="p-6 text-gray-600">
-    Settings Component (Mount your data here)
+    Restaurant Items Component (Mount your data here)
+  </div>
+);
+
+const Logout = () => (
+  <div className="p-6 text-gray-600">
+    Logout Component (Mount your data here)
   </div>
 );
 
 // --- Dashboard Overview Component (Matches your Figma design) ---
 const DashboardOverview = () => {
   const stats = [
-    {
-      title: "Total Bookings",
-      value: "10",
-      icon: <CalendarDays size={28} className="text-gray-700" />,
-    },
-    {
-      title: "Rooms",
-      value: "10",
-      icon: <BedDouble size={28} className="text-gray-700" />,
-    },
     {
       title: "Orders",
       value: "10",
@@ -94,11 +88,9 @@ const OperationManager = () => {
 
   const navItems = [
     { id: "dashboard", label: "Dashboard", icon: Home },
-    { id: "bookings", label: "Bookings", icon: CalendarDays },
-    { id: "rooms", label: "Rooms", icon: BedDouble },
-    { id: "orders", label: "Orders", icon: Utensils },
-    { id: "revenue", label: "Revenue", icon: BadgeDollarSign },
-    { id: "setting", label: "Setting", icon: Settings },
+    { id: "Liquor", label: "Liquor Items", icon: BottleWine },
+    { id: "Food", label: "Restaurant Items", icon: Utensils },
+    { id: "Logout", label: "Logout", icon: LogOut },
   ];
 
   // Function to render the correct component in the middle
@@ -106,16 +98,12 @@ const OperationManager = () => {
     switch (activeTab) {
       case "dashboard":
         return <DashboardOverview />;
-      case "bookings":
-        return <Bookings />;
-      case "rooms":
-        return <Rooms />;
-      case "orders":
-        return <Orders />;
-      case "revenue":
-        return <Revenue />;
-      case "setting":
-        return <Setting />;
+      case "Liquor":
+        return <LiquorItems />;
+      case "Food":
+        return <RestrauntItems />;
+      case "Logout":
+        return <Logout />;
       default:
         return <DashboardOverview />;
     }
@@ -234,7 +222,9 @@ const OperationManager = () => {
 
         {/* Dynamic Middle Area */}
         <main className="flex-1 overflow-y-auto p-4 pt-2 bg-transparent">
-          <div className="bg-gray-100 rounded-xl h-full">{renderContent()}</div>
+          <div className="bg-gray-100 rounded-xl min-h-full">
+            {renderContent()}
+          </div>
         </main>
       </div>
     </div>
