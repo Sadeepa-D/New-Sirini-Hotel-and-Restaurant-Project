@@ -35,6 +35,7 @@ const DrinkCard = ({ drink, onClick }) => {
           </p>
         </div>
 
+
         {/* Status */}
         <div className="mt-auto">
           {drink.isAvailable !== false ? (
