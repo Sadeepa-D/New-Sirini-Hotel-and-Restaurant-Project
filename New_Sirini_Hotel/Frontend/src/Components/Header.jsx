@@ -24,10 +24,10 @@ function Header() {
 
   const getLinkStyle = (path, id) => ({
     textDecoration: "none",
-    color:
-      hoveredLink === id || isActive(path) ? "#facc15" : "#ffffff",
-    borderBottom:
-      isActive(path) ? "2px solid #facc15" : "2px solid transparent",
+    color: hoveredLink === id || isActive(path) ? "#facc15" : "#ffffff",
+    borderBottom: isActive(path)
+      ? "2px solid #facc15"
+      : "2px solid transparent",
     paddingBottom: "2px",
     transition: "color 0.2s ease, transform 0.2s ease",
     transform: hoveredLink === id ? "scale(1.1)" : "scale(1)",
@@ -37,26 +37,25 @@ function Header() {
 
   const getMobileLinkStyle = (path, id) => ({
     textDecoration: "none",
-    color:
-      hoveredLink === id || isActive(path) ? "#facc15" : "#ffffff",
+    color: hoveredLink === id || isActive(path) ? "#facc15" : "#ffffff",
     transition: "color 0.2s ease",
     fontSize: "1.25rem",
   });
 
   return (
-    <header className="bg-black py-4 relative z-50">
-      <div className="w-full px-4 flex items-center justify-between">
-        
+    <header className="bg-black h-30 relative z-50">
+      <div className="w-full px-4 h-full flex items-center justify-between">
         {/* Logo and Title */}
         <div className="flex items-center gap-2">
           <img
             src={logo}
             alt="New Sirini Hotel Logo"
-            className="h-14 md:h-18 object-contain"
+            className="h-22 md:h-29 object-contain"
           />
-          <h1 className="text-white font-serif text-lg md:text-2xl italic">
+
+          <div className="text-white font-serif text-[19px] italic">
             New Sirini Hotel
-          </h1>
+          </div>
         </div>
 
         {/* Desktop Navigation */}
@@ -116,7 +115,6 @@ function Header() {
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
         <div className="absolute top-full left-0 w-full bg-black/95 flex flex-col items-center py-8 gap-6 shadow-xl border-t border-gray-800 md:hidden">
-          
           {/* Mobile Navigation Links */}
           {navLinks.map((link) => {
             const id = `mobile-${link.path}`;
