@@ -95,12 +95,12 @@ const LiquorManager = () => {
   };
 
   return (
-    <div className="p-4 md:p-6 min-h-screen bg-gray-100">
-      {/* Header Actions */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+    <div className="p-4 md:p-6 min-h-screen">
+      {/* Header Actions - Wrapped in a card for separation */}
+      <div className="bg-white rounded-xl p-4 shadow-xl mb-8 flex flex-col md:flex-row justify-between items-center gap-4 border border-gray-100">
         <button
           onClick={openAddForm}
-          className="w-full md:w-auto flex items-center justify-center gap-2 bg-[#FFAB00] text-black font-bold px-6 py-3 rounded-xl shadow-lg hover:bg-black hover:text-[#FFAB00] transition-all"
+          className="w-full md:w-auto flex items-center justify-center gap-2 bg-yellow-500 text-black font-bold px-6 py-3 rounded-xl shadow-lg hover:bg-orange-500 hover:text-black transition-all"
         >
           <Plus size={20} /> Add Liquor
         </button>
@@ -113,60 +113,62 @@ const LiquorManager = () => {
           <input
             type="text"
             placeholder="Search liquor..."
-            className="w-full pl-10 pr-4 py-3 rounded-xl border-none focus:ring-2 focus:ring-[#FFAB00] shadow-sm"
+            className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#FFAB00] shadow-sm bg-gray-50"
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
       </div>
 
-      {/* Grid of Liquor Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {liquorItems.map((item) => (
-          <div key={item.id} className="relative group">
-            {/* The Shared Drink Card Component */}
-            <DrinkCard drink={item} onClick={() => handlCardClick(item)} />
+      {/* Grid of Liquor Cards - Wrapped in a card for separation */}
+      <div className="bg-white rounded-xl p-6 shadow-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {liquorItems.map((item) => (
+            <div key={item.id} className="relative group">
+              {/* The Shared Drink Card Component */}
+              <DrinkCard drink={item} onClick={() => handlCardClick(item)} />
 
-            {/* Overlay Edit/Delete Buttons - Always visible in Manager View */}
-            <div className="absolute top-4 right-4 flex flex-col gap-2 z-50">
-              <button
-                className={`p-2 rounded-full shadow-md transition ${
-                  item.isAvailable !== false
-                    ? "bg-green-100 text-green-600 hover:bg-green-600 hover:text-white"
-                    : "bg-red-100 text-red-600 hover:bg-red-600 hover:text-white"
-                }`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleToggleAvailability(item.id);
-                }}
-                title={
-                  item.isAvailable !== false
-                    ? "Mark as Unavailable"
-                    : "Mark as Available"
-                }
-              >
-                <Power size={16} />
-              </button>
-              <button
-                className="p-2 bg-white/90 rounded-full text-blue-600 shadow-md hover:bg-blue-600 hover:text-white transition"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleEdit(item);
-                }}
-              >
-                <Edit2 size={16} />
-              </button>
-              <button
-                className="p-2 bg-white/90 rounded-full text-red-600 shadow-md hover:bg-red-600 hover:text-white transition"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDelete(item.id);
-                }}
-              >
-                <Trash2 size={16} />
-              </button>
+              {/* Overlay Edit/Delete Buttons - Always visible in Manager View */}
+              <div className="absolute top-4 right-4 flex flex-col gap-2 z-50">
+                <button
+                  className={`p-2 rounded-full shadow-md transition ${
+                    item.isAvailable !== false
+                      ? "bg-green-100 text-green-600 hover:bg-green-600 hover:text-white"
+                      : "bg-red-100 text-red-600 hover:bg-red-600 hover:text-white"
+                  }`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleToggleAvailability(item.id);
+                  }}
+                  title={
+                    item.isAvailable !== false
+                      ? "Mark as Unavailable"
+                      : "Mark as Available"
+                  }
+                >
+                  <Power size={16} />
+                </button>
+                <button
+                  className="p-2 bg-white/90 rounded-full text-blue-600 shadow-md hover:bg-blue-600 hover:text-white transition"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEdit(item);
+                  }}
+                >
+                  <Edit2 size={16} />
+                </button>
+                <button
+                  className="p-2 bg-white/90 rounded-full text-red-600 shadow-md hover:bg-red-600 hover:text-white transition"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(item.id);
+                  }}
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       {/* Separate Form Component Modal */}
