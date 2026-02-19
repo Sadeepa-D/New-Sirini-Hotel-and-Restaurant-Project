@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, Search, Edit2, Trash2, Power } from "lucide-react";
+import axios from "axios";
 import AddLiquorForm from "../Liquor/AddLiquorForm";
 import DrinkCard from "../../LiqourStore/LiqourCard";
 import LiquorDetailsComp from "../../LiqourStore/LIquorDetailsComp";
@@ -10,78 +11,65 @@ const LiquorManager = () => {
   const [editingItem, setEditingItem] = useState(null);
   const [selectedDrink, setSelectedDrink] = useState(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [liquorItems, setLiquorItems] = useState([]);
 
-  // Sample data - This will come from your backend later
-  const [liquorItems, setLiquorItems] = useState([
-    {
-      id: 1,
-      name: "Lion Lager",
-      price: "350",
-      alcoholPercentage: "4.8",
-      category: "Beer",
-      image:
-        "https://lankareporter.com/wp-content/uploads/2022/08/SINHA-LAGER-BOTTLE-AND-GLASS-1-773x762.jpg",
-      description:
-        "Lion Lager is a 4.8% ABV lager produced by Lion Brewery in Sri Lanka. It is the best-selling beer in Sri Lanka and is exported to over 20 countries.",
-      volume: "625ml",
-      origin: "Sri Lanka",
-      brand: "Lion",
-      isAvailable: true,
-    },
-    {
-      id: 2,
-      name: "Black Label",
-      price: "18500",
-      alcoholPercentage: "40",
-      category: "Whisky",
-      image: "https://www.hellowcost.fr/5766/511.jpg",
-      description:
-        "Johnnie Walker Black Label is a true icon, recognised as the benchmark for all other deluxe blends. Created using only whiskies aged for a minimum of 12 years from the four corners of Scotland.",
-      volume: "750ml",
-      origin: "Scotland",
-      brand: "Johnnie Walker",
-      isAvailable: true,
-    },
-  ]);
+  // Fetch liquor items from backend
+  const fetchLiquorItems = async () => {
+    try {
+      const response = await axios.get(`${process.env.API_URI}/api/liquor/get`);
+      setLiquorItems(response.data);
+    } catch (error) {
+      console.error("Error fetching liquor items:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchLiquorItems();
+  }, []);
 
   const handleEdit = (item) => {
     setEditingItem(item);
     setIsFormOpen(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
-      setLiquorItems(liquorItems.filter((item) => item.id !== id));
+      try {
+        await axios.delete(`${process.env.API_URI}/api/liquor/delete/${id}`);
+        fetchLiquorItems(); // Refresh list
+      } catch (error) {
+        console.error("Error deleting item:", error);
+      }
     }
   };
 
-  const handleToggleAvailability = (id) => {
-    setLiquorItems(
-      liquorItems.map((item) =>
-        item.id === id ? { ...item, isAvailable: !item.isAvailable } : item,
-      ),
-    );
+  const handleToggleAvailability = async (id) => {
+    try {
+      await axios.put(`${process.env.API_URI}/api/liquor/toggle/${id}`);
+      fetchLiquorItems(); // Refresh list to get updated status
+    } catch (error) {
+      console.error("Error toggling availability:", error);
+    }
   };
 
-  const handleSave = (itemData) => {
-    if (editingItem) {
-      // Update existing item
-      setLiquorItems(
-        liquorItems.map((item) =>
-          item.id === editingItem.id ? { ...item, ...itemData } : item,
-        ),
-      );
-    } else {
-      // Add new item
-      const newItem = {
-        ...itemData,
-        id: Date.now(), // Simple ID generation
-        image: itemData.image || "https://via.placeholder.com/150",
-        isAvailable: true, // Default to available
-      };
-      setLiquorItems([...liquorItems, newItem]);
+  const handleSave = async (formData) => {
+    try {
+      if (editingItem) {
+        // Update existing item
+        await axios.put(
+          `${process.env.API_URI}/api/liquor/update/${editingItem._id}`,
+          formData,
+        );
+      } else {
+        // Add new item
+        await axios.post(`${process.env.API_URI}/api/liquor/add`, formData);
+      }
+      fetchLiquorItems(); // Refresh list
+      setIsFormOpen(false);
+      setEditingItem(null);
+    } catch (error) {
+      console.error("Error saving item:", error);
     }
-    setEditingItem(null); // Reset editing state
   };
 
   const openAddForm = () => {
@@ -123,7 +111,7 @@ const LiquorManager = () => {
       <div className="bg-white rounded-xl p-6 shadow-sm">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {liquorItems.map((item) => (
-            <div key={item.id} className="relative group">
+            <div key={item._id} className="relative group">
               {/* The Shared Drink Card Component */}
               <DrinkCard drink={item} onClick={() => handlCardClick(item)} />
 
@@ -137,7 +125,7 @@ const LiquorManager = () => {
                   }`}
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleToggleAvailability(item.id);
+                    handleToggleAvailability(item._id);
                   }}
                   title={
                     item.isAvailable !== false
@@ -160,7 +148,7 @@ const LiquorManager = () => {
                   className="p-2 bg-white/90 rounded-full text-red-600 shadow-md hover:bg-red-600 hover:text-white transition"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleDelete(item.id);
+                    handleDelete(item._id);
                   }}
                 >
                   <Trash2 size={16} />
