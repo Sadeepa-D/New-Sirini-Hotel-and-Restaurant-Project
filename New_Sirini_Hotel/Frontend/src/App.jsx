@@ -30,7 +30,6 @@ export const App = () => {
           path="/operationmanager/liquormanagment"
           element={<LiquorManagment />}
         />
-      </Routes>
         <Route path="/rooms" element={<Rooms />} />
       </Routes>
       <Footer />

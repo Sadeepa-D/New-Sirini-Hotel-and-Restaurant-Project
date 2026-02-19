@@ -16,7 +16,9 @@ const LiquorManager = () => {
   // Fetch liquor items from backend
   const fetchLiquorItems = async () => {
     try {
-      const response = await axios.get(`${process.env.API_URI}/api/liquor/get`);
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/liquor/get`,
+      );
       setLiquorItems(response.data);
     } catch (error) {
       console.error("Error fetching liquor items:", error);
@@ -35,8 +37,10 @@ const LiquorManager = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
       try {
-        await axios.delete(`${process.env.API_URI}/api/liquor/delete/${id}`);
-        fetchLiquorItems(); // Refresh list
+        await axios.delete(
+          `${import.meta.env.VITE_API_URI}/api/liquor/delete/${id}`,
+        );
+        fetchLiquorItems();
       } catch (error) {
         console.error("Error deleting item:", error);
       }
@@ -45,8 +49,10 @@ const LiquorManager = () => {
 
   const handleToggleAvailability = async (id) => {
     try {
-      await axios.put(`${process.env.API_URI}/api/liquor/toggle/${id}`);
-      fetchLiquorItems(); // Refresh list to get updated status
+      await axios.put(
+        `${import.meta.env.VITE_API_URI}/api/liquor/toggle/${id}`,
+      );
+      fetchLiquorItems();
     } catch (error) {
       console.error("Error toggling availability:", error);
     }
@@ -55,16 +61,24 @@ const LiquorManager = () => {
   const handleSave = async (formData) => {
     try {
       if (editingItem) {
-        // Update existing item
         await axios.put(
-          `${process.env.API_URI}/api/liquor/update/${editingItem._id}`,
+          `${import.meta.env.VITE_API_URI}/api/liquor/update/${editingItem._id}`,
           formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          },
         );
       } else {
-        // Add new item
-        await axios.post(`${process.env.API_URI}/api/liquor/add`, formData);
+        await axios.post(
+          `${import.meta.env.VITE_API_URI}/api/liquor/add`,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          },
+        );
       }
-      fetchLiquorItems(); // Refresh list
+
+      fetchLiquorItems();
       setIsFormOpen(false);
       setEditingItem(null);
     } catch (error) {
