@@ -55,6 +55,4 @@ const LiquorSchema = mongoose.Schema(
   },
 );
 
-const Liquor = mongoose.model("Liquor", LiquorSchema);
-
-module.exports = Liquor;
+module.exports = mongoose.model("Liquor", LiquorSchema);
