@@ -1,5 +1,5 @@
 const cloudinary = require("cloudinary").v2;
-const { CloudinaryStorage } = require("multer-storage-cloudinary"); // Destructure the class
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const multer = require("multer");
 
 cloudinary.config({
@@ -12,11 +12,10 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: "sirini_hotel",
-    allowed_formats: ["jpg", "png", "jpeg"], // Note the underscore in allowed_formats
+    allowed_formats: ["jpg", "png", "jpeg"],
   },
 });
 
 const upload = multer({ storage: storage });
 
 module.exports = upload;
-// re-trigger restart
