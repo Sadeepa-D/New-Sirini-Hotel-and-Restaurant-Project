@@ -1,7 +1,7 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const cors = require('cors');
-const connectDB = require('./config/mongoconnection');
+const express = require("express");
+const dotenv = require("dotenv");
+const cors = require("cors");
+const connectDB = require("./config/mongoconnection");
 
 dotenv.config();
 connectDB();
@@ -16,7 +16,8 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
-app.use("/api", require("./routes/UserRoute"));
+app.use("/api/users", require("./routes/UserRoute"));
+app.use("/api/liquor", require("./routes/liquorRoutes"));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

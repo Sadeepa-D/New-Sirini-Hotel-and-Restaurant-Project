@@ -21,13 +21,21 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
   }, [initialData]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, files } = e.target;
+    if (name === "image") {
+      setFormData((prev) => ({ ...prev, image: files[0] }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    const data = new FormData();
+    Object.keys(formData).forEach((key) => {
+      data.append(key, formData[key]);
+    });
+    onSubmit(data);
     onClose();
   };
 
@@ -47,15 +55,29 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
             {initialData ? "Edit Liquor" : "Add New Liquor"}
           </h2>
 
-          <form className="space-y-5" onSubmit={handleSubmit}>
+          <form
+            className="space-y-5"
+            onSubmit={handleSubmit}
+            encType="multipart/form-data"
+          >
             {/* Image Upload Area */}
-            <div className="w-full h-40 border-2 border-dashed border-gray-200 rounded-3xl flex flex-col items-center justify-center gap-2 bg-gray-50 hover:bg-gray-100 cursor-pointer transition">
+            <label className="w-full h-40 border-2 border-dashed border-gray-200 rounded-3xl flex flex-col items-center justify-center gap-2 bg-gray-50 hover:bg-gray-100 cursor-pointer transition">
               <Upload className="text-[#FFAB00]" size={32} />
               <p className="text-xs font-bold text-gray-400">
-                Click to upload product image
+                {formData.image
+                  ? typeof formData.image === "string"
+                    ? "Image Uploaded"
+                    : formData.image.name
+                  : "Click to upload product image"}
               </p>
-              {/* Hidden file input could go here */}
-            </div>
+              <input
+                type="file"
+                name="image"
+                onChange={handleChange}
+                className="hidden"
+                accept="image/*"
+              />
+            </label>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
