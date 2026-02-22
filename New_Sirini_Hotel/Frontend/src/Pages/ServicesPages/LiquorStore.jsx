@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import LiqourCard from "../../Components/LiqourStore/LiqourCard";
 import LiquorComparisonComp from "../../Components/LiqourStore/LiquorComparisonComp";
 import LiquorDetailsComp from "../../Components/LiqourStore/LIquorDetailsComp";
@@ -8,129 +9,39 @@ const LiquorStore = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isComparisonOpen, setIsComparisonOpen] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(1000);
   const [beerIndex, setBeerIndex] = useState(0);
   const [othersIndex, setOthersIndex] = useState(0);
-
-  const drinksData = [
-    {
-      id: "1",
-      name: "Lion Lager",
-      category: "Beer",
-      price: 2.5,
-      alcoholPercentage: 4.8,
-      volume: "330ml",
-      image:
-        "https://images.unsplash.com/photo-1608270586620-248524c67de9?w=400&q=80",
-      brand: "Lion Brewery",
-      origin: "Sri Lanka",
-      description: "A crisp and refreshing lager beer with a smooth finish.",
-    },
-    {
-      id: "2",
-      name: "Carlsberg",
-      category: "Beer",
-      price: 3.0,
-      alcoholPercentage: 5.0,
-      volume: "330ml",
-      image:
-        "https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55?w=400&q=80",
-      brand: "Carlsberg",
-      origin: "Denmark",
-      description: "Probably the best beer in the world.",
-    },
-    {
-      id: "3",
-      name: "Anchor Smooth",
-      category: "Beer",
-      price: 2.8,
-      alcoholPercentage: 5.0,
-      volume: "330ml",
-      image:
-        "https://images.unsplash.com/photo-1618885472179-5e474019f2a9?w=400&q=80",
-      brand: "Asia Pacific Brewery",
-      origin: "Singapore",
-      description: "Smooth and easy drinking lager beer.",
-    },
-    {
-      id: "4",
-      name: "Heineken",
-      category: "Beer",
-      price: 3.5,
-      alcoholPercentage: 5.0,
-      volume: "330ml",
-      image:
-        "https://images.unsplash.com/photo-1612528443702-f6741f70a049?w=400&q=80",
-      brand: "Heineken",
-      origin: "Netherlands",
-      description: "Premium quality lager with a distinctive taste.",
-    },
-    {
-      id: "5",
-      name: "Johnnie Walker Red",
-      category: "Whisky",
-      price: 25.0,
-      alcoholPercentage: 40.0,
-      volume: "700ml",
-      image:
-        "https://images.unsplash.com/photo-1527281400262-3b640bf75d39?w=400&q=80",
-      brand: "Johnnie Walker",
-      origin: "Scotland",
-      description: "Bold, characterful whisky with a distinctive smoky flavor.",
-    },
-    {
-      id: "6",
-      name: "Johnnie Walker Black",
-      category: "Whisky",
-      price: 35.0,
-      alcoholPercentage: 40.0,
-      volume: "700ml",
-      image:
-        "https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=400&q=80",
-      brand: "Johnnie Walker",
-      origin: "Scotland",
-      description: "Premium blended Scotch whisky aged for 12 years.",
-    },
-    {
-      id: "7",
-      name: "Bacardi White",
-      category: "Rum",
-      price: 18.0,
-      alcoholPercentage: 37.5,
-      volume: "700ml",
-      image:
-        "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=400&q=80",
-      brand: "Bacardi",
-      origin: "Puerto Rico",
-      description: "Light and smooth white rum perfect for cocktails.",
-    },
-    {
-      id: "8",
-      name: "Jameson Irish Whiskey",
-      category: "Whisky",
-      price: 28.0,
-      alcoholPercentage: 40.0,
-      volume: "700ml",
-      image:
-        "https://images.unsplash.com/photo-1582818962902-1462cdbe0900?w=400&q=80",
-      brand: "Jameson",
-      origin: "Ireland",
-      description: "Triple distilled Irish whiskey with a smooth taste.",
-    },
-  ];
-
-  const beerDrinks = drinksData.filter((drink) => drink.category === "Beer");
-  const otherDrinks = drinksData.filter((drink) => drink.category !== "Beer");
-
-  const filteredBeerDrinks = beerDrinks.filter(
-    (drink) => drink.price >= priceRange[0] && drink.price <= priceRange[1],
-  );
-  const filteredOtherDrinks = otherDrinks.filter(
-    (drink) => drink.price >= priceRange[0] && drink.price <= priceRange[1],
-  );
+  const [liquorItems, setLiquorItems] = useState([]);
 
   const [itemsPerView, setItemsPerView] = useState(4);
 
-  React.useEffect(() => {
+  const fetchliquor = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/liquor/get`,
+      );
+      const data = response.data;
+      setLiquorItems(data);
+      if (data.length > 0) {
+        const prices = data.map((item) => item.price);
+
+        const min = Math.min(...prices);
+        const max = Math.max(...prices);
+
+        setMinPrice(min);
+        setMaxPrice(max);
+
+        setPriceRange([min, max]);
+      }
+    } catch (error) {
+      console.error("Error fetching liquor items:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchliquor();
     const handleResize = () => {
       if (window.innerWidth < 640) {
         setItemsPerView(1);
@@ -148,6 +59,11 @@ const LiquorStore = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    setBeerIndex(0);
+    setOthersIndex(0);
+  }, [priceRange]);
+
   const handleDrinkClick = (drink) => {
     setSelectedDrink(drink);
     setIsModalOpen(true);
@@ -158,8 +74,8 @@ const LiquorStore = () => {
   };
 
   const handleNextBeer = () => {
-    setBeerIndex(
-      Math.min(filteredBeerDrinks.length - itemsPerView, beerIndex + 1),
+    setBeerIndex((prev) =>
+      Math.max(0, Math.min(filteredBeerDrinks.length - itemsPerView, prev + 1)),
     );
   };
 
@@ -172,6 +88,19 @@ const LiquorStore = () => {
       Math.min(filteredOtherDrinks.length - itemsPerView, othersIndex + 1),
     );
   };
+  const filteredBeerDrinks = liquorItems.filter(
+    (drink) =>
+      drink.category === "Beer" &&
+      drink.price >= priceRange[0] &&
+      drink.price <= priceRange[1],
+  );
+
+  const filteredOtherDrinks = liquorItems.filter(
+    (drink) =>
+      drink.category !== "Beer" &&
+      drink.price >= priceRange[0] &&
+      drink.price <= priceRange[1],
+  );
 
   return (
     <div className="min-h-screen bg-neutral-50">
@@ -196,9 +125,9 @@ const LiquorStore = () => {
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header Layout */}
-          <div className="relative flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 items-center mb-12 gap-6">
             {/* Left: Compare Button */}
-            <div className="w-full md:w-1/3 flex justify-center md:justify-start order-2 md:order-1">
+            <div className="flex justify-center md:justify-start">
               <button
                 onClick={() => setIsComparisonOpen(true)}
                 className="px-6 py-3 bg-yellow-500 hover:bg-amber-700 text-black rounded-lg font-medium transition-colors shadow-md whitespace-nowrap flex items-center gap-2"
@@ -221,7 +150,7 @@ const LiquorStore = () => {
             </div>
 
             {/* Center: Title */}
-            <div className="w-full md:w-1/3 text-center order-1 md:order-2">
+            <div className="flex justify-center">
               <h2 className="text-4xl md:text-5xl font-serif text-neutral-900 relative inline-block">
                 Our Drinks
                 <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-12 h-1 bg-amber-500 rounded-full"></span>
@@ -229,27 +158,27 @@ const LiquorStore = () => {
             </div>
 
             {/* Right: Price Filter */}
-            <div className="w-full md:w-1/3 flex justify-center md:justify-end order-3">
+            <div className="flex justify-center md:justify-end">
               <div className="flex items-center gap-2 md:gap-4 bg-yellow-500 px-3 md:px-5 py-3 rounded-xl shadow-md border border-neutral-100 max-w-full overflow-x-auto">
                 <span className="text-xs md:text-sm text-black font-semibold uppercase tracking-wider whitespace-nowrap">
                   Price
                 </span>
                 <div className="flex items-center gap-2 md:gap-3">
                   <span className="text-xs md:text-sm font-bold text-black min-w-[3ch]">
-                    ${priceRange[0]}
+                    LKR:{priceRange[0]}
                   </span>
                   <input
                     type="range"
-                    min="0"
-                    max="1000"
+                    min={minPrice}
+                    max={maxPrice}
                     value={priceRange[1]}
                     onChange={(e) =>
-                      setPriceRange([0, parseInt(e.target.value)])
+                      setPriceRange([minPrice, parseInt(e.target.value)])
                     }
                     className="w-20 md:w-32 accent-black cursor-pointer"
                   />
                   <span className="text-xs md:text-sm font-bold text-black min-w-[4ch]">
-                    ${priceRange[1]}
+                    LKR:{priceRange[1]}
                   </span>
                 </div>
               </div>
@@ -290,7 +219,7 @@ const LiquorStore = () => {
                 >
                   {filteredBeerDrinks.map((drink) => (
                     <div
-                      key={drink.id}
+                      key={drink._id}
                       className="flex-shrink-0"
                       style={{
                         width: `calc(${100 / itemsPerView}% - ${((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) / itemsPerView}px)`,
@@ -359,7 +288,7 @@ const LiquorStore = () => {
                 >
                   {filteredOtherDrinks.map((drink) => (
                     <div
-                      key={drink.id}
+                      key={drink._id}
                       className="flex-shrink-0"
                       style={{
                         width: `calc(${100 / itemsPerView}% - ${((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) / itemsPerView}px)`,
@@ -405,7 +334,7 @@ const LiquorStore = () => {
       <LiquorComparisonComp
         isOpen={isComparisonOpen}
         onClose={() => setIsComparisonOpen(false)}
-        allDrinks={drinksData}
+        allDrinks={liquorItems}
       />
     </div>
   );
