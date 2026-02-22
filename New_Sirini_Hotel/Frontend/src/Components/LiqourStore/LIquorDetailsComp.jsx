@@ -46,7 +46,7 @@ const LiquorDetailsComp = ({ drink, isOpen, onClose }) => {
                 <div className="space-y-4 mb-6">
                   <div className="flex items-center justify-between py-3 border-b border-neutral-200">
                     <span className="text-neutral-600 font-medium">Price</span>
-                    <span className="text-2xl font-bold text-amber-600">${drink.price}</span>
+                    <span className="text-2xl font-bold text-amber-600">LKR:{drink.price}</span>
                   </div>
 
                   <div className="flex items-center justify-between py-3 border-b border-neutral-200">

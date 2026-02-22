@@ -20,7 +20,7 @@ const DrinkCard = ({ drink, onClick }) => {
       {/* Content Overlay */}
       <div className="absolute bottom-0 w-full h-[55%] bg-black/60 flex flex-col items-center pt-14 px-4 pb-4">
         {/* Title Pill */}
-        <div className="absolute top-3 bg-amber-500 text-black font-serif px-8 py-2.5 rounded-full shadow-lg font-bold text-lg tracking-wide whitespace-nowrap z-10">
+        <div className="absolute top-3 bg-amber-500 text-black font-serif px-8 py-2.5 rounded-full shadow-lg font-bold text-lg tracking-wide max-w-[90%] truncate text-center z-10">
           {drink.name}
         </div>
 
@@ -34,7 +34,6 @@ const DrinkCard = ({ drink, onClick }) => {
             Price : LKR: <span className="font-bold">{drink.price}</span>
           </p>
         </div>
-
 
         {/* Status */}
         <div className="mt-auto">
