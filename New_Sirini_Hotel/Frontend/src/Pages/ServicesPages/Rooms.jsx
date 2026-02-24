@@ -13,35 +13,42 @@ function Rooms() {
           className="absolute inset-0 w-full h-full object-cover z-0"
         />
 
-         {/* Dark Overlay for main room image*/}
+        {/* Dark Overlay for main room image*/}
         <div className="absolute inset-0 bg-black/40 z-10" />
 
         {/* Main room image text */}
         <div className="relative z-20 px-4 text-center">
-      
-     
-      <h1 className="text-6xl md:text-7xl font-serif mb-4 drop-shadow-lg 
-      transition-all duration-700 hover:scale-110 hover:text-yellow-400 cursor-pointer">
-        Rooms
-      </h1>
+          <h1
+            className="text-6xl md:text-7xl font-serif mb-4 drop-shadow-lg 
+      transition-all duration-700 hover:scale-110 hover:text-yellow-400 cursor-pointer"
+          >
+            Rooms
+          </h1>
 
-     
-      <p className="italic text-xl md:text-2xl font-light tracking-wide drop-shadow-md 
-      transition-all duration-700 hover:tracking-widest">
-        Peaceful rooms designed for your perfect stay
-      </p>
+          <p
+            className="italic text-xl md:text-2xl font-light tracking-wide drop-shadow-md 
+      transition-all duration-700 hover:tracking-widest"
+          >
+            Peaceful rooms designed for your perfect stay
+          </p>
 
-      
-      <button className="mt-8 px-8 py-3 bg-yellow-500 text-white rounded-full 
+          <button
+            className="mt-8 px-8 py-3 bg-yellow-500 text-white rounded-full 
       text-lg font-medium shadow-lg transition-all duration-300 
-      hover:bg-yellow-600 hover:scale-105 hover:shadow-2xl">
-        Explore Rooms
-      </button>
-
-    </div>
-
-        
+      hover:bg-yellow-600 hover:scale-105 hover:shadow-2xl"
+          >
+            Explore Rooms
+          </button>
+        </div>
       </header>
+
+      {/* Title for the room page*/}
+
+      <main className="max-w-5xl mx-auto py-12 px-4">
+        <h2 className="text-3xl text-center font-serif mb-10 text-gray-800">
+          Discover the perfect accommodation for your stay
+        </h2>
+      </main>
     </div>
   );
 }
