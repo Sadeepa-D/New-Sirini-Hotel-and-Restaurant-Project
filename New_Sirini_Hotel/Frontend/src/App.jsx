@@ -17,7 +17,9 @@ import Rooms from "./Pages/ServicesPages/Rooms";
 export const App = () => {
   return (
     <>
+    
       <Toaster position="top-right" reverseOrder={false} />{" "}
+      <Header/>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Registration />} />
