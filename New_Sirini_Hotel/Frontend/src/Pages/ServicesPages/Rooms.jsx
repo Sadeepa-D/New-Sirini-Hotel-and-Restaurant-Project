@@ -1,5 +1,6 @@
 import React from "react";
 import MainRoom from "../../assets/Rooms/Main_Room.png";
+import room1 from "../../assets/Rooms/D_Image.jpg";
 
 const rooms = [
   {
@@ -8,7 +9,7 @@ const rooms = [
     roomNo: "01",
     price: "$100",
     available: true,
-    image: "https://via.placeholder.com/400x300",
+    image: room1,
   },
   {
     id: 2,
@@ -16,7 +17,7 @@ const rooms = [
     roomNo: "02",
     price: "$150",
     available: false,
-    image: "https://via.placeholder.com/400x300",
+    image: room1,
   },
   {
     id: 3,
@@ -24,7 +25,7 @@ const rooms = [
     roomNo: "03",
     price: "$250",
     available: true,
-    image: "https://via.placeholder.com/400x300",
+    image: room1,
   },
   {
     id: 4,
@@ -32,7 +33,7 @@ const rooms = [
     roomNo: "04",
     price: "$80",
     available: true,
-    image: "https://via.placeholder.com/400x300",
+    image: room1,
   },
 ];
 
@@ -148,7 +149,7 @@ function Rooms() {
             `}
                   >
                     <span className="relative z-10 uppercase text-xs tracking-widest">
-                      {room.available ? "Book Now" : "Sold Out"}
+                      {room.available ? "Book Now" : "Booked"}
                     </span>
                   </button>
                 </div>
