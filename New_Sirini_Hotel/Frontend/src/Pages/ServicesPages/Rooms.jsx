@@ -107,9 +107,7 @@ function Rooms() {
                 <div className="space-y-2">
                   <div className="flex justify-between items-start">
                     {/* Room Price or Category Tag */}
-                    <span className="text-orange-400 text-xs uppercase tracking-[0.2em] font-semibold">
-                      Luxury Suite
-                    </span>
+                    
                     <h3 className="text-4xl font-serif tracking-tight">
                       {room.type}
                     </h3>
