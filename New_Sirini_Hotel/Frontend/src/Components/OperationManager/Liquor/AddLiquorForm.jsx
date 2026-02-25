@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { X, Upload } from "lucide-react";
 
 const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
+  const [imagePreview, setImagePreview] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -17,13 +18,20 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
   useEffect(() => {
     if (initialData) {
       setFormData(initialData);
+      if (typeof initialData.image === "string" && initialData.image) {
+        setImagePreview(initialData.image);
+      }
     }
   }, [initialData]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === "image") {
-      setFormData((prev) => ({ ...prev, image: files[0] }));
+      const file = files[0];
+      setFormData((prev) => ({ ...prev, image: file }));
+      if (file) {
+        setImagePreview(URL.createObjectURL(file));
+      }
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
@@ -61,15 +69,26 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
             encType="multipart/form-data"
           >
             {/* Image Upload Area */}
-            <label className="w-full h-40 border-2 border-dashed border-gray-200 rounded-3xl flex flex-col items-center justify-center gap-2 bg-gray-50 hover:bg-gray-100 cursor-pointer transition">
-              <Upload className="text-[#FFAB00]" size={32} />
-              <p className="text-xs font-bold text-gray-400">
-                {formData.image
-                  ? typeof formData.image === "string"
-                    ? "Image Uploaded"
-                    : formData.image.name
-                  : "Click to upload product image"}
-              </p>
+            <label className="w-full h-40 border-2 border-dashed border-gray-200 rounded-3xl flex flex-col items-center justify-center gap-2 bg-gray-50 hover:bg-gray-100 cursor-pointer transition overflow-hidden relative">
+              {imagePreview ? (
+                <>
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="absolute inset-0 w-full h-full object-contain p-2"
+                  />
+                  <span className="absolute bottom-2 bg-black/50 text-white text-[10px] font-bold px-3 py-1 rounded-full">
+                    Click to change
+                  </span>
+                </>
+              ) : (
+                <>
+                  <Upload className="text-[#FFAB00]" size={32} />
+                  <p className="text-xs font-bold text-gray-400">
+                    Click to upload product image
+                  </p>
+                </>
+              )}
               <input
                 type="file"
                 name="image"
