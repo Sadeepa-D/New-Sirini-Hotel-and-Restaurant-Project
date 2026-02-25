@@ -132,7 +132,7 @@ const LiquorComparisonComp = ({ isOpen, onClose, allDrinks }) => {
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto">
+        <div className="p-6 overflow-y-auto h-200">
           <div className="flex flex-col md:flex-row gap-6">
             <ComparisonCard
               drink={selectedDrink1}
