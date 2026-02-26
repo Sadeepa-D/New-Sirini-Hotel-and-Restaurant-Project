@@ -11,6 +11,7 @@ const NewSiriniHotel = () => {
       title: "Reception",
       desc: "Friendly service to assist you every step of your stay.",
       img: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=400",
+      path: "/reception",
     },
     {
       title: "Rooms",
