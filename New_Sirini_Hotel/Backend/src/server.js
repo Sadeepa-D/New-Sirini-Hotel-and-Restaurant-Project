@@ -2,6 +2,9 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/mongoconnection");
+const RoomRoutes = require("./routes/RoomsRoutes");
+const LiquorRoutes = require("./routes/LiquorRoutes");
+const UserRoutes = require("./routes/UserRoute");
 
 dotenv.config();
 connectDB();
@@ -16,8 +19,9 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
-app.use("/api/users", require("./routes/UserRoute"));
-app.use("/api/liquor", require("./routes/LiquorRoutes"));
+app.use("/api/users", UserRoutes);
+app.use("/api/liquor", LiquorRoutes);
+app.use("/api/rooms", RoomRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
