@@ -13,7 +13,8 @@ const foodItemBookSchema = new mongoose.Schema({
   },
   phoneNumber: {
     type: String,
-    required: true,
+    required: [true, "Phone number is required"],
+    match: [/^[0-9]{10}$/, "Please enter a valid 10-digit phone number"],
   },
   quantity: {
     type: Number,
@@ -28,4 +29,4 @@ const foodItemBookSchema = new mongoose.Schema({
     required: true,
   },
 });
-module.exports = mongoose.model("FoodItemBook", foodItemBookSchema);
+module.exports = mongoose.model("FoodItemorder", foodItemBookSchema);
