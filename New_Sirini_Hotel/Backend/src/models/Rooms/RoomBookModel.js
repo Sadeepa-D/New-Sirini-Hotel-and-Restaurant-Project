@@ -6,34 +6,39 @@
 
 const mongoose = require("mongoose");
 
-const roomBookSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
+const roomBookSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      trim: true,
+      lowercase: true,
+      match: [
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        "Please enter a valid email address",
+      ],
+    },
+    phone: {
+      type: String,
+      required: [true, "Phone number is required"],
+      match: [/^[0-9]{10}$/, "Please enter a valid 10-digit phone number"],
+    },
+    checkInDate: {
+      type: Date,
+      required: [true, "Check-in date is required"],
+    },
+    checkOutDate: {
+      type: Date,
+      required: [true, "Check-out date is required"],
+    },
   },
-  email: {
-    type: String,
-    required: [true, "Email is required"],
-    trim: true,
-    lowercase: true,
-    match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-      "Please enter a valid email address",
-    ],
+  {
+    timestamps: true,
   },
-  phone: {
-    type: String,
-    required: [true, "Phone number is required"],
-    match: [/^[0-9]{10}$/, "Please enter a valid 10-digit phone number"],
-  },
-  checkInDate: {
-    type: Date,
-    required: [true, "Check-in date is required"],
-  },
-  checkOutDate: {
-    type: Date,
-    required: [true, "Check-out date is required"],
-  },
-});
+);
 
 module.exports = mongoose.model("RoomBook", roomBookSchema);
