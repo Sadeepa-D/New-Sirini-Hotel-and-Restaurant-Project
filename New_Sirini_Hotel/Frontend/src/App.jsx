@@ -13,6 +13,7 @@ import { Admin } from "./Pages/Administration/Admin";
 import { Manager } from "./Pages/Administration/Manager";
 import Rooms from "./Pages/ServicesPages/Rooms";
 
+import Restaurant from "./Pages/ServicesPages/Restaurant";
 
 export const App = () => {
   return (
@@ -31,6 +32,7 @@ export const App = () => {
           element={<LiquorManagment />}
         />
         <Route path="/rooms" element={<Rooms />} />
+        <Route path="/restaurant" element={<Restaurant />} />
       </Routes>
       <Footer />
 
