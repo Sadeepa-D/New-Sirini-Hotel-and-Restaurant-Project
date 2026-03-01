@@ -29,6 +29,7 @@ const foodItemBookSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    orderCode: { type: String, unique: true },
   },
   {
     timestamps: true,

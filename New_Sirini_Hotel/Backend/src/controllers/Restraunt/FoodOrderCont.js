@@ -1,5 +1,18 @@
 const FoodOrder = require("../../models/Restraunt/FoodItemBookModel");
 
+const GenarateFoodOrderCode = async () => {
+  const prefix = "SH";
+  const randomNumber = Math.floor(1000 + Math.random() * 9000);
+  const existing = await FoodOrder.findOne({
+    orderCode: `${prefix}${randomNumber}`,
+  });
+  if (!existing) {
+    return `${prefix}${randomNumber}`;
+  }
+
+  return await GenarateFoodOrderCode();
+};
+
 const createFoodOrder = async (req, res) => {
   try {
     const { fullName, quantity, phoneNumber, pickupDate, pickupTime } =
@@ -15,6 +28,7 @@ const createFoodOrder = async (req, res) => {
       phoneNumber,
       pickupDate,
       pickupTime,
+      orderCode: await GenarateFoodOrderCode(),
     });
     const savedOrder = await newFoodOrder.save();
     res.status(201).json(savedOrder);
