@@ -12,6 +12,18 @@ const addLiquor = async (req, res) => {
       origin,
       brand,
     } = req.body;
+    if (
+      !name ||
+      !price ||
+      !category ||
+      !alcoholPercentage ||
+      !description ||
+      !volume ||
+      !origin ||
+      !brand
+    ) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
 
     const image = req.file ? req.file.path : null;
 
@@ -73,10 +85,16 @@ const updateLiquor = async (req, res) => {
       updates.image = req.file.path;
     }
 
-    const updatedLiquor = await Liquor.findByIdAndUpdate(id, updates, {
-      new: true,
-    });
-
+    const updatedLiquor = await Liquor.findByIdAndUpdate(
+      id,
+      { $set: updates },
+      {
+        new: true,
+      },
+    );
+    if (!updatedLiquor) {
+      return res.status(404).json({ message: "Liquor not found" });
+    }
     res.status(200).json(updatedLiquor);
   } catch (error) {
     res
