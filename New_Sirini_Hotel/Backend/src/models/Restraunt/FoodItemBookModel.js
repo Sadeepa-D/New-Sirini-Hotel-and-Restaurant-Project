@@ -30,6 +30,11 @@ const foodItemBookSchema = new mongoose.Schema(
       required: true,
     },
     orderCode: { type: String, unique: true },
+    status: {
+      type: String,
+      enum: ["In Progress", "Completed", "Cancelled"],
+      default: "In Progress",
+    },
   },
   {
     timestamps: true,

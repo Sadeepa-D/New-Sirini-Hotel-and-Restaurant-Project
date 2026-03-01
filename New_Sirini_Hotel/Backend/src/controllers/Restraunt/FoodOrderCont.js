@@ -29,6 +29,7 @@ const createFoodOrder = async (req, res) => {
       pickupDate,
       pickupTime,
       orderCode: await GenarateFoodOrderCode(),
+      status: "In Progress",
     });
     const savedOrder = await newFoodOrder.save();
     res.status(201).json(savedOrder);
@@ -92,9 +93,107 @@ const deleteFoodOrder = async (req, res) => {
     res.status(500).json({ message: "Failed to delete food order", error });
   }
 };
+
+const updateFoodOrderStatusTOComplete = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: "Food order ID is required" });
+    }
+    const updatedOrder = await FoodOrder.findByIdAndUpdate(
+      id,
+      { status: "Completed" },
+      { new: true },
+    );
+    if (!updatedOrder) {
+      return res.status(404).json({ message: "Food order not found" });
+    }
+    res.status(200).json(updatedOrder);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to update food order status", error });
+  }
+};
+
+const updateFoodOrderStatusToCancelled = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: "Food order ID is required" });
+    }
+    const updatedOrder = await FoodOrder.findByIdAndUpdate(
+      id,
+      { status: "Cancelled" },
+      { new: true },
+    );
+    if (!updatedOrder) {
+      return res.status(404).json({ message: "Food order not found" });
+    }
+    res.status(200).json(updatedOrder);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to update food order status", error });
+  }
+};
+
+const getCompletedFoodOrders = async (req, res) => {
+  try {
+    const completedOrders = await FoodOrder.find({ status: "Completed" });
+    if (completedOrders.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No completed food orders found" });
+    }
+    res.status(200).json(completedOrders);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to retrieve completed food orders", error });
+  }
+};
+
+const getCancelledFoodOrders = async (req, res) => {
+  try {
+    const cancelledOrders = await FoodOrder.find({ status: "Cancelled" });
+    if (cancelledOrders.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No cancelled food orders found" });
+    }
+    res.status(200).json(cancelledOrders);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to retrieve cancelled food orders", error });
+  }
+};
+
+const getInProgressFoodOrders = async (req, res) => {
+  try {
+    const inProgressOrders = await FoodOrder.find({ status: "In Progress" });
+    if (inProgressOrders.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No in-progress food orders found" });
+    }
+    res.status(200).json(inProgressOrders);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to retrieve in-progress food orders", error });
+  }
+};
+
 module.exports = {
   createFoodOrder,
   getFoodOrders,
   editfoodOrder,
   deleteFoodOrder,
+  updateFoodOrderStatusTOComplete,
+  updateFoodOrderStatusToCancelled,
+  getCompletedFoodOrders,
+  getCancelledFoodOrders,
+  getInProgressFoodOrders,
 };
