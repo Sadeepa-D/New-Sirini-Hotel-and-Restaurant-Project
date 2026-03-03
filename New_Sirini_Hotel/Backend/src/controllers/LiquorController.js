@@ -56,6 +56,9 @@ const addLiquor = async (req, res) => {
 const getAllLiquor = async (req, res) => {
   try {
     const liquor = await Liquor.find().sort({ createdAt: -1 });
+    if (liquor.length === 0) {
+      return res.status(404).json({ message: "No liquor found" });
+    }
     res.status(200).json(liquor);
   } catch (error) {
     res
@@ -79,6 +82,9 @@ const deleteLiquor = async (req, res) => {
 const updateLiquor = async (req, res) => {
   try {
     const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: "Liquor ID is required" });
+    }
     const updates = req.body;
 
     if (req.file) {
