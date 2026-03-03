@@ -61,7 +61,7 @@ function Rooms() {
     <div className="bg-white min-h-screen font-sans">
 
       {/* ── Header Section ── */}
-      <header className="relative h-[300px] sm:h-[400px] md:h-[500px] flex flex-col items-center justify-center text-white text-center overflow-hidden">
+      <header className="relative h-[260px] sm:h-[400px] md:h-[500px] flex flex-col items-center justify-center text-white text-center overflow-hidden">
         <img
           src={MainRoom}
           alt="Hotel Room Header"
@@ -69,33 +69,33 @@ function Rooms() {
         />
         <div className="absolute inset-0 bg-black/40 z-10" />
         <div className="relative z-20 px-4 text-center">
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-serif mb-3 drop-shadow-lg transition-all duration-700 hover:scale-110 hover:text-yellow-400 cursor-pointer">
+          <h1 className="text-3xl sm:text-6xl md:text-7xl font-serif mb-2 sm:mb-3 drop-shadow-lg transition-all duration-700 hover:scale-110 hover:text-yellow-400 cursor-pointer">
             Rooms
           </h1>
-          <p className="italic text-base sm:text-xl md:text-2xl font-light tracking-wide drop-shadow-md transition-all duration-700 hover:tracking-widest">
+          <p className="italic text-sm sm:text-xl md:text-2xl font-light tracking-wide drop-shadow-md transition-all duration-700 hover:tracking-widest">
             Peaceful rooms designed for your perfect stay
           </p>
-          <button className="mt-6 px-6 py-2.5 sm:px-8 sm:py-3 bg-yellow-500 text-white rounded-full text-base sm:text-lg font-medium shadow-lg transition-all duration-300 hover:bg-yellow-600 hover:scale-105 hover:shadow-2xl">
+          <button className="mt-4 sm:mt-6 px-5 py-2 sm:px-8 sm:py-3 bg-yellow-500 text-white rounded-full text-sm sm:text-lg font-medium shadow-lg transition-all duration-300 hover:bg-yellow-600 hover:scale-105 hover:shadow-2xl">
             Explore Rooms
           </button>
         </div>
       </header>
 
       {/* ── Page Title ── */}
-      <main className="max-w-5xl mx-auto py-8 sm:py-12 px-4">
-        <h2 className="text-xl sm:text-2xl md:text-3xl text-center font-serif mb-6 sm:mb-10 text-gray-800">
+      <main className="max-w-5xl mx-auto py-6 sm:py-12 px-3 sm:px-4">
+        <h2 className="text-base sm:text-2xl md:text-3xl text-center font-serif mb-5 sm:mb-10 text-gray-800">
           Discover the perfect accommodation for your stay
         </h2>
 
         {/* ── Room Cards ── */}
-        <div className="space-y-5 sm:space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {rooms.map((room) => (
             <div
               key={room.id}
               className="group flex flex-col md:flex-row bg-[#0a0a0a] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 hover:border-orange-500/50 transition-all duration-500"
             >
               {/* ── Image Section ── */}
-              <div className="w-full md:w-5/12 overflow-hidden relative h-[200px] sm:h-[220px] md:min-h-[180px] md:h-auto">
+              <div className="w-full md:w-5/12 overflow-hidden relative h-[180px] sm:h-[220px] md:min-h-[180px] md:h-auto">
                 <img
                   src={room.image}
                   alt={room.type}
@@ -105,24 +105,24 @@ function Rooms() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
                 {/* Room Number Badge — top left */}
-                <div className="absolute top-3 left-3 sm:top-4 sm:left-4">
-                  <div className="bg-black/60 backdrop-blur-md border border-white/10 rounded-xl px-2.5 py-1.5 sm:px-3 sm:py-2 text-center">
-                    <p className="text-orange-400 text-[8px] sm:text-[9px] uppercase tracking-widest font-semibold">
+                <div className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4">
+                  <div className="bg-black/60 backdrop-blur-md border border-white/10 rounded-xl px-2 py-1 sm:px-3 sm:py-2 text-center">
+                    <p className="text-orange-400 text-[7px] sm:text-[9px] uppercase tracking-widest font-semibold">
                       Room
                     </p>
-                    <p className="text-white text-base sm:text-lg font-serif font-bold leading-none">
+                    <p className="text-white text-sm sm:text-lg font-serif font-bold leading-none">
                       {room.roomNo}
                     </p>
                   </div>
                 </div>
 
                 {/* Price Tag — bottom right */}
-                <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4">
-                  <div className="bg-black/30 backdrop-blur-md border border-white/30 rounded-lg px-5 py-1 sm:px-6 sm:py-1.5">
-                    <p className="text-white/60 text-[8px] uppercase tracking-widest font-semibold">
+                <div className="absolute bottom-2.5 right-2.5 sm:bottom-4 sm:right-4">
+                  <div className="bg-black/30 backdrop-blur-md border border-white/30 rounded-lg px-3 py-1 sm:px-6 sm:py-1.5">
+                    <p className="text-white/60 text-[7px] sm:text-[8px] uppercase tracking-widest font-semibold">
                       Per Night
                     </p>
-                    <p className="text-white text-base sm:text-lg font-bold font-serif leading-tight">
+                    <p className="text-white text-sm sm:text-lg font-bold font-serif leading-tight">
                       Rs.{room.price}
                     </p>
                   </div>
@@ -130,9 +130,9 @@ function Rooms() {
               </div>
 
               {/* ── Info Section ── */}
-              <div className="w-full md:w-7/12 p-4 sm:p-5 md:p-7 flex flex-col justify-between text-white bg-gradient-to-br from-[#111] to-black">
+              <div className="w-full md:w-7/12 p-3.5 sm:p-5 md:p-7 flex flex-col justify-between text-white bg-gradient-to-br from-[#111] to-black">
                 <div>
-                  <h3 className="text-2xl sm:text-3xl font-serif tracking-tight mb-2">
+                  <h3 className="text-xl sm:text-2xl md:text-3xl font-serif tracking-tight mb-2">
                     {room.type}
                   </h3>
 
@@ -144,31 +144,31 @@ function Rooms() {
 
                   {/* Spec Cards */}
                   <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                    <div className="bg-white/[0.03] border border-white/[0.07] rounded-xl p-2.5 sm:p-3 text-center hover:border-orange-500/30 transition-colors">
+                    <div className="bg-white/[0.03] border border-white/[0.07] rounded-xl p-2 sm:p-3 text-center hover:border-orange-500/30 transition-colors">
                       <div className="flex justify-center mb-1">
-                        <svg width="15" height="15" fill="none" stroke="#f97316" strokeWidth="1.5" viewBox="0 0 24 24">
+                        <svg width="13" height="13" fill="none" stroke="#f97316" strokeWidth="1.5" viewBox="0 0 24 24">
                           <path d="M2 19V9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10" />
                           <path d="M2 12h20" />
                           <path d="M6 12V7" />
                         </svg>
                       </div>
-                      <p className="text-white text-[11px] sm:text-xs font-medium leading-snug">{room.bed}</p>
-                      <p className="text-gray-600 text-[9px] sm:text-[10px] mt-1 uppercase tracking-wider">Bed</p>
+                      <p className="text-white text-[10px] sm:text-xs font-medium leading-snug">{room.bed}</p>
+                      <p className="text-gray-600 text-[8px] sm:text-[10px] mt-1 uppercase tracking-wider">Bed</p>
                     </div>
 
-                    <div className="bg-white/[0.03] border border-white/[0.07] rounded-xl p-2.5 sm:p-3 text-center hover:border-orange-500/30 transition-colors">
+                    <div className="bg-white/[0.03] border border-white/[0.07] rounded-xl p-2 sm:p-3 text-center hover:border-orange-500/30 transition-colors">
                       <div className="flex justify-center mb-1">
-                        <svg width="15" height="15" fill="none" stroke="#f97316" strokeWidth="1.5" viewBox="0 0 24 24">
+                        <svg width="13" height="13" fill="none" stroke="#f97316" strokeWidth="1.5" viewBox="0 0 24 24">
                           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                           <circle cx="9" cy="7" r="4" />
                           <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
                           <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                         </svg>
                       </div>
-                      <p className="text-white text-[11px] sm:text-xs font-medium">
+                      <p className="text-white text-[10px] sm:text-xs font-medium">
                         {room.guests} {room.guests === 1 ? "Guest" : "Guests"}
                       </p>
-                      <p className="text-gray-600 text-[9px] sm:text-[10px] mt-1 uppercase tracking-wider">Capacity</p>
+                      <p className="text-gray-600 text-[8px] sm:text-[10px] mt-1 uppercase tracking-wider">Capacity</p>
                     </div>
                   </div>
                 </div>
@@ -176,18 +176,18 @@ function Rooms() {
                 {/* Status + Button */}
                 <div>
                   <div className="w-full h-px bg-white/[0.06] my-3 sm:my-4" />
-                  <div className="flex justify-between items-center gap-3">
+                  <div className="flex justify-between items-center gap-2">
 
-                    <div className="flex items-center gap-2">
-                      <span className="relative flex h-2.5 w-2.5 sm:h-3 sm:w-3">
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <span className="relative flex h-2.5 w-2.5 sm:h-3 sm:w-3 flex-shrink-0">
                         <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${room.available ? "bg-green-400" : "bg-red-400"}`} />
                         <span className={`relative inline-flex rounded-full h-2.5 w-2.5 sm:h-3 sm:w-3 ${room.available ? "bg-green-500" : "bg-red-500"}`} />
                       </span>
                       <div>
-                        <p className={`text-[10px] sm:text-xs font-semibold uppercase tracking-widest ${room.available ? "text-green-400" : "text-red-400"}`}>
+                        <p className={`text-[9px] sm:text-xs font-semibold uppercase tracking-widest ${room.available ? "text-green-400" : "text-red-400"}`}>
                           {room.available ? "Available" : "Reserved"}
                         </p>
-                        <p className="text-gray-600 text-[9px] sm:text-[10px] mt-0.5 hidden sm:block">
+                        <p className="text-gray-600 text-[8px] sm:text-[10px] mt-0.5 hidden sm:block">
                           {room.available ? "Ready to book" : "Currently occupied"}
                         </p>
                       </div>
@@ -197,7 +197,7 @@ function Rooms() {
                       onClick={() => handleBookNow(room)}
                       disabled={!room.available}
                       className={`
-                        group/btn relative overflow-hidden px-5 sm:px-8 py-2.5 sm:py-3 rounded-full font-bold transition-all duration-300 text-[10px] sm:text-xs uppercase tracking-widest whitespace-nowrap
+                        group/btn relative overflow-hidden px-4 sm:px-8 py-2 sm:py-3 rounded-full font-bold transition-all duration-300 text-[9px] sm:text-xs uppercase tracking-widest whitespace-nowrap flex-shrink-0
                         ${room.available
                           ? "bg-orange-500 text-black hover:bg-orange-400 hover:shadow-[0_0_25px_rgba(249,115,22,0.5)] active:scale-95"
                           : "bg-gray-800 text-gray-500 cursor-not-allowed"
