@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import BookingSuccess from "../RoomCompo/SuccessMsg";
 
-function BookingForm({ selectedRoom, onClose }) {
+function BookingForm({ selectedRoom, onClose, onConfirmed }) {
   const [showSuccess, setShowSuccess] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    onConfirmed(selectedRoom.id); // ← marks room as unavailable in Rooms.jsx
     setShowSuccess(true);
+    // TODO: when backend ready → POST /api/bookings with form data
   };
 
+  // ── After submit: show BookingSuccess ──
   if (showSuccess) {
     return (
       <BookingSuccess
@@ -18,6 +21,7 @@ function BookingForm({ selectedRoom, onClose }) {
     );
   }
 
+  // ── Before submit: show Booking Form ──
   return (
     <div
       className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 px-0 sm:px-4"

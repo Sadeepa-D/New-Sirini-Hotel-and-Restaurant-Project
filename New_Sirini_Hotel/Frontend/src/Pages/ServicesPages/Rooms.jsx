@@ -3,8 +3,8 @@ import MainRoom from "../../assets/Rooms/Main_Room.png";
 import room1 from "../../assets/Rooms/D_Image.jpg";
 import BookingForm from "../../Components/RoomCompo/BookingForm";
 
-// ── Room Data ──────────────────────────────────────────────
-const rooms = [
+// Current Room Data
+const initialRooms = [
   {
     id: 1,
     type: "Single Room",
@@ -47,14 +47,25 @@ const rooms = [
   },
 ];
 
-// ── Main Component ─────────────────────────────────────────
+// Main Component
 function Rooms() {
+  const [roomList, setRoomList] = useState(initialRooms); // ← rooms in state now
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
 
   const handleBookNow = (room) => {
     setSelectedRoom(room);
     setIsModalOpen(true);
+  };
+
+  // ── Called after booking confirmed → marks room as unavailable ──
+  // TODO: when backend is ready, replace with API call result
+  const handleBookingConfirmed = (roomId) => {
+    setRoomList((prev) =>
+      prev.map((r) =>
+        r.id === roomId ? { ...r, available: false } : r
+      )
+    );
   };
 
   return (
@@ -89,7 +100,7 @@ function Rooms() {
 
         {/* ── Room Cards ── */}
         <div className="space-y-4 sm:space-y-6">
-          {rooms.map((room) => (
+          {roomList.map((room) => (  // ← now uses roomList instead of rooms
             <div
               key={room.id}
               className="group flex flex-col md:flex-row bg-[#0a0a0a] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 hover:border-orange-500/50 transition-all duration-500"
@@ -225,6 +236,7 @@ function Rooms() {
         <BookingForm
           selectedRoom={selectedRoom}
           onClose={() => setIsModalOpen(false)}
+          onConfirmed={handleBookingConfirmed}
         />
       )}
 
