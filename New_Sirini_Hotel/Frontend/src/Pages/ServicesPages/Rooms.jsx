@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import MainRoom from "../../assets/Rooms/Main_Room.png";
 import room1 from "../../assets/Rooms/D_Image.jpg";
-import BookingForm from "../../Components/RoomCompo/BookingForm"; // ← import the separate component
+import BookingForm from "../../Components/RoomCompo/BookingForm";
 
-// ── Room Data ──────────────────────────────────────────────
+//This is current Room Data
 const rooms = [
   {
     id: 1,
@@ -47,7 +47,9 @@ const rooms = [
   },
 ];
 
-// ── Main Component ─────────────────────────────────────────
+
+
+//Main Component for Rooms Page
 function Rooms() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -60,7 +62,7 @@ function Rooms() {
   return (
     <div className="bg-white min-h-screen font-sans">
 
-      {/* ── Header Section ── */}
+      {/*Main image Section*/}
       <header className="relative h-[300px] sm:h-[400px] md:h-[500px] flex flex-col items-center justify-center text-white text-center overflow-hidden">
         <img
           src={MainRoom}
@@ -81,31 +83,31 @@ function Rooms() {
         </div>
       </header>
 
-      {/* ── Page Title ── */}
+      {/*Title - Discover the perfect accommodation for your stay*/}
       <main className="max-w-5xl mx-auto py-8 sm:py-12 px-4">
         <h2 className="text-xl sm:text-2xl md:text-3xl text-center font-serif mb-6 sm:mb-10 text-gray-800">
           Discover the perfect accommodation for your stay
         </h2>
 
-        {/* ── Room Cards ── */}
+        {/*Room Cards*/}
         <div className="space-y-5 sm:space-y-6">
           {rooms.map((room) => (
             <div
               key={room.id}
               className="group flex flex-col md:flex-row bg-[#0a0a0a] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 hover:border-orange-500/50 transition-all duration-500"
             >
-              {/* ── Image Section ── */}
+              {/*Image of the room*/}
               <div className="w-full md:w-5/12 overflow-hidden relative h-[200px] sm:h-[220px] md:min-h-[180px] md:h-auto">
                 <img
                   src={room.image}
                   alt={room.type}
                   className="w-full h-full object-cover absolute inset-0 transition-transform duration-700 group-hover:scale-110"
                 />
-                {/* Gradient overlays */}
+                {/*Gradient overlays*/}
                 <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/50" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-                {/* Room Number Badge — top left */}
+                {/*Room Number*/}
                 <div className="absolute top-3 left-3 sm:top-4 sm:left-4">
                   <div className="bg-black/60 backdrop-blur-md border border-white/10 rounded-xl px-2.5 py-1.5 sm:px-3 sm:py-2 text-center">
                     <p className="text-orange-400 text-[8px] sm:text-[9px] uppercase tracking-widest font-semibold">
@@ -117,7 +119,7 @@ function Rooms() {
                   </div>
                 </div>
 
-                {/* Price Tag — bottom right */}
+                {/* Price*/}
                 <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4">
                   <div className="bg-black/30 backdrop-blur-md border border-white/30 rounded-lg px-5 py-1 sm:px-6 sm:py-1.5">
                     <p className="text-white/60 text-[8px] uppercase tracking-widest font-semibold">
@@ -147,7 +149,7 @@ function Rooms() {
                     <span className="flex-1 h-px bg-white/5"></span>
                   </div>
 
-                  {/* ── Spec Cards: Bed / Guests ── */}
+                  {/*main Bed / Guests */}
                   <div className="grid grid-cols-2 gap-2 sm:gap-3">
 
                     {/* Bed Type */}
@@ -188,7 +190,7 @@ function Rooms() {
                   </div>
                 </div>
 
-                {/* ── Bottom: Status + Button ── */}
+                {/* Availability and Button */}
                 <div>
                   <div className="w-full h-px bg-white/[0.06] my-3 sm:my-4" />
 
@@ -239,7 +241,7 @@ function Rooms() {
         </div>
       </main>
 
-      {/* ── Booking Modal — now a separate component ── */}
+      {/*Booking Modal*/}
       {isModalOpen && selectedRoom && (
         <BookingForm
           selectedRoom={selectedRoom}
