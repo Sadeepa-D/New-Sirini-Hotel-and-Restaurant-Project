@@ -1,13 +1,25 @@
 import React, { useState } from "react";
+import BookingSuccess from "../RoomCompo/SuccessMsg";
 
 function BookingForm({ selectedRoom, onClose }) {
-  const [submitted, setSubmitted] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setShowSuccess(true); // ← after submit → show success
   };
 
+  // ── After submit: show BookingSuccess ──
+  if (showSuccess) {
+    return (
+      <BookingSuccess
+        selectedRoom={selectedRoom}
+        onClose={onClose}
+      />
+    );
+  }
+
+  // ── Before submit: show Booking Form ──
   return (
     <div
       className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 px-0 sm:px-4"
@@ -15,7 +27,7 @@ function BookingForm({ selectedRoom, onClose }) {
     >
       <div className="bg-[#0f0f0f] border border-white/10 rounded-t-3xl sm:rounded-2xl w-full sm:max-w-md shadow-[0_30px_80px_rgba(0,0,0,0.8)] overflow-hidden max-h-[95vh] overflow-y-auto">
 
-        {/* ── Modal Header ── */}
+        {/* ── Header ── */}
         <div className="bg-gradient-to-r from-orange-500 to-orange-400 px-6 sm:px-8 py-4 sm:py-5 flex justify-between items-center">
           <div>
             <p className="text-black/60 text-[10px] sm:text-xs uppercase tracking-widest font-semibold">
@@ -54,109 +66,91 @@ function BookingForm({ selectedRoom, onClose }) {
           </div>
         </div>
 
-        {/* ── Success Message ── */}
-        {submitted ? (
-          <div className="px-8 py-12 text-center">
-            <div className="text-5xl mb-4">✅</div>
-            <h3 className="text-white text-xl font-serif mb-2">Booking Confirmed!</h3>
-            <p className="text-gray-400 text-sm mb-6">
-              Your booking for <span className="text-orange-400">{selectedRoom.type}</span> has been received.
-            </p>
+        {/* ── Form ── */}
+        <form
+          className="px-6 sm:px-8 py-5 sm:py-6 space-y-3 sm:space-y-4"
+          onSubmit={handleSubmit}
+        >
+          {/* Full Name */}
+          <div>
+            <label className="text-gray-400 text-[10px] sm:text-xs uppercase tracking-widest block mb-1">
+              Full Name
+            </label>
+            <input
+              type="text"
+              required
+              placeholder="John Silva"
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 sm:py-3 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-orange-500 transition-colors"
+            />
+          </div>
+
+          {/* Email */}
+          <div>
+            <label className="text-gray-400 text-[10px] sm:text-xs uppercase tracking-widest block mb-1">
+              Email
+            </label>
+            <input
+              type="email"
+              required
+              placeholder="john@example.com"
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 sm:py-3 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-orange-500 transition-colors"
+            />
+          </div>
+
+          {/* Phone */}
+          <div>
+            <label className="text-gray-400 text-[10px] sm:text-xs uppercase tracking-widest block mb-1">
+              Phone
+            </label>
+            <input
+              type="tel"
+              required
+              placeholder="+94 77 123 4567"
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 sm:py-3 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-orange-500 transition-colors"
+            />
+          </div>
+
+          {/* Check In & Check Out */}
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
+            <div>
+              <label className="text-gray-400 text-[10px] sm:text-xs uppercase tracking-widest block mb-1">
+                Check In
+              </label>
+              <input
+                type="date"
+                required
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 text-white text-xs sm:text-sm focus:outline-none focus:border-orange-500 transition-colors"
+              />
+            </div>
+            <div>
+              <label className="text-gray-400 text-[10px] sm:text-xs uppercase tracking-widest block mb-1">
+                Check Out
+              </label>
+              <input
+                type="date"
+                required
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 text-white text-xs sm:text-sm focus:outline-none focus:border-orange-500 transition-colors"
+              />
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex gap-2 sm:gap-3 pt-1 sm:pt-2">
             <button
+              type="button"
               onClick={onClose}
-              className="bg-orange-500 text-black px-8 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-orange-400 transition-all"
+              className="flex-1 border border-white/10 text-gray-400 py-2.5 sm:py-3 rounded-full text-[10px] sm:text-xs uppercase tracking-widest font-bold hover:border-white/30 hover:text-white transition-all"
             >
-              Close
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 bg-orange-500 text-black py-2.5 sm:py-3 rounded-full text-[10px] sm:text-xs uppercase tracking-widest font-bold hover:bg-orange-400 active:scale-95 transition-all"
+            >
+              Confirm Booking
             </button>
           </div>
-        ) : (
-
-          /* ── Booking Form ── */
-          <form
-            className="px-6 sm:px-8 py-5 sm:py-6 space-y-3 sm:space-y-4"
-            onSubmit={handleSubmit}
-          >
-            {/* Full Name */}
-            <div>
-              <label className="text-gray-400 text-[10px] sm:text-xs uppercase tracking-widest block mb-1">
-                Full Name
-              </label>
-              <input
-                type="text"
-                required
-                placeholder="John Silva"
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 sm:py-3 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-orange-500 transition-colors"
-              />
-            </div>
-
-            {/* Email */}
-            <div>
-              <label className="text-gray-400 text-[10px] sm:text-xs uppercase tracking-widest block mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                required
-                placeholder="john@example.com"
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 sm:py-3 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-orange-500 transition-colors"
-              />
-            </div>
-
-            {/* Phone */}
-            <div>
-              <label className="text-gray-400 text-[10px] sm:text-xs uppercase tracking-widest block mb-1">
-                Phone
-              </label>
-              <input
-                type="tel"
-                required
-                placeholder="+94 77 123 4567"
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 sm:py-3 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-orange-500 transition-colors"
-              />
-            </div>
-
-            {/* Check In & Check Out */}
-            <div className="grid grid-cols-2 gap-2 sm:gap-3">
-              <div>
-                <label className="text-gray-400 text-[10px] sm:text-xs uppercase tracking-widest block mb-1">
-                  Check In
-                </label>
-                <input
-                  type="date"
-                  required
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 text-white text-xs sm:text-sm focus:outline-none focus:border-orange-500 transition-colors"
-                />
-              </div>
-              <div>
-                <label className="text-gray-400 text-[10px] sm:text-xs uppercase tracking-widest block mb-1">
-                  Check Out
-                </label>
-                <input
-                  type="date"
-                  required
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 text-white text-xs sm:text-sm focus:outline-none focus:border-orange-500 transition-colors"
-                />
-              </div>
-            </div>
-
-            {/* Buttons */}
-            <div className="flex gap-2 sm:gap-3 pt-1 sm:pt-2">
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex-1 border border-white/10 text-gray-400 py-2.5 sm:py-3 rounded-full text-[10px] sm:text-xs uppercase tracking-widest font-bold hover:border-white/30 hover:text-white transition-all"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="flex-1 bg-orange-500 text-black py-2.5 sm:py-3 rounded-full text-[10px] sm:text-xs uppercase tracking-widest font-bold hover:bg-orange-400 active:scale-95 transition-all"
-              >
-                Confirm Booking
-              </button>
-            </div>
-          </form>
-        )}
+        </form>
 
       </div>
     </div>

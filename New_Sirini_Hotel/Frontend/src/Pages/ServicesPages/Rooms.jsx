@@ -3,7 +3,7 @@ import MainRoom from "../../assets/Rooms/Main_Room.png";
 import room1 from "../../assets/Rooms/D_Image.jpg";
 import BookingForm from "../../Components/RoomCompo/BookingForm";
 
-//This is current Room Data
+// ── Room Data ──────────────────────────────────────────────
 const rooms = [
   {
     id: 1,
@@ -47,9 +47,7 @@ const rooms = [
   },
 ];
 
-
-
-//Main Component for Rooms Page
+// ── Main Component ─────────────────────────────────────────
 function Rooms() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -62,7 +60,7 @@ function Rooms() {
   return (
     <div className="bg-white min-h-screen font-sans">
 
-      {/*Main image Section*/}
+      {/* ── Header Section ── */}
       <header className="relative h-[300px] sm:h-[400px] md:h-[500px] flex flex-col items-center justify-center text-white text-center overflow-hidden">
         <img
           src={MainRoom}
@@ -83,31 +81,30 @@ function Rooms() {
         </div>
       </header>
 
-      {/*Title - Discover the perfect accommodation for your stay*/}
+      {/* ── Page Title ── */}
       <main className="max-w-5xl mx-auto py-8 sm:py-12 px-4">
         <h2 className="text-xl sm:text-2xl md:text-3xl text-center font-serif mb-6 sm:mb-10 text-gray-800">
           Discover the perfect accommodation for your stay
         </h2>
 
-        {/*Room Cards*/}
+        {/* ── Room Cards ── */}
         <div className="space-y-5 sm:space-y-6">
           {rooms.map((room) => (
             <div
               key={room.id}
               className="group flex flex-col md:flex-row bg-[#0a0a0a] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 hover:border-orange-500/50 transition-all duration-500"
             >
-              {/*Image of the room*/}
+              {/* ── Image Section ── */}
               <div className="w-full md:w-5/12 overflow-hidden relative h-[200px] sm:h-[220px] md:min-h-[180px] md:h-auto">
                 <img
                   src={room.image}
                   alt={room.type}
                   className="w-full h-full object-cover absolute inset-0 transition-transform duration-700 group-hover:scale-110"
                 />
-                {/*Gradient overlays*/}
                 <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/50" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-                {/*Room Number*/}
+                {/* Room Number Badge — top left */}
                 <div className="absolute top-3 left-3 sm:top-4 sm:left-4">
                   <div className="bg-black/60 backdrop-blur-md border border-white/10 rounded-xl px-2.5 py-1.5 sm:px-3 sm:py-2 text-center">
                     <p className="text-orange-400 text-[8px] sm:text-[9px] uppercase tracking-widest font-semibold">
@@ -119,7 +116,7 @@ function Rooms() {
                   </div>
                 </div>
 
-                {/* Price*/}
+                {/* Price Tag — bottom right */}
                 <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4">
                   <div className="bg-black/30 backdrop-blur-md border border-white/30 rounded-lg px-5 py-1 sm:px-6 sm:py-1.5">
                     <p className="text-white/60 text-[8px] uppercase tracking-widest font-semibold">
@@ -134,25 +131,19 @@ function Rooms() {
 
               {/* ── Info Section ── */}
               <div className="w-full md:w-7/12 p-4 sm:p-5 md:p-7 flex flex-col justify-between text-white bg-gradient-to-br from-[#111] to-black">
-
-                {/* Top */}
                 <div>
-                  {/* Room Name */}
                   <h3 className="text-2xl sm:text-3xl font-serif tracking-tight mb-2">
                     {room.type}
                   </h3>
 
-                  {/* Decorative divider */}
                   <div className="flex items-center gap-3 mb-3 sm:mb-4">
                     <span className="w-8 h-px bg-orange-500/60"></span>
                     <span className="w-1.5 h-1.5 bg-orange-500/60 rotate-45 inline-block"></span>
                     <span className="flex-1 h-px bg-white/5"></span>
                   </div>
 
-                  {/*main Bed / Guests */}
+                  {/* Spec Cards */}
                   <div className="grid grid-cols-2 gap-2 sm:gap-3">
-
-                    {/* Bed Type */}
                     <div className="bg-white/[0.03] border border-white/[0.07] rounded-xl p-2.5 sm:p-3 text-center hover:border-orange-500/30 transition-colors">
                       <div className="flex justify-center mb-1">
                         <svg width="15" height="15" fill="none" stroke="#f97316" strokeWidth="1.5" viewBox="0 0 24 24">
@@ -161,15 +152,10 @@ function Rooms() {
                           <path d="M6 12V7" />
                         </svg>
                       </div>
-                      <p className="text-white text-[11px] sm:text-xs font-medium leading-snug">
-                        {room.bed}
-                      </p>
-                      <p className="text-gray-600 text-[9px] sm:text-[10px] mt-1 uppercase tracking-wider">
-                        Bed
-                      </p>
+                      <p className="text-white text-[11px] sm:text-xs font-medium leading-snug">{room.bed}</p>
+                      <p className="text-gray-600 text-[9px] sm:text-[10px] mt-1 uppercase tracking-wider">Bed</p>
                     </div>
 
-                    {/* Guests */}
                     <div className="bg-white/[0.03] border border-white/[0.07] rounded-xl p-2.5 sm:p-3 text-center hover:border-orange-500/30 transition-colors">
                       <div className="flex justify-center mb-1">
                         <svg width="15" height="15" fill="none" stroke="#f97316" strokeWidth="1.5" viewBox="0 0 24 24">
@@ -182,21 +168,16 @@ function Rooms() {
                       <p className="text-white text-[11px] sm:text-xs font-medium">
                         {room.guests} {room.guests === 1 ? "Guest" : "Guests"}
                       </p>
-                      <p className="text-gray-600 text-[9px] sm:text-[10px] mt-1 uppercase tracking-wider">
-                        Capacity
-                      </p>
+                      <p className="text-gray-600 text-[9px] sm:text-[10px] mt-1 uppercase tracking-wider">Capacity</p>
                     </div>
-
                   </div>
                 </div>
 
-                {/* Availability and Button */}
+                {/* Status + Button */}
                 <div>
                   <div className="w-full h-px bg-white/[0.06] my-3 sm:my-4" />
-
                   <div className="flex justify-between items-center gap-3">
 
-                    {/* Availability dot */}
                     <div className="flex items-center gap-2">
                       <span className="relative flex h-2.5 w-2.5 sm:h-3 sm:w-3">
                         <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${room.available ? "bg-green-400" : "bg-red-400"}`} />
@@ -212,7 +193,6 @@ function Rooms() {
                       </div>
                     </div>
 
-                    {/* Book Now Button */}
                     <button
                       onClick={() => handleBookNow(room)}
                       disabled={!room.available}
@@ -234,14 +214,13 @@ function Rooms() {
 
                   </div>
                 </div>
-
               </div>
             </div>
           ))}
         </div>
       </main>
 
-      {/*Booking Modal*/}
+      {/* ── BookingForm Modal ── */}
       {isModalOpen && selectedRoom && (
         <BookingForm
           selectedRoom={selectedRoom}
