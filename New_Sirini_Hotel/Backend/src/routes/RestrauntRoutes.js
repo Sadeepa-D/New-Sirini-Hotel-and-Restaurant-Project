@@ -19,6 +19,7 @@ router.put(
 router.get("/completedorders", FoodOrderCont.getCompletedFoodOrders);
 router.get("/cancelledorders", FoodOrderCont.getCancelledFoodOrders);
 router.get("/inprogressorders", FoodOrderCont.getInProgressFoodOrders);
+router.get("/overdueorders", FoodOrderCont.getOverdueFoodOrders);
 
 router.post(
   "/addfooditem",

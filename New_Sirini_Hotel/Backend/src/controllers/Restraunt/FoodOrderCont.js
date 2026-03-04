@@ -185,7 +185,19 @@ const getInProgressFoodOrders = async (req, res) => {
       .json({ message: "Failed to retrieve in-progress food orders", error });
   }
 };
-
+const getOverdueFoodOrders = async (req, res) => {
+  try {
+    const overdueOrders = await FoodOrder.find({ status: "Overdue" });
+    if (overdueOrders.length === 0) {
+      return res.status(404).json({ message: "No overdue food orders found" });
+    }
+    res.status(200).json(overdueOrders);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to retrieve overdue food orders", error });
+  }
+};
 module.exports = {
   createFoodOrder,
   getFoodOrders,
@@ -196,4 +208,5 @@ module.exports = {
   getCompletedFoodOrders,
   getCancelledFoodOrders,
   getInProgressFoodOrders,
+  getOverdueFoodOrders,
 };
