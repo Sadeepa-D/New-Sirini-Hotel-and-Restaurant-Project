@@ -151,7 +151,17 @@ const setRoomBookingStatustoCancelled = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
-
+const getOverdueRoomBookings = async (req, res) => {
+  try {
+    const overdueRoomBookings = await RoomBooking.find({ status: "Overdue" });
+    if (overdueRoomBookings.length === 0) {
+      return res.status(404).json({ error: "No overdue room bookings found" });
+    }
+    res.status(200).json(overdueRoomBookings);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 module.exports = {
   createRoomBooking,
   deleteRoomBooking,
@@ -162,4 +172,5 @@ module.exports = {
   getCancelledRoomBookings,
   setRoomBookingStatustoConfirmed,
   setRoomBookingStatustoCancelled,
+  getOverdueRoomBookings,
 };

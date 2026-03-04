@@ -20,6 +20,10 @@ router.get(
   "/viewcancelledbookings",
   roomBookingController.getCancelledRoomBookings,
 );
+router.get(
+  "/viewoverduebookings",
+  roomBookingController.getOverdueRoomBookings,
+);
 router.put(
   "/confirmbooking/:id",
   roomBookingController.setRoomBookingStatustoConfirmed,

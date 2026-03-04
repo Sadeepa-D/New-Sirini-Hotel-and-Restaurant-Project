@@ -37,7 +37,7 @@ const roomBookSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Pending", "Confirmed", "Cancelled"],
+      enum: ["Pending", "Confirmed", "Cancelled", "Overdue"],
       default: "Pending",
     },
   },
