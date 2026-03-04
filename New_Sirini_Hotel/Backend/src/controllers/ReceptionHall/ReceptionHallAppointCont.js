@@ -169,7 +169,6 @@ const getoOverdueReceptionAppointments = async (req, res) => {
   try {
     const OverdueAppointments = await ReceptionAppointment.find({
       status: "Overdue",
-      date: { $lt: new Date() },
     });
     if (OverdueAppointments.length === 0) {
       return res.status(404).json({ message: "No overdue appointments found" });
