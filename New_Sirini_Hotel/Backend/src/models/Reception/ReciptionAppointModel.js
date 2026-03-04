@@ -30,6 +30,11 @@ const reciptionAppointSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    status: {
+      type: String,
+      enum: ["Pending", "Completed", "Cancelled", "Overdue"],
+      default: "Pending",
+    },
   },
   {
     timestamps: true,
