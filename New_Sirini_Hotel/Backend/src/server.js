@@ -1,5 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
+dotenv.config();
 const cors = require("cors");
 const connectDB = require("./config/mongoconnection");
 const RoomRoutes = require("./routes/RoomsRoutes");
@@ -8,7 +9,6 @@ const UserRoutes = require("./routes/UserRoute");
 const RestrauntRoutes = require("./routes/RestrauntRoutes");
 const ReceptionHallRoutes = require("./routes/ReceptionHallRoutes");
 
-dotenv.config();
 connectDB();
 
 const app = express();
