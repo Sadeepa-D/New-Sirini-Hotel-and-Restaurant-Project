@@ -3,6 +3,7 @@ const router = express.Router();
 const upload = require("../config/CloudinaryConfig");
 const ReceptionHallAppoint = require("../controllers/ReceptionHall/ReceptionHallAppointCont");
 const ReceptionHallPackg = require("../controllers/ReceptionHall/ReceptionHallPackg");
+const CateringItemsCont = require("../controllers/ReceptionHall/CateringItemsCont");
 
 router.post(
   "/appointment/add",
@@ -57,4 +58,22 @@ router.delete(
   ReceptionHallPackg.deleteReceptionHallPackage,
 );
 router.put("/package/toggle/:id", ReceptionHallPackg.toggleAvailability);
+
+router.post(
+  "/catering/add",
+  upload.single("image"),
+  CateringItemsCont.createCateringItem,
+);
+router.get("/catering/view", CateringItemsCont.getCateringItems);
+router.put(
+  "/catering/update/:id",
+  upload.single("image"),
+  CateringItemsCont.updateCateringItem,
+);
+router.delete("/catering/delete/:id", CateringItemsCont.deleteCateringItem);
+router.put(
+  "/catering/toggle/:id",
+  CateringItemsCont.toggleCateringItemAvailability,
+);
+
 module.exports = router;
