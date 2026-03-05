@@ -13,13 +13,12 @@ import { Admin } from "./Pages/Administration/Admin";
 import { Manager } from "./Pages/Administration/Manager";
 import Rooms from "./Pages/ServicesPages/Rooms";
 
+import Restaurant from "./Pages/ServicesPages/Restaurant";
 
 export const App = () => {
   return (
     <>
-    
-      <Toaster position="top-right" reverseOrder={false} />{" "}
-      <Header/>
+      <Toaster position="top-center" reverseOrder={false} />{" "}
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Registration />} />
@@ -32,12 +31,10 @@ export const App = () => {
           path="/operationmanager/liquormanagment"
           element={<LiquorManagment />}
         />
-          <Route path="/rooms" element={<Rooms />} />
+        <Route path="/rooms" element={<Rooms />} />
+        <Route path="/restaurant" element={<Restaurant />} />
       </Routes>
-      
-      
       <Footer />
-
     </>
   );
 };

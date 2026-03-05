@@ -9,7 +9,7 @@ const LiquorSchema = mongoose.Schema(
     },
 
     price: {
-      type: String,
+      type: Number,
       required: true,
     },
 
@@ -55,6 +55,4 @@ const LiquorSchema = mongoose.Schema(
   },
 );
 
-const Liquor = mongoose.model("Liquor", LiquorSchema);
-
-module.exports = Liquor;
+module.exports = mongoose.model("Liquor", LiquorSchema);
