@@ -10,7 +10,7 @@ import Liquor from "./Pages/ServicesPages/LiquorStore";
 import LiquorManagment from "./Components/OperationManager/Liquor/LiquorMngHome";
 import OperationManager from "./Pages/Administration/OperationManager";
 import { Admin } from "./Pages/Administration/Admin";
-import { Manager } from "./Pages/Administration/Manager";
+import Manager  from "./Pages/Administration/Manager";
 import Rooms from "./Pages/ServicesPages/Rooms";
 
 import Restaurant from "./Pages/ServicesPages/Restaurant";
