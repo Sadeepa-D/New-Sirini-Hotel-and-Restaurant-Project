@@ -111,6 +111,9 @@ const updateLiquor = async (req, res) => {
 const toggleAvailability = async (req, res) => {
   try {
     const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: "Liquor ID is required" });
+    }
     const liquor = await Liquor.findById(id);
     if (!liquor) {
       return res.status(404).json({ message: "Liquor not found" });

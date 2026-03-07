@@ -35,7 +35,6 @@ export const App = () => {
         <Route path="/restaurant" element={<Restaurant />} />
       </Routes>
       <Footer />
-
     </>
   );
 };
