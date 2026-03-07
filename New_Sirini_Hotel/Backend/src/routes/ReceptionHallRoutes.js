@@ -4,6 +4,7 @@ const upload = require("../config/CloudinaryConfig");
 const ReceptionHallAppoint = require("../controllers/ReceptionHall/ReceptionHallAppointCont");
 const ReceptionHallPackg = require("../controllers/ReceptionHall/ReceptionHallPackg");
 const CateringItemsCont = require("../controllers/ReceptionHall/CateringItemsCont");
+const AdvertismentCont = require("../controllers/ReceptionHall/AdvertismentCont");
 
 router.post(
   "/appointment/add",
@@ -76,4 +77,36 @@ router.put(
   CateringItemsCont.toggleCateringItemAvailability,
 );
 
+router.post(
+  "/advertisment/add",
+  upload.single("image"),
+  AdvertismentCont.createAdvertisment,
+);
+router.get("/advertisment/view", AdvertismentCont.getAdvertisments);
+router.delete("/advertisment/delete/:id", AdvertismentCont.deleteAdvertisment);
+router.put(
+  "/advertisment/update/:id",
+  upload.single("image"),
+  AdvertismentCont.updateAdvertisment,
+);
+router.put(
+  "/advertisment/toggle/approved/:id",
+  AdvertismentCont.toggleAdvertismentStatustoApproved,
+);
+router.put(
+  "/advertisment/toggle/rejected/:id",
+  AdvertismentCont.toggleAdvertismentStatustoRejected,
+);
+router.get(
+  "/advertisment/view/approved",
+  AdvertismentCont.getApprovedAdvertisments,
+);
+router.get(
+  "/advertisment/view/pending",
+  AdvertismentCont.getPendingAdvertisments,
+);
+router.get(
+  "/advertisment/view/rejected",
+  AdvertismentCont.getRejectedAdvertisments,
+);
 module.exports = router;
