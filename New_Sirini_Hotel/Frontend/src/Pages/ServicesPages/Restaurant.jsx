@@ -1,132 +1,8 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import resturantImg from "../../assets/resturant.png";
 
-const mealData = [
-  {
-    id: "1",
-    name: "Chicken Rice",
-    category: "Main Meals",
-    price: 350,
-    ingredients: ["Chicken", "Rice", "Vegetables"],
-    label: "Spicy",
-    image:
-      "https://plus.unsplash.com/premium_photo-1694141252774-c937d97641da?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2hpY2tlbiUyMHJpY2V8ZW58MHx8MHx8fDA%3D",
-    description: "Chicken and rice, cooked to perfection.",
-  },
-  {
-    id: "2",
-    name: "Noodles",
-    category: "Main Meals",
-    price: 350,
-    ingredients: ["Noodles", "Vegetables"],
-    label: "Vegetarian",
-    image:
-      "https://allthenoodles.com/wp-content/uploads/2024/09/spicy-garlic-beef-noodles-9.jpg",
-    description: "Noodles and vegetables, cooked to perfection.",
-  },
-  {
-    id: "5",
-    name: "Fried Rice",
-    category: "Main Meals",
-    price: 400,
-    ingredients: ["Rice", "Egg", "Chicken", "Vegetables"],
-    label: "Chef Special",
-    image: "https://www.australianeggs.org.au/assets/Uploads/Egg-fried-rice-2__ScaleWidthWzEyMDBd_ExtRewriteWyJqcGciLCJhdmlmIl0_QualityWzYwXQ.avif",
-    description: "Flavorful fried rice with tender chicken and fresh vegetables.",
-  },
-  {
-    id: "6",
-    name: "Chicken Kottu",
-    category: "Main Meals",
-    price: 450,
-    ingredients: ["Roti", "Chicken", "Egg", "Vegetables", "Spices"],
-    label: "Popular",
-    image: "https://dailyglobalbites.com/_next/image?url=%2Fimages%2Frecipes%2Fkottu%2Fslk1.jpg&w=1920&q=75",
-    description: "Sri Lankan style kottu with chicken and aromatic spices.",
-  },
-
-  {
-    id: "3",
-    name: "Coca Cola",
-    category: "Soft Drinks",
-    price: 150,
-    ingredients: ["Carbonated Water", "Sugar"],
-    label: "Refreshing",
-    image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500&q=80",
-    description: "Classic refreshing soft drink.",
-  },
-  {
-    id: "7",
-    name: "Sprite",
-    category: "Soft Drinks",
-    price: 150,
-    ingredients: ["Carbonated Water", "Sugar", "Lemon Flavor"],
-    label: "Chilled",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuwfyPonH0cPvqO_SELhyYHAZUmRYluj5n2w&s",
-    description: "Cool lemon flavored soft drink.",
-  },
-  {
-    id: "8",
-    name: "Fanta",
-    category: "Soft Drinks",
-    price: 150,
-    ingredients: ["Carbonated Water", "Sugar", "Orange Flavor"],
-    label: "Sweet",
-    image: "https://thechocolatehouse.lk/wp-content/uploads/2025/10/Fanta-Orange-Soft-Drink.jpg",
-    description: "Orange flavored sparkling soft drink.",
-  },
-  {
-    id: "9",
-    name: "Necto",
-    category: "Soft Drinks",
-    price: 180,
-    ingredients: ["Necto", "Sugar",],
-    label: "Cool",
-    image: "https://i0.wp.com/onlinekade.lk/wp-content/uploads/NECTO.webp?fit=744%2C744&ssl=1",
-    description: "Chilled Necto with a sweet, fruity taste.",
-  },
-  {
-    id: "4",
-    name: "Orange Juice",
-    category: "Fresh Juice",
-    price: 250,
-    ingredients: ["Fresh Oranges"],
-    label: "Healthy",
-    image: "https://images.unsplash.com/photo-1613478223719-2ab802602423?w=500&q=80",
-    description: "Freshly squeezed orange juice.",
-  },
-
-  {
-    id: "10",
-    name: "Mango Juice",
-    category: "Fresh Juice",
-    price: 280,
-    ingredients: ["Fresh Mangoes"],
-    label: "Seasonal",
-    image: "https://miro.medium.com/v2/resize:fit:1400/1*YEvGeOTWYgIcyv89lCen8Q.jpeg",
-    description: "Fresh mango juice with natural sweetness.",
-  },
-  {
-    id: "11",
-    name: "Pineapple Juice",
-    category: "Fresh Juice",
-    price: 260,
-    ingredients: ["Fresh Pineapple"],
-    label: "Tropical",
-    image: "https://thumbs.dreamstime.com/b/pineapple-juice-glass-fresh-pineapples-sunlight-great-creative-professional-projects-369361083.jpg",
-    description: "Chilled pineapple juice made from ripe fruit.",
-  },
-  {
-    id: "12",
-    name: "Watermelon Juice",
-    category: "Fresh Juice",
-    price: 240,
-    ingredients: ["Fresh Watermelon"],
-    label: "Hydrating",
-    image: "https://static.vecteezy.com/system/resources/previews/055/940/512/non_2x/watermelon-juice-with-splash-on-black-background-photo.jpg",
-    description: "Light and refreshing watermelon juice.",
-  },
-];
+// Initial hardcoded data removed. Data is now fetched from the backend API.
 
 function OrderModal({ item, onClose }) {
   const [form, setForm] = useState({
@@ -142,9 +18,31 @@ function OrderModal({ item, onClose }) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    try {
+      const orderData = {
+        fullName: form.name,
+        // Strip non-numeric characters to match backend regex /^[0-9]{10}$/
+        phoneNumber: form.phone.replace(/\D/g, ""),
+        pickupDate: form.pickupDate,
+        pickupTime: form.pickupTime,
+        quantity: form.quantity,
+      };
+
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/restraunt/placeorder`,
+        orderData
+      );
+
+      setSubmitted(true);
+      setTimeout(() => {
+        onClose();
+      }, 2000);
+    } catch (error) {
+      console.error("Error placing order:", error);
+      alert("Failed to place order. Please try again.");
+    }
   };
 
   // Prevent background scroll
@@ -237,7 +135,10 @@ function OrderModal({ item, onClose }) {
                   value={form.phone}
                   onChange={handleChange}
                   required
-                  placeholder="+94 77 123 4567"
+                  pattern="[0-9]{10}"
+                  maxLength="10"
+                  placeholder="0771234567"
+                  title="Please enter a 10-digit phone number"
                   className="w-full border border-neutral-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition"
                 />
               </div>
@@ -341,10 +242,41 @@ export default function Restaurant() {
   const [softdrinkIndex, setSoftdrinkIndex] = useState(0);
   const [freshJuiceIndex, setFreshJuiceIndex] = useState(0);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [mealData, setMealData] = useState([]);
 
   const mainmeals = mealData.filter((meal) => meal.category === "Main Meals");
   const softdrinks = mealData.filter((meal) => meal.category === "Soft Drinks");
   const freshJuice = mealData.filter((meal) => meal.category === "Fresh Juice");
+
+  const fetchFoodItems = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/restraunt/viewfooditems`
+      );
+      console.log("Restaurant API Response:", response.data);
+      
+      const data = Array.isArray(response.data) ? response.data : [];
+      
+      // Map backend data to frontend field names if they differ
+      const mappedData = data.map((item) => ({
+        id: item._id,
+        name: item.foodname,
+        price: item.price,
+        description: item.description,
+        image: item.image,
+        ingredients: Array.isArray(item.ingredients) ? item.ingredients : [item.ingredients],
+        category: item.category,
+        label: item.availability ? "Available" : "Sold Out",
+      }));
+      setMealData(mappedData);
+    } catch (error) {
+      console.error("Error fetching food items:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFoodItems();
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
