@@ -40,6 +40,7 @@ const Dashboard = () => {
     },
   ];
 
+
   return (
     <div className="p-4 md:p-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
@@ -69,4 +70,53 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+const Manager = () => {
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const navItems = [
+    { id: "dashboard", label: "Dashboard", icon: Home },
+    { id: "rooms",     label: "Rooms",     icon: BedDouble },
+    { id: "reception", label: "Reception", icon: ConciergeBell },
+    { id: "logout",    label: "Logout",    icon: LogOut },
+  ];
+
+    const renderContent = () => {
+    switch (activeTab) {
+      case "dashboard":  return <Dashboard />;
+      case "rooms":      return <RoomOperation />; 
+      case "reception":  return <ReceptionComponent />;
+      case "logout":     return <LogoutComponent />;
+      default:           return <DashboardOverview />;
+    }
+  };
+
+  const getPageTitle = () => {
+    switch (activeTab) {
+      case "dashboard":  return "Dashboard Overview";
+      case "rooms":      return "Rooms";
+      case "reception":  return "Reception";
+      case "logout":     return "Logout";
+      default:           return "Dashboard Overview";
+    }
+  };
+
+  return(
+    <>
+    <div className="flex h-screen bg-black font-sans">
+      {isSidebarOpen && (
+        <div className="fixed inset-0 bg-black/50 z-20 md:hidden" onClick={() => setIsSidebarOpen(false)} />
+      )}
+
+      <aside className={`fixed md:static inset-y-0 left-0 z-30 w-80 bg-[#000000] text-white transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"} flex flex-col`}></aside>
+      <div className="p-6 border-b border-gray-800 flex items-center gap-3">
+        <img src={Logo} alt="Hotel Logo" className="w-24 h-24 object-contain" />
+      </div>
+    </div>
+    </>
+    
+  )
+
+};
+
+export default Manager;
