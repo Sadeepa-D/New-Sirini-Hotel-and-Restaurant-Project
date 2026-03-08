@@ -122,7 +122,7 @@ const Manager = () => {
 
         <aside
           className={`fixed md:static inset-y-0 left-0 z-30 w-80 bg-[#000000] text-white transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"} flex flex-col`}
-        ></aside>
+        >
         <div className="p-6 border-b border-gray-800 flex items-center gap-3">
           <img
             src={Logo}
@@ -177,8 +177,18 @@ const Manager = () => {
         </nav>
 
         <div className="p-4 border-t border-gray-800">
-          
+           <div className="flex items-center gap-3 px-2">
+             <div className="w-9 h-9 bg-yellow-500 rounded-lg flex items-center justify-center text-black font-bold text-sm">M</div>
+             <div>
+              <p className="text-white text-xs font-bold">Manager</p>
+              <p className="text-gray-500 text-[10px]">New Sirini Hotel</p>
+            </div>
+
+           </div>
         </div>
+        </aside>
+
+        
       </div>
     </>
   );
