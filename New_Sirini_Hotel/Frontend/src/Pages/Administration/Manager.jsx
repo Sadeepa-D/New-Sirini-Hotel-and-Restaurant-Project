@@ -40,7 +40,6 @@ const Dashboard = () => {
     },
   ];
 
-
   return (
     <div className="p-4 md:p-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
@@ -76,47 +75,113 @@ const Manager = () => {
 
   const navItems = [
     { id: "dashboard", label: "Dashboard", icon: Home },
-    { id: "rooms",     label: "Rooms",     icon: BedDouble },
+    { id: "rooms", label: "Rooms", icon: BedDouble },
     { id: "reception", label: "Reception", icon: ConciergeBell },
-    { id: "logout",    label: "Logout",    icon: LogOut },
+    { id: "logout", label: "Logout", icon: LogOut },
   ];
 
-    const renderContent = () => {
+  const renderContent = () => {
     switch (activeTab) {
-      case "dashboard":  return <Dashboard />;
-      case "rooms":      return <RoomOperation />; 
-      case "reception":  return <ReceptionComponent />;
-      case "logout":     return <LogoutComponent />;
-      default:           return <DashboardOverview />;
+      case "dashboard":
+        return <Dashboard />;
+      case "rooms":
+        return <RoomOperation />;
+      case "reception":
+        return <ReceptionComponent />;
+      case "logout":
+        return <LogoutComponent />;
+      default:
+        return <DashboardOverview />;
     }
   };
 
   const getPageTitle = () => {
     switch (activeTab) {
-      case "dashboard":  return "Dashboard Overview";
-      case "rooms":      return "Rooms";
-      case "reception":  return "Reception";
-      case "logout":     return "Logout";
-      default:           return "Dashboard Overview";
+      case "dashboard":
+        return "Dashboard Overview";
+      case "rooms":
+        return "Rooms";
+      case "reception":
+        return "Reception";
+      case "logout":
+        return "Logout";
+      default:
+        return "Dashboard Overview";
     }
   };
 
-  return(
+  return (
     <>
-    <div className="flex h-screen bg-black font-sans">
-      {isSidebarOpen && (
-        <div className="fixed inset-0 bg-black/50 z-20 md:hidden" onClick={() => setIsSidebarOpen(false)} />
-      )}
+      <div className="flex h-screen bg-black font-sans">
+        {isSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-20 md:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
 
-      <aside className={`fixed md:static inset-y-0 left-0 z-30 w-80 bg-[#000000] text-white transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"} flex flex-col`}></aside>
-      <div className="p-6 border-b border-gray-800 flex items-center gap-3">
-        <img src={Logo} alt="Hotel Logo" className="w-24 h-24 object-contain" />
+        <aside
+          className={`fixed md:static inset-y-0 left-0 z-30 w-80 bg-[#000000] text-white transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"} flex flex-col`}
+        ></aside>
+        <div className="p-6 border-b border-gray-800 flex items-center gap-3">
+          <img
+            src={Logo}
+            alt="Hotel Logo"
+            className="w-24 h-24 object-contain"
+          />
+
+          <div>
+            <h2 className="font-serif italic text-xl text-white">
+              New Sirini Hotel
+            </h2>
+            <p className="text-[10px] font-bold text-gray-400 -mt-1 tracking-wide uppercase">
+              Manager Panel
+            </p>
+          </div>
+        </div>
+
+        <nav className="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            const isLogout = item.id === "logout";
+            return (
+              <button
+                key={item.id}
+                onClick={() => {
+                  setActiveTab(item.id);
+                  setIsSidebarOpen(false);
+                }}
+                className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-colors ${
+                  isActive
+                    ? "bg-yellow-500 text-white font-bold"
+                    : isLogout
+                      ? "text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                      : "text-gray-400 hover:bg-gray-900 hover:text-white"
+                }`}
+              >
+                <Icon
+                  size={20}
+                  className={
+                    isActive
+                      ? "text-white"
+                      : isLogout
+                        ? "text-red-400"
+                        : "text-white"
+                  }
+                />
+                <span className="text-sm tracking-wide">{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+
+        <div className="p-4 border-t border-gray-800">
+          
+        </div>
       </div>
-    </div>
     </>
-    
-  )
-
+  );
 };
 
 export default Manager;
