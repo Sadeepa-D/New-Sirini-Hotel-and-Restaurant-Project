@@ -3,10 +3,10 @@ import { Plus, Edit2, Trash2, X, BedDouble, Users, DollarSign, CheckCircle, XCir
 
 // ── Initial Dummy Data ─────────────────────────────────────
 const initialRooms = [
-  { id: 1, roomNumber: "101", type: "Single", price: 3500, capacity: 1, status: "available", description: "Cozy single room with garden view" },
-  { id: 2, roomNumber: "102", type: "Double", price: 6500, capacity: 2, status: "occupied", description: "Spacious double room with balcony" },
-  { id: 3, roomNumber: "201", type: "Suite", price: 15000, capacity: 4, status: "available", description: "Luxury suite with ocean view" },
-  { id: 4, roomNumber: "202", type: "Single", price: 3500, capacity: 1, status: "maintenance", description: "Single room under renovation" },
+  { id: 1, roomNumber: "01", type: "Single", price: 3500, capacity: 1, status: "available", description: "Cozy single room with garden view" },
+  { id: 2, roomNumber: "02", type: "Double", price: 6500, capacity: 2, status: "occupied", description: "Spacious double room with balcony" },
+  { id: 3, roomNumber: "03", type: "Suite", price: 15000, capacity: 4, status: "available", description: "Luxury suite with ocean view" },
+  { id: 4, roomNumber: "04", type: "Single", price: 3500, capacity: 1, status: "maintenance", description: "Single room under renovation" },
 ];
 
 // ── Room Form Modal ────────────────────────────────────────
