@@ -12,36 +12,64 @@ import {
   TrendingUp,
 } from "lucide-react";
 
+
+const dashboardData = {
+  monthly: [
+    { title: "Total Bookings", value: "24", sub: "This month" },
+    { title: "Rooms Available", value: "02", sub: "Out of 04 rooms" },
+    { title: "Guests Today", value: "16", sub: "Check-ins & stay" },
+    { title: "Total Revenue", value: "Rs.128,000", sub: "This month" },
+  ],
+  yearly: [
+    { title: "Total Bookings", value: "286", sub: "This year" },
+    { title: "Rooms Available", value: "02", sub: "Out of 04 rooms" },
+    { title: "Guests Today", value: "192", sub: "Total guests" },
+    { title: "Total Revenue", value: "Rs.1,540,000", sub: "This year" },
+  ],
+};
+
+
 const Dashboard = () => {
-  const stats = [
-    {
-      title: "Total Bookings",
-      value: "24",
-      icon: <CalendarCheck size={28} className="text-gray-700" />,
-      sub: "This month",
-    },
-    {
-      title: "Rooms Available",
-      value: "08",
-      icon: <BedDouble size={28} className="text-gray-700" />,
-      sub: "Out of 12 rooms",
-    },
-    {
-      title: "Guests Today",
-      value: "16",
-      icon: <Users size={28} className="text-gray-700" />,
-      sub: "Check-ins & stay",
-    },
-    {
-      title: "Total Revenue",
-      value: "Rs.128,000",
-      icon: <TrendingUp size={28} className="text-gray-700" />,
-      sub: "This month",
-    },
+
+  const [filter, setFilter] = useState("monthly");
+  const icons = [
+    <CalendarCheck size={28} className="text-gray-700" />,
+    <BedDouble size={28} className="text-gray-700" />,
+    <Users size={28} className="text-gray-700" />,
+    <TrendingUp size={28} className="text-gray-700" />,
   ];
 
-  return (
-    <div className="p-4 md:p-8">
+  const stats = dashboardData[filter];
+
+  return(
+    <>
+     <div className="p-4 md:p-8">
+
+      {/* Filter Buttons */}
+      <div className="flex gap-2 mb-6">
+        <button
+          onClick={() => setFilter("monthly")}
+          className={`px-5 py-2 rounded-xl text-sm font-bold transition ${
+            filter === "monthly"
+              ? "bg-yellow-500 text-black"
+              : "bg-white text-gray-500 hover:bg-gray-100"
+          }`}
+        >
+          Monthly
+        </button>
+
+        <button
+          onClick={() => setFilter("yearly")}
+          className={`px-5 py-2 rounded-xl text-sm font-bold transition ${
+            filter === "yearly"
+              ? "bg-yellow-500 text-black"
+              : "bg-white text-gray-500 hover:bg-gray-100"
+          }`}
+        >
+          Yearly
+        </button>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
         {stats.map((stat, index) => (
           <div
@@ -49,7 +77,7 @@ const Dashboard = () => {
             className="bg-white p-5 sm:p-6 rounded-xl shadow-sm flex flex-col justify-between min-h-[130px] sm:min-h-[150px] hover:shadow-md transition-shadow"
           >
             <div className="flex justify-between items-start">
-              <div>{stat.icon}</div>
+              <div>{icons[index]}</div>
               <span className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">
                 {stat.sub}
               </span>
@@ -65,8 +93,11 @@ const Dashboard = () => {
           </div>
         ))}
       </div>
-    </div>
-  );
+
+     </div>
+    </>
+  )
+
 };
 
 const Manager = () => {
@@ -214,12 +245,12 @@ const Manager = () => {
             </div>
           </header>
 
-            {/*load the render content*/}
-           <main className="flex-1 overflow-y-auto p-4 pt-2 bg-transparent">
+          {/*load the render content*/}
+          <main className="flex-1 overflow-y-auto p-4 pt-2 bg-transparent">
             <div className="bg-gray-100 rounded-xl min-h-full">
-            {renderContent()}
-          </div>
-           </main>
+              {renderContent()}
+            </div>
+          </main>
         </div>
       </div>
     </>
