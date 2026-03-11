@@ -12,7 +12,7 @@ import OperationManager from "./Pages/Administration/OperationManager";
 import { Admin } from "./Pages/Administration/Admin";
 import { Manager } from "./Pages/Administration/Manager";
 import Rooms from "./Pages/ServicesPages/Rooms";
-
+import Reception from "./Pages/ServicesPages/Reception";
 import Restaurant from "./Pages/ServicesPages/Restaurant";
 
 export const App = () => {
@@ -27,9 +27,9 @@ export const App = () => {
         <Route path="/manager" element={<Manager />} />
         <Route path="/liquor" element={<Liquor />} />
         <Route path="/operationmanager" element={<OperationManager />} />
+        <Route path="/reception" element={<Reception />} />
         <Route
-          path="/operationmanager/liquormanagment"
-          element={<LiquorManagment />}
+          path="/operationmanager/liquormanagment" element={<LiquorManagment />}
         />
         <Route path="/rooms" element={<Rooms />} />
         <Route path="/restaurant" element={<Restaurant />} />
