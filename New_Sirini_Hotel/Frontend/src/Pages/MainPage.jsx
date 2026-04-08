@@ -22,6 +22,7 @@ const NewSiriniHotel = () => {
       title: "Restaurant",
       desc: "Delicious food made with fresh ingredients.",
       img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=400",
+      path: "/restaurant",
     },
     {
       title: "Liquor",
@@ -122,7 +123,7 @@ const NewSiriniHotel = () => {
           </p>
           <div className="text-yellow-500 text-xl">★★★★★</div>
         </div>
-        <div className="w-140 rounded-lg overflow-hidden shadow-xl h-83">
+        <div className="w-full rounded-lg overflow-hidden shadow-xl h-64 md:h-96">
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.521260322283!2d80.54!3d6.23!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwMTMnNDguMCJOIDgwwrAzMicyNC4wIkU!5e0!3m2!1sen!2slk!4v1234567890"
             width="100%"

@@ -21,22 +21,22 @@ function Footer() {
               rooms, quality dining, liquor services, and event spaces for
               weddings and celebrations
             </p>
-            <div className="flex gap-3">
-              <a
-                href="#"
-                className="bg-transparent border border-yellow-500 rounded-full p-2 hover:bg-yellow-500 transition-colors group"
-                aria-label="Facebook"
-              >
-                <FaFacebookF className="w-4 h-4 text-yellow-500 group-hover:text-white" />
-              </a>
-              <a
-                href="#"
-                className="bg-transparent border border-yellow-500 rounded-full p-2 hover:bg-yellow-500 transition-colors group"
-                aria-label="Instagram"
-              >
-                <FaInstagram className="w-4 h-4 text-yellow-500 group-hover:text-white" />
-              </a>
-            </div>
+<div className="flex gap-3">
+  <a
+    href="#"
+    className="bg-transparent border border-white rounded-full p-2 hover:bg-yellow-500 transition-all duration-300 hover:scale-110 group"
+    aria-label="Facebook"
+  >
+    <FaFacebookF className="w-4 h-4 text-white group-hover:!text-yellow-500" />
+  </a>
+  <a
+    href="#"
+    className="bg-transparent border border-white rounded-full p-2 hover:bg-yellow-500 transition-all duration-300 hover:scale-110 group"
+    aria-label="Instagram"
+  >
+    <FaInstagram className="w-4 h-4 text-white group-hover:!text-yellow-500" />
+  </a>
+</div>
           </div>
 
           {/* Discover Section */}
@@ -46,15 +46,15 @@ function Footer() {
               <li>
                 <a
                   href="#reception"
-                  className="text-gray-300 hover:text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
+                  className="!text-gray-300 !no-underline hover:!text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
                 >
-                  Reciption
+                  Reception
                 </a>
               </li>
               <li>
                 <a
                   href="#rooms"
-                  className="text-gray-300 hover:text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
+                  className="!text-gray-300 !no-underline hover:!text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
                 >
                   Rooms
                 </a>
@@ -62,7 +62,7 @@ function Footer() {
               <li>
                 <a
                   href="#restaurant"
-                  className="text-gray-300 hover:text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
+                  className="!text-gray-300 !no-underline hover:!text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
                 >
                   Restaurant
                 </a>
@@ -70,7 +70,7 @@ function Footer() {
               <li>
                 <Link
                   to="/liquor"
-                  className="text-gray-300 hover:text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
+                  className="!text-gray-300 !no-underline hover:!text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
                 >
                   Liquor
                 </Link>
@@ -92,7 +92,7 @@ function Footer() {
                 <MdPhone className="w-5 h-5 text-yellow-500 shrink-0" />
                 <a
                   href="tel:041-0568476"
-                  className="text-gray-300 hover:text-white transition-colors text-base"
+                  className="!text-gray-300 !no-underline hover:!text-yellow-500 transition-colors text-base"
                 >
                   041-0568476
                 </a>
@@ -101,7 +101,7 @@ function Footer() {
                 <MdEmail className="w-5 h-5 text-yellow-500 shrink-0" />
                 <a
                   href="mailto:newsirini@gmail.com"
-                  className="text-gray-300 hover:text-white transition-colors text-base"
+                  className="!text-gray-300 !no-underline hover:!text-yellow-500 transition-colors text-base"
                 >
                   newsirini@gmail.com
                 </a>

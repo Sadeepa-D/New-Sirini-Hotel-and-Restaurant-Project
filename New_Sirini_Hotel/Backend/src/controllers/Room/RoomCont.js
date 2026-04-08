@@ -1,0 +1,115 @@
+const RoomModel = require("../../models/Rooms/RoomModel");
+
+const createRoom = async (req, res) => {
+  try {
+    const { roomNumber, roomType, price, bedType, capacity } = req.body;
+    if (!roomNumber || !roomType || !price || !bedType || !capacity) {
+      return res
+        .status(400)
+        .json({ message: "Please provide all required fields" });
+    }
+    const image = req.file ? req.file.path : null;
+    if (!image) {
+      return res.status(400).json({ message: "Image is required" });
+    }
+    const newRoom = new RoomModel({
+      roomNumber,
+      roomType,
+      price,
+      bedType,
+      capacity,
+      image,
+      availability: true,
+    });
+    await newRoom.save();
+    res.status(201).json(newRoom);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error creating room", error: error.message });
+  }
+};
+const getAllRooms = async (req, res) => {
+  try {
+    const rooms = await RoomModel.find().sort({ createdAt: -1 });
+    if (rooms.length === 0) {
+      return res.status(404).json({ message: "No rooms found" });
+    }
+    res.status(200).json(rooms);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error fetching rooms", error: error.message });
+  }
+};
+const updateRoom = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: "Room ID is required" });
+    }
+    const updates = req.body;
+    if (req.file) {
+      updates.image = req.file.path;
+    }
+    const updatedRoom = await RoomModel.findByIdAndUpdate(
+      id,
+      { $set: updates },
+      {
+        new: true,
+      },
+    );
+    if (!updatedRoom) {
+      return res.status(404).json({ message: "Room not found" });
+    }
+    res.status(200).json(updatedRoom);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error updating room", error: error.message });
+  }
+};
+const deleteRoom = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: "Room ID is required" });
+    }
+    await RoomModel.findByIdAndDelete(id);
+    res.status(200).json({ message: "Room deleted successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error deleting room", error: error.message });
+  }
+};
+const toggleRoomAvailability = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: "Room ID is required" });
+    }
+    const room = await RoomModel.findById(id);
+    if (!room) {
+      return res.status(404).json({ message: "Room not found" });
+    }
+    room.availability = !room.availability;
+    await room.save();
+    res.status(200).json(room);
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        message: "Error toggling room availability",
+        error: error.message,
+      });
+  }
+};
+
+module.exports = {
+  createRoom,
+  getAllRooms,
+  updateRoom,
+  deleteRoom,
+  toggleRoomAvailability,
+};

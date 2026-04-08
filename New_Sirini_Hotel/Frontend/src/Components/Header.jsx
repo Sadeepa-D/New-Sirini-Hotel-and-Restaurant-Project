@@ -1,80 +1,96 @@
 import React, { useState } from "react";
 import logo from "../assets/Logo.png";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
 
 function Header() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [hoveredLink, setHoveredLink] = useState(null);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const closeMenu = () => setIsMenuOpen(false);
 
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
+  const navLinks = [
+    { label: "Home", path: "/main" },
+    { label: "Services", path: "/services" },
+    { label: "Gallery", path: "/gallery" },
+    { label: "About Us", path: "/about" },
+    { label: "Contact Us", path: "/contact" },
+  ];
+
+  const isActive = (path) => location.pathname === path;
+
+  const getLinkStyle = (path, id) => ({
+    textDecoration: "none",
+    color: hoveredLink === id || isActive(path) ? "#facc15" : "#ffffff",
+    borderBottom: isActive(path)
+      ? "2px solid #facc15"
+      : "2px solid transparent",
+    paddingBottom: "2px",
+    transition: "color 0.2s ease, transform 0.2s ease",
+    transform: hoveredLink === id ? "scale(1.1)" : "scale(1)",
+    display: "inline-block",
+    fontSize: "1rem",
+  });
+
+  const getMobileLinkStyle = (path, id) => ({
+    textDecoration: "none",
+    color: hoveredLink === id || isActive(path) ? "#facc15" : "#ffffff",
+    transition: "color 0.2s ease",
+    fontSize: "1.25rem",
+  });
 
   return (
-    <header className="bg-black py-5 relative z-50">
-      <div className="w-full px-4 flex items-center justify-between">
+    <header className="bg-black h-30 relative z-50">
+      <div className="w-full px-4 h-full flex items-center justify-between">
         {/* Logo and Title */}
         <div className="flex items-center gap-2">
           <img
             src={logo}
             alt="New Sirini Hotel Logo"
-            className="h-16 md:h-20 object-contain"
+            className="h-22 md:h-29 object-contain"
           />
-          <h1 className="text-white font-serif text-xl md:text-2xl italic">
+
+          <div className="text-white font-serif text-[19px] italic">
             New Sirini Hotel
-          </h1>
+          </div>
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8 lg:gap-12 ml-auto">
-          <Link
-            to="/main"
-            className="text-white hover:text-yellow-500 transition-colors hover:scale-110"
-          >
-            Home
-          </Link>
-          <Link
-            to="/services"
-            className="text-white hover:text-yellow-600 transition-colors hover:scale-110"
-          >
-            Services
-          </Link>
-          <Link
-            to="/gallery"
-            className="text-white hover:text-yellow-600 transition-colors hover:scale-110"
-          >
-            Gallery
-          </Link>
-          <Link
-            to="/about"
-            className="text-white hover:text-yellow-600 transition-colors hover:scale-110"
-          >
-            About Us
-          </Link>
-          <Link
-            to="/contact"
-            className="text-white hover:text-yellow-600 transition-colors hover:scale-110"
-          >
-            Contact Us
-          </Link>
+        <nav className="hidden md:flex items-center gap-6 lg:gap-10 ml-auto">
+          {navLinks.map((link) => {
+            const id = `desktop-${link.path}`;
+            return (
+              <Link
+                key={id}
+                to={link.path}
+                style={getLinkStyle(link.path, id)}
+                onMouseEnter={() => setHoveredLink(id)}
+                onMouseLeave={() => setHoveredLink(null)}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Desktop Auth Buttons */}
-        <div className="hidden md:flex items-center gap-5 ml-8 lg:ml-20">
+        <div className="hidden md:flex items-center gap-2 ml-11">
           <button
             onClick={() => navigate("/")}
-            className="px-6 py-1.5 border border-white text-white rounded hover:bg-orange-400 hover:text-black transition-colors hover:border-orange-400"
+            className="w-28 py-1.5 border border-white text-white rounded
+                       hover:bg-yellow-500 hover:!text-black font-bold hover:border-yellow-500
+                       transition-colors duration-600"
           >
             Sign in
           </button>
           <button
             onClick={() => navigate("/register")}
-            className="px-6 py-1.5 border border-white text-white rounded hover:bg-orange-400 hover:text-black transition-colors hover:border-orange-400"
+            className="w-28 py-1.5 border border-white text-white rounded
+                       hover:bg-yellow-500 hover:!text-black font-bold hover:border-yellow-500
+                       transition-colors duration-600"
           >
             Sign up
           </button>
@@ -88,75 +104,62 @@ function Header() {
             aria-label="Toggle menu"
           >
             {isMenuOpen ? (
-              <FaTimes className="w-8 h-8" />
+              <FaTimes className="w-7 h-7" />
             ) : (
-              <FaBars className="w-8 h-8" />
+              <FaBars className="w-7 h-7" />
             )}
           </button>
         </div>
-
-        {/* Mobile Menu Overlay */}
-        {isMenuOpen && (
-          <div className="absolute top-full left-0 w-full bg-black/95 flex flex-col items-center py-8 gap-6 shadow-xl border-t border-gray-800 md:hidden">
-            <Link
-              to="/main"
-              onClick={closeMenu}
-              className="text-white text-xl hover:text-yellow-500 transition-colors"
-            >
-              Home
-            </Link>
-            <Link
-              to="/services"
-              onClick={closeMenu}
-              className="text-white text-xl hover:text-yellow-600 transition-colors"
-            >
-              Services
-            </Link>
-            <Link
-              to="/gallery"
-              onClick={closeMenu}
-              className="text-white text-xl hover:text-yellow-600 transition-colors"
-            >
-              Gallery
-            </Link>
-            <Link
-              to="/about"
-              onClick={closeMenu}
-              className="text-white text-xl hover:text-yellow-600 transition-colors"
-            >
-              About Us
-            </Link>
-            <Link
-              to="/contact"
-              onClick={closeMenu}
-              className="text-white text-xl hover:text-yellow-600 transition-colors"
-            >
-              Contact Us
-            </Link>
-
-            <div className="flex flex-col gap-4 mt-4 w-full px-8">
-              <button
-                onClick={() => {
-                  navigate("/");
-                  closeMenu();
-                }}
-                className="w-full px-6 py-3 border border-white text-white rounded hover:bg-orange-400 hover:text-black transition-colors hover:border-orange-400"
-              >
-                Sign in
-              </button>
-              <button
-                onClick={() => {
-                  navigate("/register");
-                  closeMenu();
-                }}
-                className="w-full px-6 py-3 border border-white text-white rounded hover:bg-orange-400 hover:text-black transition-colors hover:border-orange-400"
-              >
-                Sign up
-              </button>
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Mobile Menu Overlay */}
+      {isMenuOpen && (
+        <div className="absolute top-full left-0 w-full bg-black/95 flex flex-col items-center py-8 gap-6 shadow-xl border-t border-gray-800 md:hidden">
+          {/* Mobile Navigation Links */}
+          {navLinks.map((link) => {
+            const id = `mobile-${link.path}`;
+            return (
+              <Link
+                key={id}
+                to={link.path}
+                onClick={closeMenu}
+                style={getMobileLinkStyle(link.path, id)}
+                onMouseEnter={() => setHoveredLink(id)}
+                onMouseLeave={() => setHoveredLink(null)}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+
+          {/* Mobile Auth Buttons (Same Style as Desktop) */}
+          <div className="flex flex-col items-center gap-3 mt-4 w-full px-8">
+            <button
+              onClick={() => {
+                navigate("/");
+                closeMenu();
+              }}
+              className="w-40 py-2 border border-white text-white rounded
+                         hover:bg-yellow-500 hover:text-black hover:border-yellow-500
+                         transition-colors duration-300"
+            >
+              Sign in
+            </button>
+
+            <button
+              onClick={() => {
+                navigate("/register");
+                closeMenu();
+              }}
+              className="w-40 py-2 border border-white text-white rounded
+                         hover:bg-yellow-500 hover:text-black hover:border-yellow-500
+                         transition-colors duration-300"
+            >
+              Sign up
+            </button>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
