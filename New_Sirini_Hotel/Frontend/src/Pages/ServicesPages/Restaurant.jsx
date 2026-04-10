@@ -36,6 +36,7 @@ export default function Restaurant() {
         image: item.image,
         ingredients: Array.isArray(item.ingredients) ? item.ingredients : [item.ingredients],
         category: item.category,
+        availability: item.availability,
         label: item.availability ? "Available" : "Sold Out",
       }));
       setMealData(mappedData);
