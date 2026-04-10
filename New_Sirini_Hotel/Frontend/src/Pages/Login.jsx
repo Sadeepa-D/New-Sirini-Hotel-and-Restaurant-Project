@@ -3,9 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const API_URL = import.meta.env.VITE_API_URL;
-
 const Login = ({ onLogin }) => {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     emailOrPhone: "",
     password: "",
@@ -51,7 +51,7 @@ const Login = ({ onLogin }) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/api/login`, {
+      const response = await fetch(`${API_URL}/api/users/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -76,7 +76,7 @@ const Login = ({ onLogin }) => {
             navigate("/main");
             break;
           case "manager":
-            navigate("/manager");
+            navigate("/operationmanager");
             break;
           default:
             navigate("/main");
