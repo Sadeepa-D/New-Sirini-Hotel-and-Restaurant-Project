@@ -9,6 +9,7 @@ import {
   Menu,
 } from "lucide-react";
 import LiquorManage from "../../Components/OperationManager/Liquor/LiquorMngHome";
+import RestaurantManager from "../../Components/OperationManager/Restraunt/RestrauntManagment";
 
 const Bookings = () => (
   <div className="p-6 text-gray-600">
@@ -31,11 +32,7 @@ const LiquorItems = () => (
   </div>
 );
 
-const RestrauntItems = () => (
-  <div className="p-6 text-gray-600">
-    Restaurant Items Component (Mount your data here)
-  </div>
-);
+
 
 const Logout = () => (
   <div className="p-6 text-gray-600">
@@ -102,7 +99,7 @@ const OperationManager = () => {
       case "Liquor":
         return <LiquorManage />;
       case "Food":
-        return <RestrauntItems />;
+        return <RestaurantManager />;
       case "Logout":
         return <Logout />;
       default:
