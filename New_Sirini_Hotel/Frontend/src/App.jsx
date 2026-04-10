@@ -11,7 +11,7 @@ import LiquorManagment from "./Components/OperationManager/Liquor/LiquorMngHome"
 import OperationManager from "./Pages/Administration/OperationManager";
 import { Admin } from "./Pages/Administration/Admin";
 import { Manager } from "./Pages/Administration/Manager";
-import Reception from "./Pages/Reception";
+import Reception from "./Pages/ServicesPages/Reception";
 
 import Rooms from "./Pages/ServicesPages/Rooms";
 

@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { BarChart3, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  BarChart3,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsDown,
+} from "lucide-react";
 import LiqourCard from "../../Components/LiqourStore/LiqourCard";
 import LiquorComparisonComp from "../../Components/LiqourStore/LiquorComparisonComp";
 import LiquorDetailsComp from "../../Components/LiqourStore/LIquorDetailsComp";
@@ -105,21 +110,34 @@ const LiquorStore = () => {
 
   return (
     <div className="min-h-screen bg-neutral-50">
+      {/* FULL VIEWPORT HERO SECTION */}
       <section
-        className="relative h-96 bg-cover bg-center"
+        className="relative w-full h-screen overflow-hidden flex items-center justify-center"
         style={{
           backgroundImage:
-            "url(https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=1920&q=80)",
+            "url(https://images.unsplash.com/photo-1557149559-d74af2d38a1a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
       >
         <div className="absolute inset-0 bg-black/60"></div>
         <div className="relative h-full flex flex-col items-center justify-center text-center px-4">
-          <h1 className="text-5xl md:text-6xl font-serif text-white mb-4">
+          <h1 className="font-cinzel text-7xl sm:text-9xl md:text-[15rem] lg:text-[20rem] font-semibold text-white leading-none mb-6 drop-shadow-[4px_4px_12px_rgba(0,0,0,0.8)]">
             Liquor
           </h1>
-          <p className="text-xl text-amber-100/90 italic">
+          <p className="font-cormorant text-2xl sm:text-3xl md:text-4xl italic text-gray-200 tracking-wide mb-8">
             A perfect drink for every celebration
           </p>
+        </div>
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center cursor-pointer animate-bounce z-20 group">
+          <span className="font-cormorant text-base sm:text-lg uppercase tracking-[0.3em] mb-4 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] transition-colors group-hover:text-amber-200">
+            Explore
+          </span>
+          <ChevronsDown
+            size={36}
+            strokeWidth={1}
+            className="text-white transition-colors group-hover:text-amber-400"
+          />
         </div>
       </section>
 
