@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const upload = require("../config/CloudinaryConfig");
+const authmiddleware = require("../middleware/authMiddleware");
 const ReceptionHallAppoint = require("../controllers/ReceptionHall/ReceptionHallAppointCont");
 const ReceptionHallPackg = require("../controllers/ReceptionHall/ReceptionHallPackg");
 const CateringItemsCont = require("../controllers/ReceptionHall/CateringItemsCont");
@@ -8,6 +9,7 @@ const AdvertismentCont = require("../controllers/ReceptionHall/AdvertismentCont"
 
 router.post(
   "/appointment/add",
+  authmiddleware,
   ReceptionHallAppoint.createReceptionAppointment,
 );
 router.get("/appointment/view", ReceptionHallAppoint.getReceptionAppointments);
