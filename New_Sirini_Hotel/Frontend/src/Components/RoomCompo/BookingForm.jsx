@@ -3,12 +3,36 @@ import BookingSuccess from "../RoomCompo/SuccessMsg";
 
 function BookingForm({ selectedRoom, onClose, onConfirmed }) {
   const [showSuccess, setShowSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    checkInDate: "",
+    checkOutDate: "",
+  });
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onConfirmed(selectedRoom.id); // ← marks room as unavailable in Rooms.jsx
-    setShowSuccess(true);
-    // TODO: when backend ready → POST /api/bookings with form data
+    setLoading(true);
+    try {
+      await axios.post("http://localhost:5000/api/rooms/book", {
+        ...formData,
+        room: selectedRoom._id,  // ← room id backend එකට යවනවා
+      });
+      onConfirmed(selectedRoom._id); // ← _id use කරනවා
+      setShowSuccess(true);
+    } catch (error) {
+      alert(error.response?.data?.error || "Booking failed. Try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   // ── After submit: show BookingSuccess ──
