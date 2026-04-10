@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Logo from "../../assets/Logo.png";
-import RoomOperation from "../../Components/Manager_/RoomOperation";
+import RoomOperation from "../../Components/OperationManager/Rooms/RoomOperation";
 import {
   Home,
   BedDouble,
