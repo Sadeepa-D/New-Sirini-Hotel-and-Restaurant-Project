@@ -2,15 +2,19 @@ const ReceptionAppointment = require("../../models/Reception/ReciptionAppointMod
 
 const createReceptionAppointment = async (req, res) => {
   try {
-    const { name, email, phone, date } = req.body;
-    if (!name || !email || !phone || !date) {
+    const userId = req.userData.id;
+    const { name, email, phone, date, noOfGuests, eventType } = req.body;
+    if (!name || !email || !phone || !date || !noOfGuests || !eventType) {
       return res.status(400).json({ message: "All fields are required" });
     }
     const newAppointment = new ReceptionAppointment({
+      userId,
       name,
       email,
       phone,
       date,
+      noOfGuests,
+      eventType,
       status: "Pending",
     });
     await newAppointment.save();
