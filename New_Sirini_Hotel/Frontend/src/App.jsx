@@ -31,7 +31,6 @@ export const App = () => {
         <Route path="/reception" element={<Reception />} />
         <Route path="/operationmanager" element={<OperationManager />} />
         <Route path="/manager" element={<Manager />} />
-        <Route path="/reception" element={<Reception />} />
         {/* <Route
           path="/operationmanager/liquormanagment"
           element={<LiquorManagment />}
