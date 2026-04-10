@@ -76,7 +76,7 @@ const Login = ({ onLogin }) => {
             navigate("/main");
             break;
           case "manager":
-            navigate("/manager");
+            navigate("/operationmanager");
             break;
           default:
             navigate("/main");

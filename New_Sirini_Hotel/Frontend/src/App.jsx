@@ -1,6 +1,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import ScrollToTop from "./Components/ScrollToTop";
 import Login from "./Pages/Login";
 import Registration from "./Pages/Registration";
 import MainPage from "./Pages/MainPage";
@@ -19,7 +20,8 @@ import Restaurant from "./Pages/ServicesPages/Restaurant";
 export const App = () => {
   return (
     <>
-      <Toaster position="top-center" reverseOrder={false} />{" "}
+      <Toaster position="top-center" reverseOrder={false} />
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Registration />} />
@@ -31,7 +33,8 @@ export const App = () => {
         <Route path="/operationmanager" element={<OperationManager />} />
         <Route path="/reception" element={<Reception />} />
         <Route
-          path="/operationmanager/liquormanagment" element={<LiquorManagment />}
+          path="/operationmanager/liquormanagment"
+          element={<LiquorManagment />}
         />
         <Route path="/rooms" element={<Rooms />} />
         <Route path="/restaurant" element={<Restaurant />} />
