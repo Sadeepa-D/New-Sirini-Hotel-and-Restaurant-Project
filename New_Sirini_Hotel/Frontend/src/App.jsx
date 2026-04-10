@@ -11,7 +11,7 @@ import Liquor from "./Pages/ServicesPages/LiquorStore";
 import LiquorManagment from "./Components/OperationManager/Liquor/LiquorMngHome";
 import OperationManager from "./Pages/Administration/OperationManager";
 import { Admin } from "./Pages/Administration/Admin";
-import OperationManager2 from "./Pages/Administration/OperationManager2";
+import Manager from "./Pages/Administration/Manager";
 import Reception from "./Pages/ServicesPages/Reception";
 
 import Rooms from "./Pages/ServicesPages/Rooms";
@@ -27,11 +27,10 @@ export const App = () => {
         <Route path="/register" element={<Registration />} />
         <Route path="/main" element={<MainPage />} />
         <Route path="/admin" element={<Admin />} />
-        <Route path="/operationmanager2" element={<OperationManager2 />} />
+        <Route path="/manager" element={<Manager />} />
         <Route path="/liquor" element={<Liquor />} />
         <Route path="/reception" element={<Reception />} />
         <Route path="/operationmanager" element={<OperationManager />} />
-
         <Route path="/reception" element={<Reception />} />
         {/* <Route
           path="/operationmanager/liquormanagment"
