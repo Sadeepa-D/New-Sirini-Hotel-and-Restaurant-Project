@@ -15,8 +15,8 @@ export default function BookingForm() {
       <div className="max-w-4xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">Email Address :</label>
-            <input type="email" className={inputClass} placeholder="example@mail.com" />
+            <label className="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">Name :</label>
+            <input type="text" className={inputClass} placeholder="John Doe" />
           </div>
           <div>
             <label className="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">Event Type :</label>
@@ -48,4 +48,4 @@ export default function BookingForm() {
       </div>
     </section>
   );
-}
+}

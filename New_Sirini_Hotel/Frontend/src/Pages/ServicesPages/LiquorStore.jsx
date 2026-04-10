@@ -9,6 +9,7 @@ import {
 import LiqourCard from "../../Components/LiqourStore/LiqourCard";
 import LiquorComparisonComp from "../../Components/LiqourStore/LiquorComparisonComp";
 import LiquorDetailsComp from "../../Components/LiqourStore/LIquorDetailsComp";
+import Exploreindicator  from "../../Components/Exploreindicator";
 
 const LiquorStore = () => {
   const [selectedDrink, setSelectedDrink] = useState(null);
@@ -129,16 +130,7 @@ const LiquorStore = () => {
             A perfect drink for every celebration
           </p>
         </div>
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center cursor-pointer animate-bounce z-20 group">
-          <span className="font-cormorant text-base sm:text-lg uppercase tracking-[0.3em] mb-4 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] transition-colors group-hover:text-amber-200">
-            Explore
-          </span>
-          <ChevronsDown
-            size={36}
-            strokeWidth={1}
-            className="text-white transition-colors group-hover:text-amber-400"
-          />
-        </div>
+        <Exploreindicator />
       </section>
 
       <section className="py-12">

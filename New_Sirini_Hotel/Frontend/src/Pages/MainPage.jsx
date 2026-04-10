@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from "../assets/Logo.png";
+import Exploreindicator  from "../Components/Exploreindicator";
+
 
 const NewSiriniHotel = () => {
   const navigate = useNavigate();
@@ -35,13 +37,18 @@ const NewSiriniHotel = () => {
   return (
     <div className="font-serif bg-gray-100 text-gray-900">
       {/* --- Hero Section --- */}
-      <header className="relative h-[60vh] md:h-[80vh] flex flex-col items-center justify-center text-white text-center px-4">
-        <div className="absolute inset-0 z-0">
-          <img
-            src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=1200"
-            className="w-full h-full object-cover brightness-50"
-            alt="Hotel Building"
-          />
+      <header className="relative w-full h-screen overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
+        {" "}
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: "url(https://plus.unsplash.com/premium_photo-1661963123153-5471a95b7042?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          {/* Dark Overlay for readability */}
+          <div className="absolute inset-0 bg-black/50"></div>
         </div>
         <div className="z-10 flex flex-col items-center">
           <h1 className="text-4xl md:text-6xl font-light mb-4">
@@ -56,6 +63,7 @@ const NewSiriniHotel = () => {
             Stay, Relax, Enjoy
           </p>
         </div>
+        <Exploreindicator />
       </header>
 
       {/* --- Services Section --- */}
