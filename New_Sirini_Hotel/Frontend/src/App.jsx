@@ -14,7 +14,6 @@ import { Manager } from "./Pages/Administration/Manager";
 import Reception from "./Pages/ServicesPages/Reception";
 
 import Rooms from "./Pages/ServicesPages/Rooms";
-import Reception from "./Pages/ServicesPages/Reception";
 import Restaurant from "./Pages/ServicesPages/Restaurant";
 
 export const App = () => {
