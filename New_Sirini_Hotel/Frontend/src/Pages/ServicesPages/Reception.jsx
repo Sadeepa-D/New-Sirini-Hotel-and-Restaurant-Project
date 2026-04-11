@@ -73,7 +73,6 @@ export default function Reception() {
           </div>
         </div>
       </section>
-
       {/* 4. Conditional Rendering for the Booking Form */}
       <div ref={formSectionRef}>
         {" "}
@@ -88,7 +87,6 @@ export default function Reception() {
           </section>
         )}
       </div>
-
       {/* Content Section */}
       <section className="bg-white py-14 px-4 sm:px-8">
         <div className="text-center mb-10">
@@ -104,7 +102,9 @@ export default function Reception() {
         </div>
       </section>
       <ReceptionHallPackages />
-      <CustomizeEvents />
+      <h1 className="text-center font-cinzel text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gray-800 font-semibold py-10 px-4">
+        Let Us Introduce Our Catering Items
+      </h1>
     </div>
   );
 }
