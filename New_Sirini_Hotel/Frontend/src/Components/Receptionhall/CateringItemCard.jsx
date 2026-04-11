@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import toast from "react-hot-toast";
 
 const CateringItemCard = () => {
   const [cateringItems, setCateringItems] = useState([]);
@@ -14,16 +13,12 @@ const CateringItemCard = () => {
         const response = await fetch(
           `${VITE_URL}/api/receptionhall/catering/view`,
         );
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
+        if (!response.ok) throw new Error("Failed to fetch data");
         const data = await response.json();
         setCateringItems(data.items || []);
-        console.log("Catering API response:", data); // 👈 check browser console
       } catch (error) {
         console.error("Error fetching data:", error);
         setError("An error occurred while fetching data");
-        // toast.error("Failed to load catering items. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -32,47 +27,96 @@ const CateringItemCard = () => {
   }, []);
 
   if (loading)
-    return <p className="text-center py-16">Loading catering items...</p>;
-  if (error) return <p className="text-center py-16 text-red-500">{error}</p>;
+    return (
+      <div className="flex items-center justify-center py-24">
+        <p className="text-gray-400 text-sm uppercase tracking-widest animate-pulse">
+          Loading catering items...
+        </p>
+      </div>
+    );
+
+  if (error)
+    return <p className="text-center py-16 text-red-400 text-sm">{error}</p>;
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <section className="bg-white py-16 px-4 sm:px-6 lg:px-8">
+      {/* Section Header */}
+      <div className="text-center mb-12">
+        <p className="text-amber-500 text-xs uppercase tracking-[0.3em] mb-2 font-medium">
+          Freshly Prepared
+        </p>
+        <h2 className="font-cinzel text-3xl sm:text-4xl md:text-5xl text-gray-800 font-semibold">
+          Our Catering Items
+        </h2>
+        <div className="flex items-center justify-center gap-3 mt-4">
+          <div className="h-px w-16 bg-amber-300" />
+          <div className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+          <div className="h-px w-16 bg-amber-300" />
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {cateringItems.map((item) => (
           <div
             key={item._id}
-            className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300 flex flex-col"
+            className="group bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-500 flex flex-col"
           >
-            <div className="relative h-48 sm:h-56 w-full overflow-hidden">
+            {/* Image */}
+            <div className="relative h-52 sm:h-60 w-full overflow-hidden">
               <img
                 src={item.image}
                 alt={item.name}
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
-              <div className="absolute top-3 right-3 bg-amber-500 text-amber-900 text-xs sm:text-sm font-bold px-3 py-1 rounded-full shadow">
-                Rs. {item.price}
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-500" />
+
+              {/* Price badge */}
+              <div className="absolute top-4 right-4 bg-amber-500 text-amber-900 text-xs sm:text-sm font-bold px-4 py-1.5 rounded-full shadow-md">
+                Rs. {item.priceperserving}
               </div>
+
+              {/* Availability badge */}
+              {item.availability !== undefined && (
+                <div
+                  className={`absolute top-4 left-4 text-xs font-semibold px-3 py-1 rounded-full shadow-md ${
+                    item.availability
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-600"
+                  }`}
+                >
+                  {item.availability ? "Available" : "Unavailable"}
+                </div>
+              )}
             </div>
 
-            <div className="p-4 sm:p-5 flex flex-col flex-1">
-              <h3 className="font-cinzel text-base sm:text-lg font-semibold text-gray-800 mb-3">
+            {/* Content */}
+            <div className="p-4 sm:p-6 flex flex-col flex-1">
+              {/* Name */}
+              <h3 className="font-cinzel text-lg sm:text-xl font-semibold text-gray-800 mb-2">
                 {item.name}
               </h3>
-              <div className="w-10 h-0.5 bg-amber-400 mb-3 rounded-full" />
-              <div className="mt-auto">
-                <p className="text-xs sm:text-sm text-gray-500 uppercase tracking-widest mb-2 font-medium">
+
+              {/* Amber divider */}
+              <div className="flex items-center gap-2 mb-4">
+                <div className="h-px w-8 bg-amber-400" />
+                <div className="w-1 h-1 rounded-full bg-amber-400" />
+              </div>
+
+              {/* Ingredients */}
+              <div className="mt-auto pt-3 border-t border-gray-100">
+                <p className="text-xs text-gray-400 uppercase tracking-widest mb-3 font-medium">
                   Ingredients
                 </p>
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-2">
                   {(Array.isArray(item.ingredients)
                     ? item.ingredients
                     : [item.ingredients]
                   ).map((ing, i) => (
                     <span
                       key={i}
-                      className="bg-amber-50 text-amber-800 text-xs px-2.5 py-1 rounded-full border border-amber-200"
+                      className="bg-amber-50 text-amber-800 text-xs px-3 py-1 rounded-full border border-amber-200 font-medium"
                     >
-                      {ing}
+                      ✦ {ing}
                     </span>
                   ))}
                 </div>
@@ -84,4 +128,5 @@ const CateringItemCard = () => {
     </section>
   );
 };
+
 export default CateringItemCard;
