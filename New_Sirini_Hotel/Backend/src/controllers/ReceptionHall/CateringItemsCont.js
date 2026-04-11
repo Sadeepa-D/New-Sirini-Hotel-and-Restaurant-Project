@@ -6,7 +6,7 @@ const createCateringItem = async (req, res) => {
     if (!name || !ingredients || !priceperserving) {
       return res.status(400).json({ message: "All fields are required" });
     }
-    const image = req.file ? req.file.path : null;
+    const image = req.file ? req.file.secure_url : null;
     if (!image) {
       return res.status(400).json({ message: "Image is required" });
     }

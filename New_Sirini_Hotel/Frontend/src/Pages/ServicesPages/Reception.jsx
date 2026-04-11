@@ -3,7 +3,8 @@ import { ChevronsDown } from "lucide-react";
 import receptionImg from "../../assets/reception.jpg";
 import ReceptionHallPackages from "../../Components/Receptionhall/ReceptionHallPackages";
 import BookingForm from "../../Components/Receptionhall/receptionform";
-import CustomizeEvents from "../../Components/Receptionhall/customizeevents";
+// import CustomizeEvents from "../../Components/Receptionhall/customizeevents";
+import CateringItemCard from "../../Components/Receptionhall/CateringItemCard";
 
 export default function Reception() {
   // 2. State to handle form visibility
@@ -105,6 +106,7 @@ export default function Reception() {
       <h1 className="text-center font-cinzel text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gray-800 font-semibold py-10 px-4">
         Let Us Introduce Our Catering Items
       </h1>
+      <CateringItemCard />
     </div>
   );
 }
