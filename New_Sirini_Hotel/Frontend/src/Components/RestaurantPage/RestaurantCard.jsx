@@ -14,7 +14,7 @@ export default function RestaurantCard({ item, itemsPerView, onOrder }) {
         <div className="relative h-48">
           <img
             src={item.image}
-            alt={item.name}
+            alt={item.name || item.foodname}
             className="w-full h-full object-cover"
           />
           <div className="absolute top-2 right-2">
@@ -25,10 +25,10 @@ export default function RestaurantCard({ item, itemsPerView, onOrder }) {
         </div>
         <div className="p-4 flex-grow flex flex-col">
           <h4 className="text-xl font-bold text-neutral-900 mb-1">
-            {item.name}
+            {item.name || item.foodname}
           </h4>
           <p className="text-sm text-neutral-500 mb-3">
-            {item.ingredients.join(", ")}
+            {item.ingredients ? item.ingredients.join(", ") : item.description}
           </p>
           <div className="mt-auto flex items-center justify-between">
             <span className="text-lg font-bold text-amber-600">
@@ -36,9 +36,14 @@ export default function RestaurantCard({ item, itemsPerView, onOrder }) {
             </span>
             <button
               onClick={() => onOrder(item)}
-              className="px-4 py-2 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-orange-700 transition-colors"
+              disabled={item.availability === false}
+              className={`px-4 py-2 text-white text-sm font-medium rounded-lg transition-colors ${
+                item.availability !== false
+                  ? "bg-amber-600 hover:bg-orange-700"
+                  : "bg-gray-400 cursor-not-allowed opacity-70"
+              }`}
             >
-              Order
+              {item.availability !== false ? "Order" : "Unavailable"}
             </button>
           </div>
         </div>
