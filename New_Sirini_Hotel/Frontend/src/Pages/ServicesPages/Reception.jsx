@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronsDown } from "lucide-react";
 import receptionImg from "../../assets/reception.jpg";
-import ReceptionServices from "../../Components/Receptionhall/receptionservices";
+import ReceptionHallPackages from "../../Components/Receptionhall/ReceptionHallPackages";
 import BookingForm from "../../Components/Receptionhall/receptionform";
 import CustomizeEvents from "../../Components/Receptionhall/customizeevents";
 
@@ -93,7 +93,6 @@ export default function Reception() {
       <section className="bg-white py-14 px-4 sm:px-8">
         <div className="text-center mb-10">
           <h2 className="font-cinzel text-4xl sm:text-5xl md:text-6xl text-gray-800 mb-3">
-            Perfect for{" "}
             <span className="font-cormorant italic text-gray-700 font-light">
               Every Occasion
             </span>
@@ -104,8 +103,7 @@ export default function Reception() {
           </p>
         </div>
       </section>
-
-      <ReceptionServices />
+      <ReceptionHallPackages />
       <CustomizeEvents />
     </div>
   );

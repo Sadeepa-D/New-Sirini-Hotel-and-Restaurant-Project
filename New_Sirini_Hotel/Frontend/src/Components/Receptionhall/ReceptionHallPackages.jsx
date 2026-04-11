@@ -1,6 +1,6 @@
 import React, { useState, useEffect, use } from "react";
 
-export default function ReceptionServices() {
+export default function ReceptionHallPackages() {
 
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
