@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Camera, Music, Sparkles } from "lucide-react";
+import { Camera, Music, Sparkles, Megaphone } from "lucide-react";
 import AdvertisementCard from "./AdvertisementCard";
 
 const categories = [
@@ -69,6 +69,20 @@ const AdvertisementSection = () => {
           <div className="w-1.5 h-1.5 rounded-full bg-amber-400" />
           <div className="h-px w-16 bg-amber-300" />
         </div>
+      </div>
+
+      {/* Request Button */}
+      <div className="flex justify-center mb-10">
+        <button
+          onClick={() => (window.location.href = "/advertise")} // adjust route as needed
+          className="group flex items-center gap-3 bg-white border-2 border-amber-400 text-amber-700 hover:bg-amber-500 hover:text-amber-900 hover:border-amber-500 px-8 py-3.5 rounded-full font-semibold text-sm uppercase tracking-widest transition-all duration-300 shadow-sm hover:shadow-md"
+        >
+          <Megaphone
+            size={16}
+            className="group-hover:scale-110 transition-transform duration-300"
+          />
+          Request an Advertisement
+        </button>
       </div>
 
       {/* Category Tabs */}
