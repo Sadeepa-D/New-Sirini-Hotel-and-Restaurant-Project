@@ -2,13 +2,18 @@ const mongoose = require("mongoose");
 
 const advertisingSchema = new mongoose.Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      // required: true,
+    },
     BuissnesName: {
       type: String,
       required: true,
     },
     category: {
       type: String,
-      enum: ["Photography", "Sounds", "Decoration"],
+      enum: ["Photography", "Audio & Musical", "Decoration"],
       required: true,
     },
     description: {

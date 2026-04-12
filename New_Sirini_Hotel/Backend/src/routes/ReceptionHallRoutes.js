@@ -80,7 +80,7 @@ router.put(
 );
 
 router.post(
-  "/advertisment/add",
+  "/advertisment/add",authmiddleware,
   upload.single("image"),
   AdvertismentCont.createAdvertisment,
 );

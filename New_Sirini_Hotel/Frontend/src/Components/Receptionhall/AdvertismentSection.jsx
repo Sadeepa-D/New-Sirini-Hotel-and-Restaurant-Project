@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Camera, Music, Sparkles, Megaphone } from "lucide-react";
 import AdvertisementCard from "./AdvertisementCard";
+import AdvertismentForm from "./AdvertismentForm";
 
 const categories = [
   { label: "Photography", icon: Camera },
@@ -13,6 +14,7 @@ const AdvertisementSection = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeCategory, setActiveCategory] = useState("Photography");
+  const [showForm, setShowForm] = useState(false);
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -74,7 +76,7 @@ const AdvertisementSection = () => {
       {/* Request Button */}
       <div className="flex justify-center mb-10">
         <button
-          onClick={() => (window.location.href = "/advertise")} // adjust route as needed
+          onClick={() => setShowForm(true)}
           className="group flex items-center gap-3 bg-white border-2 border-amber-400 text-amber-700 hover:bg-amber-500 hover:text-amber-900 hover:border-amber-500 px-8 py-3.5 rounded-full font-semibold text-sm uppercase tracking-widest transition-all duration-300 shadow-sm hover:shadow-md"
         >
           <Megaphone
@@ -124,6 +126,7 @@ const AdvertisementSection = () => {
           </div>
         )}
       </div>
+      {showForm && <AdvertismentForm onClose={() => setShowForm(false)} />}
     </section>
   );
 };

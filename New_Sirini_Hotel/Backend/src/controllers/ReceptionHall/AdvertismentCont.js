@@ -2,6 +2,7 @@ const Adevertisment = require("../../models/Reception/AdvertisingModel");
 
 const createAdvertisment = async (req, res) => {
   try {
+    const userId = req.userData.id;
     const {
       BuissnesName,
       category,
@@ -21,11 +22,12 @@ const createAdvertisment = async (req, res) => {
     ) {
       return res.status(400).json({ message: "All fields are required" });
     }
-    const image = req.file ? req.file.path : null;
+    const image = req.file ? req.file.secure_url : null;
     if (!image) {
       return res.status(400).json({ message: "Image is required" });
     }
     const newAdvertisment = new Adevertisment({
+      userId,
       BuissnesName,
       category,
       description,

@@ -77,7 +77,6 @@ export default function Reception() {
       </section>
       {/* 4. Conditional Rendering for the Booking Form */}
       <div ref={formSectionRef}>
-        {" "}
         {showForm && (
           <section className="px-4 sm:px-8 py-10 bg-neutral-100 border-b border-gray-200 animate-in fade-in slide-in-from-top-4 duration-500">
             <div className="max-w-4xl mx-auto">
