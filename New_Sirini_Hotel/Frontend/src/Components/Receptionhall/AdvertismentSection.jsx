@@ -1,63 +1,6 @@
-import React, { useState } from "react";
-import { Camera, Music, Sparkles, Phone, Tag, User } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Camera, Music, Sparkles } from "lucide-react";
 import AdvertisementCard from "./AdvertisementCard";
-
-const dummyAds = [
-  {
-    _id: "1",
-    category: "Photography",
-    name: "Lens & Light Studio",
-    price: 25000,
-    contact: "077 123 4567",
-    image:
-      "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=600&auto=format&fit=crop",
-  },
-  {
-    _id: "2",
-    category: "Photography",
-    name: "Golden Moments Photography",
-    price: 18000,
-    contact: "076 234 5678",
-    image:
-      "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&auto=format&fit=crop",
-  },
-  {
-    _id: "3",
-    category: "Audio & Musical",
-    name: "SoundWave Events",
-    price: 35000,
-    contact: "071 345 6789",
-    image:
-      "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&auto=format&fit=crop",
-  },
-  {
-    _id: "4",
-    category: "Audio & Musical",
-    name: "Harmony Band",
-    price: 45000,
-    contact: "078 456 7890",
-    image:
-      "https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=600&auto=format&fit=crop",
-  },
-  {
-    _id: "5",
-    category: "Decoration",
-    name: "Bloom & Drape Decor",
-    price: 30000,
-    contact: "072 567 8901",
-    image:
-      "https://images.unsplash.com/photo-1478146059778-26028b07395a?w=600&auto=format&fit=crop",
-  },
-  {
-    _id: "6",
-    category: "Decoration",
-    name: "Elegant Touch Events",
-    price: 22000,
-    contact: "075 678 9012",
-    image:
-      "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&auto=format&fit=crop",
-  },
-];
 
 const categories = [
   { label: "Photography", icon: Camera },
@@ -66,9 +9,47 @@ const categories = [
 ];
 
 const AdvertisementSection = () => {
+  const [ads, setAds] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [activeCategory, setActiveCategory] = useState("Photography");
 
-  const filtered = dummyAds.filter((ad) => ad.category === activeCategory);
+  const VITE_URL = import.meta.env.VITE_API_URL;
+
+  useEffect(() => {
+    const fetchAds = async () => {
+      try {
+        const response = await fetch(
+          `${VITE_URL}/api/receptionhall/advertisment/view`,
+        );
+        if (!response.ok) throw new Error("Failed to fetch");
+        const data = await response.json();
+        console.log("Ads API response:", data);
+        setAds(
+          Array.isArray(data) ? data : data.advertisements || data.items || [],
+        );
+      } catch (err) {
+        setError("Failed to load advertisements. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAds();
+  }, []);
+
+  const filtered = ads.filter((ad) => ad.category === activeCategory);
+
+  if (loading)
+    return (
+      <div className="flex items-center justify-center py-24">
+        <p className="text-gray-400 text-sm uppercase tracking-widest animate-pulse">
+          Loading advertisements...
+        </p>
+      </div>
+    );
+
+  if (error)
+    return <p className="text-center py-16 text-red-400 text-sm">{error}</p>;
 
   return (
     <section className="bg-neutral-50 py-16 px-4 sm:px-6 lg:px-8 border-t border-gray-100">
@@ -108,7 +89,7 @@ const AdvertisementSection = () => {
         ))}
       </div>
 
-      {/* Divider with active category label */}
+      {/* Divider */}
       <div className="flex items-center gap-4 max-w-7xl mx-auto mb-8">
         <div className="h-px flex-1 bg-gray-200" />
         <span className="text-xs text-gray-400 uppercase tracking-widest font-medium whitespace-nowrap">
