@@ -5,6 +5,7 @@ import ReceptionHallPackages from "../../Components/Receptionhall/ReceptionHallP
 import BookingForm from "../../Components/Receptionhall/receptionform";
 // import CustomizeEvents from "../../Components/Receptionhall/customizeevents";
 import CateringItemCard from "../../Components/Receptionhall/CateringItemCard";
+import AdvertismentSection from "../../Components/Receptionhall/AdvertismentSection";
 
 export default function Reception() {
   // 2. State to handle form visibility
@@ -103,8 +104,8 @@ export default function Reception() {
         </div>
       </section>
       <ReceptionHallPackages />
-      
       <CateringItemCard />
+      <AdvertismentSection />
     </div>
   );
 }

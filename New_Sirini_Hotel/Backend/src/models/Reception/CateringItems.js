@@ -11,7 +11,7 @@ const cateringItemsSchema = new mongoose.Schema(
       required: true,
     },
     priceperserving: {
-      type: [String],
+      type: String,
       required: true,
     },
     image: {
