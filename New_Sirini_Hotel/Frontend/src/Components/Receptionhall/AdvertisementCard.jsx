@@ -4,7 +4,6 @@ import { Phone, User, MapPin, Tag, Globe } from "lucide-react";
 const AdvertisementCard = ({ ad }) => {
   return (
     <div className="group bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-500 flex flex-col">
-
       {/* Image */}
       <div className="relative h-52 sm:h-60 w-full overflow-hidden">
         <img
@@ -15,8 +14,9 @@ const AdvertisementCard = ({ ad }) => {
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-500" />
 
         {/* Price badge */}
-        <div className="absolute top-4 right-4 bg-amber-500 text-amber-900 text-xs font-bold px-4 py-1.5 rounded-full shadow-md">
-          {ad.price}
+        <div className="absolute top-4 right-4 bg-amber-500 text-amber-900 text-xs font-bold px-4 py-1.5 rounded-full shadow-md flex items-center gap-1.5">
+          <Tag size={12} className="shrink-0" />
+          <span>{ad.price}</span>
         </div>
 
         {/* Category badge */}
@@ -27,7 +27,6 @@ const AdvertisementCard = ({ ad }) => {
 
       {/* Content */}
       <div className="px-4 py-3 sm:px-5 sm:py-4 flex flex-col flex-1">
-
         {/* Business Name */}
         <div className="flex items-start gap-2 mb-2">
           <User size={15} className="text-amber-500 mt-0.5 shrink-0" />
@@ -53,22 +52,16 @@ const AdvertisementCard = ({ ad }) => {
           <span className="text-xs text-gray-500">{ad.location}</span>
         </div>
 
-        {/* Price */}
-        <div className="flex items-center gap-2 mb-3">
-          <Tag size={13} className="text-amber-400 shrink-0" />
-          <span className="text-xs font-semibold text-amber-700">{ad.price}</span>
-        </div>
-
         {/* Portfolio + Contact */}
         <div className="mt-auto pt-3 border-t border-gray-100 flex flex-col gap-3">
-
           {/* Portfolio */}
           <div>
             <p className="text-xs text-gray-400 uppercase tracking-widest mb-1 font-medium">
               Portfolio
             </p>
-            
-              <a href={`https://${ad.portfolio}`}
+
+            <a
+              href={`https://${ad.portfolio}`}
               target="_blank"
               rel="noreferrer"
               className="flex items-center gap-2 text-xs font-semibold text-blue-500 hover:text-blue-600 transition-colors truncate"
@@ -83,15 +76,15 @@ const AdvertisementCard = ({ ad }) => {
             <p className="text-xs text-gray-400 uppercase tracking-widest mb-1 font-medium">
               Contact
             </p>
-            
-              <a href={`tel:${ad.TPNumber}`}
+
+            <a
+              href={`tel:${ad.TPNumber}`}
               className="flex items-center gap-2 text-sm font-semibold text-amber-600 hover:text-amber-700 transition-colors"
             >
               <Phone size={14} />
               {ad.TPNumber}
             </a>
           </div>
-
         </div>
       </div>
     </div>
