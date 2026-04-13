@@ -100,6 +100,10 @@ router.put(
   "/advertisment/toggle/rejected/:id",
   AdvertismentCont.toggleAdvertismentStatustoRejected,
 );
+router.put(
+  "/advertisment/toggle/pending/:id",
+  AdvertismentCont.toggleAdvertismentStatustoPending,
+);
 router.get(
   "/advertisment/view/approved",
   AdvertismentCont.getApprovedAdvertisments,

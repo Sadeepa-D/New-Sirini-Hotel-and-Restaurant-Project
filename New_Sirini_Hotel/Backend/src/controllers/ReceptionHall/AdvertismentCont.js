@@ -95,6 +95,7 @@ const updateAdvertisment = async (req, res) => {
     }
     res.status(200).json({
       message: "Advertisment updated successfully",
+      advertisment: updatedAdvertisment,
     });
   } catch (error) {
     console.error("Error updating advertisment:", error);
@@ -117,6 +118,7 @@ const toggleAdvertismentStatustoApproved = async (req, res) => {
     }
     res.status(200).json({
       message: "Advertisment status updated to approved",
+      advertisment: updatedAdvertisment,
     });
   } catch (error) {
     console.error("Error updating advertisment status:", error);
@@ -139,12 +141,38 @@ const toggleAdvertismentStatustoRejected = async (req, res) => {
     }
     res.status(200).json({
       message: "Advertisment status updated to rejected",
+      advertisment: updatedAdvertisment,
     });
   } catch (error) {
     console.error("Error updating advertisment status:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
+
+const toggleAdvertismentStatustoPending = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: "Advertisment ID is required" });
+    }
+    const updatedAdvertisment = await Adevertisment.findByIdAndUpdate(
+      id,
+      { $set: { status: "pending" } },
+      { new: true },
+    );
+    if (!updatedAdvertisment) {
+      return res.status(404).json({ message: "Advertisment not found" });
+    }
+    res.status(200).json({
+      message: "Advertisment status updated to pending",
+      advertisment: updatedAdvertisment,
+    });
+  } catch (error) {
+    console.error("Error updating advertisment status:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 const getPendingAdvertisments = async (req, res) => {
   try {
     const pendingAdvertisments = await Adevertisment.find({
@@ -200,6 +228,7 @@ module.exports = {
   updateAdvertisment,
   toggleAdvertismentStatustoApproved,
   toggleAdvertismentStatustoRejected,
+  toggleAdvertismentStatustoPending,
   getPendingAdvertisments,
   getApprovedAdvertisments,
   getRejectedAdvertisments,
