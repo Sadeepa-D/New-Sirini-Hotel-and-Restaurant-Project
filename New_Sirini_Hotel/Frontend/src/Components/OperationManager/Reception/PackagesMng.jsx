@@ -54,7 +54,7 @@ const PackagesMng = () => {
       const response = await axios.get(
         `${VITE_URL}/api/receptionhall/package/view`,
       );
-      const data = response.data.packages || response.data || [];
+      const data = response.data;
       setPackages(Array.isArray(data) ? data : []);
     } catch (err) {
       setError("Failed to load packages");

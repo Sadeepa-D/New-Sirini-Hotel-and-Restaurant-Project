@@ -37,7 +37,7 @@ const getReceptionHallPackages = async (req, res) => {
         .status(404)
         .json({ message: "No reception hall packages found" });
     }
-    res.status(200).json({ packages });
+    res.status(200).json(packages);
   } catch (error) {
     console.error("Error fetching reception hall packages:", error);
     res.status(500).json({ message: "Server error" });
