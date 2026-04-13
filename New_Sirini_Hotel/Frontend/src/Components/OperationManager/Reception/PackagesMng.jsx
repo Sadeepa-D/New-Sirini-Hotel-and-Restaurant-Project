@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Plus,
   Search,
@@ -9,61 +9,15 @@ import {
   ChevronRight,
   ChevronLeft,
 } from "lucide-react";
-
-const dummyPackages = [
-  {
-    _id: "1",
-    name: "Silver Package",
-    price: "Rs. 50,000",
-    description: "Basic wedding setup",
-    availability: true,
-    image:
-      "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=400&fit=crop",
-  },
-  {
-    _id: "2",
-    name: "Gold Package",
-    price: "Rs. 85,000",
-    description: "Premium wedding setup",
-    availability: true,
-    image:
-      "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=400&fit=crop",
-  },
-  {
-    _id: "3",
-    name: "Platinum Package",
-    price: "Rs. 120,000",
-    description: "Ultimate luxury setup",
-    availability: false,
-    image:
-      "https://images.unsplash.com/photo-1478146059778-26028b07395a?w=400&fit=crop",
-  },
-  {
-    _id: "4",
-    name: "Diamond Package",
-    price: "Rs. 200,000",
-    description: "All inclusive package",
-    availability: true,
-    image:
-      "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=400&fit=crop",
-  },
-  {
-    _id: "5",
-    name: "Bronze Package",
-    price: "Rs. 30,000",
-    description: "Budget friendly setup",
-    availability: true,
-    image:
-      "https://images.unsplash.com/photo-1519741497674-611481863552?w=400&fit=crop",
-  },
-];
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const ActionRibbon = ({ item, onToggle, onEdit, onDelete }) => (
   <div className="absolute right-2 top-2 flex flex-col gap-1.5 z-10">
     <button
       onClick={() => onToggle(item._id)}
       className={`w-8 h-8 rounded-full flex items-center justify-center shadow transition-colors ${
-        item.availability
+        item.status
           ? "bg-green-100 text-green-600 hover:bg-green-200"
           : "bg-gray-100 text-gray-400 hover:bg-gray-200"
       }`}
@@ -86,30 +40,88 @@ const ActionRibbon = ({ item, onToggle, onEdit, onDelete }) => (
 );
 
 const PackagesMng = () => {
-  const [packages, setPackages] = useState(dummyPackages);
+  const [packages, setPackages] = useState([]);
   const [search, setSearch] = useState("");
   const [index, setIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const itemsPerView = 3;
+
+  const VITE_URL = import.meta.env.VITE_API_URL;
+
+  const fetchpackages = async () => {
+    try {
+      const response = await axios.get(
+        `${VITE_URL}/api/receptionhall/package/view`,
+      );
+      const data = response.data.packages || response.data || [];
+      setPackages(Array.isArray(data) ? data : []);
+    } catch (err) {
+      setError("Failed to load packages");
+      toast.error("Failed to load packages");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchpackages();
+  }, []);
 
   const filtered = packages.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase()),
   );
 
-  const handleToggle = (id) => {
-    setPackages((prev) =>
-      prev.map((p) =>
-        p._id === id ? { ...p, availability: !p.availability } : p,
-      ),
-    );
+  const handleToggle = async (id) => {
+    try {
+      const response = await axios.put(
+        `${VITE_URL}/api/receptionhall/package/toggle/${id}`,
+      );
+
+      const updatedpackage = response.data;
+
+      setPackages((prev) =>
+        prev
+          .filter((p) => p !== undefined && p !== null)
+          .map((p) => (p._id === id ? updatedpackage : p)),
+      );
+      toast.success(
+        `Package ${updatedpackage.status ? "activated" : "deactivated"} successfully`,
+      );
+    } catch (err) {
+      toast.error("Failed to toggle package status");
+    }
   };
 
-  const handleDelete = (id) => {
-    setPackages((prev) => prev.filter((p) => p._id !== id));
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${VITE_URL}/api/receptionhall/package/delete/${id}`);
+      setPackages((prev) => prev.filter((p) => p._id !== id));
+      toast.success("Package deleted successfully");
+    } catch (err) {
+      setError("Failed to delete package");
+      toast.error("Failed to delete package");
+    }
   };
 
   const handleEdit = (item) => {
     console.log("Edit:", item); // connect your edit modal here
   };
+
+  if (loading)
+    return (
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6">
+        <p className="text-center text-gray-400 text-sm py-10 animate-pulse">
+          Loading packages...
+        </p>
+      </div>
+    );
+  if (error)
+    return (
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6">
+        <p className="text-center text-red-400 text-sm py-10">{error}</p>
+      </div>
+    );
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6">
@@ -147,7 +159,6 @@ const PackagesMng = () => {
           </button>
         </div>
       </div>
-
       {/* Cards Slider */}
       {filtered.length === 0 ? (
         <p className="text-center text-gray-400 text-sm py-10">
@@ -190,7 +201,7 @@ const PackagesMng = () => {
                   </div>
 
                   {/* Availability overlay */}
-                  {!item.availability && (
+                  {!item.status && (
                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                       <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
                         Unavailable
@@ -207,6 +218,7 @@ const PackagesMng = () => {
                   />
 
                   {/* Info */}
+                  {/* Info */}
                   <div className="p-3 bg-white">
                     <h3 className="font-semibold text-gray-800 text-sm truncate">
                       {item.name}
@@ -214,9 +226,32 @@ const PackagesMng = () => {
                     <p className="text-xs text-gray-400 truncate mt-0.5">
                       {item.description}
                     </p>
-                    <span className="inline-block mt-2 text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
-                      {item.price}
-                    </span>
+
+                    {/* Features */}
+                    {item.features && item.features.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1.5">
+                        {item.features[0]
+                          .split(",")
+                          .slice(0, 2)
+                          .map((f, i) => (
+                            <span
+                              key={i}
+                              className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full border border-amber-100"
+                            >
+                              {f.trim()}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between mt-2">
+                      <span className="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
+                        Rs. {Number(item.price).toLocaleString()}
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        Seats: {item.seatings}
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -235,7 +270,6 @@ const PackagesMng = () => {
           )}
         </div>
       )}
-
       {/* Stats footer */}
       <div className="flex items-center gap-4 mt-5 pt-4 border-t border-gray-100">
         <span className="text-xs text-gray-400">
@@ -244,13 +278,13 @@ const PackagesMng = () => {
         <span className="text-xs text-gray-400">
           Active:{" "}
           <strong className="text-green-600">
-            {packages.filter((p) => p.availability).length}
+            {packages.filter((p) => p.status).length}
           </strong>
         </span>
         <span className="text-xs text-gray-400">
           Inactive:{" "}
           <strong className="text-red-500">
-            {packages.filter((p) => !p.availability).length}
+            {packages.filter((p) => !p.status).length}
           </strong>
         </span>
       </div>
