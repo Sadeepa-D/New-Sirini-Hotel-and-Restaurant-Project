@@ -12,69 +12,8 @@ import {
   Phone,
   Globe,
 } from "lucide-react";
-
-const dummyAds = [
-  {
-    _id: "1",
-    BuissnesName: "Lens & Light Studio",
-    category: "Photography",
-    price: "upto Rs.100,000",
-    location: "Galle",
-    TPNumber: "0714480408",
-    portfolio: "www.facebook.com",
-    status: "pending",
-    image:
-      "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=400&fit=crop",
-  },
-  {
-    _id: "2",
-    BuissnesName: "SoundWave Events",
-    category: "Audio & Musical",
-    price: "Rs.35,000",
-    location: "Colombo",
-    TPNumber: "0771234567",
-    portfolio: "www.soundwave.lk",
-    status: "approved",
-    image:
-      "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&fit=crop",
-  },
-  {
-    _id: "3",
-    BuissnesName: "Bloom & Drape Decor",
-    category: "Decoration",
-    price: "Rs.30,000",
-    location: "Matara",
-    TPNumber: "0725678901",
-    portfolio: "www.bloom.lk",
-    status: "rejected",
-    image:
-      "https://images.unsplash.com/photo-1478146059778-26028b07395a?w=400&fit=crop",
-  },
-  {
-    _id: "4",
-    BuissnesName: "Golden Moments",
-    category: "Photography",
-    price: "Rs.18,000",
-    location: "Kandy",
-    TPNumber: "0762345678",
-    portfolio: "www.golden.lk",
-    status: "pending",
-    image:
-      "https://images.unsplash.com/photo-1519741497674-611481863552?w=400&fit=crop",
-  },
-  {
-    _id: "5",
-    BuissnesName: "Harmony Band",
-    category: "Audio & Musical",
-    price: "Rs.45,000",
-    location: "Negombo",
-    TPNumber: "0784567890",
-    portfolio: "www.harmony.lk",
-    status: "approved",
-    image:
-      "https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=400&fit=crop",
-  },
-];
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const statusConfig = {
   pending: {
@@ -98,16 +37,36 @@ const statusConfig = {
 };
 
 const AdvertismentMng = () => {
-  const [ads, setAds] = useState(dummyAds);
+  const [ads, setAds] = useState([]);
   const [search, setSearch] = useState("");
   const [index, setIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const itemsPerView = 3;
+
+  const VITE_URL = import.meta.env.VITE_API_URL;
 
   const filtered = ads.filter(
     (a) =>
       a.BuissnesName.toLowerCase().includes(search.toLowerCase()) ||
       a.category.toLowerCase().includes(search.toLowerCase()),
   );
+
+const fetchAds = async () => {
+    try {
+      const response = await axios.get(`${VITE_URL}/api/receptionhall/advertisment/view`);
+      const data = response.data;
+      setAds(data);
+    } catch (err) {
+      setError("Failed to fetch advertisements");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchAds();
+  }, []);
 
   const handleApprove = (id) =>
     setAds((prev) =>
@@ -119,6 +78,22 @@ const AdvertismentMng = () => {
     );
   const handleDelete = (id) =>
     setAds((prev) => prev.filter((a) => a._id !== id));
+
+  if (loading)
+    return (
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6">
+        <p className="text-center text-gray-400 text-sm py-10 animate-pulse">
+          Loading advertisements...
+        </p>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6">
+        <p className="text-center text-red-400 text-sm py-10">{error}</p>
+      </div>
+    );
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6">
@@ -344,5 +319,5 @@ const AdvertismentMng = () => {
       </div>
     </div>
   );
-}
+};
 export default AdvertismentMng;
