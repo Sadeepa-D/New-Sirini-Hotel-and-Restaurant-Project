@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Logo from "../../assets/Logo.png";
 import RoomOperation from "../../Components/OperationManager/Rooms/RoomOperation";
+import ReceptionMngHome from "../../Components/OperationManager/Reception/ReceptionMngHome";
 import {
   Home,
   BedDouble,
@@ -13,10 +14,10 @@ import {
   X,
 } from "lucide-react";
 
-//Placeholder Components 
+//Placeholder Components
 const ReceptionComponent = () => (
   <div className="p-6 text-gray-600">
-    Reception Component (Mount your reception data here)
+    <ReceptionMngHome />
   </div>
 );
 
@@ -26,7 +27,7 @@ const LogoutComponent = () => (
   </div>
 );
 
-// Dashboard Data 
+// Dashboard Data
 const dashboardData = {
   monthly: [
     { title: "Total Room Bookings", value: "24", sub: "This month" },
@@ -109,7 +110,7 @@ const Dashboard = () => {
   );
 };
 
-// Main Manager Layout 
+// Main Manager Layout
 const Manager = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -128,7 +129,7 @@ const Manager = () => {
       case "rooms":
         return <RoomOperation />;
       case "reception":
-        return <ReceptionComponent />;
+        return <ReceptionMngHome />;
       case "logout":
         return <LogoutComponent />;
       default:
