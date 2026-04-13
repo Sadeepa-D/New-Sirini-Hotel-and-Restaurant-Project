@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Plus,
   Search,
@@ -9,61 +9,15 @@ import {
   ChevronRight,
   ChevronLeft,
 } from "lucide-react";
-
-const dummyCatering = [
-  {
-    _id: "1",
-    name: "Chicken Rice",
-    price: "Rs. 1,500",
-    ingredients: ["chicken", "rice", "carrot"],
-    availability: true,
-    image:
-      "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400&fit=crop",
-  },
-  {
-    _id: "2",
-    name: "Beef Curry",
-    price: "Rs. 1,800",
-    ingredients: ["beef", "spices", "coconut"],
-    availability: true,
-    image:
-      "https://images.unsplash.com/photo-1574484284002-952d92456975?w=400&fit=crop",
-  },
-  {
-    _id: "3",
-    name: "Prawn Fry",
-    price: "Rs. 2,500",
-    ingredients: ["prawn", "garlic", "butter"],
-    availability: false,
-    image:
-      "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&fit=crop",
-  },
-  {
-    _id: "4",
-    name: "Vegetable Rice",
-    price: "Rs. 1,200",
-    ingredients: ["rice", "mixed veg"],
-    availability: true,
-    image:
-      "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400&fit=crop",
-  },
-  {
-    _id: "5",
-    name: "Fish Ambul Thiyal",
-    price: "Rs. 2,000",
-    ingredients: ["fish", "goraka", "spices"],
-    availability: true,
-    image:
-      "https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&fit=crop",
-  },
-];
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const ActionRibbon = ({ item, onToggle, onEdit, onDelete }) => (
   <div className="absolute right-2 top-2 flex flex-col gap-1.5 z-10">
     <button
       onClick={() => onToggle(item._id)}
       className={`w-8 h-8 rounded-full flex items-center justify-center shadow transition-colors ${
-        item.availability
+        item.status
           ? "bg-green-100 text-green-600 hover:bg-green-200"
           : "bg-gray-100 text-gray-400 hover:bg-gray-200"
       }`}
@@ -86,26 +40,83 @@ const ActionRibbon = ({ item, onToggle, onEdit, onDelete }) => (
 );
 
 const CateringMng = () => {
-  const [items, setItems] = useState(dummyCatering);
+  const [items, setItems] = useState([]);
   const [search, setSearch] = useState("");
   const [index, setIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const itemsPerView = 3;
+
+  const VITE_URL = import.meta.env.VITE_API_URL;
+
+  const fetchItems = async () => {
+    try {
+      const response = await axios.get(
+        `${VITE_URL}/api/receptionhall/catering/view`,
+      );
+      const data = response.data;
+      setItems(data);
+    } catch (err) {
+      setError("Failed to fetch items");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchItems();
+  }, []);
 
   const filtered = items.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase()),
   );
 
-  const handleToggle = (id) => {
-    setItems((prev) =>
-      prev.map((p) =>
-        p._id === id ? { ...p, availability: !p.availability } : p,
-      ),
-    );
+  const handleToggle = async (id) => {
+    try {
+      const response = await axios.put(
+        `${VITE_URL}/api/receptionhall/catering/toggle/${id}`,
+      );
+      const updatedItem = response.data;
+      toast.success("Availability updated Successfully");
+      setItems((prev) =>
+        prev.filter((p) => p !== undefined && p !== null)
+      .map((p) => (p._id === id ? updatedItem : p)),
+      );
+    } catch (err) {
+      toast.error("Failed to update availability");
+    }
   };
 
-  const handleDelete = (id) =>
-    setItems((prev) => prev.filter((p) => p._id !== id));
-  const handleEdit = (item) => console.log("Edit:", item);
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${VITE_URL}/api/receptionhall/catering/delete/${id}`);
+      await fetchItems();
+      toast.success("Item deleted successfully");
+    } catch (err) {
+      toast.error("Failed to delete item");
+      await fetchItems();
+    }
+  };
+
+  const handleEdit = (item) => {
+    toast.error("Edit functionality not implemented yet");
+  };
+
+  if (loading)
+    return (
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6">
+        <p className="text-center text-gray-400 text-sm py-10 animate-pulse">
+          Loading catering items...
+        </p>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6">
+        <p className="text-center text-red-400 text-sm py-10">{error}</p>
+      </div>
+    );
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6">
@@ -182,7 +193,7 @@ const CateringMng = () => {
                     />
                   </div>
 
-                  {!item.availability && (
+                  {!item.status && (
                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                       <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
                         Unavailable
@@ -197,27 +208,28 @@ const CateringMng = () => {
                     onDelete={handleDelete}
                   />
 
+                  {/* NEW UPDATED CODE */}
                   <div className="p-3 bg-white">
                     <h3 className="font-semibold text-gray-800 text-sm truncate">
                       {item.name}
                     </h3>
                     <div className="flex flex-wrap gap-1 mt-1.5">
-                      {item.ingredients.slice(0, 2).map((ing, i) => (
-                        <span
-                          key={i}
-                          className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full border border-amber-100"
-                        >
-                          {ing}
-                        </span>
-                      ))}
-                      {item.ingredients.length > 2 && (
-                        <span className="text-xs text-gray-400">
-                          +{item.ingredients.length - 2}
-                        </span>
-                      )}
+                      {(Array.isArray(item.ingredients)
+                        ? item.ingredients[0].split(",")
+                        : []
+                      )
+                        .slice(0, 2)
+                        .map((ing, i) => (
+                          <span
+                            key={i}
+                            className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full border border-amber-100"
+                          >
+                            {ing.trim()}
+                          </span>
+                        ))}
                     </div>
                     <span className="inline-block mt-2 text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
-                      {item.price}
+                      Rs: {item.priceperserving}
                     </span>
                   </div>
                 </div>
@@ -245,13 +257,13 @@ const CateringMng = () => {
         <span className="text-xs text-gray-400">
           Active:
           <strong className="text-green-600">
-            {items.filter((p) => p.availability).length}
+            {items.filter((p) => p.status).length}
           </strong>
         </span>
         <span className="text-xs text-gray-400">
           Inactive:{" "}
           <strong className="text-red-500">
-            {items.filter((p) => !p.availability).length}
+            {items.filter((p) => !p.status).length}
           </strong>
         </span>
       </div>

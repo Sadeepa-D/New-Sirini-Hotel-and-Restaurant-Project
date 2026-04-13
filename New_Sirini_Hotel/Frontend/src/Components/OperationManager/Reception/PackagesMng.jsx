@@ -105,7 +105,7 @@ const PackagesMng = () => {
   };
 
   const handleEdit = (item) => {
-    console.log("Edit:", item); // connect your edit modal here
+    toast.error("Edit functionality not implemented yet"); // connect your edit modal here
   };
 
   if (loading)

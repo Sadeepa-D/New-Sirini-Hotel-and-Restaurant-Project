@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Users, ArrowRight, CheckCircle2 } from "lucide-react";
 
 export default function ReceptionHallPackages() {
   const [packages, setPackages] = useState([]);
@@ -55,80 +56,101 @@ export default function ReceptionHallPackages() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 px-6 py-10">
         {packages.map((card, index) => (
           <div
             key={index}
-            className="group bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-500 flex flex-col"
+            className="group bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-gray-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 flex flex-col h-full"
           >
-            {/* Image */}
-            <div className="relative h-52 sm:h-60 w-full overflow-hidden">
+            {/* --- IMAGE SECTION --- */}
+            <div className="relative h-72 w-full overflow-hidden">
               <img
                 src={card.image}
                 alt={card.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
               />
-              {/* Dark overlay on hover */}
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-500" />
 
-              {/* Price badge */}
-              <div className="absolute top-4 right-4 bg-amber-500 text-amber-900 text-xs sm:text-sm font-bold px-4 py-1.5 rounded-full shadow-md">
-                Rs. {card.price}
+              {/* Soft Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+
+              {/* Floating Price Badge (Glassmorphism) */}
+              <div className="absolute top-6 right-6 bg-white/20 backdrop-blur-md text-white text-sm font-bold px-5 py-2 rounded-2xl border border-white/30 shadow-xl">
+                Rs. {card.price.toLocaleString()}
               </div>
 
-              {/* Availability badge */}
+              {/* Status Badge */}
               {card.availability !== undefined && (
                 <div
-                  className={`absolute top-4 left-4 text-xs font-semibold px-3 py-1 rounded-full shadow-md ${
+                  className={`absolute top-6 left-6 text-[10px] uppercase tracking-[0.2em] font-black px-4 py-2 rounded-full shadow-lg ${
                     card.availability
-                      ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-600"
+                      ? "bg-emerald-500 text-white"
+                      : "bg-rose-500 text-white"
                   }`}
                 >
-                  {card.availability ? "Available" : "Unavailable"}
+                  {card.availability ? "Available" : "Fully Booked"}
                 </div>
               )}
             </div>
 
-            {/* Content */}
-            <div className="p-4 sm:p-6 flex flex-col flex-1">
-              {/* Name */}
-              <h3 className="font-cinzel text-lg sm:text-xl font-semibold text-gray-800 mb-2">
-                {card.name}
-              </h3>
-
-              {/* Amber divider */}
-              <div className="flex items-center gap-2 mb-4">
-                <div className="h-px w-8 bg-amber-400" />
-                <div className="w-1 h-1 rounded-full bg-amber-400" />
+            {/* --- CONTENT SECTION --- */}
+            <div className="p-8 flex flex-col flex-1 bg-white">
+              {/* Title & Decorative Divider */}
+              <div className="mb-6">
+                <h3 className="font-cinzel text-2xl lg:text-3xl font-bold text-gray-900 mb-3 group-hover:text-amber-600 transition-colors">
+                  {card.name}
+                </h3>
+                <div className="flex items-center gap-2">
+                  <div className="h-[3px] w-12 bg-amber-400 rounded-full" />
+                  <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                </div>
               </div>
 
               {/* Description */}
-              <p className="text-gray-500 italic text-sm leading-relaxed mb-5">
-                {card.description}
+              <p className="text-gray-500 font-cormorant text-xl italic leading-relaxed mb-8">
+                "{card.description}"
               </p>
 
-              {/* Features */}
+              {/* Features Chips */}
               {card.features && card.features.length > 0 && (
-                <div className="mt-auto pt-1 border-t border-gray-100">
-                  <p className="text-xs text-gray-400 uppercase tracking-widest mb-3 font-medium">
-                    What's Included
-                  </p>
+                <div className="mb-10">
+                  <div className="flex items-center gap-2 mb-4">
+                    <CheckCircle2 size={14} className="text-amber-500" />
+                    <p className="text-[10px] text-gray-400 uppercase tracking-[0.3em] font-bold">
+                      Premium Inclusions
+                    </p>
+                  </div>
                   <div className="flex flex-wrap gap-2">
-                    {(Array.isArray(card.features)
-                      ? card.features
-                      : [card.features]
-                    ).map((feature, i) => (
-                      <span
-                        key={i}
-                        className="bg-amber-50 text-amber-800 text-xs px-3 py-1 rounded-full border border-amber-200 font-medium"
-                      >
-                        ✦ {feature}
-                      </span>
-                    ))}
+                    {card.features[0]
+                      .split(",")
+                      .slice(0, 3)
+                      .map((f, i) => (
+                        <span
+                          key={i}
+                          className="text-[11px] bg-neutral-50 text-neutral-600 px-4 py-2 rounded-xl border border-neutral-100 font-semibold hover:bg-amber-50 hover:text-amber-700 hover:border-amber-200 transition-all cursor-default"
+                        >
+                          {f.trim()}
+                        </span>
+                      ))}
                   </div>
                 </div>
               )}
+
+              {/* --- FOOTER SECTION --- */}
+              <div className="mt-auto pt-8 border-t border-gray-100 flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 bg-amber-100 rounded-xl text-amber-700">
+                    <Users size={20} strokeWidth={2.5} />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-gray-400 uppercase font-bold tracking-tighter">
+                      Capacity
+                    </span>
+                    <span className="text-sm font-black text-gray-800">
+                      {card.seatings} Guests
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         ))}

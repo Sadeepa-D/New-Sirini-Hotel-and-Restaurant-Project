@@ -85,10 +85,8 @@ const toggleCateringItemAvailability = async (req, res) => {
       return res.status(404).json({ message: "Catering item not found" });
     }
     item.status = !item.status;
-    await item.save();
-    res
-      .status(200)
-      .json({ message: "Catering item availability toggled successfully" });
+    const updatedItem = await item.save();
+    res.status(200).json(updatedItem);
   } catch (error) {
     res
       .status(500)
