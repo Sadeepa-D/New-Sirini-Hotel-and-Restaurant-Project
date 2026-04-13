@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import RoomStatsRow from "./RoomStatsRow";
 import RoomTableHeader from "./RoomTableHeader";
-// import RoomTable from "./RoomTable";
+import RoomTable from "./RoomTable";
 // import RoomFormModal from "./RoomFormModal";
 
 const initialRooms = [
