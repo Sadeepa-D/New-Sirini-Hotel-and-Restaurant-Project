@@ -70,16 +70,43 @@ const AdvertismentMng = () => {
     fetchAds();
   }, []);
 
-  const handleApprove = (id) =>
-    setAds((prev) =>
-      prev.map((a) => (a._id === id ? { ...a, status: "approved" } : a)),
-    );
-  const handleReject = (id) =>
-    setAds((prev) =>
-      prev.map((a) => (a._id === id ? { ...a, status: "rejected" } : a)),
-    );
-  const handleDelete = (id) =>
-    setAds((prev) => prev.filter((a) => a._id !== id));
+  const handleApprove = async (id) => {
+    try {
+      const response = await axios.put(
+        `${VITE_URL}/api/receptionhall/advertisment/toggle/approved/${id}`,
+      );
+      const updatedAd = response.data;
+      setAds((prev) =>
+        prev.map((a) => (a._id === id ? { ...a, status: "approved" } : a)),
+      );
+    } catch (err) {
+      toast.error("Failed to approve advertisement");
+    }
+  };
+  const handleReject = async (id) => {
+    try {
+      const response = await axios.put(
+        `${VITE_URL}/api/receptionhall/advertisment/toggle/rejected/${id}`,
+      );
+      const updatedAd = response.data;
+      setAds((prev) =>
+        prev.map((a) => (a._id === id ? { ...a, status: "rejected" } : a)),
+      );
+    } catch (err) {
+      toast.error("Failed to reject advertisement");
+    }
+  };
+  const handleDelete = async (id) => {
+    try {
+      const response = await axios.delete(
+        `${VITE_URL}/api/receptionhall/advertisment/delete/${id}`,
+      );
+      await fetchAds();
+      toast.success("Advertisement deleted successfully");
+    } catch (err) {
+      toast.error("Failed to delete advertisement");
+    }
+  };
 
   if (loading)
     return (
