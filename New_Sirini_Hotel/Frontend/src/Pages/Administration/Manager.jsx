@@ -15,11 +15,11 @@ import {
 } from "lucide-react";
 
 //Placeholder Components
-const ReceptionComponent = () => (
-  <div className="p-6 text-gray-600">
-    <ReceptionMngHome />
-  </div>
-);
+// const ReceptionComponent = () => (
+//   <div className="p-6 text-gray-600">
+//     <ReceptionMngHome />
+//   </div>
+// );
 
 const LogoutComponent = () => (
   <div className="p-6 text-gray-600">

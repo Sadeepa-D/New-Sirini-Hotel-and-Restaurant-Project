@@ -158,7 +158,7 @@ const CateringMng = () => {
             </button>
           )}
 
-          <div className="overflow-hidden">
+          <div className="overflow-hidden px-9">
             <div
               className="flex gap-4 transition-transform duration-300"
               style={{
@@ -243,7 +243,7 @@ const CateringMng = () => {
           Total: <strong className="text-gray-600">{items.length}</strong>
         </span>
         <span className="text-xs text-gray-400">
-          Active:{" "}
+          Active:
           <strong className="text-green-600">
             {items.filter((p) => p.availability).length}
           </strong>
@@ -257,5 +257,5 @@ const CateringMng = () => {
       </div>
     </div>
   );
-}
+};
 export default CateringMng;

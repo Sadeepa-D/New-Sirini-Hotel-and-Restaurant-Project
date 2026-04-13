@@ -164,7 +164,7 @@ const PackagesMng = () => {
             </button>
           )}
 
-          <div className="overflow-hidden">
+          <div className="overflow-hidden px-9">
             <div
               className="flex gap-4 transition-transform duration-300"
               style={{
@@ -256,5 +256,5 @@ const PackagesMng = () => {
       </div>
     </div>
   );
-}
+};
 export default PackagesMng;
