@@ -218,7 +218,6 @@ const PackagesMng = () => {
                   />
 
                   {/* Info */}
-                  {/* Info */}
                   <div className="p-3 bg-white">
                     <h3 className="font-semibold text-gray-800 text-sm truncate">
                       {item.name}
