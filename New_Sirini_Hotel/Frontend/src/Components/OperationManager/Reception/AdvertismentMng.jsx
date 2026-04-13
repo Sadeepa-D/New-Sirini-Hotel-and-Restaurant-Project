@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Search,
   Trash2,
@@ -52,9 +52,11 @@ const AdvertismentMng = () => {
       a.category.toLowerCase().includes(search.toLowerCase()),
   );
 
-const fetchAds = async () => {
+  const fetchAds = async () => {
     try {
-      const response = await axios.get(`${VITE_URL}/api/receptionhall/advertisment/view`);
+      const response = await axios.get(
+        `${VITE_URL}/api/receptionhall/advertisment/view`,
+      );
       const data = response.data;
       setAds(data);
     } catch (err) {
@@ -64,7 +66,7 @@ const fetchAds = async () => {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchAds();
   }, []);
 
