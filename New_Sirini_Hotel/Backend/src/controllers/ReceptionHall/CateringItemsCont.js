@@ -31,7 +31,7 @@ const getCateringItems = async (req, res) => {
     if (items.length === 0) {
       return res.status(404).json({ message: "No catering items found" });
     }
-    res.status(200).json({ items });
+    res.status(200).json(items);
   } catch (error) {
     res.status(500).json({ message: "Error fetching catering items", error });
   }
