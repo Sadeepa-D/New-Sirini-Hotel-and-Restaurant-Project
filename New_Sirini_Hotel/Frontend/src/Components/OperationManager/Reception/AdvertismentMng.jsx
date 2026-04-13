@@ -76,6 +76,7 @@ const AdvertismentMng = () => {
         `${VITE_URL}/api/receptionhall/advertisment/toggle/approved/${id}`,
       );
       const updatedAd = response.data;
+      toast.success("Advertisement approved successfully");
       setAds((prev) =>
         prev.map((a) => (a._id === id ? { ...a, status: "approved" } : a)),
       );
@@ -89,6 +90,7 @@ const AdvertismentMng = () => {
         `${VITE_URL}/api/receptionhall/advertisment/toggle/rejected/${id}`,
       );
       const updatedAd = response.data;
+      toast.success("Advertisement rejected successfully");
       setAds((prev) =>
         prev.map((a) => (a._id === id ? { ...a, status: "rejected" } : a)),
       );
@@ -105,6 +107,21 @@ const AdvertismentMng = () => {
       toast.success("Advertisement deleted successfully");
     } catch (err) {
       toast.error("Failed to delete advertisement");
+    }
+  };
+
+  const handlepending = async (id) => {
+    try {
+      const response = await axios.put(
+        `${VITE_URL}/api/receptionhall/advertisment/toggle/pending/${id}`,
+      );
+      const updatedAd = response.data;
+      toast.success("Advertisement reset to pending successfully");
+      setAds((prev) =>
+        prev.map((a) => (a._id === id ? { ...a, status: "pending" } : a)),
+      );
+    } catch (err) {
+      toast.error("Failed to reset advertisement to pending");
     }
   };
 
@@ -288,15 +305,7 @@ const AdvertismentMng = () => {
 
                       {ad.status !== "pending" && (
                         <button
-                          onClick={() =>
-                            setAds((prev) =>
-                              prev.map((a) =>
-                                a._id === ad._id
-                                  ? { ...a, status: "pending" }
-                                  : a,
-                              ),
-                            )
-                          }
+                          onClick={() => handlepending(ad._id)}
                           className="mt-3 w-full flex items-center justify-center gap-1.5 border border-gray-200 text-gray-500 hover:bg-gray-50 text-xs font-semibold py-1.5 rounded-lg transition-colors"
                         >
                           <Clock size={12} />
