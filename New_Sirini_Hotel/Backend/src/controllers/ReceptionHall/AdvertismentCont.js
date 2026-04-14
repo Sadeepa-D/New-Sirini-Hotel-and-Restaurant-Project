@@ -204,11 +204,6 @@ const getPendingAdvertisments = async (req, res) => {
     const pendingAdvertisments = await Adevertisment.find({
       status: "pending",
     });
-    if (pendingAdvertisments.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No pending advertisments found" });
-    }
     res.status(200).json(pendingAdvertisments);
   } catch (error) {
     console.error("Error fetching pending advertisments:", error);
@@ -220,11 +215,6 @@ const getApprovedAdvertisments = async (req, res) => {
     const approvedAdvertisments = await Adevertisment.find({
       status: "approved",
     });
-    if (approvedAdvertisments.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No approved advertisments found" });
-    }
     res.status(200).json(approvedAdvertisments);
   } catch (error) {
     console.error("Error fetching approved advertisments:", error);
@@ -236,11 +226,6 @@ const getRejectedAdvertisments = async (req, res) => {
     const rejectedAdvertisments = await Adevertisment.find({
       status: "rejected",
     });
-    if (rejectedAdvertisments.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No rejected advertisments found" });
-    }
     res.status(200).json(rejectedAdvertisments);
   } catch (error) {
     console.error("Error fetching rejected advertisments:", error);

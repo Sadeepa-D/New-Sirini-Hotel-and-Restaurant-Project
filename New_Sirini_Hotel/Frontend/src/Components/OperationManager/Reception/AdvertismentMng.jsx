@@ -38,10 +38,12 @@ const statusConfig = {
 
 const AdvertismentMng = () => {
   const [ads, setAds] = useState([]);
+  const [allAds, setAllAds] = useState([]);
   const [search, setSearch] = useState("");
   const [index, setIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState(null);
   const [itemsPerView, setItemsPerView] = useState(
     typeof window !== "undefined" && window.innerWidth < 640 ? 1 : 3,
   );
@@ -59,10 +61,35 @@ const AdvertismentMng = () => {
       const response = await axios.get(
         `${VITE_URL}/api/receptionhall/advertisment/view`,
       );
-      const data = response.data;
-      setAds(data);
+      const data = response.data || [];
+      setAds(Array.isArray(data) ? data : []);
+      setAllAds(Array.isArray(data) ? data : []);
+      setError(null);
     } catch (err) {
-      setError("Failed to fetch advertisements");
+      toast.error("Failed to fetch advertisements");
+      setAds([]);
+      setAllAds([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchAdsByStatus = async (status) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await axios.get(
+        `${VITE_URL}/api/receptionhall/advertisment/view/${status}`,
+      );
+      const data = response.data || [];
+      setAds(Array.isArray(data) ? data : []);
+      setAllAds(Array.isArray(data) ? data : []);
+      setSelectedStatus(status);
+      setSearch("");
+      setIndex(0);
+    } catch (err) {
+      toast.error(`Failed to fetch ${status} advertisements`);
+      setAds([]);
     } finally {
       setLoading(false);
     }
@@ -95,9 +122,15 @@ const AdvertismentMng = () => {
       );
       const updatedAd = response.data;
       toast.success("Advertisement approved successfully");
-      setAds((prev) =>
-        prev.map((a) => (a._id === id ? { ...a, status: "approved" } : a)),
+      const updatedAllAds = allAds.map((a) =>
+        a._id === id ? { ...a, status: "approved" } : a,
       );
+      setAllAds(updatedAllAds);
+      if (selectedStatus) {
+        setAds(updatedAllAds.filter((a) => a.status === selectedStatus));
+      } else {
+        setAds(updatedAllAds);
+      }
     } catch (err) {
       toast.error("Failed to approve advertisement");
     }
@@ -109,9 +142,15 @@ const AdvertismentMng = () => {
       );
       const updatedAd = response.data;
       toast.success("Advertisement rejected successfully");
-      setAds((prev) =>
-        prev.map((a) => (a._id === id ? { ...a, status: "rejected" } : a)),
+      const updatedAllAds = allAds.map((a) =>
+        a._id === id ? { ...a, status: "rejected" } : a,
       );
+      setAllAds(updatedAllAds);
+      if (selectedStatus) {
+        setAds(updatedAllAds.filter((a) => a.status === selectedStatus));
+      } else {
+        setAds(updatedAllAds);
+      }
     } catch (err) {
       toast.error("Failed to reject advertisement");
     }
@@ -121,7 +160,13 @@ const AdvertismentMng = () => {
       const response = await axios.delete(
         `${VITE_URL}/api/receptionhall/advertisment/delete/${id}`,
       );
-      await fetchAds();
+      const updatedAllAds = allAds.filter((a) => a._id !== id);
+      setAllAds(updatedAllAds);
+      if (selectedStatus) {
+        setAds(updatedAllAds.filter((a) => a.status === selectedStatus));
+      } else {
+        setAds(updatedAllAds);
+      }
       toast.success("Advertisement deleted successfully");
     } catch (err) {
       toast.error("Failed to delete advertisement");
@@ -135,9 +180,15 @@ const AdvertismentMng = () => {
       );
       const updatedAd = response.data;
       toast.success("Advertisement reset to pending successfully");
-      setAds((prev) =>
-        prev.map((a) => (a._id === id ? { ...a, status: "pending" } : a)),
+      const updatedAllAds = allAds.map((a) =>
+        a._id === id ? { ...a, status: "pending" } : a,
       );
+      setAllAds(updatedAllAds);
+      if (selectedStatus) {
+        setAds(updatedAllAds.filter((a) => a.status === selectedStatus));
+      } else {
+        setAds(updatedAllAds);
+      }
     } catch (err) {
       toast.error("Failed to reset advertisement to pending");
     }
@@ -149,13 +200,6 @@ const AdvertismentMng = () => {
         <p className="text-center text-gray-400 text-sm py-10 animate-pulse">
           Loading advertisements...
         </p>
-      </div>
-    );
-
-  if (error)
-    return (
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6">
-        <p className="text-center text-red-400 text-sm py-10">{error}</p>
       </div>
     );
 
@@ -190,15 +234,33 @@ const AdvertismentMng = () => {
 
       {/* Status summary pills */}
       <div className="flex flex-wrap gap-2 mb-5">
+        <button
+          onClick={() => {
+            setSelectedStatus(null);
+            setAds(allAds);
+            setSearch("");
+            setIndex(0);
+          }}
+          className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full transition-colors cursor-pointer ${
+            selectedStatus === null
+              ? "bg-blue-100 text-blue-700 border-2 border-blue-400"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+          }`}
+        >
+          All ({allAds.length})
+        </button>
         {Object.entries(statusConfig).map(
           ([key, { label, bg, text, icon: Icon }]) => (
-            <div
+            <button
               key={key}
-              className={`flex items-center gap-1.5 ${bg} ${text} text-xs font-semibold px-3 py-1.5 rounded-full`}
+              onClick={() => fetchAdsByStatus(key)}
+              className={`flex items-center gap-1.5 ${
+                selectedStatus === key ? `${bg} ${text} border-2 border-current shadow-md` : `${bg} ${text} opacity-60 hover:opacity-100`
+              } text-xs font-semibold px-3 py-1.5 rounded-full transition-all cursor-pointer`}
             >
               <Icon size={12} />
-              {label}: {ads.filter((a) => a.status === key).length}
-            </div>
+              {label}: {allAds.filter((a) => a.status === key).length}
+            </button>
           ),
         )}
       </div>
@@ -355,24 +417,24 @@ const AdvertismentMng = () => {
 
       <div className="flex items-center gap-4 mt-5 pt-4 border-t border-gray-100">
         <span className="text-xs text-gray-400">
-          Total: <strong className="text-gray-600">{ads.length}</strong>
+          Total: <strong className="text-gray-600">{allAds.length}</strong>
         </span>
         <span className="text-xs text-gray-400">
           Pending:{" "}
           <strong className="text-yellow-600">
-            {ads.filter((a) => a.status === "pending").length}
+            {allAds.filter((a) => a.status === "pending").length}
           </strong>
         </span>
         <span className="text-xs text-gray-400">
           Approved:{" "}
           <strong className="text-green-600">
-            {ads.filter((a) => a.status === "approved").length}
+            {allAds.filter((a) => a.status === "approved").length}
           </strong>
         </span>
         <span className="text-xs text-gray-400">
           Rejected:{" "}
           <strong className="text-red-500">
-            {ads.filter((a) => a.status === "rejected").length}
+            {allAds.filter((a) => a.status === "rejected").length}
           </strong>
         </span>
       </div>
