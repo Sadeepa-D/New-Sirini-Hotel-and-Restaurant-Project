@@ -33,7 +33,7 @@ const PackageAddForm = ({ onClose, fetchpackages }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    onClose(); // Close modal immediately
+    onClose();
     const loadingToast = toast.loading("Uploading package to Sirini Hotel...");
     try {
       const response = await axios.post(
