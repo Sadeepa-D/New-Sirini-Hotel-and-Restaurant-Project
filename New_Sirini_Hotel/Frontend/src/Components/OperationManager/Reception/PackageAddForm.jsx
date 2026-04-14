@@ -52,6 +52,7 @@ const PackageAddForm = ({ onClose, fetchpackages }) => {
       }
     } catch (err) {
       toast.error("Failed to add package. Please try again.");
+      toast.dismiss(loadingToast);
     }
   };
 

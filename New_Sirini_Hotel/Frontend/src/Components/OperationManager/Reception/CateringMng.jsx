@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import CateringAddForm from "./CateringAddForm";
 
 const ActionRibbon = ({ item, onToggle, onEdit, onDelete }) => (
   <div className="absolute right-2 top-2 flex flex-col gap-1.5 z-10">
@@ -45,6 +46,7 @@ const CateringMng = () => {
   const [index, setIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showForm, setShowForm] = useState(false);
   const [itemsPerView, setItemsPerView] = useState(
     typeof window !== "undefined" && window.innerWidth < 640 ? 1 : 3,
   );
@@ -165,7 +167,10 @@ const CateringMng = () => {
               </button>
             )}
           </div>
-          <button className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors shadow-sm">
+          <button
+            className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors shadow-sm"
+            onClick={() => setShowForm(true)}
+          >
             <Plus size={16} />
             Add Item
           </button>
@@ -289,6 +294,12 @@ const CateringMng = () => {
           </strong>
         </span>
       </div>
+      {showForm && (
+        <CateringAddForm
+          onClose={() => setShowForm(false)}
+          fetchitems={fetchItems}
+        />
+      )}
     </div>
   );
 };
