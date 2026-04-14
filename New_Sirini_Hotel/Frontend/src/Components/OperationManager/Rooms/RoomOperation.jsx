@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import RoomStatsRow from "./RoomStatsRow";
 import RoomTableHeader from "./RoomTableHeader";
 import RoomTable from "./RoomTable";
-// import RoomFormModal from "./RoomFormModal";
+import RoomFormModal from "./RoomFormModal";
 
 const initialRooms = [
   { id: 1, roomNumber: "01", type: "Single",  price: 3500,  capacity: 1, status: "available",   description: "Cozy single room with garden view" },
