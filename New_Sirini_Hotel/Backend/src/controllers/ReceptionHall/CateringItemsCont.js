@@ -46,8 +46,18 @@ const updateCateringItem = async (req, res) => {
       return res.status(400).json({ message: "Catering item ID is required" });
     }
     const updates = req.body;
+
+    const existingItem = await CateringItems.findById(id);
+    if (!existingItem) {
+      return res.status(404).json({ message: "Catering item not found" });
+    }
+
     if (req.file) {
-      updates.image = req.file.path;
+      if (existingItem.imagePublicId) {
+        await cloudinary.v2.uploader.destroy(existingItem.imagePublicId);
+      }
+      updates.image = req.file.secure_url; // New URL
+      updates.imagePublicId = req.file.public_id; // New Public ID
     }
     const updatedItem = await CateringItems.findByIdAndUpdate(
       id,
@@ -57,7 +67,7 @@ const updateCateringItem = async (req, res) => {
     if (!updatedItem) {
       return res.status(404).json({ message: "Catering item not found" });
     }
-    res.status(200).json({ message: "Catering item updated successfully" });
+    res.status(201).json({ message: "Catering item updated successfully" });
   } catch (error) {
     res.status(500).json({ message: "Error updating catering item", error });
   }

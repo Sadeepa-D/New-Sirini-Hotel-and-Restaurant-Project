@@ -97,9 +97,20 @@ const updateAdvertisment = async (req, res) => {
       return res.status(400).json({ message: "Advertisment ID is required" });
     }
     const updateData = req.body;
-    if (req.file) {
-      updateData.image = req.file.path;
+
+    const existingAdvertisment = await Adevertisment.findById(id);
+    if (!existingAdvertisment) {
+      return res.status(404).json({ message: "Advertisment not found" });
     }
+
+    if (req.file) {
+      if (existingAdvertisment.imagePublicId) {
+        await cloudinary.v2.uploader.destroy(existingAdvertisment.imagePublicId);
+      }
+      updateData.image = req.file.secure_url;
+      updateData.imagePublicId = req.file.public_id;
+    }
+
     const updatedAdvertisment = await Adevertisment.findByIdAndUpdate(
       id,
       { $set: updateData },

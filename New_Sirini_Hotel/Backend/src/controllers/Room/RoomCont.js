@@ -52,9 +52,20 @@ const updateRoom = async (req, res) => {
       return res.status(400).json({ message: "Room ID is required" });
     }
     const updates = req.body;
-    if (req.file) {
-      updates.image = req.file.path;
+
+    const existingRoom = await RoomModel.findById(id);
+    if (!existingRoom) {
+      return res.status(404).json({ message: "Room not found" });
     }
+
+    if (req.file) {
+      if (existingRoom.imagePublicId) {
+        await cloudinary.v2.uploader.destroy(existingRoom.imagePublicId);
+      }
+      updates.image = req.file.secure_url;
+      updates.imagePublicId = req.file.public_id;
+    }
+
     const updatedRoom = await RoomModel.findByIdAndUpdate(
       id,
       { $set: updates },

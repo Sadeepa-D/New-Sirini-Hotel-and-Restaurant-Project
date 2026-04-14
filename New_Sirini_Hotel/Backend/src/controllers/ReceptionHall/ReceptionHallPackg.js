@@ -53,9 +53,20 @@ const updateReceptionHallPackage = async (req, res) => {
       return res.status(400).json({ message: "Package ID is required" });
     }
     const updates = req.body;
-    if (req.file) {
-      updates.image = req.file.secure_url;
+
+    const existingPackage = await ReceptionHallPackage.findById(id);
+    if (!existingPackage) {
+      return res.status(404).json({ message: "Package not found" });
     }
+
+    if (req.file) {
+      if (existingPackage.imagePublicId) {
+        await cloudinary.v2.uploader.destroy(existingPackage.imagePublicId);
+      }
+      updates.image = req.file.secure_url;
+      updates.imagePublicId = req.file.public_id;
+    }
+
     const updatedPackage = await ReceptionHallPackage.findByIdAndUpdate(
       id,
       { $set: updates },

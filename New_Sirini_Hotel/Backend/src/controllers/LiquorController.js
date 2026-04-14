@@ -105,8 +105,17 @@ const updateLiquor = async (req, res) => {
     }
     const updates = req.body;
 
+    const existingLiquor = await Liquor.findById(id);
+    if (!existingLiquor) {
+      return res.status(404).json({ message: "Liquor not found" });
+    }
+
     if (req.file) {
-      updates.image = req.file.path;
+      if (existingLiquor.imagePublicId) {
+        await cloudinary.v2.uploader.destroy(existingLiquor.imagePublicId);
+      }
+      updates.image = req.file.secure_url;
+      updates.imagePublicId = req.file.public_id;
     }
 
     const updatedLiquor = await Liquor.findByIdAndUpdate(

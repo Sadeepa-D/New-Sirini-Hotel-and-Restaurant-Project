@@ -57,9 +57,20 @@ const updateFoodItem = async (req, res) => {
       updates.foodname = updates.name;
       delete updates.name;
     }
-    if (req.file) {
-      updates.image = req.file.path;
+
+    const existingFoodItem = await FoodItems.findById(id);
+    if (!existingFoodItem) {
+      return res.status(404).json({ message: "Food item not found" });
     }
+
+    if (req.file) {
+      if (existingFoodItem.imagePublicId) {
+        await cloudinary.v2.uploader.destroy(existingFoodItem.imagePublicId);
+      }
+      updates.image = req.file.secure_url;
+      updates.imagePublicId = req.file.public_id;
+    }
+
     const updatedFoodItem = await FoodItems.findByIdAndUpdate(
       id,
       { $set: updates },

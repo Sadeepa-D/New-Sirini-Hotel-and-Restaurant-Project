@@ -171,7 +171,10 @@ const CateringMng = () => {
           </div>
           <button
             className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors shadow-sm"
-            onClick={() => setShowForm(true)}
+            onClick={() => {
+              setShowForm(true);
+              setEditItem(null);
+            }}
           >
             <Plus size={16} />
             Add Item
