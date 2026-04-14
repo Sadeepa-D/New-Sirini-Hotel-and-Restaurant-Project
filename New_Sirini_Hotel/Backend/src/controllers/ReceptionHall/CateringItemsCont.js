@@ -1,4 +1,5 @@
 const CateringItems = require("../../models/Reception/CateringItems");
+const cloudinary = require("cloudinary");
 
 const createCateringItem = async (req, res) => {
   try {
@@ -7,6 +8,7 @@ const createCateringItem = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
     const image = req.file ? req.file.secure_url : null;
+    const imagePublicId = req.file ? req.file.public_id : null;
     if (!image) {
       return res.status(400).json({ message: "Image is required" });
     }
@@ -15,6 +17,7 @@ const createCateringItem = async (req, res) => {
       ingredients,
       priceperserving,
       image,
+      imagePublicId,
       status: true,
     });
     await newCateringItem.save();
@@ -64,6 +67,18 @@ const deleteCateringItem = async (req, res) => {
     const { id } = req.params;
     if (!id) {
       return res.status(400).json({ message: "Catering item ID is required" });
+    }
+    const item = await CateringItems.findById(id);
+    if (!item) {
+      return res.status(404).json({ message: "Catering item not found" });
+    }
+    if (item.imagePublicId) {
+      try {
+        await cloudinary.v2.uploader.destroy(item.imagePublicId);
+      } catch (cloudinaryError) {
+        console.error("Error deleting image from Cloudinary:", cloudinaryError);
+        // Continue with database deletion even if Cloudinary deletion fails
+      }
     }
     const deletedItem = await CateringItems.findByIdAndDelete(id);
     if (!deletedItem) {

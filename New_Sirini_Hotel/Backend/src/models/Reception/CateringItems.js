@@ -18,6 +18,10 @@ const cateringItemsSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    imagePublicId: {
+      type: String,
+      default: null,
+    },
     status: {
       type: Boolean,
       default: true,

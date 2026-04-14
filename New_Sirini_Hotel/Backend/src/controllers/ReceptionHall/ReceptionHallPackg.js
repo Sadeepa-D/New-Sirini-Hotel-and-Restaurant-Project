@@ -1,4 +1,5 @@
 const ReceptionHallPackage = require("../../models/Reception/ReceptionHallPackages");
+const cloudinary = require("cloudinary");
 
 const createReceptionHallPackage = async (req, res) => {
   try {
@@ -7,6 +8,7 @@ const createReceptionHallPackage = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
     const image = req.file ? req.file.secure_url : null;
+    const imagePublicId = req.file ? req.file.public_id : null;
     if (!image) {
       return res.status(400).json({ message: "Image is required" });
     }
@@ -17,6 +19,7 @@ const createReceptionHallPackage = async (req, res) => {
       features,
       seatings,
       image,
+      imagePublicId,
       status: true,
     });
     await newPackage.save();
@@ -73,6 +76,19 @@ const deleteReceptionHallPackage = async (req, res) => {
     if (!id) {
       return res.status(400).json({ message: "Package ID is required" });
     }
+    const item = await ReceptionHallPackage.findById(id);
+    if (!item) {
+      return res.status(404).json({ message: "Package not found" });
+    }
+    if (item.imagePublicId) {
+      try {
+        await cloudinary.v2.uploader.destroy(item.imagePublicId);
+      } catch (cloudinaryError) {
+        console.error("Error deleting image from Cloudinary:", cloudinaryError);
+        // Continue with database deletion even if Cloudinary deletion fails
+      }
+    }
+
     const deletedPackage = await ReceptionHallPackage.findByIdAndDelete(id);
     if (!deletedPackage) {
       return res.status(404).json({ message: "Package not found" });

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import PackageAddForm from "./PackageAddForm";
 
 const ActionRibbon = ({ item, onToggle, onEdit, onDelete }) => (
   <div className="absolute right-2 top-2 flex flex-col gap-1.5 z-10">
@@ -45,7 +46,10 @@ const PackagesMng = () => {
   const [index, setIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const itemsPerView = 3;
+  const [showForm, setShowForm] = useState(false);
+  const [itemsPerView, setItemsPerView] = useState(
+    typeof window !== "undefined" && window.innerWidth < 640 ? 1 : 3,
+  );
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -68,9 +72,25 @@ const PackagesMng = () => {
     fetchpackages();
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setItemsPerView(window.innerWidth < 640 ? 1 : 3);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const filtered = packages.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase()),
   );
+
+  useEffect(() => {
+    setIndex((prev) =>
+      Math.min(prev, Math.max(0, filtered.length - itemsPerView)),
+    );
+  }, [filtered.length, itemsPerView]);
 
   const handleToggle = async (id) => {
     try {
@@ -153,7 +173,10 @@ const PackagesMng = () => {
             )}
           </div>
           {/* Add Button */}
-          <button className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors shadow-sm">
+          <button
+            className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors shadow-sm"
+            onClick={() => setShowForm(true)}
+          >
             <Plus size={16} />
             Add Package
           </button>
@@ -175,7 +198,7 @@ const PackagesMng = () => {
             </button>
           )}
 
-          <div className="overflow-hidden px-9">
+          <div className="overflow-hidden px-1 sm:px-9">
             <div
               className="flex gap-4 transition-transform duration-300"
               style={{
@@ -187,8 +210,11 @@ const PackagesMng = () => {
                   key={item._id}
                   className="relative shrink-0 rounded-xl overflow-hidden border border-gray-100 shadow-sm group"
                   style={{
-                    width: `calc(${100 / itemsPerView}% - 12px)`,
-                    minWidth: "200px",
+                    width:
+                      itemsPerView === 1
+                        ? "100%"
+                        : `calc(${100 / itemsPerView}% - 12px)`,
+                    minWidth: itemsPerView === 1 ? "100%" : "200px",
                   }}
                 >
                   {/* Image */}
@@ -275,18 +301,24 @@ const PackagesMng = () => {
           Total: <strong className="text-gray-600">{packages.length}</strong>
         </span>
         <span className="text-xs text-gray-400">
-          Active:{" "}
+          Active:
           <strong className="text-green-600">
             {packages.filter((p) => p.status).length}
           </strong>
         </span>
         <span className="text-xs text-gray-400">
-          Inactive:{" "}
+          Inactive:
           <strong className="text-red-500">
             {packages.filter((p) => !p.status).length}
           </strong>
         </span>
       </div>
+      {showForm && (
+        <PackageAddForm
+          onClose={() => setShowForm(false)}
+          fetchpackages={fetchpackages}
+        />
+      )}
     </div>
   );
 };

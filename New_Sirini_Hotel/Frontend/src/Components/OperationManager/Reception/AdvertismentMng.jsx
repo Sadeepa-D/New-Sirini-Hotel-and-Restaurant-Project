@@ -42,7 +42,9 @@ const AdvertismentMng = () => {
   const [index, setIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const itemsPerView = 3;
+  const [itemsPerView, setItemsPerView] = useState(
+    typeof window !== "undefined" && window.innerWidth < 640 ? 1 : 3,
+  );
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -69,6 +71,22 @@ const AdvertismentMng = () => {
   useEffect(() => {
     fetchAds();
   }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setItemsPerView(window.innerWidth < 640 ? 1 : 3);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    setIndex((prev) =>
+      Math.min(prev, Math.max(0, filtered.length - itemsPerView)),
+    );
+  }, [filtered.length, itemsPerView]);
 
   const handleApprove = async (id) => {
     try {
@@ -201,7 +219,7 @@ const AdvertismentMng = () => {
             </button>
           )}
 
-          <div className="overflow-hidden px-9">
+          <div className="overflow-hidden px-1 sm:px-9">
             <div
               className="flex gap-4 transition-transform duration-300"
               style={{
@@ -220,8 +238,11 @@ const AdvertismentMng = () => {
                     key={ad._id}
                     className="relative shrink-0 rounded-xl overflow-hidden border border-gray-100 shadow-sm group flex flex-col"
                     style={{
-                      width: `calc(${100 / itemsPerView}% - 12px)`,
-                      minWidth: "220px",
+                      width:
+                        itemsPerView === 1
+                          ? "100%"
+                          : `calc(${100 / itemsPerView}% - 12px)`,
+                      minWidth: itemsPerView === 1 ? "100%" : "220px",
                     }}
                   >
                     {/* Image */}
