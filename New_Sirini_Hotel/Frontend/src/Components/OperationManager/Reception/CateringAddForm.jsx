@@ -11,11 +11,11 @@ import {
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const CateringAddForm = ({ onClose, fetchitems }) => {
+const CateringAddForm = ({ onClose, fetchitems, editItem }) => {
   const [formData, setFormData] = useState({
-    name: "",
-    ingredients: "",
-    priceperserving: "",
+    name: editItem?.name || "",
+    ingredients: editItem?.ingredients || "",
+    priceperserving: editItem?.priceperserving || "",
     image: null,
   });
   const VITE_URL = import.meta.env.VITE_API_URL;
@@ -64,8 +64,8 @@ const CateringAddForm = ({ onClose, fetchitems }) => {
             <p className="text-orange-500 text-xs uppercase tracking-[0.3em] font-medium mb-0.5">
               Sirini Hotel Kitchen
             </p>
-            <h2 className="text-xl sm:text-2xl text-gray-800 font-bold">
-              Add Catering Item
+            <h2 className="font-cinzel text-xl sm:text-2xl text-gray-800 font-semibold">
+              {editItem ? "Edit Catering Item" : "Add Catering Items"}
             </h2>
           </div>
           <button

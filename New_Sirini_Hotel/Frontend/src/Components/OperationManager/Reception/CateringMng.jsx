@@ -47,6 +47,7 @@ const CateringMng = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [editItem, setEditItem] = useState(null);
   const [itemsPerView, setItemsPerView] = useState(
     typeof window !== "undefined" && window.innerWidth < 640 ? 1 : 3,
   );
@@ -120,7 +121,8 @@ const CateringMng = () => {
   };
 
   const handleEdit = (item) => {
-    toast.error("Edit functionality not implemented yet");
+    setEditItem(item);
+    setShowForm(true);
   };
 
   if (loading)
@@ -298,6 +300,7 @@ const CateringMng = () => {
         <CateringAddForm
           onClose={() => setShowForm(false)}
           fetchitems={fetchItems}
+          editItem={editItem}
         />
       )}
     </div>
