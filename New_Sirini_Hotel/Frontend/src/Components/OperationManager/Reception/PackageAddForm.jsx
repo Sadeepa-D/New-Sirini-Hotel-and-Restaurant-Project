@@ -12,13 +12,13 @@ import {
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const PackageAddForm = ({ onClose, fetchpackages }) => {
+const PackageAddForm = ({ onClose, fetchpackages, editItem }) => {
   const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    price: "",
-    seatings: "",
-    features: "",
+    name: editItem?.name || "",
+    description: editItem?.description || "",
+    price: editItem?.price || "",
+    seatings: editItem?.seatings || "",
+    features: editItem?.features?.[0] || "",
     image: null,
   });
   const VITE_URL = import.meta.env.VITE_API_URL;
@@ -34,21 +34,34 @@ const PackageAddForm = ({ onClose, fetchpackages }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     onClose();
-    const loadingToast = toast.loading("Uploading package to Sirini Hotel...");
+    const loadingToast = toast.loading(
+      editItem ? "Updating package..." : "Adding package...",
+    );
     try {
-      const response = await axios.post(
-        `${VITE_URL}/api/receptionhall/package/add`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        },
-      );
-      if (response.status === 201) {
-        toast.success("Package added successfully!");
+      if (editItem) {
+        const response = await axios.put(
+          `${VITE_URL}/api/receptionhall/package/update/${editItem._id}`,
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } },
+        );
+        toast.success("Package updated successfully!");
         toast.dismiss(loadingToast);
         fetchpackages();
+      } else {
+        const response = await axios.post(
+          `${VITE_URL}/api/receptionhall/package/add`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          },
+        );
+        if (response.status === 201) {
+          toast.success("Package added successfully!");
+          toast.dismiss(loadingToast);
+          fetchpackages();
+        }
       }
     } catch (err) {
       toast.error("Failed to add package. Please try again.");
@@ -66,7 +79,7 @@ const PackageAddForm = ({ onClose, fetchpackages }) => {
               Reception Hall
             </p>
             <h2 className="font-cinzel text-xl sm:text-2xl text-gray-800 font-semibold">
-              Add New Package
+              {editItem ? "Edit Package" : "Add New Package"}
             </h2>
           </div>
           <button

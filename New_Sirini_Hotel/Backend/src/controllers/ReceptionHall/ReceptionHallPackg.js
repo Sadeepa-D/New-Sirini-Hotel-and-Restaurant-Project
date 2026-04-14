@@ -54,7 +54,7 @@ const updateReceptionHallPackage = async (req, res) => {
     }
     const updates = req.body;
     if (req.file) {
-      updates.image = req.file.path;
+      updates.image = req.file.secure_url;
     }
     const updatedPackage = await ReceptionHallPackage.findByIdAndUpdate(
       id,

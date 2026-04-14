@@ -47,6 +47,7 @@ const PackagesMng = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [editItem, setEditItem] = useState(null);
   const [itemsPerView, setItemsPerView] = useState(
     typeof window !== "undefined" && window.innerWidth < 640 ? 1 : 3,
   );
@@ -125,7 +126,8 @@ const PackagesMng = () => {
   };
 
   const handleEdit = (item) => {
-    toast.error("Edit functionality not implemented yet"); // connect your edit modal here
+    setEditItem(item);
+    setShowForm(true);
   };
 
   if (loading)
@@ -317,6 +319,7 @@ const PackagesMng = () => {
         <PackageAddForm
           onClose={() => setShowForm(false)}
           fetchpackages={fetchpackages}
+          editItem={editItem}
         />
       )}
     </div>
