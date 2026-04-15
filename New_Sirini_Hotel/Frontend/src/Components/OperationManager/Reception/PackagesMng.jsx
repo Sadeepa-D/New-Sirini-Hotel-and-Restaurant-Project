@@ -145,6 +145,12 @@ const PackagesMng = () => {
       </div>
     );
 
+  const visibleItems = filtered.slice(index, index + itemsPerView);
+  const canGoBack = index > 0;
+  const canGoNext = index + itemsPerView < filtered.length;
+  const GAP = 16;
+  const cardWidth = `calc((100% - ${GAP * (itemsPerView - 1)}px) / ${itemsPerView})`;
+
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6">
       {/* Header */}
@@ -187,116 +193,131 @@ const PackagesMng = () => {
           </button>
         </div>
       </div>
-      {/* Cards Slider */}
+      {/* Cards */}
       {filtered.length === 0 ? (
         <p className="text-center text-gray-400 text-sm py-10">
           No packages found
         </p>
       ) : (
         <div className="relative">
-          {index > 0 && (
+          {/* Left arrow */}
+          {canGoBack && (
             <button
-              onClick={() => setIndex((i) => Math.max(0, i - 1))}
-              className="absolute -left-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow flex items-center justify-center hover:bg-gray-50"
+              onClick={() => setIndex((i) => Math.max(0, i - itemsPerView))}
+              className="absolute -left-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow flex items-center justify-center hover:bg-gray-50"
             >
               <ChevronLeft size={16} className="text-gray-600" />
             </button>
           )}
 
-          <div className="overflow-hidden px-1 sm:px-9">
-            <div
-              className="flex gap-4 transition-transform duration-300"
-              style={{
-                transform: `translateX(-${index * (100 / itemsPerView)}%)`,
-              }}
-            >
-              {filtered.map((item) => (
-                <div
-                  key={item._id}
-                  className="relative shrink-0 rounded-xl overflow-hidden border border-gray-100 shadow-sm group"
-                  style={{
-                    width:
-                      itemsPerView === 1
-                        ? "100%"
-                        : `calc(${100 / itemsPerView}% - 12px)`,
-                    minWidth: itemsPerView === 1 ? "100%" : "200px",
-                  }}
-                >
-                  {/* Image */}
-                  <div className="h-40 overflow-hidden">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
+          {/* Visible cards — slice-based, no translateX */}
+          <div
+            key={index}
+            className="flex gap-4"
+            style={{ animation: "fadeIn 0.25s ease" }}
+          >
+            {visibleItems.map((item) => (
+              <div
+                key={item._id}
+                className="relative shrink-0 rounded-xl overflow-hidden border border-gray-100 shadow-sm group"
+                style={{ width: cardWidth }}
+              >
+                {/* Image */}
+                <div className="h-40 overflow-hidden">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
 
-                  {/* Availability overlay */}
-                  {!item.status && (
-                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                      <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                        Unavailable
-                      </span>
+                {/* Availability overlay */}
+                {!item.status && (
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                    <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                      Unavailable
+                    </span>
+                  </div>
+                )}
+
+                {/* Action ribbon */}
+                <ActionRibbon
+                  item={item}
+                  onToggle={handleToggle}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+
+                {/* Info */}
+                <div className="p-3 bg-white">
+                  <h3 className="font-semibold text-gray-800 text-sm truncate">
+                    {item.name}
+                  </h3>
+                  <p className="text-xs text-gray-400 truncate mt-0.5">
+                    {item.description}
+                  </p>
+
+                  {/* Features */}
+                  {item.features && item.features.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-1.5">
+                      {item.features[0]
+                        .split(",")
+                        .slice(0, 2)
+                        .map((f, i) => (
+                          <span
+                            key={i}
+                            className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full border border-amber-100"
+                          >
+                            {f.trim()}
+                          </span>
+                        ))}
                     </div>
                   )}
 
-                  {/* Action ribbon */}
-                  <ActionRibbon
-                    item={item}
-                    onToggle={handleToggle}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                  />
-
-                  {/* Info */}
-                  <div className="p-3 bg-white">
-                    <h3 className="font-semibold text-gray-800 text-sm truncate">
-                      {item.name}
-                    </h3>
-                    <p className="text-xs text-gray-400 truncate mt-0.5">
-                      {item.description}
-                    </p>
-
-                    {/* Features */}
-                    {item.features && item.features.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-1.5">
-                        {item.features[0]
-                          .split(",")
-                          .slice(0, 2)
-                          .map((f, i) => (
-                            <span
-                              key={i}
-                              className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full border border-amber-100"
-                            >
-                              {f.trim()}
-                            </span>
-                          ))}
-                      </div>
-                    )}
-
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
-                        Rs. {Number(item.price).toLocaleString()}
-                      </span>
-                      <span className="text-xs text-gray-400">
-                        Seats: {item.seatings}
-                      </span>
-                    </div>
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
+                      Rs. {Number(item.price).toLocaleString()}
+                    </span>
+                    <span className="text-xs text-gray-400">
+                      Seats: {item.seatings}
+                    </span>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
 
-          {index < filtered.length - itemsPerView && (
+          {/* Right arrow */}
+          {canGoNext && (
             <button
               onClick={() =>
-                setIndex((i) => Math.min(filtered.length - itemsPerView, i + 1))
+                setIndex((i) =>
+                  Math.min(filtered.length - itemsPerView, i + itemsPerView),
+                )
               }
-              className="absolute -right-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow flex items-center justify-center hover:bg-gray-50"
+              className="absolute -right-6 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow flex items-center justify-center hover:bg-gray-50"
             >
               <ChevronRight size={16} className="text-gray-600" />
             </button>
+          )}
+
+          {/* Page dots */}
+          {filtered.length > itemsPerView && (
+            <div className="flex justify-center gap-1.5 mt-4">
+              {Array.from({
+                length: Math.ceil(filtered.length / itemsPerView),
+              }).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setIndex(i * itemsPerView)}
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    Math.floor(index / itemsPerView) === i
+                      ? "bg-amber-500"
+                      : "bg-gray-200 hover:bg-gray-300"
+                  }`}
+                />
+              ))}
+            </div>
           )}
         </div>
       )}
@@ -325,6 +346,13 @@ const PackagesMng = () => {
           editItem={editItem}
         />
       )}
+
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 };

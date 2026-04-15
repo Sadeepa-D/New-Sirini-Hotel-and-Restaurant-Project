@@ -11,6 +11,8 @@ import {
   XCircle,
   AlertCircle,
   Filter,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 const AppointmentCard = ({ appointment, onUpdate }) => {
@@ -103,6 +105,12 @@ const AppointmentMng = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [index, setIndex] = useState(0);
+  const [itemsPerView, setItemsPerView] = useState(
+    typeof window !== "undefined"
+      ? window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : 3
+      : 3,
+  );
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -122,7 +130,19 @@ const AppointmentMng = () => {
 
   useEffect(() => {
     fetchAppointments();
+    setIndex(0);
   }, [activeTab]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setItemsPerView(
+        window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : 3,
+      );
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handlestatuseChange = async (id, newStatus) => {
     const loadingtoast = toast.loading("Updating status to ${newStatus}...");
@@ -142,6 +162,12 @@ const AppointmentMng = () => {
   };
 
   const tabs = ["Pending", "Completed", "Canceled", "Overdue"];
+
+  const GAP = 24;
+  const cardWidth = `calc((100% - ${GAP * (itemsPerView - 1)}px) / ${itemsPerView})`;
+  const visibleAppointments = appointments.slice(index, index + itemsPerView);
+  const canGoBack = index > 0;
+  const canGoNext = index + itemsPerView < appointments.length;
 
   return (
     <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 sm:p-8">
@@ -173,32 +199,84 @@ const AppointmentMng = () => {
         </div>
       </div>
 
-      {/* Grid Section */}
+      {/* Carousel Section */}
       {loading ? (
         <div className="py-20 text-center animate-pulse text-gray-400 uppercase tracking-widest text-sm font-bold">
           Loading...
         </div>
+      ) : appointments.length === 0 ? (
+        <div className="py-20 text-center">
+          <Filter size={40} className="mx-auto text-gray-200 mb-4" />
+          <p className="text-gray-400 text-sm tracking-widest uppercase font-bold">
+            No {activeTab} requests found
+          </p>
+        </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {appointments.map((app) => (
-            <AppointmentCard
-              key={app._id}
-              appointment={app}
-              onUpdate={handlestatuseChange}
-            />
-          ))}
+        <div className="relative">
+          {/* Left arrow */}
+          {canGoBack && (
+            <button
+              onClick={() => setIndex((i) => Math.max(0, i - itemsPerView))}
+              className="absolute -left-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow flex items-center justify-center hover:bg-gray-50"
+            >
+              <ChevronLeft size={16} className="text-gray-600" />
+            </button>
+          )}
 
-          {/* Empty State */}
-          {appointments.length === 0 && (
-            <div className="col-span-full py-20 text-center">
-              <Filter size={40} className="mx-auto text-gray-200 mb-4" />
-              <p className="text-gray-400 text-sm tracking-widest uppercase font-bold">
-                No {activeTab} requests found
-              </p>
+          {/* Visible cards — slice-based, no translateX */}
+          <div
+            key={index}
+            className="flex gap-6"
+            style={{ animation: "fadeIn 0.25s ease" }}
+          >
+            {visibleAppointments.map((app) => (
+              <div key={app._id} className="shrink-0" style={{ width: cardWidth }}>
+                <AppointmentCard appointment={app} onUpdate={handlestatuseChange} />
+              </div>
+            ))}
+          </div>
+
+          {/* Right arrow */}
+          {canGoNext && (
+            <button
+              onClick={() =>
+                setIndex((i) =>
+                  Math.min(appointments.length - itemsPerView, i + itemsPerView),
+                )
+              }
+              className="absolute -right-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow flex items-center justify-center hover:bg-gray-50"
+            >
+              <ChevronRight size={16} className="text-gray-600" />
+            </button>
+          )}
+
+          {/* Page dots */}
+          {appointments.length > itemsPerView && (
+            <div className="flex justify-center gap-1.5 mt-6">
+              {Array.from({
+                length: Math.ceil(appointments.length / itemsPerView),
+              }).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setIndex(i * itemsPerView)}
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    Math.floor(index / itemsPerView) === i
+                      ? "bg-amber-500"
+                      : "bg-gray-200 hover:bg-gray-300"
+                  }`}
+                />
+              ))}
             </div>
           )}
         </div>
       )}
+
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 };
