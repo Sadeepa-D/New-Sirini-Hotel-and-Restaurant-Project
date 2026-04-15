@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
 import {
   Calendar,
   Mail,
@@ -11,7 +13,7 @@ import {
   Filter,
 } from "lucide-react";
 
-const AppointmentCard = ({ appointment }) => {
+const AppointmentCard = ({ appointment, onUpdate }) => {
   // Define status styles
   const statusStyles = {
     Completed: {
@@ -75,56 +77,69 @@ const AppointmentCard = ({ appointment }) => {
         </div>
       </div>
 
-      <div className="mt-4 pt-3 flex gap-2">
-        <button className="flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest bg-green-500 text-white hover:bg-green-600 transition-all shadow-sm">
-          Complete
-        </button>
-        <button className="flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest bg-red-500 text-white hover:bg-red-600 transition-all shadow-sm">
-          Cancel
-        </button>
-      </div>
+      {(appointment.status === "Pending" ||
+        appointment.status === "Overdue") && (
+        <div className="mt-4 pt-3 flex gap-2">
+          <button
+            className="flex-1 flex items-center justify-center gap-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold py-1.5 rounded-lg transition-colors"
+            onClick={() => onUpdate(appointment._id, "completed")}
+          >
+            Complete
+          </button>
+          <button
+            className="flex-1 flex items-center justify-center gap-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold py-1.5 rounded-lg transition-colors"
+            onClick={() => onUpdate(appointment._id, "canceled")}
+          >
+            Cancel
+          </button>
+        </div>
+      )}
     </div>
   );
 };
 
 const AppointmentMng = () => {
   const [activeTab, setActiveTab] = useState("Pending");
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Sample static data for UI demonstration
-  const dummyAppointments = [
-    {
-      _id: "1",
-      name: "Sadeepa Dinakara",
-      email: "sadeepa.14@yahoo.com",
-      phone: "0760363685",
-      date: "2026-03-16",
-      status: "Completed",
-    },
-    {
-      _id: "2",
-      name: "Kasun Perera",
-      email: "kasun@gmail.com",
-      phone: "0712345678",
-      date: "2026-04-20",
-      status: "Pending",
-    },
-    {
-      _id: "3",
-      name: "Dilini Silva",
-      email: "dilini@outlook.com",
-      phone: "0771112223",
-      date: "2026-01-10",
-      status: "Overdue",
-    },
-    {
-      _id: "4",
-      name: "Nuwan Sameera",
-      email: "nuwan@yahoo.com",
-      phone: "0759998887",
-      date: "2026-04-15",
-      status: "Canceled",
-    },
-  ];
+  const VITE_URL = import.meta.env.VITE_API_URL;
+
+  const fetchAppointments = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${VITE_URL}/api/receptionhall/appointment/view/${activeTab.toLowerCase()}`,
+      );
+      setAppointments(response.data);
+    } catch (err) {
+      setAppointments([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAppointments();
+  }, [activeTab]);
+
+  const handlestatuseChange = async (id, newStatus) => {
+    const loadingtoast = toast.loading("Updating status to ${newStatus}...");
+    try {
+      const response = await axios.put(
+        `${VITE_URL}/api/receptionhall/appointment/update/${newStatus}/${id}`,
+      );
+      if (response.status === 200) {
+        toast.success("Status updated successfully");
+        fetchAppointments();
+      }
+    } catch (err) {
+      toast.error("Failed to update status");
+    } finally {
+      toast.dismiss(loadingtoast);
+    }
+  };
 
   const tabs = ["Pending", "Completed", "Canceled", "Overdue"];
 
@@ -159,24 +174,31 @@ const AppointmentMng = () => {
       </div>
 
       {/* Grid Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {dummyAppointments
-          .filter((item) => item.status === activeTab)
-          .map((app) => (
-            <AppointmentCard key={app._id} appointment={app} />
+      {loading ? (
+        <div className="py-20 text-center animate-pulse text-gray-400 uppercase tracking-widest text-sm font-bold">
+          Loading...
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {appointments.map((app) => (
+            <AppointmentCard
+              key={app._id}
+              appointment={app}
+              onUpdate={handlestatuseChange}
+            />
           ))}
 
-        {/* Empty State */}
-        {dummyAppointments.filter((item) => item.status === activeTab)
-          .length === 0 && (
-          <div className="col-span-full py-20 text-center">
-            <Filter size={40} className="mx-auto text-gray-200 mb-4" />
-            <p className="text-gray-400 text-sm tracking-widest uppercase">
-              No {activeTab} requests found
-            </p>
-          </div>
-        )}
-      </div>
+          {/* Empty State */}
+          {appointments.length === 0 && (
+            <div className="col-span-full py-20 text-center">
+              <Filter size={40} className="mx-auto text-gray-200 mb-4" />
+              <p className="text-gray-400 text-sm tracking-widest uppercase font-bold">
+                No {activeTab} requests found
+              </p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

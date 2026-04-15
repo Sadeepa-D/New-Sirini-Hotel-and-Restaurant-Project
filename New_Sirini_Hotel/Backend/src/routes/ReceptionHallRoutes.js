@@ -26,7 +26,7 @@ router.put(
   ReceptionHallAppoint.updateReceptionAppointmentasCompleted,
 );
 router.put(
-  "/appointment/update/cancelled/:id",
+  "/appointment/update/Canceled/:id",
   ReceptionHallAppoint.updateReceptionAppointmentasCancelled,
 );
 router.get(
@@ -38,7 +38,7 @@ router.get(
   ReceptionHallAppoint.getCompletedReceptionAppointments,
 );
 router.get(
-  "/appointment/view/cancelled",
+  "/appointment/view/canceled",
   ReceptionHallAppoint.getCancelledReceptionAppointments,
 );
 router.get(
