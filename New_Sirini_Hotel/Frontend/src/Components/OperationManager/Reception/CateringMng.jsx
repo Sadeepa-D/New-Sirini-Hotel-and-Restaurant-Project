@@ -228,7 +228,7 @@ const CateringMng = () => {
                   {/* Availability overlay */}
                   {!item.status && (
                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                      <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                      <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full relative top-4">
                         Unavailable
                       </span>
                     </div>
