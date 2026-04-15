@@ -76,8 +76,11 @@ const AppointmentCard = ({ appointment }) => {
       </div>
 
       <div className="mt-4 pt-3 flex gap-2">
-        <button className="flex-1 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-gray-50 text-gray-500 hover:bg-amber-500 hover:text-white transition-all">
-          Manage
+        <button className="flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest bg-green-500 text-white hover:bg-green-600 transition-all shadow-sm">
+          Complete
+        </button>
+        <button className="flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest bg-red-500 text-white hover:bg-red-600 transition-all shadow-sm">
+          Cancel
         </button>
       </div>
     </div>
