@@ -2,6 +2,7 @@ import React from "react";
 import PackagesMng from "./PackagesMng";
 import CateringMng from "./CateringMng";
 import AdvertismentMng from "./AdvertismentMng";
+import AppointmentMng from "./AppointmentMng";
 
 const ReceptionMngHome = () => {
   return (
@@ -9,7 +10,8 @@ const ReceptionMngHome = () => {
       <PackagesMng />
       <CateringMng />
       <AdvertismentMng />
+      <AppointmentMng />
     </div>
   );
-}
+};
 export default ReceptionMngHome;
