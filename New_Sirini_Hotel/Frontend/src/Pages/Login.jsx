@@ -73,13 +73,13 @@ const Login = ({ onLogin }) => {
             navigate("/admin");
             break;
           case "user":
-            navigate("/main");
+            navigate("/");
             break;
           case "manager":
             navigate("/operationmanager");
             break;
           default:
-            navigate("/main");
+            navigate("/");
             break;
         }
       } else {

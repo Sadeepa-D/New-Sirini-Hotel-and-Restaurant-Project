@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Camera, Music, Sparkles, Megaphone } from "lucide-react";
 import axios from "axios";
+import toast from "react-hot-toast";
 import AdvertisementCard from "./AdvertisementCard";
 import AdvertismentForm from "./AdvertismentForm";
 
@@ -16,6 +17,7 @@ const AdvertisementSection = () => {
   const [error, setError] = useState(null);
   const [activeCategory, setActiveCategory] = useState("Photography");
   const [showForm, setShowForm] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -37,6 +39,16 @@ const AdvertisementSection = () => {
     };
     fetchAds();
   }, []);
+
+  const handleadrequest = () => {
+    if (!isLoggedIn) {
+      toast.error("You must be logged in to place an Advertisement.");
+      setShowForm(false);
+      return;
+    } else {
+      setShowForm(true);
+    }
+  };
 
   const filtered = ads.filter((ad) => ad.category === activeCategory);
 
@@ -75,7 +87,9 @@ const AdvertisementSection = () => {
       {/* Request Button */}
       <div className="flex justify-center mb-10">
         <button
-          onClick={() => setShowForm(true)}
+          onClick={() => {
+            handleadrequest();
+          }}
           className="group flex items-center gap-3 bg-white border-2 border-amber-400 text-amber-700 hover:bg-amber-500 hover:text-amber-900 hover:border-amber-500 px-8 py-3.5 rounded-full font-semibold text-sm uppercase tracking-widest transition-all duration-300 shadow-sm hover:shadow-md"
         >
           <Megaphone
