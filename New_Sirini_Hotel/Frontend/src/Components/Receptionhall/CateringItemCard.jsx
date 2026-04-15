@@ -109,18 +109,20 @@ const CateringItemCard = () => {
                 <p className="text-xs text-gray-400 uppercase tracking-widest mb-3 font-medium">
                   Ingredients
                 </p>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1 mt-1.5">
                   {(Array.isArray(item.ingredients)
-                    ? item.ingredients
-                    : [item.ingredients]
-                  ).map((ing, i) => (
-                    <span
-                      key={i}
-                      className="bg-amber-50 text-amber-800 text-xs px-3 py-1 rounded-full border border-amber-200 font-medium"
-                    >
-                      ✦ {ing}
-                    </span>
-                  ))}
+                    ? item.ingredients[0].split(",")
+                    : []
+                  )
+                    .slice(0, 2)
+                    .map((ing, i) => (
+                      <span
+                        key={i}
+                        className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full border border-amber-100"
+                      >
+                        {ing.trim()}
+                      </span>
+                    ))}
                 </div>
               </div>
             </div>
