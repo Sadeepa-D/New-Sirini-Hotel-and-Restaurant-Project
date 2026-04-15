@@ -87,7 +87,6 @@ const AdvertismentMng = () => {
       setSearch("");
       setIndex(0);
     } catch (err) {
-      toast.error(`Failed to fetch ${status} advertisements`);
       setAds([]);
     } finally {
       setLoading(false);
