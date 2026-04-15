@@ -61,7 +61,7 @@ const AdvertismentMng = () => {
       const response = await axios.get(
         `${VITE_URL}/api/receptionhall/advertisment/view`,
       );
-      const data = response.data || [];
+      const data = response.data;
       setAds(Array.isArray(data) ? data : []);
       setAllAds(Array.isArray(data) ? data : []);
       setError(null);
@@ -81,9 +81,8 @@ const AdvertismentMng = () => {
       const response = await axios.get(
         `${VITE_URL}/api/receptionhall/advertisment/view/${status}`,
       );
-      const data = response.data || [];
+      const data = response.data;
       setAds(Array.isArray(data) ? data : []);
-      setAllAds(Array.isArray(data) ? data : []);
       setSelectedStatus(status);
       setSearch("");
       setIndex(0);
