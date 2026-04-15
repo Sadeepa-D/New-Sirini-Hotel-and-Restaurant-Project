@@ -269,12 +269,13 @@ const CateringMng = () => {
             </div>
           </div>
 
+          {/* Right Arrow */}
           {index < filtered.length - itemsPerView && (
             <button
               onClick={() =>
                 setIndex((i) => Math.min(filtered.length - itemsPerView, i + 1))
               }
-              className="absolute -right-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow flex items-center justify-center hover:bg-gray-50"
+              className="absolute -right-3 top-1/2 -translate-y-1/2 z-30 w-8 h-8 bg-white border border-gray-200 rounded-full shadow flex items-center justify-center hover:bg-gray-50"
             >
               <ChevronRight size={16} className="text-gray-600" />
             </button>
