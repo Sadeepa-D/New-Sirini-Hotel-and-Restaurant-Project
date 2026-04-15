@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Users, ArrowRight, CheckCircle2 } from "lucide-react";
+import axios from "axios";
 
 export default function ReceptionHallPackages() {
   const [packages, setPackages] = useState([]);
@@ -11,12 +12,13 @@ export default function ReceptionHallPackages() {
   useEffect(() => {
     const fetchoccasionpackages = async () => {
       try {
-        const response = await fetch(
+        const response = await axios.get(
           `${VITE_URL}/api/receptionhall/package/view`,
         );
-        if (!response.ok) throw new Error("Failed to fetch data");
-        const data = await response.json();
-        setPackages(data.packages || data || []);
+        if (response.status !== 200) {
+          throw new Error("Failed to fetch data");
+        }
+        setPackages(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
         setError("An error occurred while fetching data");
