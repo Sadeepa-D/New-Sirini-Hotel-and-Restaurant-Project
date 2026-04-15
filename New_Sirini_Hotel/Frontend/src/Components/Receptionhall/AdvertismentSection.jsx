@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Camera, Music, Sparkles, Megaphone } from "lucide-react";
+import axios from "axios";
 import AdvertisementCard from "./AdvertisementCard";
 import AdvertismentForm from "./AdvertismentForm";
 
@@ -21,15 +22,11 @@ const AdvertisementSection = () => {
   useEffect(() => {
     const fetchAds = async () => {
       try {
-        const response = await fetch(
+        const response = await axios.get(
           `${VITE_URL}/api/receptionhall/advertisment/view`,
         );
-        if (!response.ok) throw new Error("Failed to fetch");
-        const data = await response.json();
-        console.log("Ads API response:", data);
-        setAds(
-          Array.isArray(data) ? data : data.advertisements || data.items || [],
-        );
+
+        setAds(response.data);
       } catch (err) {
         setError("Failed to load advertisements. Please try again.");
       } finally {

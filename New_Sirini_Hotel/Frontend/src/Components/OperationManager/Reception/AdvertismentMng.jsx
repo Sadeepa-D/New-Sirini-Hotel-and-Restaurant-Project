@@ -255,7 +255,9 @@ const AdvertismentMng = () => {
               key={key}
               onClick={() => fetchAdsByStatus(key)}
               className={`flex items-center gap-1.5 ${
-                selectedStatus === key ? `${bg} ${text} border-2 border-current shadow-md` : `${bg} ${text} opacity-60 hover:opacity-100`
+                selectedStatus === key
+                  ? `${bg} ${text} border-2 border-current shadow-md`
+                  : `${bg} ${text} opacity-60 hover:opacity-100`
               } text-xs font-semibold px-3 py-1.5 rounded-full transition-all cursor-pointer`}
             >
               <Icon size={12} />

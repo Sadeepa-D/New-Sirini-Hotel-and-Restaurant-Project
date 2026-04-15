@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const CateringItemCard = () => {
   const [cateringItems, setCateringItems] = useState([]);
@@ -10,12 +11,10 @@ const CateringItemCard = () => {
   useEffect(() => {
     const fetchCateringItems = async () => {
       try {
-        const response = await fetch(
+        const response = await axios.get(
           `${VITE_URL}/api/receptionhall/catering/view`,
         );
-        if (!response.ok) throw new Error("Failed to fetch data");
-        const data = await response.json();
-        setCateringItems(data.items || []);
+        setCateringItems(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
         setError("An error occurred while fetching data");
