@@ -81,6 +81,7 @@ router.put(
 
 router.post(
   "/advertisment/add",
+  authmiddleware,
   upload.single("image"),
   AdvertismentCont.createAdvertisment,
 );
@@ -98,6 +99,10 @@ router.put(
 router.put(
   "/advertisment/toggle/rejected/:id",
   AdvertismentCont.toggleAdvertismentStatustoRejected,
+);
+router.put(
+  "/advertisment/toggle/pending/:id",
+  AdvertismentCont.toggleAdvertismentStatustoPending,
 );
 router.get(
   "/advertisment/view/approved",

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { X, Upload } from "lucide-react";
+import toast from "react-hot-toast";
 
 const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
   const [imagePreview, setImagePreview] = useState(null);
@@ -37,14 +38,26 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    onClose();
+    const loading = toast.loading(
+      initialData ? "Updating liquor item..." : "Adding new liquor...",
+    );
     const data = new FormData();
     Object.keys(formData).forEach((key) => {
       data.append(key, formData[key]);
     });
-    onSubmit(data);
-    onClose();
+    try {
+      await onSubmit(data);
+      toast.dismiss(loading);
+      toast.success(
+        initialData ? "Item updated successfully" : "Item added successfully",
+      );
+    } catch (error) {
+      toast.dismiss(loading);
+      toast.error(initialData ? "Failed to update item" : "Failed to add item");
+    }
   };
 
   return (

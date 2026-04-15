@@ -94,7 +94,6 @@ const LiquorManager = () => {
           {
             headers: { "Content-Type": "multipart/form-data" },
           },
-          toast.success("Item updated successfully"),
         );
       } else {
         await axios.post(
@@ -103,7 +102,6 @@ const LiquorManager = () => {
           {
             headers: { "Content-Type": "multipart/form-data" },
           },
-          toast.success("Item added successfully"),
         );
       }
 

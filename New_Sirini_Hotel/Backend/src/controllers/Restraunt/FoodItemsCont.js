@@ -1,4 +1,5 @@
 const FoodItems = require("../../models/Restraunt/FoodItemModel");
+const cloudinary = require("cloudinary");
 
 const createFoodItem = async (req, res) => {
   try {
@@ -6,7 +7,8 @@ const createFoodItem = async (req, res) => {
     if (!name || !price || !description || !category) {
       return res.status(400).json({ message: "Required fields are missing" });
     }
-    const image = req.file ? req.file.path : null;
+    const image = req.file ? req.file.secure_url : null;
+    const imagePublicId = req.file ? req.file.public_id : null;
     if (!image) {
       return res.status(400).json({ message: "Image is required" });
     }
@@ -20,6 +22,7 @@ const createFoodItem = async (req, res) => {
       dietary,
       preparationTime,
       image,
+      imagePublicId,
       availability: true,
     });
     await newFoodItem.save();
@@ -54,9 +57,20 @@ const updateFoodItem = async (req, res) => {
       updates.foodname = updates.name;
       delete updates.name;
     }
-    if (req.file) {
-      updates.image = req.file.path;
+
+    const existingFoodItem = await FoodItems.findById(id);
+    if (!existingFoodItem) {
+      return res.status(404).json({ message: "Food item not found" });
     }
+
+    if (req.file) {
+      if (existingFoodItem.imagePublicId) {
+        await cloudinary.v2.uploader.destroy(existingFoodItem.imagePublicId);
+      }
+      updates.image = req.file.secure_url;
+      updates.imagePublicId = req.file.public_id;
+    }
+
     const updatedFoodItem = await FoodItems.findByIdAndUpdate(
       id,
       { $set: updates },
@@ -79,6 +93,18 @@ const deleteFoodItem = async (req, res) => {
     const { id } = req.params;
     if (!id) {
       return res.status(400).json({ message: "Food item ID is required" });
+    }
+    const foodItem = await FoodItems.findById(id);
+    if (!foodItem) {
+      return res.status(404).json({ message: "Food item not found" });
+    }
+    if (foodItem.imagePublicId) {
+      try {
+        await cloudinary.v2.uploader.destroy(foodItem.imagePublicId);
+      } catch (cloudinaryError) {
+        console.error("Error deleting image from Cloudinary:", cloudinaryError);
+        // Continue with database deletion even if Cloudinary deletion fails
+      }
     }
     await FoodItems.findByIdAndDelete(id);
     res.status(200).json({ message: "Food item deleted successfully" });
