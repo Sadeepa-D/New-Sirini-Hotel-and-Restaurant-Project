@@ -78,7 +78,7 @@ const CateringItemCard = () => {
               </div>
 
               {/* Availability badge */}
-              {item.availability !== undefined && (
+              {!item.statu && (
                 <div
                   className={`absolute top-4 left-4 text-xs font-semibold px-3 py-1 rounded-full shadow-md ${
                     item.availability
