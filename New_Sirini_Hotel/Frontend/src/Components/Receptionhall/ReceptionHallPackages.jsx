@@ -81,15 +81,15 @@ export default function ReceptionHallPackages() {
               </div>
 
               {/* Status Badge */}
-              {card.availability !== undefined && (
+              {!card.status && (
                 <div
                   className={`absolute top-6 left-6 text-[10px] uppercase tracking-[0.2em] font-black px-4 py-2 rounded-full shadow-lg ${
-                    card.availability
+                    card.status
                       ? "bg-emerald-500 text-white"
                       : "bg-rose-500 text-white"
                   }`}
                 >
-                  {card.availability ? "Available" : "Fully Booked"}
+                  {card.status ? "Available" : "Unavailable"}
                 </div>
               )}
             </div>
