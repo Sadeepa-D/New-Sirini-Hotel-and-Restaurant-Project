@@ -14,6 +14,9 @@ const CateringItemCard = () => {
         const response = await axios.get(
           `${VITE_URL}/api/receptionhall/catering/view`,
         );
+        if (response.status !== 200) {
+          throw new Error("Failed to fetch catering items");
+        }
         setCateringItems(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
