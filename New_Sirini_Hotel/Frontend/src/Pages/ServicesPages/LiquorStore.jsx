@@ -77,22 +77,22 @@ const LiquorStore = () => {
   };
 
   const handlePrevBeer = () => {
-    setBeerIndex(Math.max(0, beerIndex - 1));
+    setBeerIndex(Math.max(0, beerIndex - itemsPerView));
   };
 
   const handleNextBeer = () => {
     setBeerIndex((prev) =>
-      Math.max(0, Math.min(filteredBeerDrinks.length - itemsPerView, prev + 1)),
+      Math.min(filteredBeerDrinks.length - itemsPerView, prev + itemsPerView),
     );
   };
 
   const handlePrevOthers = () => {
-    setOthersIndex(Math.max(0, othersIndex - 1));
+    setOthersIndex(Math.max(0, othersIndex - itemsPerView));
   };
 
   const handleNextOthers = () => {
     setOthersIndex(
-      Math.min(filteredOtherDrinks.length - itemsPerView, othersIndex + 1),
+      Math.min(filteredOtherDrinks.length - itemsPerView, othersIndex + itemsPerView),
     );
   };
   const filteredBeerDrinks = liquorItems.filter(
@@ -108,6 +108,16 @@ const LiquorStore = () => {
       drink.price >= priceRange[0] &&
       drink.price <= priceRange[1],
   );
+
+  // Slice-based navigation (same as CateringMng)
+  const GAP = 16;
+  const cardWidth = `calc((100% - ${GAP * (itemsPerView - 1)}px) / ${itemsPerView})`;
+  const visibleBeerDrinks = filteredBeerDrinks.slice(beerIndex, beerIndex + itemsPerView);
+  const canGoBackBeer = beerIndex > 0;
+  const canGoNextBeer = beerIndex + itemsPerView < filteredBeerDrinks.length;
+  const visibleOtherDrinks = filteredOtherDrinks.slice(othersIndex, othersIndex + itemsPerView);
+  const canGoBackOthers = othersIndex > 0;
+  const canGoNextOthers = othersIndex + itemsPerView < filteredOtherDrinks.length;
 
   return (
     <div className="min-h-screen bg-neutral-50">
@@ -188,7 +198,7 @@ const LiquorStore = () => {
             <h3 className="text-2xl font-bold text-neutral-900 mb-6">Beer</h3>
 
             <div className="relative">
-              {beerIndex > 0 && (
+              {canGoBackBeer && (
                 <button
                   onClick={handlePrevBeer}
                   className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
@@ -197,34 +207,45 @@ const LiquorStore = () => {
                 </button>
               )}
 
-              <div className="overflow-hidden">
-                <div
-                  className="flex gap-4 sm:gap-6 transition-transform duration-300"
-                  style={{
-                    transform: `translateX(-${beerIndex * (100 / itemsPerView)}%)`,
-                  }}
-                >
-                  {filteredBeerDrinks.map((drink) => (
-                    <div
-                      key={drink._id}
-                      className="flex-shrink-0"
-                      style={{
-                        width: `calc(${100 / itemsPerView}% - ${((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) / itemsPerView}px)`,
-                      }}
-                    >
-                      <LiqourCard drink={drink} onClick={handleDrinkClick} />
-                    </div>
-                  ))}
-                </div>
+              <div
+                key={beerIndex}
+                className="flex gap-4"
+                style={{ animation: "fadeIn 0.25s ease" }}
+              >
+                {visibleBeerDrinks.map((drink) => (
+                  <div
+                    key={drink._id}
+                    className="shrink-0"
+                    style={{ width: cardWidth }}
+                  >
+                    <LiqourCard drink={drink} onClick={handleDrinkClick} />
+                  </div>
+                ))}
               </div>
 
-              {beerIndex < filteredBeerDrinks.length - itemsPerView && (
+              {canGoNextBeer && (
                 <button
                   onClick={handleNextBeer}
                   className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
                 >
                   <ChevronRight className="w-6 h-6 text-neutral-900" />
                 </button>
+              )}
+
+              {filteredBeerDrinks.length > itemsPerView && (
+                <div className="flex justify-center gap-1.5 mt-4">
+                  {Array.from({ length: Math.ceil(filteredBeerDrinks.length / itemsPerView) }).map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setBeerIndex(i * itemsPerView)}
+                      className={`w-2 h-2 rounded-full transition-colors ${
+                        Math.floor(beerIndex / itemsPerView) === i
+                          ? "bg-amber-500"
+                          : "bg-gray-300 hover:bg-gray-400"
+                      }`}
+                    />
+                  ))}
+                </div>
               )}
             </div>
           </div>
@@ -233,7 +254,7 @@ const LiquorStore = () => {
             <h3 className="text-2xl font-bold text-neutral-900 mb-6">Others</h3>
 
             <div className="relative">
-              {othersIndex > 0 && (
+              {canGoBackOthers && (
                 <button
                   onClick={handlePrevOthers}
                   className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
@@ -242,34 +263,45 @@ const LiquorStore = () => {
                 </button>
               )}
 
-              <div className="overflow-hidden">
-                <div
-                  className="flex gap-4 sm:gap-6 transition-transform duration-300"
-                  style={{
-                    transform: `translateX(-${othersIndex * (100 / itemsPerView)}%)`,
-                  }}
-                >
-                  {filteredOtherDrinks.map((drink) => (
-                    <div
-                      key={drink._id}
-                      className="flex-shrink-0"
-                      style={{
-                        width: `calc(${100 / itemsPerView}% - ${((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) / itemsPerView}px)`,
-                      }}
-                    >
-                      <LiqourCard drink={drink} onClick={handleDrinkClick} />
-                    </div>
-                  ))}
-                </div>
+              <div
+                key={othersIndex}
+                className="flex gap-4"
+                style={{ animation: "fadeIn 0.25s ease" }}
+              >
+                {visibleOtherDrinks.map((drink) => (
+                  <div
+                    key={drink._id}
+                    className="shrink-0"
+                    style={{ width: cardWidth }}
+                  >
+                    <LiqourCard drink={drink} onClick={handleDrinkClick} />
+                  </div>
+                ))}
               </div>
 
-              {othersIndex < filteredOtherDrinks.length - itemsPerView && (
+              {canGoNextOthers && (
                 <button
                   onClick={handleNextOthers}
                   className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
                 >
                   <ChevronRight className="w-6 h-6 text-neutral-900" />
                 </button>
+              )}
+
+              {filteredOtherDrinks.length > itemsPerView && (
+                <div className="flex justify-center gap-1.5 mt-4">
+                  {Array.from({ length: Math.ceil(filteredOtherDrinks.length / itemsPerView) }).map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setOthersIndex(i * itemsPerView)}
+                      className={`w-2 h-2 rounded-full transition-colors ${
+                        Math.floor(othersIndex / itemsPerView) === i
+                          ? "bg-amber-500"
+                          : "bg-gray-300 hover:bg-gray-400"
+                      }`}
+                    />
+                  ))}
+                </div>
               )}
             </div>
           </div>
@@ -287,6 +319,12 @@ const LiquorStore = () => {
         onClose={() => setIsComparisonOpen(false)}
         allDrinks={liquorItems}
       />
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 };

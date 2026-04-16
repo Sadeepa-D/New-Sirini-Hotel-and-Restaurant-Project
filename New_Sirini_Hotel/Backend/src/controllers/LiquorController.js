@@ -1,4 +1,5 @@
 const Liquor = require("../models/Liquor");
+const cloudinary = require("cloudinary");
 
 const addLiquor = async (req, res) => {
   try {
@@ -25,7 +26,8 @@ const addLiquor = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const image = req.file ? req.file.path : null;
+    const image = req.file ? req.file.secure_url : null;
+    const imagePublicId = req.file ? req.file.public_id : null;
 
     if (!image) {
       return res.status(400).json({ message: "Image is required" });
@@ -37,6 +39,7 @@ const addLiquor = async (req, res) => {
       category,
       alcoholPercentage,
       image,
+      imagePublicId,
       description,
       volume,
       origin,
@@ -70,6 +73,21 @@ const getAllLiquor = async (req, res) => {
 const deleteLiquor = async (req, res) => {
   try {
     const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: "Liquor ID is required" });
+    }
+    const liquor = await Liquor.findById(id);
+    if (!liquor) {
+      return res.status(404).json({ message: "Liquor not found" });
+    }
+    if (liquor.imagePublicId) {
+      try {
+        await cloudinary.v2.uploader.destroy(liquor.imagePublicId);
+      } catch (cloudinaryError) {
+        console.error("Error deleting image from Cloudinary:", cloudinaryError);
+        // Continue with database deletion even if Cloudinary deletion fails
+      }
+    }
     await Liquor.findByIdAndDelete(id);
     res.status(200).json({ message: "Liquor deleted successfully" });
   } catch (error) {
@@ -87,8 +105,17 @@ const updateLiquor = async (req, res) => {
     }
     const updates = req.body;
 
+    const existingLiquor = await Liquor.findById(id);
+    if (!existingLiquor) {
+      return res.status(404).json({ message: "Liquor not found" });
+    }
+
     if (req.file) {
-      updates.image = req.file.path;
+      if (existingLiquor.imagePublicId) {
+        await cloudinary.v2.uploader.destroy(existingLiquor.imagePublicId);
+      }
+      updates.image = req.file.secure_url;
+      updates.imagePublicId = req.file.public_id;
     }
 
     const updatedLiquor = await Liquor.findByIdAndUpdate(

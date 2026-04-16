@@ -26,7 +26,7 @@ router.put(
   ReceptionHallAppoint.updateReceptionAppointmentasCompleted,
 );
 router.put(
-  "/appointment/update/cancelled/:id",
+  "/appointment/update/Canceled/:id",
   ReceptionHallAppoint.updateReceptionAppointmentasCancelled,
 );
 router.get(
@@ -38,7 +38,7 @@ router.get(
   ReceptionHallAppoint.getCompletedReceptionAppointments,
 );
 router.get(
-  "/appointment/view/cancelled",
+  "/appointment/view/canceled",
   ReceptionHallAppoint.getCancelledReceptionAppointments,
 );
 router.get(
@@ -81,6 +81,7 @@ router.put(
 
 router.post(
   "/advertisment/add",
+  authmiddleware,
   upload.single("image"),
   AdvertismentCont.createAdvertisment,
 );
@@ -98,6 +99,10 @@ router.put(
 router.put(
   "/advertisment/toggle/rejected/:id",
   AdvertismentCont.toggleAdvertismentStatustoRejected,
+);
+router.put(
+  "/advertisment/toggle/pending/:id",
+  AdvertismentCont.toggleAdvertismentStatustoPending,
 );
 router.get(
   "/advertisment/view/approved",

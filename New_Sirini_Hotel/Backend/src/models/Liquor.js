@@ -29,6 +29,11 @@ const LiquorSchema = mongoose.Schema(
       required: true,
     },
 
+    imagePublicId: {
+      type: String,
+      default: null,
+    },
+
     description: {
       type: String,
     },

@@ -94,7 +94,6 @@ const LiquorManager = () => {
           {
             headers: { "Content-Type": "multipart/form-data" },
           },
-          toast.success("Item updated successfully"),
         );
       } else {
         await axios.post(
@@ -103,7 +102,6 @@ const LiquorManager = () => {
           {
             headers: { "Content-Type": "multipart/form-data" },
           },
-          toast.success("Item added successfully"),
         );
       }
 
@@ -177,53 +175,72 @@ const LiquorManager = () => {
   );
 
   // Reusable carousel section component
-  const renderCarouselSection = (title, items, index, setIndex) => (
-    <div className="mb-12">
-      <h3 className="text-2xl font-bold text-neutral-900 mb-6">{title}</h3>
-      <div className="relative">
-        {index > 0 && (
-          <button
-            onClick={() => setIndex(Math.max(0, index - 1))}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
-          >
-            <ChevronLeft className="w-6 h-6 text-neutral-900" />
-          </button>
-        )}
+  const renderCarouselSection = (title, items, index, setIndex) => {
+    const GAP = 16;
+    const cardWidth = `calc((100% - ${GAP * (itemsPerView - 1)}px) / ${itemsPerView})`;
+    const visibleItems = items.slice(index, index + itemsPerView);
+    const canGoBack = index > 0;
+    const canGoNext = index + itemsPerView < items.length;
 
-        <div className="overflow-hidden">
+    return (
+      <div className="mb-12">
+        <h3 className="text-2xl font-bold text-neutral-900 mb-6">{title}</h3>
+        <div className="relative">
+          {canGoBack && (
+            <button
+              onClick={() => setIndex(Math.max(0, index - itemsPerView))}
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
+            >
+              <ChevronLeft className="w-6 h-6 text-neutral-900" />
+            </button>
+          )}
+
           <div
-            className="flex gap-4 sm:gap-6 transition-transform duration-300"
-            style={{
-              transform: `translateX(-${index * (100 / itemsPerView)}%)`,
-            }}
+            key={index}
+            className="flex gap-4"
+            style={{ animation: "fadeIn 0.25s ease" }}
           >
-            {items.map((item) => (
+            {visibleItems.map((item) => (
               <div
                 key={item._id}
-                className="flex-shrink-0"
-                style={{
-                  width: `calc(${100 / itemsPerView}% - ${((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) / itemsPerView}px)`,
-                }}
+                className="shrink-0"
+                style={{ width: cardWidth }}
               >
                 {renderCarouselCard(item)}
               </div>
             ))}
           </div>
-        </div>
 
-        {index < items.length - itemsPerView && (
-          <button
-            onClick={() =>
-              setIndex(Math.min(items.length - itemsPerView, index + 1))
-            }
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
-          >
-            <ChevronRight className="w-6 h-6 text-neutral-900" />
-          </button>
-        )}
+          {canGoNext && (
+            <button
+              onClick={() =>
+                setIndex(Math.min(items.length - itemsPerView, index + itemsPerView))
+              }
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
+            >
+              <ChevronRight className="w-6 h-6 text-neutral-900" />
+            </button>
+          )}
+
+          {items.length > itemsPerView && (
+            <div className="flex justify-center gap-1.5 mt-4">
+              {Array.from({ length: Math.ceil(items.length / itemsPerView) }).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setIndex(i * itemsPerView)}
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    Math.floor(index / itemsPerView) === i
+                      ? "bg-amber-500"
+                      : "bg-gray-300 hover:bg-gray-400"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="p-4 md:p-6 min-h-screen">
@@ -276,6 +293,12 @@ const LiquorManager = () => {
         isOpen={isDetailsOpen}
         onClose={() => setIsDetailsOpen(false)}
       />
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 };

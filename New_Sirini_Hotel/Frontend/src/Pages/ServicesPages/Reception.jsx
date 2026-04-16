@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronsDown } from "lucide-react";
 import receptionImg from "../../assets/reception.jpg";
-import ReceptionServices from "../../Components/Receptionhall/receptionservices";
+import ReceptionHallPackages from "../../Components/Receptionhall/ReceptionHallPackages";
 import BookingForm from "../../Components/Receptionhall/receptionform";
-import CustomizeEvents from "../../Components/Receptionhall/customizeevents";
+// import CustomizeEvents from "../../Components/Receptionhall/customizeevents";
+import CateringItemCard from "../../Components/Receptionhall/CateringItemCard";
+import AdvertismentSection from "../../Components/Receptionhall/AdvertismentSection";
 
 export default function Reception() {
   // 2. State to handle form visibility
@@ -73,10 +75,8 @@ export default function Reception() {
           </div>
         </div>
       </section>
-
       {/* 4. Conditional Rendering for the Booking Form */}
       <div ref={formSectionRef}>
-        {" "}
         {showForm && (
           <section className="px-4 sm:px-8 py-10 bg-neutral-100 border-b border-gray-200 animate-in fade-in slide-in-from-top-4 duration-500">
             <div className="max-w-4xl mx-auto">
@@ -88,12 +88,10 @@ export default function Reception() {
           </section>
         )}
       </div>
-
       {/* Content Section */}
       <section className="bg-white py-14 px-4 sm:px-8">
         <div className="text-center mb-10">
           <h2 className="font-cinzel text-4xl sm:text-5xl md:text-6xl text-gray-800 mb-3">
-            Perfect for{" "}
             <span className="font-cormorant italic text-gray-700 font-light">
               Every Occasion
             </span>
@@ -104,9 +102,9 @@ export default function Reception() {
           </p>
         </div>
       </section>
-
-      <ReceptionServices />
-      <CustomizeEvents />
+      <ReceptionHallPackages />
+      <CateringItemCard />
+      <AdvertismentSection />
     </div>
   );
 }

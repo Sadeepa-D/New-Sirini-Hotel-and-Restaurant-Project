@@ -23,20 +23,20 @@ export const App = () => {
       <Toaster position="top-center" reverseOrder={false} />
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<MainPage />} />
         <Route path="/register" element={<Registration />} />
-        <Route path="/main" element={<MainPage />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/liquor" element={<Liquor />} />
         <Route path="/reception" element={<Reception />} />
         <Route path="/operationmanager" element={<OperationManager />} />
         <Route path="/manager" element={<Manager />} />
+        <Route path="/rooms" element={<Rooms />} />
+        <Route path="/restaurant" element={<Restaurant />} />
         {/* <Route
           path="/operationmanager/liquormanagment"
           element={<LiquorManagment />}
         /> */}
-        <Route path="/rooms" element={<Rooms />} />
-        <Route path="/restaurant" element={<Restaurant />} />
       </Routes>
       <Footer />
     </>
