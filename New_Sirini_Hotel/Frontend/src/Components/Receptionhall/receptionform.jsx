@@ -121,7 +121,7 @@ export default function BookingForm() {
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">
-                Event Date :
+                Pre Visit Date :
               </label>
               <input
                 type="date"
