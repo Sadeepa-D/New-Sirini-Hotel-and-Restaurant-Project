@@ -30,7 +30,6 @@ const AdvertismentForm = ({ onClose }) => {
     TPNumber: "",
     image: null,
   });
-  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -43,7 +42,10 @@ const AdvertismentForm = ({ onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitting(true);
+    onClose();
+    const loadingtoast = toast.loading(
+      "Submitting your advertisement request...",
+    );
     try {
       const response = await axios.post(
         `${API_URL}/api/receptionhall/advertisment/add`,
@@ -56,13 +58,14 @@ const AdvertismentForm = ({ onClose }) => {
         },
       );
       if (response.status === 201) {
+        toast.dismiss(loadingtoast);
         toast.success("Advertisement request submitted successfully!");
-        onClose();
       }
     } catch (error) {
+      toast.dismiss(loadingtoast);
       toast.error("Failed to submit advertisement. Please try again.");
     } finally {
-      setSubmitting(false);
+      toast.dismiss(loadingtoast);
     }
   };
 
@@ -267,10 +270,9 @@ const AdvertismentForm = ({ onClose }) => {
             </button>
             <button
               type="submit"
-              disabled={submitting}
               className="w-full sm:w-1/2 py-3 rounded-full bg-amber-500 hover:bg-amber-600 text-amber-900 text-sm font-semibold uppercase tracking-widest transition-all duration-300 shadow-md hover:shadow-lg"
             >
-              {submitting ? "Submitting..." : "Submit Request"}
+              Submit Request
             </button>
           </div>
         </form>

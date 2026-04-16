@@ -57,7 +57,7 @@ const AdvertisementCard = ({ ad }) => {
           {/* Portfolio */}
           <div>
             <p className="text-xs text-gray-400 uppercase tracking-widest mb-1 font-medium">
-              Portfolio
+              For More Details:
             </p>
 
             <a
@@ -74,7 +74,7 @@ const AdvertisementCard = ({ ad }) => {
           {/* Contact */}
           <div>
             <p className="text-xs text-gray-400 uppercase tracking-widest mb-1 font-medium">
-              Contact
+              Contact us
             </p>
 
             <a
