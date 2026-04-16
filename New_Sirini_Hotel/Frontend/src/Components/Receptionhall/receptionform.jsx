@@ -56,7 +56,7 @@ export default function BookingForm() {
       toast.error("Failed to submit booking request. Please try again.");
     }
   };
-
+  const today = new Date().toISOString().split("T")[0];
   return (
     <section className="bg-white py-16 px-4 sm:px-8 border-t border-gray-100">
       <div className="text-center mb-10">
@@ -128,6 +128,7 @@ export default function BookingForm() {
                 className={inputClass}
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
+                min={today}
               />
             </div>
             <div>
