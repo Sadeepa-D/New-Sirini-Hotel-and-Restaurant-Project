@@ -16,6 +16,7 @@ import Reception from "./Pages/ServicesPages/Reception";
 
 import Rooms from "./Pages/ServicesPages/Rooms";
 import Restaurant from "./Pages/ServicesPages/Restaurant";
+import Dashboard from "./Pages/Dashboard";
 
 export const App = () => {
   return (
@@ -24,6 +25,7 @@ export const App = () => {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<MainPage />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/register" element={<Registration />} />
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<Admin />} />
