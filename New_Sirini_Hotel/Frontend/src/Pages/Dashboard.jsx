@@ -7,6 +7,8 @@ import {
   Megaphone,
   LogOut,
 } from "lucide-react";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 import ProfileSection from "../Components/Dashboard/ProfileSection";
 import RoomsSection from "../Components/Dashboard/RoomsSection";
@@ -15,6 +17,7 @@ import AppointmentsSection from "../Components/Dashboard/AppointmentSection";
 import AdsSection from "../Components/Dashboard/AdsSection";
 
 const UserDashboard = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("profile");
 
   // Mock Data for UI Demonstration
@@ -54,37 +57,13 @@ const UserDashboard = () => {
     },
   ];
 
-  const mockAppointments = [
-    {
-      id: "APP-55",
-      purpose: "Spa & Massage",
-      date: "Oct 16, 2024",
-      time: "14:00",
-      status: "Confirmed",
-    },
-    {
-      id: "APP-56",
-      purpose: "Hall Viewing",
-      date: "Oct 20, 2024",
-      time: "10:00",
-      status: "Pending",
-    },
-  ];
-
-  const mockAds = [
-    {
-      id: "AD-01",
-      title: "Wedding Photography Promo",
-      submitted: "Oct 10, 2024",
-      status: "Approved",
-    },
-    {
-      id: "AD-02",
-      title: "Event Catering Services",
-      submitted: "Oct 12, 2024",
-      status: "Under Review",
-    },
-  ];
+  const handlelogout = () => {
+    // Clear user session (e.g., remove token, clear local storage)
+    localStorage.removeItem("token");
+    // Redirect to login page or homepage
+    navigate("/login");
+    toast.success("logged out successfully.");
+  };
 
   return (
     <div className="min-h-screen bg-gray-50/50 py-8 px-4 sm:px-6 lg:px-8">
@@ -97,7 +76,10 @@ const UserDashboard = () => {
               Manage your bookings, orders, and profile details.
             </p>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors shadow-sm self-start sm:self-auto">
+          <button
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors shadow-sm self-start sm:self-auto"
+            onClick={handlelogout}
+          >
             <LogOut size={18} />
             <span className="font-medium">Sign Out</span>
           </button>
@@ -147,10 +129,8 @@ const UserDashboard = () => {
             {activeTab === "restaurant" && (
               <RestrauntSection data={mockOrders} />
             )}
-            {activeTab === "appointments" && (
-              <AppointmentsSection data={mockAppointments} />
-            )}
-            {activeTab === "ads" && <AdsSection data={mockAds} />}
+            {activeTab === "appointments" && <AppointmentsSection />}
+            {activeTab === "ads" && <AdsSection />}
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   X,
   Building2,
@@ -18,7 +18,7 @@ import toast from "react-hot-toast";
 
 const categories = ["Photography", "Audio & Musical", "Decoration"];
 
-const AdvertismentForm = ({ onClose }) => {
+const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
   const API_URL = import.meta.env.VITE_API_URL;
   const [formData, setFormData] = useState({
     BuissnesName: "",
@@ -30,6 +30,20 @@ const AdvertismentForm = ({ onClose }) => {
     TPNumber: "",
     image: null,
   });
+  useEffect(() => {
+    if (editData) {
+      setFormData({
+        BuissnesName: editData.BuissnesName || "",
+        category: editData.category || "",
+        description: editData.description || "",
+        portfolio: editData.portfolio || "",
+        price: editData.price || "",
+        location: editData.location || "",
+        TPNumber: editData.TPNumber || "",
+        image: null,
+      });
+    }
+  }, [editData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,23 +58,63 @@ const AdvertismentForm = ({ onClose }) => {
     e.preventDefault();
     onClose();
     const loadingtoast = toast.loading(
-      "Submitting your advertisement request...",
+      editData
+        ? "Updating advertisement..."
+        : "Submitting your advertisement request...",
     );
     try {
-      const response = await axios.post(
-        `${API_URL}/api/receptionhall/advertisment/add`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+      const submitData = new FormData();
+      submitData.append("BuissnesName", formData.BuissnesName);
+      submitData.append("category", formData.category);
+      submitData.append("description", formData.description);
+      submitData.append("portfolio", formData.portfolio);
+      submitData.append("price", formData.price);
+      submitData.append("location", formData.location);
+      submitData.append("TPNumber", formData.TPNumber);
+      if (formData.image) {
+        submitData.append("image", formData.image);
+      }
+      const token = localStorage.getItem("token");
+      if (editData) {
+        // ================= EDIT MODE =================
+        await axios.put(
+          `${API_URL}/api/receptionhall/advertisment/update/${editData._id}`,
+          submitData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
           },
-        },
-      );
-      if (response.status === 201) {
-        toast.dismiss(loadingtoast);
+        );
+        const changestatus = await axios.put(
+          `${API_URL}/api/receptionhall/advertisment/toggle/pending/${editData._id}`,
+          { status: "pending" },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        toast.success("Advertisement updated successfully!");
+      } else {
+        // ================= ADD MODE =================
+        await axios.post(
+          `${API_URL}/api/receptionhall/advertisment/add`,
+          submitData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
         toast.success("Advertisement request submitted successfully!");
       }
+
+      toast.dismiss(loadingtoast);
+      if (onSuccess) onSuccess(); // Refresh the parent list
     } catch (error) {
       toast.dismiss(loadingtoast);
       toast.error("Failed to submit advertisement. Please try again.");

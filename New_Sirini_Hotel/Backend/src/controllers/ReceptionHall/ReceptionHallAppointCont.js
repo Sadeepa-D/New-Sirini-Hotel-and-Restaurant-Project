@@ -188,9 +188,13 @@ const getSpecificUserReceptionAppointments = async (req, res) => {
   try {
     // 1. Get the logged-in user's ID from your auth middleware
     const userId = req.userData.id;
-
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
     // 2. Find only the appointments that belong to this specific userId
-    const userAppointments = await ReceptionAppointment.find({ userId: userId });
+    const userAppointments = await ReceptionAppointment.find({
+      userId: userId,
+    });
 
     // 3. Send the filtered appointments back to the frontend
     res.status(200).json(userAppointments);

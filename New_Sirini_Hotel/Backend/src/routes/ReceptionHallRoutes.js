@@ -121,4 +121,9 @@ router.get(
   "/advertisment/view/rejected",
   AdvertismentCont.getRejectedAdvertisments,
 );
+router.get(
+  "/advertisment/view/userspecific",
+  authmiddleware,
+  AdvertismentCont.getSpecificUserAdvertisments,
+);
 module.exports = router;
