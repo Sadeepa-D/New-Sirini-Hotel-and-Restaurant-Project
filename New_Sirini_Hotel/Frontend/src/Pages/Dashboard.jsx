@@ -14,7 +14,7 @@ import RestrauntSection from "../Components/Dashboard/RestrauntSection";
 import AppointmentsSection from "../Components/Dashboard/AppointmentSection";
 import AdsSection from "../Components/Dashboard/AdsSection";
 
-export default function UserDashboard() {
+const UserDashboard = () => {
   const [activeTab, setActiveTab] = useState("profile");
 
   // Mock Data for UI Demonstration
@@ -156,7 +156,7 @@ export default function UserDashboard() {
       </div>
     </div>
   );
-}
+};
 
 // Navigation Button
 const NavButton = ({ icon: Icon, label, isActive, onClick }) => (
@@ -175,3 +175,4 @@ const NavButton = ({ icon: Icon, label, isActive, onClick }) => (
     {label}
   </button>
 );
+export default UserDashboard;

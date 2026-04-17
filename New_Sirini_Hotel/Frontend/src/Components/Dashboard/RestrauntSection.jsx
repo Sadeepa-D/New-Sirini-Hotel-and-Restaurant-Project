@@ -2,7 +2,8 @@ import React from 'react';
 import { Clock, XCircle } from 'lucide-react';
 import { StatusBadge } from './SharedUI'; 
 
-const RestaurantSection = ({ data }) => (
+const RestaurantSection = ({ data }) => {
+    return(
   <div className="space-y-6 animate-in fade-in duration-300">
     <h2 className="text-xl font-bold text-gray-900 mb-6">Restaurant Orders</h2>
     {data.map((order) => (
@@ -34,5 +35,5 @@ const RestaurantSection = ({ data }) => (
     ))}
   </div>
 );
-
+}
 export default RestaurantSection;

@@ -2,7 +2,8 @@ import React from "react";
 import { Camera, Lock } from "lucide-react";
 import { InputField } from "./SharedUI";
 
-const ProfileSection = () => (
+const ProfileSection = () => {
+    return(
   <div className="space-y-10 animate-in fade-in duration-300">
     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
       <div className="relative group cursor-pointer">
@@ -62,5 +63,5 @@ const ProfileSection = () => (
     </div>
   </div>
 );
-
+}
 export default ProfileSection;
