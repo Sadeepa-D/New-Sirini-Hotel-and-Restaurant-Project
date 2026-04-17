@@ -8,7 +8,6 @@ import {
   LogOut,
 } from "lucide-react";
 
-// Import your new separate components
 import ProfileSection from "../Components/Dashboard/ProfileSection";
 import RoomsSection from "../Components/Dashboard/RoomsSection";
 import RestrauntSection from "../Components/Dashboard/RestrauntSection";
@@ -158,8 +157,6 @@ export default function UserDashboard() {
     </div>
   );
 }
-
-/* ================= SUB-COMPONENTS ================= */
 
 // Navigation Button
 const NavButton = ({ icon: Icon, label, isActive, onClick }) => (
