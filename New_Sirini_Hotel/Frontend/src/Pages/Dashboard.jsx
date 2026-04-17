@@ -175,16 +175,3 @@ const NavButton = ({ icon: Icon, label, isActive, onClick }) => (
     {label}
   </button>
 );
-
-// Generic Input Field Component
-const InputField = ({ label, type = "text", defaultValue, placeholder }) => (
-  <div className="flex flex-col gap-1.5">
-    <label className="text-sm font-medium text-gray-700">{label}</label>
-    <input
-      type={type}
-      defaultValue={defaultValue}
-      placeholder={placeholder}
-      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 outline-none transition-all text-gray-900 bg-white"
-    />
-  </div>
-);
