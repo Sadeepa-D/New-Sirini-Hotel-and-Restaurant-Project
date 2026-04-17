@@ -169,7 +169,7 @@ const getCancelledReceptionAppointments = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-const getoOverdueReceptionAppointments = async (req, res) => {
+const getOverdueReceptionAppointments = async (req, res) => {
   try {
     const OverdueAppointments = await ReceptionAppointment.find({
       status: "Overdue",
@@ -183,6 +183,23 @@ const getoOverdueReceptionAppointments = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+const getSpecificUserReceptionAppointments = async (req, res) => {
+  try {
+    // 1. Get the logged-in user's ID from your auth middleware
+    const userId = req.userData.id;
+
+    // 2. Find only the appointments that belong to this specific userId
+    const userAppointments = await ReceptionAppointment.find({ userId: userId });
+
+    // 3. Send the filtered appointments back to the frontend
+    res.status(200).json(userAppointments);
+  } catch (error) {
+    console.error("Error fetching user appointments:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   createReceptionAppointment,
   getReceptionAppointments,
@@ -193,5 +210,6 @@ module.exports = {
   getPendingReceptionAppointments,
   getCompletedReceptionAppointments,
   getCancelledReceptionAppointments,
-  getoOverdueReceptionAppointments,
+  getOverdueReceptionAppointments,
+  getSpecificUserReceptionAppointments,
 };

@@ -43,7 +43,12 @@ router.get(
 );
 router.get(
   "/appointment/view/overdue",
-  ReceptionHallAppoint.getoOverdueReceptionAppointments,
+  ReceptionHallAppoint.getOverdueReceptionAppointments,
+);
+router.get(
+  "/appointment/view/userspecific",
+  authmiddleware,
+  ReceptionHallAppoint.getSpecificUserReceptionAppointments,
 );
 router.post(
   "/package/add",

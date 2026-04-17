@@ -10,9 +10,16 @@ import {
   Filter,
   ChevronLeft,
   ChevronRight,
+  Edit2,
 } from "lucide-react";
 
-const AppointmentCard = ({ appointment, onUpdate }) => {
+const AppointmentCard = ({
+  appointment,
+  onUpdate,
+  onEdit,
+  onCancel,
+  isAdmin = false,
+}) => {
   // Define status styles
   const statusStyles = {
     Completed: {
@@ -76,23 +83,43 @@ const AppointmentCard = ({ appointment, onUpdate }) => {
         </div>
       </div>
 
-      {(appointment.status === "Pending" ||
-        appointment.status === "Overdue") && (
-        <div className="mt-4 pt-3 flex gap-2">
-          <button
-            className="flex-1 flex items-center justify-center gap-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold py-1.5 rounded-lg transition-colors"
-            onClick={() => onUpdate(appointment._id, "completed")}
-          >
-            Complete
-          </button>
-          <button
-            className="flex-1 flex items-center justify-center gap-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold py-1.5 rounded-lg transition-colors"
-            onClick={() => onUpdate(appointment._id, "canceled")}
-          >
-            Cancel
-          </button>
-        </div>
-      )}
+      {/* Conditionally Render Buttons Based on Role */}
+      {isAdmin
+        ? // ================= MANAGER BUTTONS =================
+          (appointment.status === "Pending" ||
+            appointment.status === "Overdue") && (
+            <div className="mt-4 pt-3 flex gap-2">
+              <button
+                className="flex-1 flex items-center justify-center gap-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold py-1.5 rounded-lg transition-colors"
+                onClick={() => onUpdate(appointment._id, "completed")}
+              >
+                Complete
+              </button>
+              <button
+                className="flex-1 flex items-center justify-center gap-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold py-1.5 rounded-lg transition-colors"
+                onClick={() => onUpdate(appointment._id, "cancelled")}
+              >
+                Cancel
+              </button>
+            </div>
+          )
+        : // ================= USER BUTTONS =================
+          appointment.status === "Pending" && (
+            <div className="mt-4 pt-3 flex gap-2">
+              <button
+                className="flex-1 flex items-center justify-center gap-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold py-2 rounded-lg transition-colors"
+                onClick={() => onEdit(appointment)}
+              >
+                <Edit2 size={14} /> Edit
+              </button>
+              <button
+                className="flex-1 flex items-center justify-center gap-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold py-2 rounded-lg transition-colors"
+                onClick={() => onCancel(appointment._id)}
+              >
+                <XCircle size={14} /> Cancel
+              </button>
+            </div>
+          )}
     </div>
   );
 };

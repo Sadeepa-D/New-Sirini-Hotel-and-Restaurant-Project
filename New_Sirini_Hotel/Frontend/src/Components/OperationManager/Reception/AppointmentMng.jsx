@@ -146,6 +146,7 @@ const AppointmentMng = () => {
                 <AppointmentCard
                   appointment={app}
                   onUpdate={handlestatuseChange}
+                  isAdmin={true}
                 />
               </div>
             ))}

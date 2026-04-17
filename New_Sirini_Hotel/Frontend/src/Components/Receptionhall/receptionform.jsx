@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-export default function BookingForm() {
+export default function BookingForm({ editData = null, onSuccess }) {
   const VITE_URL = import.meta.env.VITE_API_URL;
 
   const inputClass =
@@ -15,13 +15,26 @@ export default function BookingForm() {
   const [noOfGuests, setNoOfGuests] = useState("");
   const [eventType, setEventType] = useState("");
 
+  useEffect(() => {
+    if (editData) {
+      setName(editData.name || "");
+      setEmail(editData.email || "");
+      setPhone(editData.phone || "");
+      setDate(editData.date ? editData.date.split("T")[0] : ""); // Format date for input
+      setNoOfGuests(editData.noOfGuests || "");
+      setEventType(editData.eventType || "");
+    }
+  }, [editData]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
+
     if (!token) {
       toast.error("You must be logged in to submit a booking request.");
       return;
     }
+
     const bookingdata = {
       name,
       email,
@@ -30,41 +43,63 @@ export default function BookingForm() {
       noOfGuests,
       eventType,
     };
+
     try {
-      const response = await axios.post(
-        `${VITE_URL}/api/receptionhall/appointment/add`,
-        bookingdata,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // CRITICAL: Send the JWT here
+      if (editData) {
+        // ================= EDIT EXISTING APPOINTMENT =================
+        await axios.put(
+          `${VITE_URL}/api/receptionhall/appointment/update/${editData._id}`,
+          bookingdata,
+          {
+            headers: { Authorization: `Bearer ${token}` },
           },
-        },
-      );
-      if (response.status === 201) {
-        toast.success(
-          "Booking request submitted successfully! We will contact you soon.",
         );
-        setName("");
-        setEmail("");
-        setPhone("");
-        setDate("");
-        setNoOfGuests("");
-        setEventType("");
+        toast.success("Booking updated successfully!");
+        if (onSuccess) onSuccess(); // Closes the modal in the dashboard
+      } else {
+        // ================= ADD NEW APPOINTMENT =================
+        const response = await axios.post(
+          `${VITE_URL}/api/receptionhall/appointment/add`,
+          bookingdata,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+
+        if (response.status === 201) {
+          toast.success(
+            "Booking request submitted successfully! We will contact you soon.",
+          );
+          // Clear form after successful new addition
+          setName("");
+          setEmail("");
+          setPhone("");
+          setDate("");
+          setNoOfGuests("");
+          setEventType("");
+        }
       }
     } catch (error) {
       console.error("Error submitting booking:", error);
-      toast.error("Failed to submit booking request. Please try again.");
+      // Handle the 401 specifically to help the user
+      if (error.response && error.response.status === 401) {
+        toast.error(
+          "Your session has expired. Please log out and log back in.",
+        );
+      } else {
+        toast.error("Failed to process booking request. Please try again.");
+      }
     }
   };
   const today = new Date().toISOString().split("T")[0];
   return (
     <section className="bg-white py-16 px-4 sm:px-8 border-t border-gray-100">
       <div className="text-center mb-10">
-        <h2 className="font-cormorant italic text-4xl sm:text-5xl text-amber-500 font-semibold mb-2">
-          Book Your Reception Hall
+        <h2 className="font-cormorant italic text-3xl sm:text-5xl text-amber-500 font-semibold mb-2">
+          {editData ? "Update Your Booking" : "Book Your Reception Hall"}
         </h2>
         <p className="text-gray-400 text-sm uppercase tracking-widest">
-          plan your visit
+          {editData ? "Edit Details" : "plan your visit"}
         </p>
       </div>
 
@@ -150,7 +185,7 @@ export default function BookingForm() {
               type="submit"
               className="bg-amber-400 hover:bg-amber-500 text-black text-lg font-bold px-16 py-3.5 transition-all duration-300 shadow-md hover:shadow-lg active:scale-[0.98]"
             >
-              Submit Booking
+              {editData ? "Save Changes" : "Submit Booking"}{" "}
             </button>
           </div>
         </form>
