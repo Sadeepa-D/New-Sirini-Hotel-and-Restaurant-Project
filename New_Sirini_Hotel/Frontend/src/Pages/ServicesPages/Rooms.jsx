@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import MainRoom from "../../assets/Rooms/Main_Room.png";
 import BookingForm from "../../Components/RoomCompo/BookingForm";
+import Exploreindicator from "../../Components/Exploreindicator";
 
 function Rooms() {
   const [roomList, setRoomList] = useState([]);
@@ -10,11 +11,12 @@ function Rooms() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // ── Fetch rooms from backend ──
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/rooms");
+        const res = await axios.get(
+          "http://localhost:5000/api/rooms/viewrooms",
+        );
         setRoomList(res.data);
       } catch (err) {
         setError("Failed to load rooms. Please try again.");
@@ -32,198 +34,189 @@ function Rooms() {
 
   const handleBookingConfirmed = (roomId) => {
     setRoomList((prev) =>
-      prev.map((r) =>
-        r._id === roomId ? { ...r, available: false } : r
-      )
+      prev.map((r) => (r._id === roomId ? { ...r, status: "reserved" } : r)),
     );
   };
 
   return (
-    <div className="bg-white min-h-screen font-sans">
-
-      {/* ── Header Section ── */}
-      <header className="relative h-[260px] sm:h-[400px] md:h-[500px] flex flex-col items-center justify-center text-white text-center overflow-hidden">
+    <div className="bg-[#f8f9fa] min-h-screen font-sans">
+      {/* Header */}
+      <header className="relative w-full h-[70vh] md:h-screen overflow-hidden">
+        {/* Background Image */}
         <img
           src={MainRoom}
-          alt="Hotel Room Header"
-          className="absolute inset-0 w-full h-full object-cover z-0"
+          alt="Luxury Room Header"
+          className="w-full h-full object-cover object-center transition-transform duration-[2000ms] hover:scale-105"
         />
-        <div className="absolute inset-0 bg-black/40 z-10" />
-        <div className="relative z-20 px-4 text-center">
-          <h1 className="text-3xl sm:text-6xl md:text-7xl font-serif mb-2 sm:mb-3 drop-shadow-lg transition-all duration-700 hover:scale-110 hover:text-yellow-400 cursor-pointer">
-            Rooms
+
+        <div className="absolute inset-0 bg-black/40 shadow-inner"></div>
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+          <h1
+            className="font-serif font-bold text-white 
+                 text-4xl md:text-7xl lg:text-8xl 
+                 drop-shadow-[4px_4px_15px_rgba(0,0,0,0.8)]
+                 leading-tight transition-all duration-700"
+          >
+            Our Rooms
           </h1>
-          <p className="italic text-sm sm:text-xl md:text-2xl font-light tracking-wide drop-shadow-md transition-all duration-700 hover:tracking-widest">
+          <p className="text-white/90 italic text-sm md:text-xl font-light tracking-widest max-w-2xl drop-shadow-md">
             Peaceful rooms designed for your perfect stay
           </p>
-          <button className="mt-4 sm:mt-6 px-5 py-2 sm:px-8 sm:py-3 bg-yellow-500 text-white rounded-full text-sm sm:text-lg font-medium shadow-lg transition-all duration-300 hover:bg-yellow-600 hover:scale-105 hover:shadow-2xl">
-            Explore Rooms
-          </button>
+
+          <Exploreindicator />
         </div>
       </header>
 
-      {/* ── Main Content ── */}
-      <main className="max-w-5xl mx-auto py-6 sm:py-12 px-3 sm:px-4">
-        <h2 className="text-base sm:text-2xl md:text-3xl text-center font-serif mb-5 sm:mb-10 text-gray-800">
-          Discover the perfect accommodation for your stay
-        </h2>
-
-        {/* ── Loading State ── */}
-        {loading && (
-          <div className="flex justify-center items-center py-20">
-            <div className="w-8 h-8 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin" />
+      {/* Main Content */}
+      <main className="max-w-6xl mx-auto py-8 md:py-16 px-4">
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <div className="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
           </div>
-        )}
-
-        {/* ── Error State ── */}
-        {error && (
-          <div className="text-center py-20">
-            <p className="text-red-500 font-medium">{error}</p>
-            <button
-              onClick={() => window.location.reload()}
-              className="mt-4 px-6 py-2 bg-yellow-500 text-white rounded-full text-sm hover:bg-yellow-600 transition"
-            >
-              Try Again
-            </button>
-          </div>
-        )}
-
-        {/* ── Empty State ── */}
-        {!loading && !error && roomList.length === 0 && (
-          <div className="text-center py-20">
-            <p className="text-gray-500 font-medium">
-              No rooms available at the moment.
-            </p>
-          </div>
-        )}
-
-        {/* ── Room Cards ── */}
-        {!loading && !error && roomList.length > 0 && (
-          <div className="space-y-4 sm:space-y-6">
+        ) : (
+          <div className="grid grid-cols-1 gap-10">
             {roomList.map((room) => (
               <div
                 key={room._id}
-                className="group flex flex-col md:flex-row bg-[#0a0a0a] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 hover:border-orange-500/50 transition-all duration-500"
+                className="flex flex-col lg:flex-row bg-white rounded-[2rem] overflow-hidden shadow-[0_10px_40px_-15px_rgba(0,0,0,0.1)] border border-gray-100 group transition-all duration-700 hover:shadow-[0_20px_60px_-15px_rgba(249,115,22,0.15)] hover:-translate-y-1"
               >
-                {/* ── Image Section ── */}
-                <div className="w-full md:w-5/12 overflow-hidden relative h-[180px] sm:h-[220px] md:min-h-[180px] md:h-auto">
+                {/* Image Section */}
+                <div className="w-full lg:w-5/12 relative h-[300px] lg:h-auto overflow-hidden">
                   <img
                     src={room.image}
-                    alt={room.type}
-                    className="w-full h-full object-cover absolute inset-0 transition-transform duration-700 group-hover:scale-110"
+                    alt={room.roomType}
+                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/50" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-                  {/* Room Number Badge */}
-                  <div className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4">
-                    <div className="bg-black/60 backdrop-blur-md border border-white/10 rounded-xl px-2 py-1 sm:px-3 sm:py-2 text-center">
-                      <p className="text-orange-400 text-[7px] sm:text-[9px] uppercase tracking-widest font-semibold">
-                        Room
-                      </p>
-                      <p className="text-white text-sm sm:text-lg font-serif font-bold leading-none">
-                        {room.roomNo}
-                      </p>
-                    </div>
+                  <div className="absolute top-6 left-6 bg-white/20 backdrop-blur-md border border-white/30 px-4 py-2 rounded-2xl shadow-xl">
+                    <p className="text-white text-[10px] uppercase tracking-widest font-medium opacity-90">
+                      Room No.
+                    </p>
+                    <p className="text-white text-xl font-serif font-bold">
+                      {room.roomNumber}
+                    </p>
                   </div>
 
-                  {/* Price Tag */}
-                  <div className="absolute bottom-2.5 right-2.5 sm:bottom-4 sm:right-4">
-                    <div className="bg-black/30 backdrop-blur-md border border-white/30 rounded-lg px-3 py-1 sm:px-6 sm:py-1.5">
-                      <p className="text-white/60 text-[7px] sm:text-[8px] uppercase tracking-widest font-semibold">
-                        Per Night
-                      </p>
-                      <p className="text-white text-sm sm:text-lg font-bold font-serif leading-tight">
-                        Rs.{room.price}
-                      </p>
-                    </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-700" />
+                  <div className="absolute bottom-8 left-8 transition-all duration-500 transform group-hover:-translate-y-2">
+                    <span className=" text-white text-[11px] font-black uppercase tracking-[0.2em]">
+                      Price
+                    </span>
+                    <p className="text-white text-3xl font-bold">
+                      Rs.{room.price.toLocaleString()}
+                    </p>
                   </div>
                 </div>
+                {/* --- Info Section --- */}
+                <div className="w-full lg:w-7/12 p-8 md:p-12 flex flex-col justify-between bg-white relative">
+                  {/* Decorative Background Element */}
+                  <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
+                    <span className="text-9xl font-serif">
+                      {room.roomNumber}
+                    </span>
+                  </div>
 
-                {/* ── Info Section ── */}
-                <div className="w-full md:w-7/12 p-3.5 sm:p-5 md:p-7 flex flex-col justify-between text-white bg-gradient-to-br from-[#111] to-black">
                   <div>
-                    <h3 className="text-xl sm:text-2xl md:text-3xl font-serif tracking-tight mb-2">
-                      {room.type}
-                    </h3>
-
-                    <div className="flex items-center gap-3 mb-3 sm:mb-4">
-                      <span className="w-8 h-px bg-orange-500/60"></span>
-                      <span className="w-1.5 h-1.5 bg-orange-500/60 rotate-45 inline-block"></span>
-                      <span className="flex-1 h-px bg-white/5"></span>
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="w-8 h-[1px] bg-orange-500"></span>
+                      <span className="text-orange-500 text-[10px] font-black uppercase tracking-[0.3em]">
+                        Luxury Collection
+                      </span>
                     </div>
 
-                    {/* Spec Cards */}
-                    <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                      <div className="bg-white/[0.03] border border-white/[0.07] rounded-xl p-2 sm:p-3 text-center hover:border-orange-500/30 transition-colors">
-                        <div className="flex justify-center mb-1">
-                          <svg width="13" height="13" fill="none" stroke="#f97316" strokeWidth="1.5" viewBox="0 0 24 24">
-                            <path d="M2 19V9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10" />
-                            <path d="M2 12h20" />
-                            <path d="M6 12V7" />
-                          </svg>
-                        </div>
-                        <p className="text-white text-[10px] sm:text-xs font-medium leading-snug">{room.bed}</p>
-                        <p className="text-gray-600 text-[8px] sm:text-[10px] mt-1 uppercase tracking-wider">Bed</p>
-                      </div>
+                    <h3 className="text-4xl md:text-5xl font-serif text-gray-900 mb-6 leading-tight group-hover:text-orange-600 transition-colors duration-500">
+                      {room.roomType}{" "}
+                      <span className="text-lg font-light text-gray-400 font-sans italic">
+                        Room
+                      </span>
+                    </h3>
 
-                      <div className="bg-white/[0.03] border border-white/[0.07] rounded-xl p-2 sm:p-3 text-center hover:border-orange-500/30 transition-colors">
-                        <div className="flex justify-center mb-1">
-                          <svg width="13" height="13" fill="none" stroke="#f97316" strokeWidth="1.5" viewBox="0 0 24 24">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                            <circle cx="9" cy="7" r="4" />
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                          </svg>
-                        </div>
-                        <p className="text-white text-[10px] sm:text-xs font-medium">
-                          {room.guests} {room.guests === 1 ? "Guest" : "Guests"}
-                        </p>
-                        <p className="text-gray-600 text-[8px] sm:text-[10px] mt-1 uppercase tracking-wider">Capacity</p>
+                    <p className="text-gray-500 text-sm md:text-base leading-relaxed mb-8 font-light max-w-md">
+                      {room.description ||
+                        "A sanctuary of refined elegance, offering bespoke furnishings and panoramic views for the discerning traveler."}
+                    </p>
+
+                    {/* Feature Grid */}
+                    <div className="flex flex-wrap gap-4 mb-10">
+                      <div className="bg-gray-50 px-6 py-3 rounded-2xl flex flex-col items-center justify-center min-w-[100px] border border-gray-100 group-hover:bg-orange-50 group-hover:border-orange-100 transition-colors">
+                        <span className="text-gray-900 font-bold text-sm">
+                          {room.bedType}
+                        </span>
+                        <span className="text-[9px] text-gray-400 uppercase tracking-tighter">
+                          Bed Type
+                        </span>
+                      </div>
+                      <div className="bg-gray-50 px-6 py-3 rounded-2xl flex flex-col items-center justify-center min-w-[100px] border border-gray-100 group-hover:bg-orange-50 group-hover:border-orange-100 transition-colors">
+                        <span className="text-gray-900 font-bold text-sm">
+                          {room.capacity} Guests
+                        </span>
+                        <span className="text-[9px] text-gray-400 uppercase tracking-tighter">
+                          Capacity
+                        </span>
+                      </div>
+                      <div className="bg-gray-50 px-6 py-3 rounded-2xl flex flex-col items-center justify-center min-w-[100px] border border-gray-100 group-hover:bg-orange-50 group-hover:border-orange-100 transition-colors">
+                        <span className="text-gray-900 font-bold text-sm">
+                          {room.condition === "AC"
+                            ? "Air Conditioned"
+                            : "Fan Cooled"}
+                        </span>
+                        <span className="text-[9px] text-gray-400 uppercase tracking-tighter">
+                          Condition
+                        </span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Status + Button */}
-                  <div>
-                    <div className="w-full h-px bg-white/[0.06] my-3 sm:my-4" />
-                    <div className="flex justify-between items-center gap-2">
-
-                      <div className="flex items-center gap-1.5 sm:gap-2">
-                        <span className="relative flex h-2.5 w-2.5 sm:h-3 sm:w-3 flex-shrink-0">
-                          <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${room.available ? "bg-green-400" : "bg-red-400"}`} />
-                          <span className={`relative inline-flex rounded-full h-2.5 w-2.5 sm:h-3 sm:w-3 ${room.available ? "bg-green-500" : "bg-red-500"}`} />
-                        </span>
-                        <div>
-                          <p className={`text-[9px] sm:text-xs font-semibold uppercase tracking-widest ${room.available ? "text-green-400" : "text-red-400"}`}>
-                            {room.available ? "Available" : "Reserved"}
-                          </p>
-                          <p className="text-gray-600 text-[8px] sm:text-[10px] mt-0.5 hidden sm:block">
-                            {room.available ? "Ready to book" : "Currently occupied"}
-                          </p>
-                        </div>
+                  {/* --- Status & Footer --- */}
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-8 pt-8 border-t border-gray-50">
+                    <div className="flex items-center gap-4">
+                      <div className="relative flex items-center justify-center">
+                        <div
+                          className={`w-3 h-3 rounded-full animate-ping absolute opacity-20 ${
+                            room.status === "available"
+                              ? "bg-green-500"
+                              : room.status === "maintenance"
+                                ? "bg-yellow-500"
+                                : "bg-red-500"
+                          }`}
+                        />
+                        <div
+                          className={`w-3 h-3 rounded-full relative shadow-sm ${
+                            room.status === "available"
+                              ? "bg-green-500"
+                              : room.status === "maintenance"
+                                ? "bg-yellow-500"
+                                : "bg-red-500"
+                          }`}
+                        />
                       </div>
-
-                      <button
-                        onClick={() => handleBookNow(room)}
-                        disabled={!room.available}
-                        className={`
-                          group/btn relative overflow-hidden px-4 sm:px-8 py-2 sm:py-3 rounded-full font-bold transition-all duration-300 text-[9px] sm:text-xs uppercase tracking-widest whitespace-nowrap flex-shrink-0
-                          ${room.available
-                            ? "bg-orange-500 text-black hover:bg-orange-400 hover:shadow-[0_0_25px_rgba(249,115,22,0.5)] active:scale-95"
-                            : "bg-gray-800 text-gray-500 cursor-not-allowed"
-                          }
-                        `}
+                      <p
+                        className={`text-[10px] font-black uppercase tracking-[0.2em] ${
+                          room.status === "available"
+                            ? "text-green-600"
+                            : room.status === "maintenance"
+                              ? "text-yellow-600"
+                              : "text-red-600"
+                        }`}
                       >
-                        {room.available && (
-                          <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-500" />
-                        )}
-                        <span className="relative z-10">
-                          {room.available ? "Book Now →" : "Booked"}
-                        </span>
-                      </button>
-
+                        {room.status === "maintenance"
+                          ? "Under Maintenance"
+                          : room.status}
+                      </p>
                     </div>
+
+                    <button
+                      onClick={() => handleBookNow(room)}
+                      disabled={room.status !== "available"}
+                      className={`relative overflow-hidden group/btn w-full sm:w-auto px-14 py-4 rounded-full font-black text-[10px] uppercase tracking-[0.2em] transition-all duration-500 
+          ${
+            room.status === "available"
+              ? "bg-gray-900 text-white hover:bg-orange-600 shadow-xl shadow-gray-200"
+              : "bg-gray-100 text-gray-400 cursor-not-allowed pointer-events-none opacity-60"
+          }`}
+                    >
+                      <span className="relative z-10">Book Now</span>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -232,7 +225,6 @@ function Rooms() {
         )}
       </main>
 
-      {/* ── BookingForm Modal ── */}
       {isModalOpen && selectedRoom && (
         <BookingForm
           selectedRoom={selectedRoom}
@@ -240,7 +232,6 @@ function Rooms() {
           onConfirmed={handleBookingConfirmed}
         />
       )}
-
     </div>
   );
 }
