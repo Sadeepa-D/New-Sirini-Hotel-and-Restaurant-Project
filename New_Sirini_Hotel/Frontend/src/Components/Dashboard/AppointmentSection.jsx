@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { CalendarDays, Edit2, XCircle } from "lucide-react";
-import { StatusBadge } from "./SharedUI";
 import AppointmentCard from "../OperationManager/Reception/AppointmentCard";
 import AppointForm from "../Receptionhall/receptionform";
 
