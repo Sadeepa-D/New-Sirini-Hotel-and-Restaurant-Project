@@ -1,6 +1,7 @@
 const User = require("../models/UserModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const cloudinary = require("cloudinary");
 
 const registerUser = async (req, res) => {
   try {
@@ -96,9 +97,23 @@ const updateUserProfile = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized User" });
     }
     const { name, email, Phone } = req.body;
+    const updates = { name, email, Phone };
+    if (req.file) {
+      // Delete old image from Cloudinary if exists
+      const existingUser = await User.findById(userId);
+      if (existingUser.imagePublicId) {
+        try {
+          await cloudinary.v2.uploader.destroy(existingUser.imagePublicId);
+        } catch (err) {
+          console.error("Cloudinary delete error:", err);
+        }
+      }
+      updates.image = req.file.secure_url;
+      updates.imagePublicId = req.file.public_id;
+    }
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { $set: { name, email, Phone } },
+      { $set: updates },
       { new: true },
     );
     res.status(200).json(updatedUser);
@@ -138,4 +153,10 @@ const UpdatePassword = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getUserProfile, updateUserProfile ,UpdatePassword};
+module.exports = {
+  registerUser,
+  loginUser,
+  getUserProfile,
+  updateUserProfile,
+  UpdatePassword,
+};

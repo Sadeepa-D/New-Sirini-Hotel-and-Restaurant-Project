@@ -13,6 +13,8 @@ const ProfileSection = () => {
     currentPassword: "",
     newPassword: "",
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -44,6 +46,13 @@ const ProfileSection = () => {
       [name]: value,
     }));
   };
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
 
   const handleSaveChanges = async () => {
     const loadingToast = toast.loading("Updating profile...");
@@ -53,16 +62,20 @@ const ProfileSection = () => {
       return;
     }
     try {
+      const formData = new FormData();
+      formData.append("name", existingProfileData.name);
+      formData.append("email", existingProfileData.email);
+      formData.append("Phone", existingProfileData.Phone);
+      if (imageFile) {
+        formData.append("image", imageFile);
+      }
       const response = await axios.put(
         `${VITE_URL}/api/users/profile/update`,
-        {
-          name: existingProfileData.name,
-          email: existingProfileData.email,
-          Phone: existingProfileData.Phone,
-        },
+        formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
           },
         },
       );
@@ -93,6 +106,7 @@ const ProfileSection = () => {
       }
       toast.dismiss(loadingToast);
       toast.success("Profile updated successfully.");
+      fetchProfileData();
     } catch (error) {
       const errorMessage =
         error.response?.data?.message ||
@@ -114,13 +128,30 @@ const ProfileSection = () => {
     <div className="space-y-10 animate-in fade-in duration-300">
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
         <div className="relative group cursor-pointer">
-          <div className="w-24 h-24 rounded-full bg-indigo-100 border-4 border-white shadow-lg overflow-hidden flex items-center justify-center">
-            <span className="text-3xl font-bold text-indigo-700">JD</span>
-            {/* Replace span with img tag when backend is connected */}
-          </div>
-          <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <Camera className="text-white" size={24} />
-          </div>
+          <label className="cursor-pointer">
+            <div className="w-24 h-24 rounded-full bg-indigo-100 border-4 border-white shadow-lg overflow-hidden flex items-center justify-center">
+              {imagePreview || existingProfileData.image ? (
+                <img
+                  src={imagePreview || existingProfileData.image}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-3xl font-bold text-indigo-700">
+                  {existingProfileData.name?.charAt(0)?.toUpperCase() || "U"}
+                </span>
+              )}
+            </div>
+            <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <Camera className="text-white" size={24} />
+            </div>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="hidden"
+            />
+          </label>
         </div>
         <div>
           <h2 className="text-xl font-bold text-gray-900">
