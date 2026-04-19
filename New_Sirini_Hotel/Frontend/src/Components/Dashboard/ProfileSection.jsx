@@ -124,12 +124,18 @@ const ProfileSection = () => {
       </div>
     );
   }
+  const inputStyle =
+    "w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none transition-all text-gray-900 bg-white shadow-sm font-sans";
+  const labelStyle =
+    "text-xs font-semibold text-gray-800 uppercase tracking-widest mb-1";
+
   return (
-    <div className="space-y-10 animate-in fade-in duration-300">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-        <div className="relative group cursor-pointer">
+    <div className="font-serif space-y-12 animate-in fade-in duration-300 max-w-5xl mx-auto pb-10">
+      {/* Profile Header Area */}
+      <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-8 border-b border-gray-200 pb-10">
+        <div className="relative group cursor-pointer shrink-0">
           <label className="cursor-pointer">
-            <div className="w-24 h-24 rounded-full bg-indigo-100 border-4 border-white shadow-lg overflow-hidden flex items-center justify-center">
+            <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gray-200 border-4 border-white shadow-xl overflow-hidden flex items-center justify-center">
               {imagePreview || existingProfileData.image ? (
                 <img
                   src={imagePreview || existingProfileData.image}
@@ -137,13 +143,13 @@ const ProfileSection = () => {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span className="text-3xl font-bold text-indigo-700">
+                <span className="text-4xl font-light text-gray-800">
                   {existingProfileData.name?.charAt(0)?.toUpperCase() || "U"}
                 </span>
               )}
             </div>
-            <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <Camera className="text-white" size={24} />
+            <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <Camera className="text-white" size={28} />
             </div>
             <input
               type="file"
@@ -153,94 +159,101 @@ const ProfileSection = () => {
             />
           </label>
         </div>
-        <div>
-          <h2 className="text-xl font-bold text-gray-900">
+        <div className="mt-2 sm:mt-6">
+          <h2 className="text-3xl sm:text-4xl font-light text-gray-900 mb-2">
             {existingProfileData.name}
           </h2>
-          <p className="text-gray-500">
+          <p className="text-gray-500 italic text-lg tracking-wide">
             Update your photo and personal details here.
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Personal Details Form */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* 1. Name Input */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-gray-700">Name</label>
+          <label className={labelStyle}>Full Name</label>
           <input
             type="text"
             name="name"
             defaultValue={existingProfileData.name}
             onChange={handleChange}
-            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 outline-none transition-all text-gray-900 bg-white"
+            className={inputStyle}
           />
         </div>
 
         {/* 2. Role Input */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-gray-700">Role</label>
+          <label className={labelStyle}>Role</label>
           <input
             type="text"
             value={existingProfileData.Role}
             disabled
-            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-gray-50 text-gray-500 cursor-not-allowed outline-none transition-all"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed outline-none transition-all font-sans italic"
           />
         </div>
 
         {/* 3. Email Address Input */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-gray-700">
-            Email Address
-          </label>
+          <label className={labelStyle}>Email Address</label>
           <input
             type="email"
             name="email"
             defaultValue={existingProfileData.email}
             onChange={handleChange}
-            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 outline-none transition-all text-gray-900 bg-white"
+            className={inputStyle}
           />
         </div>
 
         {/* 4. Phone Number Input */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-gray-700">
-            Phone Number
-          </label>
+          <label className={labelStyle}>Phone Number</label>
           <input
             type="tel"
             name="Phone"
             defaultValue={existingProfileData.Phone}
             onChange={handleChange}
-            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 outline-none transition-all text-gray-900 bg-white"
+            className={inputStyle}
           />
         </div>
       </div>
 
-      <div className="pt-6 border-t border-gray-100">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-          <Lock size={20} className="text-gray-400" /> Change Password
+      {/* Security / Password Section */}
+      <div className="pt-8 border-t border-gray-200">
+        <h3 className="text-2xl font-light text-gray-900 mb-6 flex items-center justify-center sm:justify-start gap-3">
+          <Lock size={24} className="text-amber-500" /> Security Settings
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <input
-            type="password"
-            name="currentPassword"
-            placeholder="Current Password"
-            onChange={handleChange}
-            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 outline-none transition-all text-gray-900 bg-white"
-          />
-          <input
-            type="password"
-            name="newPassword"
-            onChange={handleChange}
-            placeholder="New Password"
-            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 outline-none transition-all text-gray-900 bg-white"
-          />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="flex flex-col gap-1.5">
+            <label className={labelStyle}>Current Password</label>
+            <input
+              type="password"
+              name="currentPassword"
+              placeholder="Enter current password"
+              onChange={handleChange}
+              className={inputStyle}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className={labelStyle}>New Password</label>
+            <input
+              type="password"
+              name="newPassword"
+              onChange={handleChange}
+              placeholder="Enter new password"
+              className={inputStyle}
+            />
+          </div>
         </div>
       </div>
 
-      <div className="flex justify-end pt-4">
+      {/* Action Area */}
+      <div className="flex justify-center sm:justify-end pt-8">
         <button
-          className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg shadow-sm transition-colors"
+          className="px-10 py-3.5 bg-black text-white rounded-full text-lg tracking-wider hover:bg-amber-500 hover:text-black transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-0.5 active:translate-y-0"
           onClick={handleSaveChanges}
         >
           Save Changes

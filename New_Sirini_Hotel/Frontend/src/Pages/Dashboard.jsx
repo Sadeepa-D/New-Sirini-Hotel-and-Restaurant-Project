@@ -66,29 +66,33 @@ const UserDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-100 font-serif py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        {/* RESTORED: Dashboard Header */}
-        <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        {/* Dashboard Header */}
+        <div className="mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 border-b border-gray-200 pb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">My Account</h1>
-            <p className="text-gray-500 mt-1">
+            <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-2">
+              My Account
+            </h1>
+            <p className="text-gray-500 italic tracking-wide text-lg">
               Manage your bookings, orders, and profile details.
             </p>
           </div>
           <button
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors shadow-sm self-start sm:self-auto"
+            className="flex items-center gap-2 px-6 py-2.5 bg-red-600 text-white rounded-full hover:bg-red-500 transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-red-500/40 hover:-translate-y-0.5 active:translate-y-0 self-start sm:self-auto"
             onClick={handlelogout}
           >
             <LogOut size={18} />
-            <span className="font-medium">Sign Out</span>
+            <span className="font-sans font-semibold tracking-wider uppercase text-xs">
+              Sign Out
+            </span>
           </button>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* RESTORED: Sidebar Navigation */}
-          <div className="w-full lg:w-64 flex-shrink-0">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-2 flex lg:flex-col overflow-x-auto lg:overflow-visible overflow-y-hidden hide-scrollbar">
+          {/* Sidebar Navigation */}
+          <div className="w-full lg:w-72 flex-shrink-0">
+            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-3 flex lg:flex-col overflow-x-auto lg:overflow-visible overflow-y-hidden hide-scrollbar gap-1.5">
               <NavButton
                 icon={User}
                 label="Profile Details"
@@ -103,7 +107,7 @@ const UserDashboard = () => {
               />
               <NavButton
                 icon={UtensilsCrossed}
-                label="Restaurant Orders"
+                label="Restaurant"
                 isActive={activeTab === "restaurant"}
                 onClick={() => setActiveTab("restaurant")}
               />
@@ -123,7 +127,7 @@ const UserDashboard = () => {
           </div>
 
           {/* Main Content Area */}
-          <div className="flex-1 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 min-h-[600px]">
+          <div className="flex-1 bg-white rounded-2xl shadow-xl border border-gray-100 p-6 sm:p-10 min-h-[600px]">
             {activeTab === "profile" && <ProfileSection />}
             {activeTab === "rooms" && <RoomsSection data={mockRooms} />}
             {activeTab === "restaurant" && (
@@ -142,17 +146,18 @@ const UserDashboard = () => {
 const NavButton = ({ icon: Icon, label, isActive, onClick }) => (
   <button
     onClick={onClick}
-    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all whitespace-nowrap min-w-max lg:min-w-0 font-medium ${
+    className={`flex-shrink-0 flex items-center gap-3.5 px-5 py-3.5 rounded-xl transition-all duration-300 whitespace-nowrap min-w-max lg:min-w-0 font-sans text-left ${
       isActive
-        ? "bg-indigo-50 text-indigo-700"
-        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+        ? "bg-amber-50 text-amber-900 font-semibold shadow-sm ring-1 ring-amber-100"
+        : "text-gray-500 hover:bg-gray-50 hover:text-gray-900 font-medium"
     }`}
   >
     <Icon
-      size={20}
-      className={isActive ? "text-indigo-700" : "text-gray-400"}
+      size={24}
+      strokeWidth={isActive ? 2.5 : 2}
+      className={isActive ? "text-amber-500" : "text-gray-400"}
     />
-    {label}
+    <span className="tracking-wide">{label}</span>
   </button>
 );
 export default UserDashboard;
