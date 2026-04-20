@@ -18,29 +18,32 @@ import Rooms from "./Pages/ServicesPages/Rooms";
 import Restaurant from "./Pages/ServicesPages/Restaurant";
 import Dashboard from "./Pages/Dashboard";
 
+const PublicLayout = ({ children }) => (
+  <>
+    <Header />
+    {children}
+    <Footer />
+  </>
+);
+
 export const App = () => {
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<MainPage />} />
+        <Route path="/" element={<PublicLayout><MainPage /></PublicLayout>} />
+        <Route path="/liquor" element={<PublicLayout><Liquor /></PublicLayout>} />
+        <Route path="/reception" element={<PublicLayout><Reception /></PublicLayout>} />
+        <Route path="/rooms" element={<PublicLayout><Rooms /></PublicLayout>} />
+        <Route path="/restaurant" element={<PublicLayout><Restaurant /></PublicLayout>} />
+
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/register" element={<Registration />} />
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<Admin />} />
-        <Route path="/liquor" element={<Liquor />} />
-        <Route path="/reception" element={<Reception />} />
-        <Route path="/operationmanager" element={<OperationManager />} />
         <Route path="/manager" element={<Manager />} />
-        <Route path="/rooms" element={<Rooms />} />
-        <Route path="/restaurant" element={<Restaurant />} />
-        <Route path="/header" element={<Header />} />
-        <Route path="/footer" element={<Footer />} />
-        {/* <Route
-          path="/operationmanager/liquormanagment"
-          element={<LiquorManagment />}
-        /> */}
+           <Route path="/operationmanager" element={<OperationManager />} />
       </Routes>
     </>
   );
