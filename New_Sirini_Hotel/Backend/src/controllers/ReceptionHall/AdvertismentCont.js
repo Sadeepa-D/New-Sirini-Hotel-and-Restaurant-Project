@@ -105,7 +105,9 @@ const updateAdvertisment = async (req, res) => {
 
     if (req.file) {
       if (existingAdvertisment.imagePublicId) {
-        await cloudinary.v2.uploader.destroy(existingAdvertisment.imagePublicId);
+        await cloudinary.v2.uploader.destroy(
+          existingAdvertisment.imagePublicId,
+        );
       }
       updateData.image = req.file.secure_url;
       updateData.imagePublicId = req.file.public_id;
@@ -232,6 +234,21 @@ const getRejectedAdvertisments = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+const getSpecificUserAdvertisments = async (req, res) => {
+  try {
+    const userId = req.userData.id;
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+    const userAdvertisments = await Adevertisment.find({ userId });
+    res.status(200).json(userAdvertisments);
+  } catch (error) {
+    console.error("Error fetching user advertisments:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   createAdvertisment,
   getAdvertisments,
@@ -243,4 +260,5 @@ module.exports = {
   getPendingAdvertisments,
   getApprovedAdvertisments,
   getRejectedAdvertisments,
+  getSpecificUserAdvertisments,
 };

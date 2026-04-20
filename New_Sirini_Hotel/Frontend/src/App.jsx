@@ -5,7 +5,7 @@ import ScrollToTop from "./Components/ScrollToTop";
 import Login from "./Pages/Login";
 import Registration from "./Pages/Registration";
 import MainPage from "./Pages/MainPage";
-// import Header from "./Components/Header";
+import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import Liquor from "./Pages/ServicesPages/LiquorStore";
 // import LiquorManagment from "./Components/OperationManager/Liquor/LiquorMngHome";
@@ -16,6 +16,7 @@ import Reception from "./Pages/ServicesPages/Reception";
 
 import Rooms from "./Pages/ServicesPages/Rooms";
 import Restaurant from "./Pages/ServicesPages/Restaurant";
+import Dashboard from "./Pages/Dashboard";
 
 export const App = () => {
   return (
@@ -24,6 +25,7 @@ export const App = () => {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<MainPage />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/register" element={<Registration />} />
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<Admin />} />
@@ -33,12 +35,13 @@ export const App = () => {
         <Route path="/manager" element={<Manager />} />
         <Route path="/rooms" element={<Rooms />} />
         <Route path="/restaurant" element={<Restaurant />} />
+        <Route path="/header" element={<Header />} />
+        <Route path="/footer" element={<Footer />} />
         {/* <Route
           path="/operationmanager/liquormanagment"
           element={<LiquorManagment />}
         /> */}
       </Routes>
-      <Footer />
     </>
   );
 };

@@ -25,7 +25,7 @@ const AdvertisementSection = () => {
     const fetchAds = async () => {
       try {
         const response = await axios.get(
-          `${VITE_URL}/api/receptionhall/advertisment/view`,
+          `${VITE_URL}/api/receptionhall/advertisment/view/approved`,
         );
         if (response.status !== 200) {
           throw new Error("Failed to load advertisements");

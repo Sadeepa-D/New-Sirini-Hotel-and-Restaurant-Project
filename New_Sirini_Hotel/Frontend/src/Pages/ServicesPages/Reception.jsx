@@ -6,12 +6,24 @@ import BookingForm from "../../Components/Receptionhall/receptionform";
 // import CustomizeEvents from "../../Components/Receptionhall/customizeevents";
 import CateringItemCard from "../../Components/Receptionhall/CateringItemCard";
 import AdvertismentSection from "../../Components/Receptionhall/AdvertismentSection";
+import toast from "react-hot-toast";
 
 export default function Reception() {
   // 2. State to handle form visibility
   const [showForm, setShowForm] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   // 2. Create the reference
   const formSectionRef = useRef(null);
+
+  const handleadrequest = () => {
+    if (!isLoggedIn) {
+      toast.error("You must be logged in to place Your Appointment.");
+      setShowForm(false);
+      return;
+    } else {
+      setShowForm(true);
+    }
+  };
 
   // 3. Effect to scroll when showForm becomes true
   useEffect(() => {
@@ -53,7 +65,7 @@ export default function Reception() {
 
             {/* 3. The Toggle Button */}
             <button
-              onClick={() => setShowForm(!showForm)}
+              onClick={() => handleadrequest()}
               className="bg-white text-gray-900 px-8 py-3 rounded-full font-semibold uppercase tracking-widest text-sm hover:bg-gray-200 transition-all duration-300 shadow-lg"
             >
               {showForm ? "Close Booking" : "Book Your Visit"}
