@@ -167,24 +167,33 @@ export default function Restaurant() {
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      {/* Hero Section */}
-      <div className="relative w-full h-screen overflow-hidden">
-        <img
-          src={resturantImg}
-          alt="Restaurant"
-          className="w-full h-full object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-black/30"></div>
-        <h1
-          className="absolute inset-0 flex items-center justify-center 
-               text-center font-serif font-bold text-white 
-               text-2xl md:text-5xl lg:text-6xl 
-               drop-shadow-[2px_2px_8px_rgba(0,0,0,0.7)]"
+      {/* HERO SECTION - Aligned with MainPage */}
+      <header className="relative w-full h-[calc(100vh-120px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
+        {/* Background */}
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: `url(${resturantImg})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
         >
-          Eat well, laugh often, enjoy life
-        </h1>
-        <Exploreindicator />
-      </div>
+          <div className="absolute inset-0 bg-black/50"></div>
+        </div>
+
+        {/* Content - centered in hero */}
+        <div className="z-10 flex flex-col items-center justify-center gap-4">
+          <h1 className="text-4xl md:text-6xl font-light">Our Restaurant</h1>
+          <p className="text-lg md:text-xl italic tracking-widest border-t border-b border-white py-2 px-4">
+            Eat well, laugh often, enjoy life
+          </p>
+        </div>
+
+        {/* Explore arrow pinned to bottom */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
+          <Exploreindicator />
+        </div>
+      </header>
 
       {/* Menu Header Section */}
       <div className="px-4 py-8 md:py-12">
