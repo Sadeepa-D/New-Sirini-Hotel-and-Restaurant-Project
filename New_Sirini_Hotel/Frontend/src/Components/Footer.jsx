@@ -5,10 +5,10 @@ import { Link } from "react-router-dom";
 
 function Footer() {
   return (
-    <footer className="bg-black text-white px-8 py-3">
+    <footer className="bg-black text-white px-8 py-1">
       <div className="max-w-7xl mx-auto">
         {/* main footer content */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-8 mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-4 mt-4">
           {/* About Section */}
           <div>
             <h2 className="text-white font-serif text-4xl mb-4 leading-tight">
@@ -21,22 +21,22 @@ function Footer() {
               rooms, quality dining, liquor services, and event spaces for
               weddings and celebrations
             </p>
-<div className="flex gap-3">
-  <a
-    href="#"
-    className="bg-transparent border border-white rounded-full p-2 hover:bg-yellow-500 transition-all duration-300 hover:scale-110 group"
-    aria-label="Facebook"
-  >
-    <FaFacebookF className="w-4 h-4 text-white group-hover:!text-yellow-500" />
-  </a>
-  <a
-    href="#"
-    className="bg-transparent border border-white rounded-full p-2 hover:bg-yellow-500 transition-all duration-300 hover:scale-110 group"
-    aria-label="Instagram"
-  >
-    <FaInstagram className="w-4 h-4 text-white group-hover:!text-yellow-500" />
-  </a>
-</div>
+            <div className="flex gap-3">
+              <a
+                href="#"
+                className="bg-transparent border border-white rounded-full p-2 hover:bg-yellow-500 transition-all duration-300 hover:scale-110 group"
+                aria-label="Facebook"
+              >
+                <FaFacebookF className="w-4 h-4 text-white group-hover:!text-yellow-500" />
+              </a>
+              <a
+                href="#"
+                className="bg-transparent border border-white rounded-full p-2 hover:bg-yellow-500 transition-all duration-300 hover:scale-110 group"
+                aria-label="Instagram"
+              >
+                <FaInstagram className="w-4 h-4 text-white group-hover:!text-yellow-500" />
+              </a>
+            </div>
           </div>
 
           {/* Discover Section */}
@@ -44,28 +44,28 @@ function Footer() {
             <h3 className="text-white font-bold text-xl mb-6">Discover</h3>
             <ul className="space-y-3">
               <li>
-                <a
-                  href="#reception"
+                <Link
+                  to="/reception"
                   className="!text-gray-300 !no-underline hover:!text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
                 >
                   Reception
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#rooms"
+                <Link
+                  to="/rooms"
                   className="!text-gray-300 !no-underline hover:!text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
                 >
                   Rooms
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#restaurant"
+                <Link
+                  to="/restaurant"
                   className="!text-gray-300 !no-underline hover:!text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
                 >
                   Restaurant
-                </a>
+                </Link>
               </li>
               <li>
                 <Link
