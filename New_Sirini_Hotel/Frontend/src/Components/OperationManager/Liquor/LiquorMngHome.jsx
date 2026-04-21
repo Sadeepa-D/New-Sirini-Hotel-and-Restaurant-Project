@@ -61,10 +61,12 @@ const LiquorManager = () => {
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
+      const loadingtoast = toast.loading("Deleting item...");
       try {
         await axios.delete(
           `${import.meta.env.VITE_API_URL}/api/liquor/delete/${id}`,
         );
+        toast.dismiss(loadingtoast);
         toast.success("Item deleted successfully");
         fetchLiquorItems();
       } catch (error) {
@@ -214,7 +216,9 @@ const LiquorManager = () => {
           {canGoNext && (
             <button
               onClick={() =>
-                setIndex(Math.min(items.length - itemsPerView, index + itemsPerView))
+                setIndex(
+                  Math.min(items.length - itemsPerView, index + itemsPerView),
+                )
               }
               className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
             >
@@ -224,7 +228,9 @@ const LiquorManager = () => {
 
           {items.length > itemsPerView && (
             <div className="flex justify-center gap-1.5 mt-4">
-              {Array.from({ length: Math.ceil(items.length / itemsPerView) }).map((_, i) => (
+              {Array.from({
+                length: Math.ceil(items.length / itemsPerView),
+              }).map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setIndex(i * itemsPerView)}
