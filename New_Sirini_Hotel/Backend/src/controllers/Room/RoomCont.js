@@ -1,4 +1,5 @@
 const RoomModel = require("../../models/Rooms/RoomModel");
+const cloudinary = require("cloudinary");
 
 // ── 1. Create New Room ──
 const createRoom = async (req, res) => {
@@ -9,8 +10,8 @@ const createRoom = async (req, res) => {
     if (!roomNumber || !roomType || !price || !bedType || !capacity) {
       return res.status(400).json({ message: "Please provide all required fields" });
     }
-
-    const image = req.file ? req.file.path : null;
+    const image = req.file ? req.file.secure_url : null;
+    const imagePublicId = req.file ? req.file.public_id : null;
     if (!image) {
       return res.status(400).json({ message: "Image is required" });
     }
@@ -24,6 +25,8 @@ const createRoom = async (req, res) => {
       image,
       status: status || "available", // පෝරමයෙන් එන status එක සුරකියි (available/reserved/maintenance)
       description, // පෝරමයෙන් එන description එක සුරකියි
+      imagePublicId,
+      availability: true,
     });
 
     await newRoom.save();
@@ -56,9 +59,17 @@ const updateRoom = async (req, res) => {
 
     const updates = req.body;
 
-    // පින්තූරයක් ඇත්නම් එය update කරමු
+    const existingRoom = await RoomModel.findById(id);
+    if (!existingRoom) {
+      return res.status(404).json({ message: "Room not found" });
+    }
+
     if (req.file) {
-      updates.image = req.file.path;
+      if (existingRoom.imagePublicId) {
+        await cloudinary.v2.uploader.destroy(existingRoom.imagePublicId);
+      }
+      updates.image = req.file.secure_url;
+      updates.imagePublicId = req.file.public_id;
     }
 
     const updatedRoom = await RoomModel.findByIdAndUpdate(
@@ -82,6 +93,18 @@ const deleteRoom = async (req, res) => {
     const { id } = req.params;
     if (!id) {
       return res.status(400).json({ message: "Room ID is required" });
+    }
+    const room = await RoomModel.findById(id);
+    if (!room) {
+      return res.status(404).json({ message: "Room not found" });
+    }
+    if (room.imagePublicId) {
+      try {
+        await cloudinary.v2.uploader.destroy(room.imagePublicId);
+      } catch (cloudinaryError) {
+        console.error("Error deleting image from Cloudinary:", cloudinaryError);
+        // Continue with database deletion even if Cloudinary deletion fails
+      }
     }
     await RoomModel.findByIdAndDelete(id);
     res.status(200).json({ message: "Room deleted successfully" });

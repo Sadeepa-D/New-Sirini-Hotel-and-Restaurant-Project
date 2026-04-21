@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Logo from "../../assets/Logo.png";
 import RoomOperation from "../../Components/OperationManager/Rooms/RoomOperation";
+import ReceptionMngHome from "../../Components/OperationManager/Reception/ReceptionMngHome";
 import {
   Home,
   BedDouble,
@@ -12,21 +13,10 @@ import {
   TrendingUp,
   X,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
-//Placeholder Components 
-const ReceptionComponent = () => (
-  <div className="p-6 text-gray-600">
-    Reception Component (Mount your reception data here)
-  </div>
-);
-
-const LogoutComponent = () => (
-  <div className="p-6 text-gray-600">
-    Logout Component (Mount your logout logic here)
-  </div>
-);
-
-// Dashboard Data 
+// Dashboard Data
 const dashboardData = {
   monthly: [
     { title: "Total Room Bookings", value: "24", sub: "This month" },
@@ -109,10 +99,17 @@ const Dashboard = () => {
   );
 };
 
-// Main Manager Layout 
+// Main Manager Layout
 const Manager = () => {
+  const usenavigate = useNavigate();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    toast.success("Logged out successfully");
+    usenavigate("/login");
+  };
 
   const navItems = [
     { id: "dashboard", label: "Dashboard", icon: Home },
@@ -128,9 +125,7 @@ const Manager = () => {
       case "rooms":
         return <RoomOperation />;
       case "reception":
-        return <ReceptionComponent />;
-      case "logout":
-        return <LogoutComponent />;
+        return <ReceptionMngHome />;
       default:
         return <Dashboard />;
     }
@@ -144,8 +139,6 @@ const Manager = () => {
         return "Rooms";
       case "reception":
         return "Reception";
-      case "logout":
-        return "Logout";
       default:
         return "Manager Dashboard Overview";
     }
@@ -201,8 +194,12 @@ const Manager = () => {
               <button
                 key={item.id}
                 onClick={() => {
-                  setActiveTab(item.id);
-                  setIsSidebarOpen(false);
+                   if (item.id === "logout") {
+                    handleLogout();
+                  } else {
+                    setActiveTab(item.id);
+                    setIsSidebarOpen(false);
+                  }
                 }}
                 className={`w-full flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg transition-colors ${
                   isActive
