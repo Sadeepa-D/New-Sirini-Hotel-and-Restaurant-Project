@@ -14,7 +14,9 @@ function Rooms() {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/rooms/viewrooms");
+        const res = await axios.get(
+          "http://localhost:5000/api/rooms/viewrooms",
+        );
         setRoomList(res.data);
       } catch (err) {
         setError("Failed to load rooms. Please try again.");
@@ -32,7 +34,7 @@ function Rooms() {
 
   const handleBookingConfirmed = (roomId) => {
     setRoomList((prev) =>
-      prev.map((r) => (r._id === roomId ? { ...r, status: "reserved" } : r))
+      prev.map((r) => (r._id === roomId ? { ...r, status: "reserved" } : r)),
     );
   };
 
@@ -47,7 +49,7 @@ function Rooms() {
         />
         <div className="absolute inset-0 bg-black/40 shadow-inner"></div>
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-          <h1 className="font-serif font-bold text-white text-4xl md:text-7xl lg:text-8xl drop-shadow-[4px_4px_15px_rgba(0,0,0,0.8)] leading-tight transition-all duration-700">
+          <h1 className="font-serif font-bold text-white text-4xl md:text-7xl lg:text-8xl drop-shadow-[4px_4px_15px_rgba(0,0,0,0.8)] leading-tight">
             Our Rooms
           </h1>
           <p className="text-white/90 italic text-sm md:text-xl font-light tracking-widest max-w-2xl drop-shadow-md">
@@ -68,7 +70,6 @@ function Rooms() {
             {roomList.map((room) => (
               <div
                 key={room._id}
-                /* ✅ Fixed height container for consistency */
                 className="flex flex-col lg:flex-row bg-white rounded-[2rem] overflow-hidden shadow-[0_10px_40px_-15px_rgba(0,0,0,0.1)] border border-gray-100 group transition-all duration-700 hover:shadow-[0_20px_60px_-15px_rgba(249,115,22,0.15)] hover:-translate-y-1 lg:h-[400px]"
               >
                 {/* Image Section */}
@@ -76,10 +77,8 @@ function Rooms() {
                   <img
                     src={room.image}
                     alt={room.roomType}
-                    /* ✅ object-cover maintains aspect ratio within the fixed size */
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                   />
-
                   <div className="absolute top-6 left-6 bg-white/20 backdrop-blur-md border border-white/30 px-4 py-2 rounded-2xl shadow-xl">
                     <p className="text-white text-[10px] uppercase tracking-widest font-medium opacity-90">
                       Room No.
@@ -88,7 +87,6 @@ function Rooms() {
                       {room.roomNumber}
                     </p>
                   </div>
-
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-700" />
                   <div className="absolute bottom-8 left-8 transition-all duration-500 transform group-hover:-translate-y-2">
                     <span className="text-white text-[11px] font-black uppercase tracking-[0.2em]">
@@ -100,10 +98,10 @@ function Rooms() {
                   </div>
                 </div>
 
-                {/* --- Info Section --- */}
+                {/* Info Section */}
                 <div className="w-full lg:w-7/12 p-8 md:p-10 flex flex-col justify-between bg-black relative">
                   <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
-                    <span className="text-9xl font-serif leading-none">
+                    <span className="text-9xl font-serif leading-none text-white">
                       {room.roomNumber}
                     </span>
                   </div>
@@ -118,20 +116,18 @@ function Rooms() {
 
                     <h3 className="text-3xl md:text-4xl font-serif text-white mb-4 leading-tight group-hover:text-orange-600 transition-colors duration-500">
                       {room.roomType}{" "}
-                      <span className="text-lg font-serif text-white font-sans italic">
+                      <span className="text-lg font-serif text-white italic font-sans">
                         Room
                       </span>
                     </h3>
 
-                    {/* ✅ line-clamp ensures text doesn't break the card size */}
                     <p className="text-white text-sm md:text-base leading-relaxed mb-6 font-light max-w-md line-clamp-2">
                       {room.description ||
-                        "A sanctuary of refined elegance, offering bespoke furnishings and panoramic views for the discerning traveler."}
+                        "A sanctuary of refined elegance, offering bespoke furnishings and panoramic views."}
                     </p>
 
-                    {/* Feature Grid */}
                     <div className="flex flex-wrap gap-3 mb-6">
-                      <div className="bg-gray-50 px-4 py-2 rounded-2xl flex flex-col items-center justify-center min-w-[90px] border border-gray-100 group-hover:bg-orange-50 group-hover:border-orange-100 transition-colors">
+                      <div className="bg-gray-50 px-4 py-2 rounded-2xl flex flex-col items-center justify-center min-w-[90px] border border-gray-100 group-hover:bg-orange-50 transition-colors">
                         <span className="text-gray-900 font-bold text-xs">
                           {room.bedType}
                         </span>
@@ -139,7 +135,7 @@ function Rooms() {
                           Bed Type
                         </span>
                       </div>
-                      <div className="bg-gray-50 px-4 py-2 rounded-2xl flex flex-col items-center justify-center min-w-[90px] border border-gray-100 group-hover:bg-orange-50 group-hover:border-orange-100 transition-colors">
+                      <div className="bg-gray-50 px-4 py-2 rounded-2xl flex flex-col items-center justify-center min-w-[90px] border border-gray-100 group-hover:bg-orange-50 transition-colors">
                         <span className="text-gray-900 font-bold text-xs">
                           {room.capacity} Guests
                         </span>
@@ -147,7 +143,7 @@ function Rooms() {
                           Capacity
                         </span>
                       </div>
-                      <div className="bg-gray-50 px-4 py-2 rounded-2xl flex flex-col items-center justify-center min-w-[90px] border border-gray-100 group-hover:bg-orange-50 group-hover:border-orange-100 transition-colors">
+                      <div className="bg-gray-50 px-4 py-2 rounded-2xl flex flex-col items-center justify-center min-w-[90px] border border-gray-100 group-hover:bg-orange-50 transition-colors">
                         <span className="text-gray-900 font-bold text-xs">
                           {room.condition === "AC" ? "AC" : "Fan"}
                         </span>
@@ -158,81 +154,30 @@ function Rooms() {
                     </div>
                   </div>
 
-                  {/* --- Status & Footer --- */}
+                  {/* Status & Footer */}
                   <div className="flex flex-row items-center justify-between gap-4 pt-6 border-t border-gray-50 mt-auto">
                     <div className="flex items-center gap-3">
                       <div className="relative flex items-center justify-center">
                         <div
-                          className={`w-2.5 h-2.5 rounded-full animate-ping absolute opacity-20 ${
-                            room.status === "available"
-                              ? "bg-green-500"
-                              : room.status === "maintenance"
-                              ? "bg-yellow-500"
-                              : "bg-red-500"
-                          }`}
+                          className={`w-2.5 h-2.5 rounded-full animate-ping absolute opacity-20 ${room.status === "available" ? "bg-green-500" : room.status === "maintenance" ? "bg-yellow-500" : "bg-red-500"}`}
                         />
                         <div
-                          className={`w-2.5 h-2.5 rounded-full relative shadow-sm ${
-                            room.status === "available"
-                              ? "bg-green-500"
-                              : room.status === "maintenance"
-                              ? "bg-yellow-500"
-                              : "bg-red-500"
-                          }`}
+                          className={`w-2.5 h-2.5 rounded-full relative shadow-sm ${room.status === "available" ? "bg-green-500" : room.status === "maintenance" ? "bg-yellow-500" : "bg-red-500"}`}
                         />
                       </div>
                       <p
-                        className={`text-[17px] font-black uppercase tracking-[0.2em] ${
-                          room.status === "available"
-                            ? "text-green-600"
-                            : room.status === "maintenance"
-                            ? "text-yellow-600"
-                            : "text-red-600"
-                        }`}
+                        className={`text-[17px] font-black uppercase tracking-[0.2em] ${room.status === "available" ? "text-green-600" : room.status === "maintenance" ? "text-yellow-600" : "text-red-600"}`}
                       >
                         {room.status === "maintenance"
-                          ? "Under Maintenance"
+                          ? "Maintenance"
                           : room.status}
                       </p>
                     </div>
-                  </div>
-
-                  {/* Status + Button */}
-                  <div>
-                    <div className="w-full h-px bg-white/[0.06] my-3 sm:my-4" />
-                    <div className="flex justify-between items-center gap-2">
-                      <div className="flex items-center gap-1.5 sm:gap-2">
-                        <span className="relative flex h-2.5 w-2.5 sm:h-3 sm:w-3 flex-shrink-0">
-                          <span
-                            className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${room.available ? "bg-green-400" : "bg-red-400"}`}
-                          />
-                          <span
-                            className={`relative inline-flex rounded-full h-2.5 w-2.5 sm:h-3 sm:w-3 ${room.available ? "bg-green-500" : "bg-red-500"}`}
-                          />
-                        </span>
-                        <div>
-                          <p
-                            className={`text-[9px] sm:text-xs font-semibold uppercase tracking-widest ${room.available ? "text-green-400" : "text-red-400"}`}
-                          >
-                            {room.available ? "Available" : "Reserved"}
-                          </p>
-                          <p className="text-gray-600 text-[8px] sm:text-[10px] mt-0.5 hidden sm:block">
-                            {room.available
-                              ? "Ready to book"
-                              : "Currently occupied"}
-                          </p>
-                        </div>
-                      </div>
 
                     <button
                       onClick={() => handleBookNow(room)}
                       disabled={room.status !== "available"}
-                      className={`relative overflow-hidden group/btn w-auto px-8 py-3 rounded-full font-black text-[9px] uppercase tracking-[0.2em] transition-all duration-500 
-                        ${
-                          room.status === "available"
-                            ? "bg-yellow-400 text-white hover:bg-orange-600 shadow-xl"
-                            : "bg-gray-100 text-gray-400 cursor-not-allowed pointer-events-none opacity-60"
-                        }`}
+                      className={`relative overflow-hidden group/btn w-auto px-8 py-3 rounded-full font-black text-[9px] uppercase tracking-[0.2em] transition-all duration-500 ${room.status === "available" ? "bg-yellow-400 text-white hover:bg-orange-600 shadow-xl" : "bg-gray-100 text-gray-400 cursor-not-allowed pointer-events-none opacity-60"}`}
                     >
                       <span className="relative z-10">Book Now</span>
                     </button>
