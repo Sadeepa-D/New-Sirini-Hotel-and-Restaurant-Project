@@ -18,6 +18,7 @@ const NewSiriniHotel = () => {
       title: "Rooms",
       desc: "Comfortable rooms designed for rest and relaxation.",
       img: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=400",
+      path: "/rooms",
     },
     {
       title: "Restaurant",

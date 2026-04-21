@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import axios from "axios";
 import BookingSuccess from "../RoomCompo/SuccessMsg";
 
 function BookingForm({ selectedRoom, onClose, onConfirmed }) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const today=new Date().toISOString().split("T")[0];
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -16,17 +18,33 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    //date validation
+    const checkIn = new Date(formData.checkInDate);
+    const checkOut = new Date(formData.checkOutDate);
+
+    if (checkOut <= checkIn){
+      alert("Check-out date must be after check-in date.");
+      return;
+    }
+
+    //Mobile Number validation
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(formData.phone)) {
+      alert("Please enter a valid 10-digit phone number.");
+      return;
+    }
+
+    
     setLoading(true);
     try {
       await axios.post("http://localhost:5000/api/rooms/book", {
         ...formData,
-        room: selectedRoom._id,  // ← room id backend එකට යවනවා
+        room: selectedRoom._id,
       });
-      onConfirmed(selectedRoom._id); // ← _id use කරනවා
+      onConfirmed(selectedRoom._id);
       setShowSuccess(true);
     } catch (error) {
       alert(error.response?.data?.error || "Booking failed. Try again.");
@@ -35,7 +53,6 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
     }
   };
 
-  // ── After submit: show BookingSuccess ──
   if (showSuccess) {
     return (
       <BookingSuccess
@@ -45,7 +62,6 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
     );
   }
 
-  // ── Before submit: show Booking Form ──
   return (
     <div
       className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 px-0 sm:px-4"
@@ -97,6 +113,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
           className="px-4 sm:px-8 py-4 sm:py-6 space-y-2.5 sm:space-y-4"
           onSubmit={handleSubmit}
         >
+
           {/* Full Name */}
           <div>
             <label className="text-gray-400 text-[9px] sm:text-xs uppercase tracking-widest block mb-1">
@@ -104,6 +121,9 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
             </label>
             <input
               type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
               required
               placeholder="John Silva"
               className="w-full bg-white/5 border border-white/10 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-white text-xs sm:text-sm placeholder-gray-600 focus:outline-none focus:border-orange-500 transition-colors"
@@ -117,6 +137,9 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
             </label>
             <input
               type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               required
               placeholder="john@example.com"
               className="w-full bg-white/5 border border-white/10 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-white text-xs sm:text-sm placeholder-gray-600 focus:outline-none focus:border-orange-500 transition-colors"
@@ -125,11 +148,14 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
 
           {/* Phone */}
           <div>
-            <label className="text-gray-400 text-[9px] sm:text-xs uppercase tracking-widest block mb-1">
+            <label className="text-gray-400 text-[9px] sm:text-xs uppercase tracking-widests block mb-1">
               Phone
             </label>
             <input
               type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
               required
               placeholder="+94 77 123 4567"
               className="w-full bg-white/5 border border-white/10 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-white text-xs sm:text-sm placeholder-gray-600 focus:outline-none focus:border-orange-500 transition-colors"
@@ -144,6 +170,9 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
               </label>
               <input
                 type="date"
+                name="checkInDate"
+                value={formData.checkInDate}
+                onChange={handleChange}
                 required
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-2 sm:px-4 py-2 sm:py-3 text-white text-[10px] sm:text-sm focus:outline-none focus:border-orange-500 transition-colors"
               />
@@ -154,6 +183,9 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
               </label>
               <input
                 type="date"
+                name="checkOutDate"
+                value={formData.checkOutDate}
+                onChange={handleChange}
                 required
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-2 sm:px-4 py-2 sm:py-3 text-white text-[10px] sm:text-sm focus:outline-none focus:border-orange-500 transition-colors"
               />
@@ -171,13 +203,14 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
             </button>
             <button
               type="submit"
-              className="flex-1 bg-orange-500 text-black py-2 sm:py-3 rounded-full text-[9px] sm:text-xs uppercase tracking-widest font-bold hover:bg-orange-400 active:scale-95 transition-all"
+              disabled={loading}
+              className="flex-1 bg-orange-500 text-black py-2 sm:py-3 rounded-full text-[9px] sm:text-xs uppercase tracking-widest font-bold hover:bg-orange-400 active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Confirm Booking
+              {loading ? "Booking..." : "Confirm Booking"}
             </button>
           </div>
-        </form>
 
+        </form>
       </div>
     </div>
   );

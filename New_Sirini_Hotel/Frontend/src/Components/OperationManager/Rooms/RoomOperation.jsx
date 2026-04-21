@@ -1,26 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import RoomStatsRow from "./RoomStatsRow";
 import RoomTableHeader from "./RoomTableHeader";
 import RoomTable from "./RoomTable";
-// import RoomFormModal from "./RoomFormModal";
-
-const initialRooms = [
-  { id: 1, roomNumber: "01", type: "Single",  price: 3500,  capacity: 1, status: "available",   description: "Cozy single room with garden view" },
-  { id: 2, roomNumber: "02", type: "Double",  price: 6500,  capacity: 2, status: "occupied",     description: "Spacious double room with balcony" },
-  { id: 3, roomNumber: "03", type: "Suite",   price: 15000, capacity: 4, status: "available",    description: "Luxury suite with ocean view" },
-  { id: 4, roomNumber: "04", type: "Single",  price: 3500,  capacity: 1, status: "maintenance",  description: "Single room under renovation" },
-];
+import RoomFormModal from "./RoomFormModal";
+import toast from "react-hot-toast";
 
 const RoomOperation = () => {
-  const [rooms, setRooms]           = useState(initialRooms);
+  const [rooms, setRooms] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingRoom, setEditingRoom] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredRooms = rooms.filter((r) =>
-    r.roomNumber.includes(searchTerm) ||
-    r.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    r.status.toLowerCase().includes(searchTerm.toLowerCase())
+  const fetchRooms = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/rooms/viewrooms");
+      setRooms(res.data);
+    } catch (err) {
+      console.error("Error fetching rooms:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchRooms();
+  }, []);
+
+  // ✅ Search එකට status එකත් ඇතුළත් කළා
+  const filteredRooms = rooms.filter(
+    (r) =>
+      r.roomNumber?.toString().includes(searchTerm) ||
+      r.roomType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      r.status?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleAdd = () => {
@@ -33,30 +43,65 @@ const RoomOperation = () => {
     setIsFormOpen(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this room?")) {
-      setRooms(rooms.filter((r) => r.id !== id));
+      try {
+        await axios.delete(`http://localhost:5000/api/rooms/deleteroom/${id}`);
+        fetchRooms();
+      } catch (err) {
+        alert("Delete failed");
+      }
     }
   };
 
-  const handleSave = (formData) => {
-    if (editingRoom) {
-      setRooms(rooms.map((r) => (r.id === editingRoom.id ? { ...formData, id: editingRoom.id } : r)));
-    } else {
-      setRooms([...rooms, { ...formData, id: Date.now() }]);
+  const handleSave = async (formData) => {
+    const data = new FormData();
+    data.append("roomNumber", formData.roomNumber);
+    data.append("roomType", formData.roomType);
+    data.append("price", formData.price);
+    data.append("bedType", formData.bedType);
+    data.append("capacity", formData.capacity);
+    data.append("status", formData.status);
+    data.append("description", formData.description || "");
+    data.append("condition", formData.condition || "Fan");
+
+    if (formData.imageFile) {
+      data.append("image", formData.imageFile);
     }
-    setIsFormOpen(false);
-    setEditingRoom(null);
+
+    try {
+      const config = {
+        headers: { "Content-Type": "multipart/form-data" },
+      };
+
+      if (editingRoom) {
+        await axios.put(
+          `http://localhost:5000/api/rooms/updateroom/${editingRoom._id}`,
+          data,
+          config,
+        );
+      } else {
+        await axios.post("http://localhost:5000/api/rooms/add", data, config);
+      }
+      fetchRooms();
+      setIsFormOpen(false);
+      setEditingRoom(null);
+    } catch (err) {
+      console.error("Save Error:", err.response?.data);
+      alert(err.response?.data?.message || "Error saving room");
+    }
   };
 
+  // ✅ Stats ගණනය කිරීම status අනුව වෙනස් කළා
   const stats = {
-    available:   rooms.filter((r) => r.status === "available").length,
-    occupied:    rooms.filter((r) => r.status === "occupied").length,
+    available: rooms.filter((r) => r.status === "available").length,
+    reserved: rooms.filter((r) => r.status === "reserved").length, 
     maintenance: rooms.filter((r) => r.status === "maintenance").length,
   };
 
   return (
     <div className="p-4 md:p-6">
+      {/* stats object එක දැන් නිවැරදි අගයන් යවයි */}
       <RoomStatsRow stats={stats} />
 
       <RoomTableHeader
@@ -75,7 +120,10 @@ const RoomOperation = () => {
         <RoomFormModal
           initialData={editingRoom}
           onSubmit={handleSave}
-          onClose={() => { setIsFormOpen(false); setEditingRoom(null); }}
+          onClose={() => {
+            setIsFormOpen(false);
+            setEditingRoom(null);
+          }}
         />
       )}
     </div>
