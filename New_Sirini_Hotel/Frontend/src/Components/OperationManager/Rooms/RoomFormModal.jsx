@@ -10,14 +10,15 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
       bedType: "Single Bed",
       capacity: "",
       description: "",
-      status: "available", // 'availability' වෙනුවට 'status' භාවිතා කරන්න
+      condition: "Fan",
+      status: "available",
     },
   );
   const [imageFile, setImageFile] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // දැන් අපිට Boolean පරිවර්තන අවශ්‍ය නැත, කෙළින්ම අගය (Value) ලබා ගත හැක
+
     setForm({ ...form, [name]: value });
   };
 
@@ -26,13 +27,11 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
   };
 
   const handleSubmit = () => {
-    // දත්ත පරීක්ෂාව
     if (!form.roomNumber || !form.price || !form.capacity) {
       alert("Please fill in all required fields.");
       return;
     }
 
-    // අලුත් කාමරයක් නම් පින්තූරයක් අනිවාර්යයි
     if (!initialData && !imageFile) {
       alert("Please upload a room image.");
       return;
@@ -146,16 +145,19 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
               <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
                 Bed Type
               </label>
-              <input
+              <select
                 name="bedType"
                 value={form.bedType}
                 onChange={handleChange}
-                placeholder="e.g. King Size"
-                className="w-full border border-gray-200 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 focus:outline-none"
-              />
+                className="w-full border border-gray-200 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 focus:outline-none bg-white cursor-pointer"
+              >
+                <option value="Single">Single Bed</option>
+                <option value="Double">Double Bed</option>
+                <option value="Queen">Queen Size</option>
+                <option value="King">King Size</option>
+              </select>
             </div>
           </div>
-
           {/* Capacity & Availability Row */}
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
             <div>

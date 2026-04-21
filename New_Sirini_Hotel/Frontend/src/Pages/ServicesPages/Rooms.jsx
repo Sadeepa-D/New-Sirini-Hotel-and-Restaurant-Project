@@ -14,9 +14,7 @@ function Rooms() {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:5000/api/rooms/viewrooms",
-        );
+        const res = await axios.get("http://localhost:5000/api/rooms/viewrooms");
         setRoomList(res.data);
       } catch (err) {
         setError("Failed to load rooms. Please try again.");
@@ -34,7 +32,7 @@ function Rooms() {
 
   const handleBookingConfirmed = (roomId) => {
     setRoomList((prev) =>
-      prev.map((r) => (r._id === roomId ? { ...r, status: "reserved" } : r)),
+      prev.map((r) => (r._id === roomId ? { ...r, status: "reserved" } : r))
     );
   };
 
@@ -42,27 +40,19 @@ function Rooms() {
     <div className="bg-[#f8f9fa] min-h-screen font-sans">
       {/* Header */}
       <header className="relative w-full h-[70vh] md:h-screen overflow-hidden">
-        {/* Background Image */}
         <img
           src={MainRoom}
           alt="Luxury Room Header"
           className="w-full h-full object-cover object-center transition-transform duration-[2000ms] hover:scale-105"
         />
-
         <div className="absolute inset-0 bg-black/40 shadow-inner"></div>
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-          <h1
-            className="font-serif font-bold text-white 
-                 text-4xl md:text-7xl lg:text-8xl 
-                 drop-shadow-[4px_4px_15px_rgba(0,0,0,0.8)]
-                 leading-tight transition-all duration-700"
-          >
+          <h1 className="font-serif font-bold text-white text-4xl md:text-7xl lg:text-8xl drop-shadow-[4px_4px_15px_rgba(0,0,0,0.8)] leading-tight transition-all duration-700">
             Our Rooms
           </h1>
           <p className="text-white/90 italic text-sm md:text-xl font-light tracking-widest max-w-2xl drop-shadow-md">
             Peaceful rooms designed for your perfect stay
           </p>
-
           <Exploreindicator />
         </div>
       </header>
@@ -78,13 +68,15 @@ function Rooms() {
             {roomList.map((room) => (
               <div
                 key={room._id}
-                className="flex flex-col lg:flex-row bg-white rounded-[2rem] overflow-hidden shadow-[0_10px_40px_-15px_rgba(0,0,0,0.1)] border border-gray-100 group transition-all duration-700 hover:shadow-[0_20px_60px_-15px_rgba(249,115,22,0.15)] hover:-translate-y-1"
+                /* ✅ Fixed height container for consistency */
+                className="flex flex-col lg:flex-row bg-white rounded-[2rem] overflow-hidden shadow-[0_10px_40px_-15px_rgba(0,0,0,0.1)] border border-gray-100 group transition-all duration-700 hover:shadow-[0_20px_60px_-15px_rgba(249,115,22,0.15)] hover:-translate-y-1 lg:h-[400px]"
               >
                 {/* Image Section */}
-                <div className="w-full lg:w-5/12 relative h-[300px] lg:h-auto overflow-hidden">
+                <div className="w-full lg:w-5/12 relative h-[300px] lg:h-full overflow-hidden">
                   <img
                     src={room.image}
                     alt={room.roomType}
+                    /* ✅ object-cover maintains aspect ratio within the fixed size */
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                   />
 
@@ -99,7 +91,7 @@ function Rooms() {
 
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-700" />
                   <div className="absolute bottom-8 left-8 transition-all duration-500 transform group-hover:-translate-y-2">
-                    <span className=" text-white text-[11px] font-black uppercase tracking-[0.2em]">
+                    <span className="text-white text-[11px] font-black uppercase tracking-[0.2em]">
                       Price
                     </span>
                     <p className="text-white text-3xl font-bold">
@@ -107,60 +99,59 @@ function Rooms() {
                     </p>
                   </div>
                 </div>
+
                 {/* --- Info Section --- */}
-                <div className="w-full lg:w-7/12 p-8 md:p-12 flex flex-col justify-between bg-white relative">
-                  {/* Decorative Background Element */}
+                <div className="w-full lg:w-7/12 p-8 md:p-10 flex flex-col justify-between bg-black relative">
                   <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
-                    <span className="text-9xl font-serif">
+                    <span className="text-9xl font-serif leading-none">
                       {room.roomNumber}
                     </span>
                   </div>
 
                   <div>
-                    <div className="flex items-center gap-2 mb-4">
+                    <div className="flex items-center gap-2 mb-2">
                       <span className="w-8 h-[1px] bg-orange-500"></span>
                       <span className="text-orange-500 text-[10px] font-black uppercase tracking-[0.3em]">
-                        Luxury Collection
+                        New Sirini Hotel Rooms
                       </span>
                     </div>
 
-                    <h3 className="text-4xl md:text-5xl font-serif text-gray-900 mb-6 leading-tight group-hover:text-orange-600 transition-colors duration-500">
+                    <h3 className="text-3xl md:text-4xl font-serif text-white mb-4 leading-tight group-hover:text-orange-600 transition-colors duration-500">
                       {room.roomType}{" "}
-                      <span className="text-lg font-light text-gray-400 font-sans italic">
+                      <span className="text-lg font-serif text-white font-sans italic">
                         Room
                       </span>
                     </h3>
 
-                    <p className="text-gray-500 text-sm md:text-base leading-relaxed mb-8 font-light max-w-md">
+                    {/* ✅ line-clamp ensures text doesn't break the card size */}
+                    <p className="text-white text-sm md:text-base leading-relaxed mb-6 font-light max-w-md line-clamp-2">
                       {room.description ||
                         "A sanctuary of refined elegance, offering bespoke furnishings and panoramic views for the discerning traveler."}
                     </p>
 
                     {/* Feature Grid */}
-                    <div className="flex flex-wrap gap-4 mb-10">
-                      <div className="bg-gray-50 px-6 py-3 rounded-2xl flex flex-col items-center justify-center min-w-[100px] border border-gray-100 group-hover:bg-orange-50 group-hover:border-orange-100 transition-colors">
-                        <span className="text-gray-900 font-bold text-sm">
+                    <div className="flex flex-wrap gap-3 mb-6">
+                      <div className="bg-gray-50 px-4 py-2 rounded-2xl flex flex-col items-center justify-center min-w-[90px] border border-gray-100 group-hover:bg-orange-50 group-hover:border-orange-100 transition-colors">
+                        <span className="text-gray-900 font-bold text-xs">
                           {room.bedType}
                         </span>
-                        <span className="text-[9px] text-gray-400 uppercase tracking-tighter">
+                        <span className="text-[8px] text-gray-400 uppercase tracking-tighter">
                           Bed Type
                         </span>
                       </div>
-                      <div className="bg-gray-50 px-6 py-3 rounded-2xl flex flex-col items-center justify-center min-w-[100px] border border-gray-100 group-hover:bg-orange-50 group-hover:border-orange-100 transition-colors">
-                        <span className="text-gray-900 font-bold text-sm">
+                      <div className="bg-gray-50 px-4 py-2 rounded-2xl flex flex-col items-center justify-center min-w-[90px] border border-gray-100 group-hover:bg-orange-50 group-hover:border-orange-100 transition-colors">
+                        <span className="text-gray-900 font-bold text-xs">
                           {room.capacity} Guests
                         </span>
-                        <span className="text-[9px] text-gray-400 uppercase tracking-tighter">
+                        <span className="text-[8px] text-gray-400 uppercase tracking-tighter">
                           Capacity
                         </span>
                       </div>
-                      <div className="bg-gray-50 px-6 py-3 rounded-2xl flex flex-col items-center justify-center min-w-[100px] border border-gray-100 group-hover:bg-orange-50 group-hover:border-orange-100 transition-colors">
-                        <span className="text-gray-900 font-bold text-sm">
-                          {room.condition === "AC"
-                            ? "Air Conditioned"
-                            : "Fan Cooled"}
+                      <div className="bg-gray-50 px-4 py-2 rounded-2xl flex flex-col items-center justify-center min-w-[90px] border border-gray-100 group-hover:bg-orange-50 group-hover:border-orange-100 transition-colors">
+                        <span className="text-gray-900 font-bold text-xs">
+                          {room.condition === "AC" ? "AC" : "Fan"}
                         </span>
-                        <span className="text-[9px] text-gray-400 uppercase tracking-tighter">
+                        <span className="text-[8px] text-gray-400 uppercase tracking-tighter">
                           Condition
                         </span>
                       </div>
@@ -168,35 +159,35 @@ function Rooms() {
                   </div>
 
                   {/* --- Status & Footer --- */}
-                  <div className="flex flex-col sm:flex-row items-center justify-between gap-8 pt-8 border-t border-gray-50">
-                    <div className="flex items-center gap-4">
+                  <div className="flex flex-row items-center justify-between gap-4 pt-6 border-t border-gray-50 mt-auto">
+                    <div className="flex items-center gap-3">
                       <div className="relative flex items-center justify-center">
                         <div
-                          className={`w-3 h-3 rounded-full animate-ping absolute opacity-20 ${
+                          className={`w-2.5 h-2.5 rounded-full animate-ping absolute opacity-20 ${
                             room.status === "available"
                               ? "bg-green-500"
                               : room.status === "maintenance"
-                                ? "bg-yellow-500"
-                                : "bg-red-500"
+                              ? "bg-yellow-500"
+                              : "bg-red-500"
                           }`}
                         />
                         <div
-                          className={`w-3 h-3 rounded-full relative shadow-sm ${
+                          className={`w-2.5 h-2.5 rounded-full relative shadow-sm ${
                             room.status === "available"
                               ? "bg-green-500"
                               : room.status === "maintenance"
-                                ? "bg-yellow-500"
-                                : "bg-red-500"
+                              ? "bg-yellow-500"
+                              : "bg-red-500"
                           }`}
                         />
                       </div>
                       <p
-                        className={`text-[10px] font-black uppercase tracking-[0.2em] ${
+                        className={`text-[17px] font-black uppercase tracking-[0.2em] ${
                           room.status === "available"
                             ? "text-green-600"
                             : room.status === "maintenance"
-                              ? "text-yellow-600"
-                              : "text-red-600"
+                            ? "text-yellow-600"
+                            : "text-red-600"
                         }`}
                       >
                         {room.status === "maintenance"
@@ -208,12 +199,12 @@ function Rooms() {
                     <button
                       onClick={() => handleBookNow(room)}
                       disabled={room.status !== "available"}
-                      className={`relative overflow-hidden group/btn w-full sm:w-auto px-14 py-4 rounded-full font-black text-[10px] uppercase tracking-[0.2em] transition-all duration-500 
-          ${
-            room.status === "available"
-              ? "bg-gray-900 text-white hover:bg-orange-600 shadow-xl shadow-gray-200"
-              : "bg-gray-100 text-gray-400 cursor-not-allowed pointer-events-none opacity-60"
-          }`}
+                      className={`relative overflow-hidden group/btn w-auto px-8 py-3 rounded-full font-black text-[9px] uppercase tracking-[0.2em] transition-all duration-500 
+                        ${
+                          room.status === "available"
+                            ? "bg-yellow-400 text-white hover:bg-orange-600 shadow-xl"
+                            : "bg-gray-100 text-gray-400 cursor-not-allowed pointer-events-none opacity-60"
+                        }`}
                     >
                       <span className="relative z-10">Book Now</span>
                     </button>

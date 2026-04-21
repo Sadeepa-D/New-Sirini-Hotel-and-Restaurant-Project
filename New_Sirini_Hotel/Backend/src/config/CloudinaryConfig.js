@@ -1,5 +1,5 @@
 const cloudinary = require("cloudinary").v2;
-const CloudinaryStorage = require("multer-storage-cloudinary");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const multer = require("multer");
 
 cloudinary.config({
@@ -9,7 +9,7 @@ cloudinary.config({
 });
 
 const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
+  cloudinary: cloudinary, 
   params: {
     folder: "sirini_hotel",
     allowed_formats: ["jpg", "png", "jpeg"],
@@ -17,5 +17,4 @@ const storage = new CloudinaryStorage({
 });
 
 const upload = multer({ storage: storage });
-
 module.exports = upload;
