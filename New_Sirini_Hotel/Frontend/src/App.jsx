@@ -9,7 +9,7 @@ import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import Liquor from "./Pages/ServicesPages/LiquorStore";
 import OperationManager from "./Pages/Administration/OperationManager";
-import { Admin } from "./Pages/Administration/Admin";
+import Admin from "./Pages/Administration/Admin";
 import Manager from "./Pages/Administration/Manager";
 import Reception from "./Pages/ServicesPages/Reception";
 import Rooms from "./Pages/ServicesPages/Rooms";
