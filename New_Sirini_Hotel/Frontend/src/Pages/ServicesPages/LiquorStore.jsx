@@ -9,7 +9,7 @@ import {
 import LiqourCard from "../../Components/LiqourStore/LiqourCard";
 import LiquorComparisonComp from "../../Components/LiqourStore/LiquorComparisonComp";
 import LiquorDetailsComp from "../../Components/LiqourStore/LIquorDetailsComp";
-import Exploreindicator  from "../../Components/Exploreindicator";
+import Exploreindicator from "../../Components/Exploreindicator";
 
 const LiquorStore = () => {
   const [selectedDrink, setSelectedDrink] = useState(null);
@@ -92,7 +92,10 @@ const LiquorStore = () => {
 
   const handleNextOthers = () => {
     setOthersIndex(
-      Math.min(filteredOtherDrinks.length - itemsPerView, othersIndex + itemsPerView),
+      Math.min(
+        filteredOtherDrinks.length - itemsPerView,
+        othersIndex + itemsPerView,
+      ),
     );
   };
   const filteredBeerDrinks = liquorItems.filter(
@@ -112,36 +115,50 @@ const LiquorStore = () => {
   // Slice-based navigation (same as CateringMng)
   const GAP = 16;
   const cardWidth = `calc((100% - ${GAP * (itemsPerView - 1)}px) / ${itemsPerView})`;
-  const visibleBeerDrinks = filteredBeerDrinks.slice(beerIndex, beerIndex + itemsPerView);
+  const visibleBeerDrinks = filteredBeerDrinks.slice(
+    beerIndex,
+    beerIndex + itemsPerView,
+  );
   const canGoBackBeer = beerIndex > 0;
   const canGoNextBeer = beerIndex + itemsPerView < filteredBeerDrinks.length;
-  const visibleOtherDrinks = filteredOtherDrinks.slice(othersIndex, othersIndex + itemsPerView);
+  const visibleOtherDrinks = filteredOtherDrinks.slice(
+    othersIndex,
+    othersIndex + itemsPerView,
+  );
   const canGoBackOthers = othersIndex > 0;
-  const canGoNextOthers = othersIndex + itemsPerView < filteredOtherDrinks.length;
+  const canGoNextOthers =
+    othersIndex + itemsPerView < filteredOtherDrinks.length;
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      {/* FULL VIEWPORT HERO SECTION */}
-      <section
-        className="relative w-full h-screen overflow-hidden flex items-center justify-center"
-        style={{
-          backgroundImage:
-            "url(https://images.unsplash.com/photo-1557149559-d74af2d38a1a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="absolute inset-0 bg-black/60"></div>
-        <div className="relative h-full flex flex-col items-center justify-center text-center px-4">
-          <h1 className="font-cinzel text-7xl sm:text-9xl md:text-[15rem] lg:text-[20rem] font-semibold text-white leading-none mb-6 drop-shadow-[4px_4px_12px_rgba(0,0,0,0.8)]">
-            Liquor
-          </h1>
-          <p className="font-cormorant text-2xl sm:text-3xl md:text-4xl italic text-gray-200 tracking-wide mb-8">
+      {/* HERO SECTION - Aligned with MainPage */}
+      <header className="relative w-full h-[calc(100vh-120px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
+        {/* Background */}
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage:
+              "url(https://images.unsplash.com/photo-1557149559-d74af2d38a1a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <div className="absolute inset-0 bg-black/50"></div>
+        </div>
+
+        {/* Content - centered in hero */}
+        <div className="z-10 flex flex-col items-center justify-center gap-4">
+          <h1 className="text-4xl md:text-6xl font-light">Our Liquor Store</h1>
+          <p className="text-lg md:text-xl italic tracking-widest border-t border-b border-white py-2 px-4">
             A perfect drink for every celebration
           </p>
         </div>
-        <Exploreindicator />
-      </section>
+
+        {/* Explore arrow pinned to bottom */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
+          <Exploreindicator />
+        </div>
+      </header>
 
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -234,7 +251,9 @@ const LiquorStore = () => {
 
               {filteredBeerDrinks.length > itemsPerView && (
                 <div className="flex justify-center gap-1.5 mt-4">
-                  {Array.from({ length: Math.ceil(filteredBeerDrinks.length / itemsPerView) }).map((_, i) => (
+                  {Array.from({
+                    length: Math.ceil(filteredBeerDrinks.length / itemsPerView),
+                  }).map((_, i) => (
                     <button
                       key={i}
                       onClick={() => setBeerIndex(i * itemsPerView)}
@@ -290,7 +309,11 @@ const LiquorStore = () => {
 
               {filteredOtherDrinks.length > itemsPerView && (
                 <div className="flex justify-center gap-1.5 mt-4">
-                  {Array.from({ length: Math.ceil(filteredOtherDrinks.length / itemsPerView) }).map((_, i) => (
+                  {Array.from({
+                    length: Math.ceil(
+                      filteredOtherDrinks.length / itemsPerView,
+                    ),
+                  }).map((_, i) => (
                     <button
                       key={i}
                       onClick={() => setOthersIndex(i * itemsPerView)}

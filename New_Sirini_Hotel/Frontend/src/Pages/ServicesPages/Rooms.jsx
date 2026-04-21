@@ -195,6 +195,34 @@ function Rooms() {
                           : room.status}
                       </p>
                     </div>
+                  </div>
+
+                  {/* Status + Button */}
+                  <div>
+                    <div className="w-full h-px bg-white/[0.06] my-3 sm:my-4" />
+                    <div className="flex justify-between items-center gap-2">
+                      <div className="flex items-center gap-1.5 sm:gap-2">
+                        <span className="relative flex h-2.5 w-2.5 sm:h-3 sm:w-3 flex-shrink-0">
+                          <span
+                            className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${room.available ? "bg-green-400" : "bg-red-400"}`}
+                          />
+                          <span
+                            className={`relative inline-flex rounded-full h-2.5 w-2.5 sm:h-3 sm:w-3 ${room.available ? "bg-green-500" : "bg-red-500"}`}
+                          />
+                        </span>
+                        <div>
+                          <p
+                            className={`text-[9px] sm:text-xs font-semibold uppercase tracking-widest ${room.available ? "text-green-400" : "text-red-400"}`}
+                          >
+                            {room.available ? "Available" : "Reserved"}
+                          </p>
+                          <p className="text-gray-600 text-[8px] sm:text-[10px] mt-0.5 hidden sm:block">
+                            {room.available
+                              ? "Ready to book"
+                              : "Currently occupied"}
+                          </p>
+                        </div>
+                      </div>
 
                     <button
                       onClick={() => handleBookNow(room)}

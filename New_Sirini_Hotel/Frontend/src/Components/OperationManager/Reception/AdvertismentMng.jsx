@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import AdvertisementCard from "./AdvertisementCard";
 
 const statusConfig = {
   pending: {
@@ -288,120 +289,34 @@ const AdvertismentMng = () => {
             className="flex gap-4"
             style={{ animation: "fadeIn 0.25s ease" }}
           >
-            {filtered.slice(index, index + itemsPerView).map((ad) => {
-              const {
-                label,
-                bg,
-                text,
-                icon: StatusIcon,
-              } = statusConfig[ad.status];
-              return (
-                <div
-                  key={ad._id}
-                  className="relative shrink-0 rounded-xl overflow-hidden border border-gray-100 shadow-sm group flex flex-col"
-                  style={{
-                    width: `calc((100% - ${16 * (itemsPerView - 1)}px) / ${itemsPerView})`,
-                  }}
-                >
-                  {/* Image */}
-                  <div className="relative h-36 overflow-hidden">
-                    <img
-                      src={ad.image}
-                      alt={ad.BuissnesName}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-
-                    {/* Status badge */}
-                    <div
-                      className={`absolute top-2 left-2 flex items-center gap-1 ${bg} ${text} text-xs font-semibold px-2.5 py-1 rounded-full shadow`}
-                    >
-                      <StatusIcon size={11} />
-                      {label}
-                    </div>
-
-                    {/* Delete ribbon */}
-                    <div className="absolute right-2 top-2">
-                      <button
-                        onClick={() => handleDelete(ad._id)}
-                        className="w-8 h-8 rounded-full bg-red-100 text-red-500 hover:bg-red-200 flex items-center justify-center shadow transition-colors"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Info */}
-                  <div className="p-3 bg-white flex flex-col flex-1">
-                    <h3 className="font-semibold text-gray-800 text-sm truncate">
-                      {ad.BuissnesName}
-                    </h3>
-                    <span className="text-xs text-amber-600 font-medium mt-0.5">
-                      {ad.category}
-                    </span>
-
-                    <div className="flex items-center gap-1 mt-1.5">
-                      <MapPin size={11} className="text-gray-400 shrink-0" />
-                      <span className="text-xs text-gray-400 truncate">
-                        {ad.location}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1 mt-0.5">
-                      <Phone size={11} className="text-gray-400 shrink-0" />
-                      <span className="text-xs text-gray-400">
-                        {ad.TPNumber}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1 mt-0.5">
-                      <Globe size={11} className="text-gray-400 shrink-0" />
-                      <span className="text-xs text-blue-400 truncate">
-                        {ad.portfolio}
-                      </span>
-                    </div>
-
-                    <span className="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full mt-2 self-start">
-                      {ad.price}
-                    </span>
-
-                    {/* Approve / Reject buttons */}
-                    {ad.status === "pending" && (
-                      <div className="flex gap-2 mt-3">
-                        <button
-                          onClick={() => handleApprove(ad._id)}
-                          className="flex-1 flex items-center justify-center gap-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold py-1.5 rounded-lg transition-colors"
-                        >
-                          <CheckCircle size={13} />
-                          Approve
-                        </button>
-                        <button
-                          onClick={() => handleReject(ad._id)}
-                          className="flex-1 flex items-center justify-center gap-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold py-1.5 rounded-lg transition-colors"
-                        >
-                          <XCircle size={13} />
-                          Reject
-                        </button>
-                      </div>
-                    )}
-
-                    {ad.status !== "pending" && (
-                      <button
-                        onClick={() => handlepending(ad._id)}
-                        className="mt-3 w-full flex items-center justify-center gap-1.5 border border-gray-200 text-gray-500 hover:bg-gray-50 text-xs font-semibold py-1.5 rounded-lg transition-colors"
-                      >
-                        <Clock size={12} />
-                        Reset to Pending
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+            {filtered.slice(index, index + itemsPerView).map((ad) => (
+              <div
+                key={ad._id}
+                style={{
+                  width: `calc((100% - ${16 * (itemsPerView - 1)}px) / ${itemsPerView})`,
+                }}
+                className="shrink-0"
+              >
+                <AdvertisementCard
+                  ad={ad}
+                  onApprove={handleApprove}
+                  onReject={handleReject}
+                  onDelete={handleDelete}
+                  onResetPending={handlepending}
+                  showAdminActions={true}
+                  showEditDelete={false}
+                />
+              </div>
+            ))}
           </div>
 
           {/* Right arrow */}
           {index + itemsPerView < filtered.length && (
             <button
               onClick={() =>
-                setIndex((i) => Math.min(filtered.length - itemsPerView, i + itemsPerView))
+                setIndex((i) =>
+                  Math.min(filtered.length - itemsPerView, i + itemsPerView),
+                )
               }
               className="absolute -right-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow flex items-center justify-center hover:bg-gray-50"
             >

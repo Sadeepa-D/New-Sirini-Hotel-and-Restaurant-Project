@@ -43,7 +43,12 @@ router.get(
 );
 router.get(
   "/appointment/view/overdue",
-  ReceptionHallAppoint.getoOverdueReceptionAppointments,
+  ReceptionHallAppoint.getOverdueReceptionAppointments,
+);
+router.get(
+  "/appointment/view/userspecific",
+  authmiddleware,
+  ReceptionHallAppoint.getSpecificUserReceptionAppointments,
 );
 router.post(
   "/package/add",
@@ -115,5 +120,10 @@ router.get(
 router.get(
   "/advertisment/view/rejected",
   AdvertismentCont.getRejectedAdvertisments,
+);
+router.get(
+  "/advertisment/view/userspecific",
+  authmiddleware,
+  AdvertismentCont.getSpecificUserAdvertisments,
 );
 module.exports = router;
