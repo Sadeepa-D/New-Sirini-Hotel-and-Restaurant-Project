@@ -55,7 +55,9 @@ function Rooms() {
           <p className="text-white/90 italic text-sm md:text-xl font-light tracking-widest max-w-2xl drop-shadow-md">
             Peaceful rooms designed for your perfect stay
           </p>
+           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
           <Exploreindicator />
+        </div>
         </div>
       </header>
 

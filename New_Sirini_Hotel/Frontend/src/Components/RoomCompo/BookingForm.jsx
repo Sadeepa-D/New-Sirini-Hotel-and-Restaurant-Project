@@ -5,11 +5,12 @@ import BookingSuccess from "../RoomCompo/SuccessMsg";
 function BookingForm({ selectedRoom, onClose, onConfirmed }) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const today=new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split("T")[0];
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
+    guests: 1,
     checkInDate: "",
     checkOutDate: "",
   });
@@ -25,7 +26,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
     const checkIn = new Date(formData.checkInDate);
     const checkOut = new Date(formData.checkOutDate);
 
-    if (checkOut <= checkIn){
+    if (checkOut <= checkIn) {
       alert("Check-out date must be after check-in date.");
       return;
     }
@@ -37,13 +38,15 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
       return;
     }
 
-    
     setLoading(true);
     try {
       await axios.post("http://localhost:5000/api/rooms/book", {
         ...formData,
         room: selectedRoom._id,
+        roomNumber: selectedRoom.roomNumber,
+        numberOfGuests: formData.guests,
       });
+      
       onConfirmed(selectedRoom._id);
       setShowSuccess(true);
     } catch (error) {
@@ -54,12 +57,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
   };
 
   if (showSuccess) {
-    return (
-      <BookingSuccess
-        selectedRoom={selectedRoom}
-        onClose={onClose}
-      />
-    );
+    return <BookingSuccess selectedRoom={selectedRoom} onClose={onClose} />;
   }
 
   return (
@@ -68,7 +66,6 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div className="bg-[#0f0f0f] border border-white/10 rounded-t-3xl sm:rounded-2xl w-full sm:max-w-md shadow-[0_30px_80px_rgba(0,0,0,0.8)] overflow-hidden max-h-[92vh] overflow-y-auto">
-
         {/* Header */}
         <div className="bg-gradient-to-r from-orange-500 to-orange-400 px-4 sm:px-8 py-3 sm:py-5 flex justify-between items-center">
           <div>
@@ -96,12 +93,9 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
           />
           <div className="min-w-0">
             <p className="text-white text-xs sm:text-sm font-medium truncate">
-              Room No: {selectedRoom.roomNo}
+              Room No: {selectedRoom.roomNumber}
             </p>
-            <p className="text-gray-400 text-[9px] sm:text-xs mt-0.5 sm:mt-1">
-              🛏 {selectedRoom.bed} &nbsp;|&nbsp; 👤 {selectedRoom.guests}{" "}
-              {selectedRoom.guests === 1 ? "Guest" : "Guests"}
-            </p>
+
             <p className="text-orange-400 text-[9px] sm:text-xs font-bold mt-0.5 sm:mt-1">
               Rs.{selectedRoom.price} / night
             </p>
@@ -113,7 +107,6 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
           className="px-4 sm:px-8 py-4 sm:py-6 space-y-2.5 sm:space-y-4"
           onSubmit={handleSubmit}
         >
-
           {/* Full Name */}
           <div>
             <label className="text-gray-400 text-[9px] sm:text-xs uppercase tracking-widest block mb-1">
@@ -162,6 +155,31 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
             />
           </div>
 
+          {/* Number of Guests Dropdown */}
+          <div>
+            <label className="text-gray-400 text-[9px] sm:text-xs uppercase tracking-widest block mb-1">
+              Number of Guests (Max: {selectedRoom.capacity})
+            </label>
+            <select
+              name="guests"
+              value={formData.guests}
+              onChange={handleChange}
+              required
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-white text-xs sm:text-sm focus:outline-none focus:border-orange-500 transition-colors cursor-pointer"
+            >
+              {/* කාමරයේ capacity එක අනුව options සාදනු ලබයි */}
+              {[...Array(selectedRoom.capacity)].map((_, i) => (
+                <option
+                  key={i + 1}
+                  value={i + 1}
+                  className="bg-gray-900 text-white"
+                >
+                  {i + 1} {i + 1 === 1 ? "Guest" : "Guests"}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Check In & Check Out */}
           <div className="grid grid-cols-2 gap-2 sm:gap-3">
             <div>
@@ -171,6 +189,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
               <input
                 type="date"
                 name="checkInDate"
+                min={today}
                 value={formData.checkInDate}
                 onChange={handleChange}
                 required
@@ -184,6 +203,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
               <input
                 type="date"
                 name="checkOutDate"
+                min={formData.checkInDate || today}
                 value={formData.checkOutDate}
                 onChange={handleChange}
                 required
@@ -209,7 +229,6 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
               {loading ? "Booking..." : "Confirm Booking"}
             </button>
           </div>
-
         </form>
       </div>
     </div>
