@@ -30,7 +30,7 @@ const RoomOperation = () => {
     (r) =>
       r.roomNumber?.toString().includes(searchTerm) ||
       r.roomType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      r.status?.toLowerCase().includes(searchTerm.toLowerCase())
+      r.status?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handleAdd = () => {
@@ -55,6 +55,7 @@ const RoomOperation = () => {
   };
 
   const handleSave = async (formData) => {
+    const loadingtoast = toast.loading("Saving room...");
     const data = new FormData();
     data.append("roomNumber", formData.roomNumber);
     data.append("roomType", formData.roomType);
@@ -83,6 +84,7 @@ const RoomOperation = () => {
       } else {
         await axios.post("http://localhost:5000/api/rooms/add", data, config);
       }
+      toast.dismiss(loadingtoast);
       fetchRooms();
       setIsFormOpen(false);
       setEditingRoom(null);
@@ -95,7 +97,7 @@ const RoomOperation = () => {
   // ✅ Stats ගණනය කිරීම status අනුව වෙනස් කළා
   const stats = {
     available: rooms.filter((r) => r.status === "available").length,
-    reserved: rooms.filter((r) => r.status === "reserved").length, 
+    reserved: rooms.filter((r) => r.status === "reserved").length,
     maintenance: rooms.filter((r) => r.status === "maintenance").length,
   };
 
