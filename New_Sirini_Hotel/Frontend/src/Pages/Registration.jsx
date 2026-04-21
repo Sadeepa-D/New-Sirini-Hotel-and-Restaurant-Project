@@ -260,7 +260,7 @@ const Registration = () => {
 
         <div className="mt-6 text-center">
           <Link
-            to="/main"
+            to="/"
             className="inline-flex items-center text-amber-100/60 hover:text-amber-400 transition-colors text-sm"
           >
             <svg
