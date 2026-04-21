@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import BookingSuccess from "../RoomCompo/SuccessMsg";
 
 function BookingForm({ selectedRoom, onClose, onConfirmed }) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [totalPrice, setTotalPrice] = useState(selectedRoom.price);
   const today = new Date().toISOString().split("T")[0];
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -15,26 +17,33 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
     checkOutDate: "",
   });
 
+  // දින වෙනස් වන විට මුළු මුදල ගණනය කිරීම
+  useEffect(() => {
+    if (formData.checkInDate && formData.checkOutDate) {
+      const checkIn = new Date(formData.checkInDate);
+      const checkOut = new Date(formData.checkOutDate);
+      const timeDiff = checkOut.getTime() - checkIn.getTime();
+      const nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+      if (nights > 0) {
+        setTotalPrice(nights * selectedRoom.price);
+      } else {
+        setTotalPrice(selectedRoom.price);
+      }
+    }
+  }, [formData.checkInDate, formData.checkOutDate, selectedRoom.price]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    //date validation
     const checkIn = new Date(formData.checkInDate);
     const checkOut = new Date(formData.checkOutDate);
 
     if (checkOut <= checkIn) {
       alert("Check-out date must be after check-in date.");
-      return;
-    }
-
-    //Mobile Number validation
-    const phoneRegex = /^[0-9]{10}$/;
-    if (!phoneRegex.test(formData.phone)) {
-      alert("Please enter a valid 10-digit phone number.");
       return;
     }
 
@@ -45,8 +54,8 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
         room: selectedRoom._id,
         roomNumber: selectedRoom.roomNumber,
         numberOfGuests: formData.guests,
+        totalAmount: totalPrice, // මුළු මුදලත් යවනවා
       });
-      
       onConfirmed(selectedRoom._id);
       setShowSuccess(true);
     } catch (error) {
@@ -62,174 +71,102 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
 
   return (
     <div
-      className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 px-0 sm:px-4"
+      className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-end sm:items-center justify-center z-50 px-0 sm:px-4 transition-all duration-500"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-[#0f0f0f] border border-white/10 rounded-t-3xl sm:rounded-2xl w-full sm:max-w-md shadow-[0_30px_80px_rgba(0,0,0,0.8)] overflow-hidden max-h-[92vh] overflow-y-auto">
+      <div className="bg-[#0c0c0c] border border-white/10 rounded-t-3xl sm:rounded-2xl w-full sm:max-w-lg shadow-[0_0_50px_rgba(249,115,22,0.1)] overflow-hidden max-h-[95vh] flex flex-col animate-in fade-in zoom-in duration-300">
+        
         {/* Header */}
-        <div className="bg-gradient-to-r from-orange-500 to-orange-400 px-4 sm:px-8 py-3 sm:py-5 flex justify-between items-center">
+        <div className="bg-gradient-to-r from-orange-600 to-orange-400 px-6 py-5 flex justify-between items-center">
           <div>
-            <p className="text-black/60 text-[9px] sm:text-xs uppercase tracking-widest font-semibold">
-              Booking
-            </p>
-            <h2 className="text-black text-lg sm:text-2xl font-serif font-bold leading-tight">
-              {selectedRoom.type}
+            <h2 className="text-black text-xl sm:text-2xl font-serif font-black uppercase italic tracking-tighter">
+              Reserve Your Stay
             </h2>
+            <p className="text-black/70 text-[10px] font-bold uppercase tracking-widest">
+              {selectedRoom.type} Suite
+            </p>
           </div>
-          <button
-            onClick={onClose}
-            className="text-black/60 hover:text-black text-3xl font-light w-8 h-8 flex items-center justify-center flex-shrink-0"
-          >
+          <button onClick={onClose} className="text-black/60 hover:text-black text-4xl font-thin transition-transform hover:rotate-90">
             ×
           </button>
         </div>
 
-        {/* Room Summary */}
-        <div className="px-4 sm:px-8 py-3 sm:py-4 border-b border-white/5 flex gap-3 items-center">
-          <img
-            src={selectedRoom.image}
-            alt={selectedRoom.type}
-            className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg object-cover flex-shrink-0"
-          />
-          <div className="min-w-0">
-            <p className="text-white text-xs sm:text-sm font-medium truncate">
-              Room No: {selectedRoom.roomNumber}
-            </p>
-
-            <p className="text-orange-400 text-[9px] sm:text-xs font-bold mt-0.5 sm:mt-1">
-              Rs.{selectedRoom.price} / night
-            </p>
+        <div className="overflow-y-auto px-6 py-4 space-y-6">
+          {/* Pricing Card - Interactive Summary */}
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex justify-between items-center group hover:border-orange-500/50 transition-all">
+            <div className="flex items-center gap-4">
+               <img src={selectedRoom.image} className="w-16 h-16 rounded-xl object-cover grayscale group-hover:grayscale-0 transition-all duration-500" alt="Room" />
+               <div>
+                  <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">Room No</p>
+                  <p className="text-white font-mono text-lg font-bold">{selectedRoom.roomNumber}</p>
+               </div>
+            </div>
+            <div className="text-right">
+              <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">Total Price</p>
+              <p className="text-orange-500 text-2xl font-black font-mono">Rs.{totalPrice.toLocaleString()}</p>
+            </div>
           </div>
+
+          <form className="grid grid-cols-1 sm:grid-cols-2 gap-4" onSubmit={handleSubmit}>
+            {/* Full Name */}
+            <div className="sm:col-span-2">
+              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">Full Name</label>
+              <input type="text" name="name" value={formData.name} onChange={handleChange} required placeholder="Enter your name"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all" />
+            </div>
+
+            {/* Email */}
+            <div className="sm:col-span-1">
+              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">Email</label>
+              <input type="email" name="email" value={formData.email} onChange={handleChange} required placeholder="email@example.com"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all" />
+            </div>
+
+            {/* Phone */}
+            <div className="sm:col-span-1">
+              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">Phone</label>
+              <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required placeholder="07xxxxxxxx"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all" />
+            </div>
+
+            {/* Guests */}
+            <div className="sm:col-span-2">
+              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">Guests (Max: {selectedRoom.capacity})</label>
+              <select name="guests" value={formData.guests} onChange={handleChange} required
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 appearance-none transition-all">
+                {[...Array(selectedRoom.capacity)].map((_, i) => (
+                  <option key={i + 1} value={i + 1} className="bg-neutral-900 text-white">{i + 1} Guest{i > 0 ? 's' : ''}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Check In */}
+            <div>
+              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">Check In</label>
+              <input type="date" name="checkInDate" min={today} value={formData.checkInDate} onChange={handleChange} required
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all" />
+            </div>
+
+            {/* Check Out */}
+            <div>
+              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">Check Out</label>
+              <input type="date" name="checkOutDate" min={formData.checkInDate || today} value={formData.checkOutDate} onChange={handleChange} required
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all" />
+            </div>
+
+            {/* Footer Buttons */}
+            <div className="sm:col-span-2 flex gap-4 pt-4">
+              <button type="button" onClick={onClose} 
+                className="flex-1 py-4 rounded-xl border border-white/10 text-gray-400 font-bold uppercase text-[10px] tracking-[0.2em] hover:bg-white/5 transition-all">
+                Discard
+              </button>
+              <button type="submit" disabled={loading}
+                className="flex-[2] py-4 rounded-xl bg-orange-500 text-black font-black uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-orange-500/20 hover:bg-orange-400 hover:shadow-orange-500/40 active:scale-95 disabled:opacity-50 transition-all">
+                {loading ? "Processing..." : "Confirm Reservation"}
+              </button>
+            </div>
+          </form>
         </div>
-
-        {/* Form */}
-        <form
-          className="px-4 sm:px-8 py-4 sm:py-6 space-y-2.5 sm:space-y-4"
-          onSubmit={handleSubmit}
-        >
-          {/* Full Name */}
-          <div>
-            <label className="text-gray-400 text-[9px] sm:text-xs uppercase tracking-widest block mb-1">
-              Full Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              placeholder="John Silva"
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-white text-xs sm:text-sm placeholder-gray-600 focus:outline-none focus:border-orange-500 transition-colors"
-            />
-          </div>
-
-          {/* Email */}
-          <div>
-            <label className="text-gray-400 text-[9px] sm:text-xs uppercase tracking-widest block mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              placeholder="john@example.com"
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-white text-xs sm:text-sm placeholder-gray-600 focus:outline-none focus:border-orange-500 transition-colors"
-            />
-          </div>
-
-          {/* Phone */}
-          <div>
-            <label className="text-gray-400 text-[9px] sm:text-xs uppercase tracking-widests block mb-1">
-              Phone
-            </label>
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              required
-              placeholder="+94 77 123 4567"
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-white text-xs sm:text-sm placeholder-gray-600 focus:outline-none focus:border-orange-500 transition-colors"
-            />
-          </div>
-
-          {/* Number of Guests Dropdown */}
-          <div>
-            <label className="text-gray-400 text-[9px] sm:text-xs uppercase tracking-widest block mb-1">
-              Number of Guests (Max: {selectedRoom.capacity})
-            </label>
-            <select
-              name="guests"
-              value={formData.guests}
-              onChange={handleChange}
-              required
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-white text-xs sm:text-sm focus:outline-none focus:border-orange-500 transition-colors cursor-pointer"
-            >
-              {/* කාමරයේ capacity එක අනුව options සාදනු ලබයි */}
-              {[...Array(selectedRoom.capacity)].map((_, i) => (
-                <option
-                  key={i + 1}
-                  value={i + 1}
-                  className="bg-gray-900 text-white"
-                >
-                  {i + 1} {i + 1 === 1 ? "Guest" : "Guests"}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Check In & Check Out */}
-          <div className="grid grid-cols-2 gap-2 sm:gap-3">
-            <div>
-              <label className="text-gray-400 text-[9px] sm:text-xs uppercase tracking-widest block mb-1">
-                Check In
-              </label>
-              <input
-                type="date"
-                name="checkInDate"
-                min={today}
-                value={formData.checkInDate}
-                onChange={handleChange}
-                required
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-2 sm:px-4 py-2 sm:py-3 text-white text-[10px] sm:text-sm focus:outline-none focus:border-orange-500 transition-colors"
-              />
-            </div>
-            <div>
-              <label className="text-gray-400 text-[9px] sm:text-xs uppercase tracking-widest block mb-1">
-                Check Out
-              </label>
-              <input
-                type="date"
-                name="checkOutDate"
-                min={formData.checkInDate || today}
-                value={formData.checkOutDate}
-                onChange={handleChange}
-                required
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-2 sm:px-4 py-2 sm:py-3 text-white text-[10px] sm:text-sm focus:outline-none focus:border-orange-500 transition-colors"
-              />
-            </div>
-          </div>
-
-          {/* Buttons */}
-          <div className="flex gap-2 sm:gap-3 pt-1 sm:pt-2 pb-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 border border-white/10 text-gray-400 py-2 sm:py-3 rounded-full text-[9px] sm:text-xs uppercase tracking-widest font-bold hover:border-white/30 hover:text-white transition-all"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 bg-orange-500 text-black py-2 sm:py-3 rounded-full text-[9px] sm:text-xs uppercase tracking-widest font-bold hover:bg-orange-400 active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              {loading ? "Booking..." : "Confirm Booking"}
-            </button>
-          </div>
-        </form>
       </div>
     </div>
   );
