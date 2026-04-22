@@ -100,208 +100,187 @@ const UserManagement = () => {
   };
 
   return (
-    <div className="p-4 sm:p-6">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h2 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">
-            User Accounts
-          </h2>
-          <p className="text-gray-400 text-sm mt-0.5">
-            Manage access levels and staff credentials.
+          <h2 className="text-2xl font-black text-gray-900">User Accounts</h2>
+          <p className="text-gray-500 text-sm">
+            Manage system access levels and staff credentials.
           </p>
         </div>
         <button
           onClick={() => navigate("/register")}
-          className="flex items-center justify-center gap-2 bg-black text-yellow-400 px-5 py-2.5 rounded-xl font-bold hover:bg-gray-900 transition-all shadow-md text-sm w-full sm:w-auto"
+          className="flex items-center justify-center gap-2 bg-black text-yellow-500 px-6 py-3 rounded-2xl font-bold hover:scale-[1.02] transition-all shadow-lg w-full md:w-auto"
         >
-          <UserPlus size={17} />
-          Add New User
+          <UserPlus size={20} /> Add New User
         </button>
       </div>
 
-      {/* Search bar */}
-      <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm flex gap-3 mb-5">
+      {/* Search Bar */}
+      <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm flex gap-3 mb-6">
         <div className="relative flex-1">
           <Search
             className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-            size={16}
+            size={18}
           />
           <input
             type="text"
-            placeholder="Search by name or email..."
-            className="w-full pl-9 pr-4 py-2 bg-gray-50 rounded-xl text-sm outline-none focus:ring-2 focus:ring-yellow-400/30 border border-transparent"
+            placeholder="Search accounts..."
+            className="w-full pl-10 pr-4 py-2 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-yellow-500/20"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
       </div>
 
-      {/* User cards */}
-      <div className="space-y-3">
+      {/* Unified Responsive Grid */}
+      <div className="grid grid-cols-1 gap-4">
         {filteredUsers.map((user) => (
           <div
             key={user._id}
-            className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex flex-col sm:flex-row sm:items-center gap-4 hover:shadow-md transition-shadow duration-200"
+            className="bg-white rounded-3xl border border-gray-100 p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:shadow-md transition-all group"
           >
-            {/* Status stripe */}
-            <div
-              className={`hidden sm:block w-1 self-stretch rounded-full ${user.Status === "Active" ? "bg-green-400" : "bg-red-400"}`}
-            />
-
-            {/* Avatar */}
-            <div className="flex items-center gap-3 flex-1 min-w-0">
-              <div className="w-11 h-11 shrink-0 rounded-2xl bg-yellow-100 text-yellow-700 flex items-center justify-center font-black text-base">
+            {/* LEFT: Identity Section (35% width on desktop) */}
+            <div className="flex items-center gap-4 md:w-[35%] min-w-0">
+              <div
+                className={`w-1.5 h-12 rounded-full hidden md:block ${user.Status === "Active" ? "bg-green-500" : "bg-red-500"}`}
+              />
+              <div className="w-12 h-12 shrink-0 rounded-2xl bg-yellow-100 text-yellow-700 flex items-center justify-center font-black text-lg shadow-sm">
                 {user.name?.charAt(0).toUpperCase()}
               </div>
-
-              {/* Info */}
-              <div className="min-w-0 flex-1">
-                <p className="font-bold text-gray-900 text-sm truncate">
+              <div className="truncate">
+                <h3 className="font-bold text-gray-900 truncate">
                   {user.name}
-                </p>
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-0.5">
-                  <span className="flex items-center gap-1 text-[11px] text-gray-400 truncate">
+                </h3>
+                <div className="flex flex-col text-[11px] text-gray-400 mt-0.5">
+                  <span className="flex items-center gap-1">
                     <Mail size={11} /> {user.email}
                   </span>
-                  <span className="flex items-center gap-1 text-[11px] text-gray-400">
+                  <span className="flex items-center gap-1">
                     <Phone size={11} /> {user.Phone}
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Role + Status badges */}
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="flex items-center gap-1 text-[11px] font-bold text-gray-600 bg-gray-100 px-2.5 py-1 rounded-lg">
-                <ShieldCheck size={12} className="text-gray-400" />
-                {user.Role}
-              </span>
-              <span
-                className={`text-[10px] font-black uppercase px-2.5 py-1 rounded-lg ${
-                  user.Status === "Active"
-                    ? "bg-green-100 text-green-600"
-                    : "bg-red-100 text-red-500"
-                }`}
-              >
-                {user.Status}
-              </span>
+            {/* MIDDLE: Role & Status (Centered on desktop) */}
+            <div className="flex flex-1 items-center justify-between md:justify-center gap-4 px-2">
+              <div className="flex flex-row md:flex-col items-center md:items-center gap-2">
+                <span className="flex items-center gap-1.5 text-[10px] font-bold text-gray-600 bg-gray-50 px-3 py-1 rounded-lg border border-gray-100 whitespace-nowrap">
+                  <ShieldCheck size={12} className="text-gray-400" />
+                  {user.Role}
+                </span>
+                <span
+                  className={`text-[9px] font-black uppercase px-3 py-0.5 rounded-full border ${
+                    user.Status === "Active"
+                      ? "bg-green-50 text-green-600 border-green-100"
+                      : "bg-red-50 text-red-500 border-red-100"
+                  }`}
+                >
+                  {user.Status}
+                </span>
+              </div>
             </div>
 
-            {/* Actions */}
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <button
-                title="Edit"
-                className="p-2 rounded-xl text-blue-500 hover:bg-blue-50 transition-colors"
-              >
-                <Edit3 size={16} />
-              </button>
+            {/* RIGHT: Actions Hub (Fixed width on desktop) */}
+            <div className="flex items-center justify-end md:w-[30%] shrink-0">
+              <div className="flex items-center bg-gray-50 p-1.5 rounded-2xl border border-gray-100 gap-1 w-full md:w-auto justify-around md:justify-end">
+                <button
+                  title="Edit"
+                  className="p-2 rounded-xl text-blue-500 hover:bg-white hover:shadow-sm transition-all"
+                >
+                  <Edit3 size={17} />
+                </button>
 
-              <button
-                title={user.Status === "Active" ? "Suspend" : "Activate"}
-                onClick={() => toggleuserstatus(user)}
-                className={`p-2 rounded-xl transition-colors ${
-                  user.Status === "Active"
-                    ? "text-orange-500 hover:bg-orange-50"
-                    : "text-green-500 hover:bg-green-50"
-                }`}
-              >
-                {user.Status === "Active" ? (
-                  <UserX size={16} />
-                ) : (
-                  <UserCheck size={16} />
-                )}
-              </button>
+                <button
+                  onClick={() => toggleuserstatus(user)}
+                  title="Status"
+                  className={`p-2 rounded-xl transition-all hover:bg-white hover:shadow-sm ${user.Status === "Active" ? "text-orange-500" : "text-green-600"}`}
+                >
+                  {user.Status === "Active" ? (
+                    <UserX size={17} />
+                  ) : (
+                    <UserCheck size={17} />
+                  )}
+                </button>
 
-              <button
-                title="Delete"
-                onClick={() => deleteuser(user)}
-                className="p-2 rounded-xl text-red-500 hover:bg-red-50 transition-colors"
-              >
-                <Trash2 size={16} />
-              </button>
+                <button
+                  onClick={() => deleteuser(user)}
+                  title="Delete"
+                  className="p-2 rounded-xl text-red-500 hover:bg-white hover:shadow-sm transition-all"
+                >
+                  <Trash2 size={17} />
+                </button>
 
-              <div className="w-px h-5 bg-gray-200" />
+                <div className="w-px h-6 bg-gray-200 mx-1 hidden md:block" />
 
-              <button
-                title="Change Role"
-                onClick={() => {
-                  setSelectedUser(user);
-                  setNewRole(user.Role);
-                  setIsPromoteModalOpen(true);
-                }}
-                className="p-2 rounded-xl text-indigo-500 hover:bg-indigo-50 transition-colors"
-              >
-                <UserCog size={16} />
-              </button>
+                <button
+                  onClick={() => {
+                    setSelectedUser(user);
+                    setNewRole(user.Role);
+                    setIsPromoteModalOpen(true);
+                  }}
+                  className="p-2 rounded-xl text-indigo-600 hover:bg-white hover:shadow-sm transition-all"
+                >
+                  <UserCog size={17} />
+                </button>
+              </div>
             </div>
           </div>
         ))}
-
-        {filteredUsers.length === 0 && (
-          <div className="text-center py-16 text-gray-400 text-sm">
-            No users found
-          </div>
-        )}
       </div>
 
-      {/* Promote Role Modal */}
+      {/* Role Modal */}
       {isPromoteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-sm border border-gray-100">
-            <div className="flex items-center justify-between mb-5">
-              <h3 className="text-base font-bold text-gray-900">
-                Change Role —{" "}
-                <span className="text-yellow-600">{selectedUser?.name}</span>
-              </h3>
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-4">
+          <div className="bg-white w-full max-w-sm rounded-t-[2.5rem] sm:rounded-3xl shadow-2xl p-6 md:p-8 animate-in slide-in-from-bottom duration-300">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-black text-gray-900">Change Role</h3>
               <button
                 onClick={() => setIsPromoteModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="p-2 text-gray-400 hover:bg-gray-100 rounded-full"
               >
-                <X size={18} />
+                <X size={20} />
               </button>
             </div>
-
-            <div className="flex flex-col gap-2 mb-6">
-              {["user", "manager", "admin"].map((role) => (
-                <label
-                  key={role}
-                  className={`flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-colors ${
-                    newRole === role
-                      ? "border-yellow-400 bg-yellow-50"
-                      : "border-gray-100 hover:bg-gray-50"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="role"
-                    value={role}
-                    checked={newRole === role}
-                    onChange={(e) => setNewRole(e.target.value)}
-                    className="w-4 h-4 accent-yellow-500"
-                  />
-                  <span className="text-sm font-semibold text-gray-700 capitalize">
-                    {role}
-                  </span>
-                </label>
-              ))}
+            <div className="space-y-3 mb-8">
+              {["User", "Manager", "Operational Manager", "Admin"].map(
+                (role) => (
+                  <label
+                    key={role}
+                    className={`flex items-center gap-4 p-4 border-2 rounded-2xl cursor-pointer transition-all ${newRole === role ? "border-yellow-500 bg-yellow-50" : "border-gray-50"}`}
+                  >
+                    <input
+                      type="radio"
+                      name="role"
+                      value={role}
+                      checked={newRole === role}
+                      onChange={(e) => setNewRole(e.target.value)}
+                      className="w-4 h-4 accent-yellow-600"
+                    />
+                    <span className="font-bold text-sm text-gray-700">
+                      {role}
+                    </span>
+                  </label>
+                ),
+              )}
             </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => setIsPromoteModalOpen(false)}
-                className="flex-1 py-2.5 text-sm font-bold text-gray-500 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors"
-              >
-                Cancel
-              </button>
+            <div className="flex flex-col gap-3">
               <button
                 onClick={() => {
                   updateuserrole(selectedUser._id);
                   setIsPromoteModalOpen(false);
                 }}
-                className="flex-1 py-2.5 text-sm font-bold text-black bg-yellow-400 rounded-xl hover:bg-yellow-500 transition-colors shadow-md shadow-yellow-400/20"
+                className="w-full py-4 bg-black text-yellow-500 font-black rounded-2xl shadow-xl active:scale-95 transition-all"
               >
-                Update Role
+                Update Access
+              </button>
+              <button
+                onClick={() => setIsPromoteModalOpen(false)}
+                className="w-full py-4 text-gray-400 font-bold"
+              >
+                Cancel
               </button>
             </div>
           </div>
