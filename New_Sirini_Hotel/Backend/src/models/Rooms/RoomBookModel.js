@@ -35,6 +35,10 @@ const roomBookSchema = new mongoose.Schema(
       type: Date,
       required: [true, "Check-out date is required"],
     },
+    roomNumber: { 
+      type: String, 
+      required: true 
+    },
     status: {
       type: String,
       enum: ["Pending", "Confirmed", "Cancelled", "Overdue"],

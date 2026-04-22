@@ -39,6 +39,8 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // 1. දින පරීක්ෂා කිරීම (Validation)
     const checkIn = new Date(formData.checkInDate);
     const checkOut = new Date(formData.checkOutDate);
 
@@ -49,17 +51,24 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
 
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/api/rooms/book", {
+      // 2. Backend එකට දත්ත යැවීම
+      // මෙහිදී 'totalAmount' එකත් ඇතුළත් කර තිබෙනවා
+      const res = await axios.post("http://localhost:5000/api/rooms/book", {
         ...formData,
         room: selectedRoom._id,
         roomNumber: selectedRoom.roomNumber,
         numberOfGuests: formData.guests,
-        totalAmount: totalPrice, // මුළු මුදලත් යවනවා
+        totalAmount: totalPrice, // මුළු මුදල
       });
-      onConfirmed(selectedRoom._id);
+
+      // 3. සාර්ථක නම් පණිවිඩයක් පෙන්වීම සහ Success Component එකට මාරු වීම
+      onConfirmed(selectedRoom._id); // පිටුව refresh කිරීමට හෝ status වෙනස් කිරීමට
       setShowSuccess(true);
     } catch (error) {
-      alert(error.response?.data?.error || "Booking failed. Try again.");
+      // Backend එකෙන් එවන නිවැරදි error message එක පෙන්වීම
+      const errorMsg =
+        error.response?.data?.error || "Booking failed. Please try again.";
+      alert(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -75,7 +84,6 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div className="bg-[#0c0c0c] border border-white/10 rounded-t-3xl sm:rounded-2xl w-full sm:max-w-lg shadow-[0_0_50px_rgba(249,115,22,0.1)] overflow-hidden max-h-[95vh] flex flex-col animate-in fade-in zoom-in duration-300">
-        
         {/* Header */}
         <div className="bg-gradient-to-r from-orange-600 to-orange-400 px-6 py-5 flex justify-between items-center">
           <div>
@@ -86,7 +94,10 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
               {selectedRoom.type} Suite
             </p>
           </div>
-          <button onClick={onClose} className="text-black/60 hover:text-black text-4xl font-thin transition-transform hover:rotate-90">
+          <button
+            onClick={onClose}
+            className="text-black/60 hover:text-black text-4xl font-thin transition-transform hover:rotate-90"
+          >
             ×
           </button>
         </div>
@@ -95,73 +106,152 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
           {/* Pricing Card - Interactive Summary */}
           <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex justify-between items-center group hover:border-orange-500/50 transition-all">
             <div className="flex items-center gap-4">
-               <img src={selectedRoom.image} className="w-16 h-16 rounded-xl object-cover grayscale group-hover:grayscale-0 transition-all duration-500" alt="Room" />
-               <div>
-                  <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">Room No</p>
-                  <p className="text-white font-mono text-lg font-bold">{selectedRoom.roomNumber}</p>
-               </div>
+              <img
+                src={selectedRoom.image}
+                className="w-16 h-16 rounded-xl object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                alt="Room"
+              />
+              <div>
+                <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">
+                  Room No
+                </p>
+                <p className="text-white font-mono text-lg font-bold">
+                  {selectedRoom.roomNumber}
+                </p>
+              </div>
             </div>
             <div className="text-right">
-              <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">Total Price</p>
-              <p className="text-orange-500 text-2xl font-black font-mono">Rs.{totalPrice.toLocaleString()}</p>
+              <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">
+                Total Price
+              </p>
+              <p className="text-orange-500 text-2xl font-black font-mono">
+                Rs.{totalPrice.toLocaleString()}
+              </p>
             </div>
           </div>
 
-          <form className="grid grid-cols-1 sm:grid-cols-2 gap-4" onSubmit={handleSubmit}>
+          <form
+            className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+            onSubmit={handleSubmit}
+          >
             {/* Full Name */}
             <div className="sm:col-span-2">
-              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">Full Name</label>
-              <input type="text" name="name" value={formData.name} onChange={handleChange} required placeholder="Enter your name"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all" />
+              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">
+                Full Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                placeholder="Enter your name"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all"
+              />
             </div>
 
             {/* Email */}
             <div className="sm:col-span-1">
-              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">Email</label>
-              <input type="email" name="email" value={formData.email} onChange={handleChange} required placeholder="email@example.com"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all" />
+              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                placeholder="email@example.com"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all"
+              />
             </div>
 
             {/* Phone */}
             <div className="sm:col-span-1">
-              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">Phone</label>
-              <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required placeholder="07xxxxxxxx"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all" />
+              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">
+                Phone
+              </label>
+              <input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                required
+                placeholder="07xxxxxxxx"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all"
+              />
             </div>
 
             {/* Guests */}
             <div className="sm:col-span-2">
-              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">Guests (Max: {selectedRoom.capacity})</label>
-              <select name="guests" value={formData.guests} onChange={handleChange} required
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 appearance-none transition-all">
+              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">
+                Guests (Max: {selectedRoom.capacity})
+              </label>
+              <select
+                name="guests"
+                value={formData.guests}
+                onChange={handleChange}
+                required
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 appearance-none transition-all"
+              >
                 {[...Array(selectedRoom.capacity)].map((_, i) => (
-                  <option key={i + 1} value={i + 1} className="bg-neutral-900 text-white">{i + 1} Guest{i > 0 ? 's' : ''}</option>
+                  <option
+                    key={i + 1}
+                    value={i + 1}
+                    className="bg-neutral-900 text-white"
+                  >
+                    {i + 1} Guest{i > 0 ? "s" : ""}
+                  </option>
                 ))}
               </select>
             </div>
 
             {/* Check In */}
             <div>
-              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">Check In</label>
-              <input type="date" name="checkInDate" min={today} value={formData.checkInDate} onChange={handleChange} required
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all" />
+              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">
+                Check In
+              </label>
+              <input
+                type="date"
+                name="checkInDate"
+                min={today}
+                value={formData.checkInDate}
+                onChange={handleChange}
+                required
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all"
+              />
             </div>
 
             {/* Check Out */}
             <div>
-              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">Check Out</label>
-              <input type="date" name="checkOutDate" min={formData.checkInDate || today} value={formData.checkOutDate} onChange={handleChange} required
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all" />
+              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">
+                Check Out
+              </label>
+              <input
+                type="date"
+                name="checkOutDate"
+                min={formData.checkInDate || today}
+                value={formData.checkOutDate}
+                onChange={handleChange}
+                required
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all"
+              />
             </div>
 
             {/* Footer Buttons */}
             <div className="sm:col-span-2 flex gap-4 pt-4">
-              <button type="button" onClick={onClose} 
-                className="flex-1 py-4 rounded-xl border border-white/10 text-gray-400 font-bold uppercase text-[10px] tracking-[0.2em] hover:bg-white/5 transition-all">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 py-4 rounded-xl border border-white/10 text-gray-400 font-bold uppercase text-[10px] tracking-[0.2em] hover:bg-white/5 transition-all"
+              >
                 Discard
               </button>
-              <button type="submit" disabled={loading}
-                className="flex-[2] py-4 rounded-xl bg-orange-500 text-black font-black uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-orange-500/20 hover:bg-orange-400 hover:shadow-orange-500/40 active:scale-95 disabled:opacity-50 transition-all">
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-[2] py-4 rounded-xl bg-orange-500 text-black font-black uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-orange-500/20 hover:bg-orange-400 hover:shadow-orange-500/40 active:scale-95 disabled:opacity-50 transition-all"
+              >
                 {loading ? "Processing..." : "Confirm Reservation"}
               </button>
             </div>
