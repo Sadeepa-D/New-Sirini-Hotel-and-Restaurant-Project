@@ -24,6 +24,8 @@ const UserManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [users, setUsers] = useState([]);
   const [isPromoteModalOpen, setIsPromoteModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editdata, setEditData] = useState({});
   const [selectedUser, setSelectedUser] = useState(null);
   const [newRole, setNewRole] = useState("");
 
@@ -97,6 +99,40 @@ const UserManagement = () => {
       console.error("Error deleting user:", error);
       toast.error("Failed to delete user.");
     }
+  };
+
+  const updateuserdetails = async (e) => {
+    e.preventDefault();
+    const loadingtoast = toast.loading("Updating user details...");
+    try {
+      const response = await axios.put(
+        `${VITE_URL}/api/users/update/userdetails`,
+        {
+          userId: editdata.id,
+          name: editdata.name,
+          email: editdata.email,
+          Phone: editdata.Phone,
+        },
+      );
+      toast.dismiss(loadingtoast);
+      toast.success("User details updated successfully!");
+      setIsEditModalOpen(false);
+      fetchUsers();
+    } catch (error) {
+      console.error("Error updating user details:", error);
+      toast.error("Failed to update user details.");
+      toast.dismiss(loadingtoast);
+    }
+  };
+
+  const openEditModal = (user) => {
+    setEditData({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      Phone: user.Phone,
+    });
+    setIsEditModalOpen(true);
   };
 
   return (
@@ -189,6 +225,7 @@ const UserManagement = () => {
                 <button
                   title="Edit"
                   className="p-2 rounded-xl text-blue-500 hover:bg-white hover:shadow-sm transition-all"
+                  onClick={() => openEditModal(user)}
                 >
                   <Edit3 size={17} />
                 </button>
@@ -280,7 +317,6 @@ const UserManagement = () => {
               <button
                 onClick={() => {
                   updateuserrole(selectedUser._id, newRole);
-
                   setIsPromoteModalOpen(false);
                 }}
                 className="flex-1 py-2.5 text-sm font-bold text-black bg-yellow-400 rounded-xl hover:bg-yellow-500 transition-colors shadow-md shadow-yellow-400/20"
@@ -291,8 +327,95 @@ const UserManagement = () => {
           </div>
         </div>
       )}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in duration-200">
+            {/* Header */}
+            <div className="bg-black p-6 text-white flex justify-between items-center">
+              <div>
+                <h3 className="text-xl font-bold text-yellow-500">
+                  Edit Profile
+                </h3>
+                <p className="text-gray-400 text-xs mt-1">
+                  Update primary contact details
+                </p>
+              </div>
+              <button
+                onClick={() => setIsEditModalOpen(false)}
+                className="text-gray-400 hover:text-white"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={updateuserdetails} className="p-6 space-y-5">
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase text-gray-400 ml-1">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-yellow-500/20 outline-none transition-all"
+                  value={editdata.name}
+                  onChange={(e) =>
+                    setEditData({ ...editdata, name: e.target.value })
+                  }
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase text-gray-400 ml-1">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  required
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-yellow-500/20 outline-none transition-all"
+                  value={editdata.email}
+                  onChange={(e) =>
+                    setEditData({ ...editdata, email: e.target.value })
+                  }
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase text-gray-400 ml-1">
+                  Phone Number
+                </label>
+                <input
+                  type="text"
+                  required
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-yellow-500/20 outline-none transition-all"
+                  value={editdata.Phone}
+                  onChange={(e) =>
+                    setEditData({ ...editdata, phone: e.target.value })
+                  }
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="flex-1 py-3 text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-[2] py-3 bg-black text-yellow-500 font-bold rounded-2xl shadow-lg shadow-yellow-500/10 active:scale-95 transition-all"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
-
 export default UserManagement;

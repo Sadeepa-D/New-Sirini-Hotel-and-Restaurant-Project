@@ -238,6 +238,29 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const updateuserdetails = async (req, res) => {
+  try {
+    const { userId, name, email, Phone } = req.body;
+    if (!userId || !name || !email || !Phone) {
+      return res
+        .status(400)
+        .json({ message: "User ID, name, email and phone are required" });
+    }
+    const userupdate = await User.findByIdAndUpdate(
+      userId,
+      { $set: { name: name, email: email, Phone: Phone } },
+      { new: true },
+    );
+    if (!userupdate) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(userupdate);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -248,4 +271,5 @@ module.exports = {
   updateUserRole,
   suspendUser,
   deleteUser,
+  updateuserdetails,
 };
