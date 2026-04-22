@@ -69,7 +69,7 @@ const Login = ({ onLogin }) => {
         toast.success("Login successful");
 
         switch (data.user.Role) {
-          case "admin":
+          case "Admin":
             navigate("/admin");
             break;
           case "user":

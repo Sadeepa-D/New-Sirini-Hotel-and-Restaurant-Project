@@ -98,7 +98,7 @@ const Registration = () => {
       }
 
       toast.success("Registration successful!");
-      navigate("/");
+      navigate("/login");
     } catch (error) {
       setErrors({ submit: "Registration failed. Please try again." });
     } finally {
@@ -247,7 +247,7 @@ const Registration = () => {
 
           <div className="mt-6 text-center">
             <p className="text-amber-100/60 text-sm">
-              Already have an account?{" "}
+              Already have an account?
               <Link
                 to="/"
                 className="text-amber-400 hover:text-amber-300 font-semibold transition-colors"
