@@ -15,6 +15,7 @@ import {
   X,
 } from "lucide-react";
 import axios from "axios";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const UserManagement = () => {
@@ -35,6 +36,22 @@ const UserManagement = () => {
     }
   };
 
+  const updateuserrole = async (id) => {
+    const loadingtoast = toast.loading("Updating user role...");
+    try {
+      const response = await axios.put(`${VITE_URL}/api/users/update/role`, {
+        userId: id,
+        newRole: newRole,
+      });
+      toast.dismiss(loadingtoast);
+      toast.success("User role updated successfully!");
+      fetchUsers();
+    } catch (error) {
+      console.error("Error updating user role:", error);
+      toast.error("Failed to update user role.");
+    }
+  };
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -43,6 +60,7 @@ const UserManagement = () => {
       user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+
   return (
     <div className="p-4 sm:p-6 md:p-8">
       {/* Header Section */}
@@ -379,8 +397,7 @@ const UserManagement = () => {
               </button>
               <button
                 onClick={() => {
-                  console.log("Updating role to:", newRole);
-                  // Add your axios call here
+                  updateuserrole(selectedUser._id, { Role: newRole });
                   setIsPromoteModalOpen(false);
                 }}
                 className="flex-1 py-2 text-sm font-bold text-black bg-yellow-500 rounded-xl hover:bg-yellow-600 shadow-lg shadow-yellow-500/20"

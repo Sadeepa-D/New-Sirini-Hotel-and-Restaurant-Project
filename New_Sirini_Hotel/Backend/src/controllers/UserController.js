@@ -163,6 +163,29 @@ const UpdatePassword = async (req, res) => {
   }
 };
 
+const updateUserRole = async (req, res) => {
+  try {
+    const { userId, newRole } = req.body;
+    if (!userId || !newRole) {
+      return res
+        .status(400)
+        .json({ message: "User ID and new role are required" });
+    }
+    const updateuser = await User.findByIdAndUpdate(
+      userId,
+      { $set: { Role: newRole } },
+      { new: true },
+    );
+    if (!updateuser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(updateuser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -170,4 +193,5 @@ module.exports = {
   updateUserProfile,
   UpdatePassword,
   getallUsers,
+  updateUserRole,
 };

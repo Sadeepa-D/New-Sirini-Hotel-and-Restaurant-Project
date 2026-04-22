@@ -19,5 +19,6 @@ router.put(
   UserController.UpdatePassword,
 );
 router.get("/getall/users", UserController.getallUsers);
+router.put("/update/role", UserController.updateUserRole);
 
 module.exports = router;
