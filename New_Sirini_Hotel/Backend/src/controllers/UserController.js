@@ -39,6 +39,11 @@ const loginUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    if (user.Status === "Suspended") {
+      return res.status(403).json({
+        message: "Your account is suspended. Please contact the Hotel Admin.",
+      });
+    }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid password" });
@@ -50,6 +55,7 @@ const loginUser = async (req, res) => {
         name: user.name,
         Phone: user.Phone,
         Role: user.Role,
+        Status: user.Status,
       },
       process.env.JWT_SECRET,
       {
@@ -65,6 +71,7 @@ const loginUser = async (req, res) => {
         name: user.name,
         Phone: user.Phone,
         Role: user.Role,
+        Status: user.Status,
       },
     });
   } catch (error) {
@@ -186,6 +193,29 @@ const updateUserRole = async (req, res) => {
   }
 };
 
+const suspendUser = async (req, res) => {
+  try {
+    const { userId, newStatus } = req.body;
+    if (!userId || !newStatus) {
+      return res
+        .status(400)
+        .json({ message: "User ID and new status are required" });
+    }
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: { Status: newStatus } },
+      { new: true },
+    );
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -194,4 +224,5 @@ module.exports = {
   UpdatePassword,
   getallUsers,
   updateUserRole,
+  suspendUser,
 };

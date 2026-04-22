@@ -61,6 +61,28 @@ const UserManagement = () => {
       user.email?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
+  const toggleuserstatus = async (users) => {
+    const newStatus = users.Status === "Active" ? "Suspended" : "Active";
+    const loadingtoast = toast.loading(
+      users.Status === "Active" ? "Suspending user..." : "Activating user...",
+    );
+    try {
+      const response = await axios.put(
+        `${VITE_URL}/api/users/update/userstatus`,
+        {
+          userId: users._id,
+          newStatus: newStatus,
+        },
+      );
+      toast.dismiss(loadingtoast);
+      toast.success("User status updated successfully!");
+      fetchUsers();
+    } catch (error) {
+      console.error("Error updating user status:", error);
+      toast.error("Failed to update user status.");
+    }
+  };
+
   return (
     <div className="p-4 sm:p-6 md:p-8">
       {/* Header Section */}
@@ -186,6 +208,7 @@ const UserManagement = () => {
 
                       {/* Status Toggle - Orange/Green Tint */}
                       <button
+                        onClick={() => toggleuserstatus(user)}
                         title={
                           user.Status === "Active"
                             ? "Suspend User"
