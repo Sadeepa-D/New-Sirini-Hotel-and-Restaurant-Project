@@ -18,5 +18,6 @@ router.put(
   authMiddleware,
   UserController.UpdatePassword,
 );
+router.get("/getall/users", UserController.getallUsers);
 
 module.exports = router;

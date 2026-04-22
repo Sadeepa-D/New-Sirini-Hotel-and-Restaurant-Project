@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import UserManagement from "../../Components/Admin/UserManagement";
 
 // --- PLACEHOLDER COMPONENTS FOR TABS ---
 const AdminDashboard = () => (
@@ -61,12 +62,6 @@ const AdminDashboard = () => (
     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 min-h-[300px] flex items-center justify-center text-gray-400 italic">
       System Performance & Activity Chart Placeholder
     </div>
-  </div>
-);
-
-const UserManagement = () => (
-  <div className="p-8 text-center text-gray-500">
-    User Management Table Component
   </div>
 );
 const RestaurantAnalysis = () => (

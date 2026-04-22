@@ -73,6 +73,16 @@ const loginUser = async (req, res) => {
   }
 };
 
+const getallUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
+    res.status(200).json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 const getUserProfile = async (req, res) => {
   try {
     const userId = req.userData.id;
@@ -159,4 +169,5 @@ module.exports = {
   getUserProfile,
   updateUserProfile,
   UpdatePassword,
+  getallUsers,
 };
