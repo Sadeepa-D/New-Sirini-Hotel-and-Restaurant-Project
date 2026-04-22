@@ -209,12 +209,16 @@ const UserManagement = () => {
               <div
                 className={`w-1.5 h-12 rounded-full hidden md:block ${user.Status === "Active" ? "bg-green-500" : "bg-red-500"}`}
               />
-              <div className="w-12 h-12 shrink-0 rounded-2xl bg-yellow-100 text-yellow-700 flex items-center justify-center font-black text-lg shadow-sm">
+              <div className="w-15 h-17 shrink-0 rounded-2xl bg-yellow-100 text-yellow-700 flex items-center justify-center font-black text-lg shadow-sm">
                 {/* {user.name?.charAt(0).toUpperCase()} */}
                 {!user.image ? (
                   user.name?.charAt(0).toUpperCase()
                 ) : (
-                  <img src={user.image} alt={user.name} />
+                  <img
+                    src={user.image}
+                    alt={user.name}
+                    className="w-full h-full object-cover rounded-2xl border-2 border-yellow-200/50"
+                  />
                 )}
               </div>
               <div className="truncate">
