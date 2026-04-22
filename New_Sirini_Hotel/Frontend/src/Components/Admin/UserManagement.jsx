@@ -230,57 +230,62 @@ const UserManagement = () => {
           </div>
         ))}
       </div>
-
       {/* Role Modal */}
       {isPromoteModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-4">
-          <div className="bg-white w-full max-w-sm rounded-t-[2.5rem] sm:rounded-3xl shadow-2xl p-6 md:p-8 animate-in slide-in-from-bottom duration-300">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-black text-gray-900">Change Role</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-base font-bold text-gray-900">
+                Change Role Of-
+                <span className="text-yellow-600">{selectedUser?.name}</span>
+              </h3>
               <button
                 onClick={() => setIsPromoteModalOpen(false)}
-                className="p-2 text-gray-400 hover:bg-gray-100 rounded-full"
+                className="text-gray-400 hover:text-gray-600"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
-            <div className="space-y-3 mb-8">
-              {["User", "Manager", "Operational Manager", "Admin"].map(
-                (role) => (
-                  <label
-                    key={role}
-                    className={`flex items-center gap-4 p-4 border-2 rounded-2xl cursor-pointer transition-all ${newRole === role ? "border-yellow-500 bg-yellow-50" : "border-gray-50"}`}
-                  >
-                    <input
-                      type="radio"
-                      name="role"
-                      value={role}
-                      checked={newRole === role}
-                      onChange={(e) => setNewRole(e.target.value)}
-                      className="w-4 h-4 accent-yellow-600"
-                    />
-                    <span className="font-bold text-sm text-gray-700">
-                      {role}
-                    </span>
-                  </label>
-                ),
-              )}
+            <div className="flex flex-col gap-2 mb-6">
+              {["user", "manager", "admin"].map((role) => (
+                <label
+                  key={role}
+                  className={`flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-colors ${
+                    newRole === role
+                      ? "border-yellow-400 bg-yellow-50"
+                      : "border-gray-100 hover:bg-gray-50"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="role"
+                    value={role}
+                    checked={newRole === role}
+                    onChange={(e) => setNewRole(e.target.value)}
+                    className="w-4 h-4 accent-yellow-500"
+                  />
+                  <span className="text-sm font-semibold text-gray-700 capitalize">
+                    {role}
+                  </span>
+                </label>
+              ))}
             </div>
-            <div className="flex flex-col gap-3">
-              <button
-                onClick={() => {
-                  updateuserrole(selectedUser._id);
-                  setIsPromoteModalOpen(false);
-                }}
-                className="w-full py-4 bg-black text-yellow-500 font-black rounded-2xl shadow-xl active:scale-95 transition-all"
-              >
-                Update Access
-              </button>
+            <div className="flex gap-3">
               <button
                 onClick={() => setIsPromoteModalOpen(false)}
-                className="w-full py-4 text-gray-400 font-bold"
+                className="flex-1 py-2.5 text-sm font-bold text-gray-500 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors"
               >
                 Cancel
+              </button>
+              <button
+                onClick={() => {
+                  updateuserrole(selectedUser._id, newRole);
+
+                  setIsPromoteModalOpen(false);
+                }}
+                className="flex-1 py-2.5 text-sm font-bold text-black bg-yellow-400 rounded-xl hover:bg-yellow-500 transition-colors shadow-md shadow-yellow-400/20"
+              >
+                Update Role
               </button>
             </div>
           </div>
