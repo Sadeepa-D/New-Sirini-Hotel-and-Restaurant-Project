@@ -21,5 +21,6 @@ router.put(
 router.get("/getall/users", UserController.getallUsers);
 router.put("/update/role", UserController.updateUserRole);
 router.put("/update/userstatus", UserController.suspendUser);
+router.put("/delete/user", UserController.deleteUser);
 
 module.exports = router;

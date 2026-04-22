@@ -52,10 +52,14 @@ const Login = () => {
 
       const data = response.data;
 
-      if (data.user.Status === "Suspended") {
-        toast.error("Access Denied: Your account is currently suspended.");
+      if (data.user.Status === "Suspended" || data.user.Status === "Deleted") {
+        toast.error(
+          "Your Account is " +
+            data.user.Status +
+            ". Please contact the Hotel Admin.",
+        );
         setIsLoading(false);
-        return; // Stop execution
+        return;
       }
       if (data.token && data.user) {
         localStorage.setItem("token", data.token);

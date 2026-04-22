@@ -39,9 +39,12 @@ const loginUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    if (user.Status === "Suspended") {
+    if (user.Status === "Suspended" || user.Status === "Deleted") {
       return res.status(403).json({
-        message: "Your account is suspended. Please contact the Hotel Admin.",
+        message:
+          "Your Account is " +
+          user.Status +
+          ". Please contact the Hotel Admin.",
       });
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -215,6 +218,25 @@ const suspendUser = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+const deleteUser = async (req, res) => {
+  try {
+    const { userId, deleteStatus } = req.body;
+    if (!userId || !deleteStatus) {
+      return res
+        .status(400)
+        .json({ message: "User ID and delete status are required" });
+    }
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: { Status: deleteStatus } },
+      { new: true },
+    );
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 module.exports = {
   registerUser,
@@ -225,4 +247,5 @@ module.exports = {
   getallUsers,
   updateUserRole,
   suspendUser,
+  deleteUser,
 };

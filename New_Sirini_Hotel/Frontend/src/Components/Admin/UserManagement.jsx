@@ -83,6 +83,22 @@ const UserManagement = () => {
     }
   };
 
+  const deleteuser = async (users) => {
+    const loadingtoast = toast.loading("Deleting user...");
+    try {
+      const response = await axios.put(`${VITE_URL}/api/users/delete/user`, {
+        userId: users._id,
+        deleteStatus: "Deleted",
+      });
+      toast.dismiss(loadingtoast);
+      toast.success("User deleted successfully!");
+      fetchUsers();
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      toast.error("Failed to delete user.");
+    }
+  };
+
   return (
     <div className="p-4 sm:p-6 md:p-8">
       {/* Header Section */}
@@ -231,6 +247,7 @@ const UserManagement = () => {
                       <button
                         title="Delete User"
                         className="p-2 text-red-500 hover:bg-red-500 hover:text-white rounded-lg transition-all duration-200"
+                        onClick={() => deleteuser(user)}
                       >
                         <Trash2 size={16} />
                       </button>
@@ -329,7 +346,10 @@ const UserManagement = () => {
                 </span>
               </button>
 
-              <button className="flex flex-col items-center justify-center gap-1 py-2 hover:bg-red-50 rounded-xl transition-colors group">
+              <button
+                className="flex flex-col items-center justify-center gap-1 py-2 hover:bg-red-50 rounded-xl transition-colors group"
+                onClick={() => deleteuser(user)}
+              >
                 <Trash2 size={18} className="text-red-400" />
                 <span className="text-[9px] font-bold text-gray-500 uppercase">
                   Delete
