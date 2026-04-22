@@ -26,6 +26,8 @@ const UserManagement = () => {
   const [isPromoteModalOpen, setIsPromoteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editdata, setEditData] = useState({});
+  const [showResetField, setShowResetField] = useState(false);
+  const [tempPassword, setTempPassword] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [newRole, setNewRole] = useState("");
 
@@ -126,6 +128,7 @@ const UserManagement = () => {
   };
 
   const openEditModal = (user) => {
+    setSelectedUser(user);
     setEditData({
       id: user._id,
       name: user.name,
@@ -133,6 +136,30 @@ const UserManagement = () => {
       Phone: user.Phone,
     });
     setIsEditModalOpen(true);
+  };
+
+  const handlePasswordReset = async () => {
+    if (!tempPassword) {
+      toast.error("Please enter a new temporary password.");
+      return;
+    }
+    const loadingtoast = toast.loading("Resetting user password...");
+    try {
+      const response = await axios.put(
+        `${VITE_URL}/api/users/reset/userpassword`,
+        {
+          userId: selectedUser._id,
+          newPassword: tempPassword,
+        },
+      );
+      toast.dismiss(loadingtoast);
+      toast.success("User password reset successfully!");
+      setTempPassword("");
+    } catch (error) {
+      console.error("Error resetting user password:", error);
+      toast.error("Failed to reset user password.");
+      toast.dismiss(loadingtoast);
+    }
   };
 
   return (
@@ -393,6 +420,56 @@ const UserManagement = () => {
                     setEditData({ ...editdata, phone: e.target.value })
                   }
                 />
+              </div>
+
+              <div className="pt-4 border-t border-gray-100">
+                {!showResetField ? (
+                  <button
+                    type="button"
+                    onClick={() => setShowResetField(true)}
+                    className="text-xs font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-2 transition-colors"
+                  >
+                    <ShieldCheck size={14} />
+                    Reset User Password?
+                  </button>
+                ) : (
+                  <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div className="flex justify-between items-center">
+                      <label className="text-[10px] font-black uppercase text-indigo-400">
+                        Set New Temporary Password
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowResetField(false);
+                          setTempPassword("");
+                        }}
+                        className="text-[10px] font-bold text-gray-400 hover:text-red-500"
+                      >
+                        Cancel Reset
+                      </button>
+                    </div>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="Enter new password"
+                        className="flex-1 px-4 py-2 bg-indigo-50 border border-indigo-100 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500/20"
+                        value={tempPassword}
+                        onChange={(e) => setTempPassword(e.target.value)}
+                      />
+                      <button
+                        type="button"
+                        onClick={handlePasswordReset}
+                        className="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-xl hover:bg-indigo-700 transition-all active:scale-95 shadow-md shadow-indigo-200"
+                      >
+                        Apply
+                      </button>
+                    </div>
+                    <p className="text-[9px] text-gray-400 italic">
+                      User will need to use this password for their next login.
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Action Buttons */}

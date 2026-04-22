@@ -261,6 +261,30 @@ const updateuserdetails = async (req, res) => {
   }
 };
 
+const resetuserpassword = async (req, res) => {
+  try {
+    const { userId, newPassword } = req.body;
+    if (!userId || !newPassword) {
+      return res
+        .status(400)
+        .json({ message: "User ID and new password are required" });
+    }
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: { password: hashedNewPassword } },
+      { new: true },
+    );
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({ message: "Password reset successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -272,4 +296,5 @@ module.exports = {
   suspendUser,
   deleteUser,
   updateuserdetails,
+  resetuserpassword,
 };
