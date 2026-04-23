@@ -31,12 +31,17 @@ const userSchema = mongoose.Schema(
     },
     Role: {
       type: String,
-      enum: ["user", "admin", "manager"],
-      default: "user",
+      enum: ["User", "Admin", "Manager","Operational Manager"],
+      default: "User",
     },
     password: {
       type: String,
       required: [true, "Please add a Password"],
+    },
+    Status: {
+      type: String,
+      enum: ["Active", "Suspended", "Deleted"],
+      default: "Active",
     },
   },
   {
