@@ -54,7 +54,7 @@ function Header() {
     }
   }, [isLoggedIn]);
   const navLinks = [
-    { label: "Home", path: "/main" },
+    { label: "Home", path: "/" },
     { label: "Services", path: "/services" },
     { label: "Gallery", path: "/gallery" },
     { label: "About Us", path: "/about" },

@@ -18,5 +18,11 @@ router.put(
   authMiddleware,
   UserController.UpdatePassword,
 );
+router.get("/getall/users", UserController.getallUsers);
+router.put("/update/role", UserController.updateUserRole);
+router.put("/update/userstatus", UserController.suspendUser);
+router.put("/delete/user", UserController.deleteUser);
+router.put("/update/userdetails", UserController.updateuserdetails);
+router.put("/reset/userpassword", UserController.resetuserpassword);
 
 module.exports = router;

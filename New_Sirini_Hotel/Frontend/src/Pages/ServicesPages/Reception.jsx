@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { ChevronsDown } from "lucide-react";
 import receptionImg from "../../assets/reception.jpg";
 import ReceptionHallPackages from "../../Components/Receptionhall/ReceptionHallPackages";
 import BookingForm from "../../Components/Receptionhall/receptionform";
 // import CustomizeEvents from "../../Components/Receptionhall/customizeevents";
 import CateringItemCard from "../../Components/Receptionhall/CateringItemCard";
 import AdvertismentSection from "../../Components/Receptionhall/AdvertismentSection";
+import Exploreindicator from "../../Components/Exploreindicator";
 import toast from "react-hot-toast";
 
 export default function Reception() {
@@ -37,56 +37,42 @@ export default function Reception() {
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      {/* Hero Section */}
-      <section
-        className="relative w-full h-screen overflow-hidden"
-        style={{
-          backgroundImage:
-            "url(https://images.unsplash.com/photo-1745573673583-a51f665ae48e?q=80&w=1334&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        {/* <img
-          src={receptionImg}
-          alt="Reception"
-          className="w-full h-full object-cover object-center"
-        /> */}
-        <div className="absolute inset-0 bg-black/40"></div>
-
-        <div className="absolute inset-0 flex items-center justify-center text-center px-4">
-          <div className="max-w-[95vw]">
-            <h1 className="font-cinzel text-7xl sm:text-9xl md:text-[15rem] lg:text-[20rem] font-semibold text-white leading-none mb-6 drop-shadow-[4px_4px_12px_rgba(0,0,0,0.8)]">
-              Reception
-            </h1>
-            <p className="font-cormorant text-2xl sm:text-3xl md:text-4xl italic text-gray-200 tracking-wide mb-8">
-              "Your special moments, handled with elegance."
-            </p>
-
-            {/* 3. The Toggle Button */}
-            <button
-              onClick={() => handleadrequest()}
-              className="bg-white text-gray-900 px-8 py-3 rounded-full font-semibold uppercase tracking-widest text-sm hover:bg-gray-200 transition-all duration-300 shadow-lg"
-            >
-              {showForm ? "Close Booking" : "Book Your Visit"}
-            </button>
-          </div>
+      {/* HERO SECTION - Aligned with MainPage */}
+      <header className="relative w-full h-[calc(100vh-120px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
+        {/* Background */}
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage:
+              "url(https://images.unsplash.com/photo-1745573673583-a51f665ae48e?q=80&w=1334&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <div className="absolute inset-0 bg-black/50"></div>
         </div>
-        {/* NEW: Lucide Animated Scroll Arrow */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 cursor-pointer z-20 group">
-          <div className="animate-bounce flex flex-col items-center">
-            <span className="font-cormorant text-base sm:text-lg uppercase tracking-[0.3em] mb-2 text-white drop-shadow-md transition-colors group-hover:text-amber-200">
-              Explore
-            </span>
 
-            <ChevronsDown
-              size={36}
-              strokeWidth={1}
-              className="text-white transition-colors group-hover:text-amber-400"
-            />
-          </div>
+        {/* Content - centered in hero */}
+        <div className="z-10 flex flex-col items-center justify-center gap-6">
+          <h1 className="text-4xl md:text-6xl font-light">Reception Hall</h1>
+          <p className="text-lg md:text-xl italic tracking-widest border-t border-b border-white py-2 px-4">
+            Your special moments, handled with elegance
+          </p>
+
+          {/* Booking Button */}
+          <button
+            onClick={() => handleadrequest()}
+            className="bg-yellow-500 hover:bg-amber-700 text-black px-8 py-3 rounded-full font-semibold uppercase tracking-widest text-sm transition-all duration-300 shadow-lg mt-4"
+          >
+            {showForm ? "Close Booking" : "Book Your Visit"}
+          </button>
         </div>
-      </section>
+
+        {/* Explore arrow pinned to bottom */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
+          <Exploreindicator />
+        </div>
+      </header>
       {/* 4. Conditional Rendering for the Booking Form */}
       <div ref={formSectionRef}>
         {showForm && (
