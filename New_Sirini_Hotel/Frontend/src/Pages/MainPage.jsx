@@ -38,41 +38,41 @@ const NewSiriniHotel = () => {
     <div className="font-serif bg-gray-100 text-gray-900">
       {/* --- Hero Section --- */}
       {/* Hero Section */}
-<header className="relative w-full h-[calc(100vh-120px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
-  
-  {/* Background */}
-  <div className="absolute inset-0 z-0"
-    style={{
-      backgroundImage: "url(https://plus.unsplash.com/premium_photo-1661963123153-5471a95b7042?q=80&w=1074&auto=format&fit=crop)",
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-    }}
-  >
-    <div className="absolute inset-0 bg-black/50"></div>
-  </div>
+      <header className="relative w-full h-[calc(100vh-120px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
+        {/* Background */}
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage:
+              "url(https://plus.unsplash.com/premium_photo-1661963123153-5471a95b7042?q=80&w=1074&auto=format&fit=crop)",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <div className="absolute inset-0 bg-black/50"></div>
+        </div>
 
-  {/* Content — centered in hero */}
-  <div className="z-10 flex flex-col items-center justify-center gap-4">
-    <h1 className="text-4xl md:text-6xl font-light">New Sirini Hotel</h1>
-    <img
-      src={Logo}
-      alt="New Sirini Hotel Logo"
-      className="w-40 h-40 mx-auto object-contain"
-    />
-    <p className="text-lg md:text-xl italic tracking-widest border-t border-b border-white py-2 px-4">
-      Stay, Relax, Enjoy
-    </p>
-  </div>
+        {/* Content — centered in hero */}
+        <div className="z-10 flex flex-col items-center justify-center gap-4">
+          <h1 className="text-4xl md:text-6xl font-light">New Sirini Hotel</h1>
+          <img
+            src={Logo}
+            alt="New Sirini Hotel Logo"
+            className="w-40 h-40 mx-auto object-contain"
+          />
+          <p className="text-lg md:text-xl italic tracking-widest border-t border-b border-white py-2 px-4">
+            Stay, Relax, Enjoy
+          </p>
+        </div>
 
-  {/* Explore arrow pinned to bottom */}
-  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
-    <Exploreindicator />
-  </div>
-
-</header>
+        {/* Explore arrow pinned to bottom */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
+          <Exploreindicator />
+        </div>
+      </header>
 
       {/* --- Services Section --- */}
-      <section className="py-16 container mx-auto px-4">
+      <section id="services" className="py-16 container mx-auto px-4">
         <h2 className="text-4xl text-center mb-12 font-serif">Our Services</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {services.map((service, idx) => (
@@ -104,7 +104,7 @@ const NewSiriniHotel = () => {
       </section>
 
       {/* --- Gallery Filter --- */}
-      <section className="bg-gray-200 py-12 text-center">
+      <section id="gallery" className="bg-gray-200 py-12 text-center">
         <h2 className="text-4xl mb-8 font-serif">Gallery</h2>
         <div className="flex flex-wrap justify-center gap-4 mb-10">
           {["All", "Reception", "Rooms", "Restaurant", "Liquor"].map((cat) => (
@@ -122,7 +122,10 @@ const NewSiriniHotel = () => {
       </section>
 
       {/* --- About Us --- */}
-      <section className="py-16 container mx-auto px-4 grid md:grid-cols-2 gap-10 items-center">
+      <section
+        id="about"
+        className="py-16 container mx-auto px-4 grid md:grid-cols-2 gap-10 items-center"
+      >
         <div>
           <h2 className="text-4xl mb-6 font-serif">About Us</h2>
           <p className="text-gray-700 leading-relaxed mb-4">

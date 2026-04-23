@@ -5,6 +5,7 @@ import { FaBars, FaTimes } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { User } from "lucide-react";
 import axios from "axios";
+import Footer from "./Footer";
 
 function Header() {
   const VITE_URL = import.meta.env.VITE_API_URL;
@@ -55,10 +56,10 @@ function Header() {
   }, [isLoggedIn]);
   const navLinks = [
     { label: "Home", path: "/" },
-    { label: "Services", path: "/services" },
-    { label: "Gallery", path: "/gallery" },
-    { label: "About Us", path: "/about" },
-    { label: "Contact Us", path: "/contact" },
+    { label: "Services", path: "/#services" },
+    { label: "Gallery", path: "/#gallery" },
+    { label: "About Us", path: "/#about" },
+    { label: "Contact Us", path: "/#contact" },
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -82,6 +83,28 @@ function Header() {
     transition: "color 0.2s ease",
     fontSize: "1.25rem",
   });
+
+  const handleNavClick = (e, path) => {
+    if (path.includes("#")) {
+      e.preventDefault();
+      const sectionId = path.split("#")[1];
+
+      if (location.pathname !== "/") {
+        // Navigate to home first, then scroll
+        navigate("/");
+        setTimeout(() => {
+          document
+            .getElementById(sectionId)
+            ?.scrollIntoView({ behavior: "smooth" });
+        }, 300);
+      } else {
+        document
+          .getElementById(sectionId)
+          ?.scrollIntoView({ behavior: "smooth" });
+      }
+      closeMenu();
+    }
+  };
 
   return (
     <header className="bg-black h-30 relative z-50">
@@ -107,6 +130,7 @@ function Header() {
               <Link
                 key={id}
                 to={link.path}
+                onClick={(e) => handleNavClick(e, link.path)}
                 style={getLinkStyle(link.path, id)}
                 onMouseEnter={() => setHoveredLink(id)}
                 onMouseLeave={() => setHoveredLink(null)}
@@ -197,7 +221,7 @@ function Header() {
               <Link
                 key={id}
                 to={link.path}
-                onClick={closeMenu}
+                onClick={(e) => handleNavClick(e, link.path)}
                 style={getMobileLinkStyle(link.path, id)}
                 onMouseEnter={() => setHoveredLink(id)}
                 onMouseLeave={() => setHoveredLink(null)}
