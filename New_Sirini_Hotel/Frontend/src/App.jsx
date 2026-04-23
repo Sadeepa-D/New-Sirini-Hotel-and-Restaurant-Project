@@ -15,6 +15,7 @@ import Reception from "./Pages/ServicesPages/Reception";
 import Rooms from "./Pages/ServicesPages/Rooms";
 import Restaurant from "./Pages/ServicesPages/Restaurant";
 import Dashboard from "./Pages/Dashboard";
+import NotFound from "./Pages/NotFound";
 
 const PublicLayout = ({ children }) => (
   <>
@@ -30,18 +31,54 @@ export const App = () => {
       <Toaster position="top-center" reverseOrder={false} />
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<PublicLayout><MainPage /></PublicLayout>} />
-        <Route path="/liquor" element={<PublicLayout><Liquor /></PublicLayout>} />
-        <Route path="/reception" element={<PublicLayout><Reception /></PublicLayout>} />
-        <Route path="/rooms" element={<PublicLayout><Rooms /></PublicLayout>} />
-        <Route path="/restaurant" element={<PublicLayout><Restaurant /></PublicLayout>} />
+        <Route
+          path="/"
+          element={
+            <PublicLayout>
+              <MainPage />
+            </PublicLayout>
+          }
+        />
+        <Route
+          path="/liquor"
+          element={
+            <PublicLayout>
+              <Liquor />
+            </PublicLayout>
+          }
+        />
+        <Route
+          path="/reception"
+          element={
+            <PublicLayout>
+              <Reception />
+            </PublicLayout>
+          }
+        />
+        <Route
+          path="/rooms"
+          element={
+            <PublicLayout>
+              <Rooms />
+            </PublicLayout>
+          }
+        />
+        <Route
+          path="/restaurant"
+          element={
+            <PublicLayout>
+              <Restaurant />
+            </PublicLayout>
+          }
+        />
 
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/register" element={<Registration />} />
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/manager" element={<Manager />} />
-           <Route path="/operationmanager" element={<OperationManager />} />
+        <Route path="/operationmanager" element={<OperationManager />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );

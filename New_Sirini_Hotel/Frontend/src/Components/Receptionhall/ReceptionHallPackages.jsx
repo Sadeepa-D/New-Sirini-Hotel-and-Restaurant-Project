@@ -18,7 +18,7 @@ export default function ReceptionHallPackages() {
         if (response.status !== 200) {
           throw new Error("Failed to fetch data");
         }
-        setPackages(response.data);
+        setPackages(Array.isArray(response.data) ? response.data : response.data.packages || []);
       } catch (error) {
         console.error("Error fetching data:", error);
         setError("An error occurred while fetching data");
