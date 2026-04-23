@@ -30,15 +30,15 @@ const RoomOperation = () => {
   };
 
   const handleActionCompleted = () => {
-    fetchRooms(); // Manage Rooms table එක refresh කරයි
-    setRefreshKey(prev => prev + 1); // Confirmed table එකට signal එකක් යවයි
+    fetchRooms(); // refresh Manage Rooms table 
+    setRefreshKey(prev => prev + 1); //send signal to Confirmed table 
   };
 
   useEffect(() => {
     fetchRooms();
   }, []);
 
-  // ✅ Search එකට status එකත් ඇතුළත් කළා
+  
   const filteredRooms = rooms.filter(
     (r) =>
       r.roomNumber?.toString().includes(searchTerm) ||
@@ -107,7 +107,7 @@ const RoomOperation = () => {
     }
   };
 
-  // ✅ Stats ගණනය කිරීම status අනුව වෙනස් කළා
+  
   const stats = {
     available: rooms.filter((r) => r.status === "available").length,
     reserved: rooms.filter((r) => r.status === "reserved").length,
@@ -116,7 +116,7 @@ const RoomOperation = () => {
 
   return (
     <div className="p-4 md:p-6">
-      {/* stats object එක දැන් නිවැරදි අගයන් යවයි */}
+    
       <RoomStatsRow stats={stats} />
 
       <RoomTableHeader
@@ -143,7 +143,7 @@ const RoomOperation = () => {
   
   <RoomRequests onActionCompleted={handleActionCompleted} /> 
 
-  {/* Confirmed Bookings Header (එකම විලාසිතාව භාවිතා කර ඇත) */}
+  {/* Confirmed Bookings Header  */}
   <div className="mt-10 mb-4">
     <h2 className="text-lg font-bold text-gray-800 uppercase tracking-wider">
       Approved Completed AND CANCELLED Room Bookings

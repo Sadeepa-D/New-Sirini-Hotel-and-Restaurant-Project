@@ -8,7 +8,7 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
       roomType: "Single",
       price: "",
       bedType: "Single Bed",
-      capacity: "1", // Single තෝරා ඇති නිසා Default 1 ලෙස තැබුවා
+      capacity: "1", 
       description: "",
       condition: "Fan",
       status: "available",
@@ -20,7 +20,7 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
     const { name, value } = e.target;
     let updatedForm = { ...form, [name]: value };
 
-    // ✅ Room Type එක අනුව Capacity එක ස්වයංක්‍රීයව වෙනස් කිරීම
+    
     if (name === "roomType") {
       switch (value) {
         case "Single":
@@ -46,19 +46,18 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
   };
 
   const handleSubmit = () => {
-    // 1. අත්‍යවශ්‍ය field පරීක්ෂාව
+   
     if (!form.roomNumber || !form.price || !form.capacity) {
       alert("Please fill in all required fields.");
       return;
     }
 
-    // 2. Image පරීක්ෂාව
     if (!initialData && !imageFile) {
       alert("Please upload a room image.");
       return;
     }
 
-    // 3. ✅ Final Validation (Submit කිරීමේදී නැවත තහවුරු කර ගැනීම)
+    //final validation before submitting the form
     const cap = parseInt(form.capacity);
     if (form.roomType === "Single" && cap !== 1) {
       alert("Single room must have a capacity of 1.");
@@ -169,7 +168,7 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
                 name="capacity"
                 type="number"
                 value={form.capacity}
-                readOnly // ✅ User ට වෙනස් කළ නොහැකි ලෙස (Read Only) තැබුවා
+                readOnly 
                 className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm bg-gray-50 text-gray-500 outline-none"
               />
             </div>

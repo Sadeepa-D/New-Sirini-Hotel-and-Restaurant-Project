@@ -38,7 +38,7 @@ function RoomConfirmedBooking({ refreshKey, onActionCompleted }) {
     fetchAllBookings();
   }, [fetchAllBookings, refreshKey]);
 
-  //දත්තයක් ස්ථිරවම මැකීමේ Function එක
+  //the function that deletes the record permanently from the database
   const handleDeleteRecord = async (id) => {
     if (!window.confirm("Are you sure you want to PERMANENTLY delete this record? This action cannot be undone.")) return;
 
@@ -46,7 +46,7 @@ function RoomConfirmedBooking({ refreshKey, onActionCompleted }) {
     try {
       await axios.delete(`http://localhost:5000/api/rooms/deletebooking/${id}`);
       toast.success("Record permanently deleted", { id: actionToast });
-      fetchAllBookings(); // වගුව refresh කරන්න
+      fetchAllBookings(); // refresh the tables after deletion
       if (onActionCompleted) onActionCompleted();
     } catch (err) {
       toast.error("Failed to delete record", { id: actionToast });
@@ -149,7 +149,7 @@ function RoomConfirmedBooking({ refreshKey, onActionCompleted }) {
                     </td>
                     <td className="px-5 py-4 text-center">
                       <div className="flex items-center justify-center gap-2">
-                        {/* සෑම Tab එකකදීම පෙනෙන Delete බොත්තම */}
+                        {/* Delete button in every tab */}
                         <button 
                           onClick={() => handleDeleteRecord(req._id)} 
                           className="p-2 bg-gray-50 text-gray-400 hover:bg-red-600 hover:text-white rounded-lg transition-all"
@@ -158,7 +158,7 @@ function RoomConfirmedBooking({ refreshKey, onActionCompleted }) {
                           <Trash2 size={16} />
                         </button>
 
-                        {/* Approved Tab එකේ පමණක් පෙනෙන අමතර Actions */}
+                        {/* Approved Tab Actions */}
                         {activeTab === "approved" && (
                           <>
                             <button onClick={() => handleComplete(req._id)} className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all" title="Mark as Completed"><Flag size={16} /></button>

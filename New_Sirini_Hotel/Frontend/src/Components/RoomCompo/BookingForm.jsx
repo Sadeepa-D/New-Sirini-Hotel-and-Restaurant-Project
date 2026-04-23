@@ -17,7 +17,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
     checkOutDate: "",
   });
 
-  // දින වෙනස් වන විට මුළු මුදල ගණනය කිරීම
+  // change the price according to num of dates selected
   useEffect(() => {
     if (formData.checkInDate && formData.checkOutDate) {
       const checkIn = new Date(formData.checkInDate);
@@ -40,7 +40,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 1. දින පරීක්ෂා කිරීම (Validation)
+    
     const checkIn = new Date(formData.checkInDate);
     const checkOut = new Date(formData.checkOutDate);
 
@@ -51,21 +51,20 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
 
     setLoading(true);
     try {
-      // 2. Backend එකට දත්ත යැවීම
-      // මෙහිදී 'totalAmount' එකත් ඇතුළත් කර තිබෙනවා
+     
       const res = await axios.post("http://localhost:5000/api/rooms/book", {
         ...formData,
         room: selectedRoom._id,
         roomNumber: selectedRoom.roomNumber,
         numberOfGuests: formData.guests,
-        totalAmount: totalPrice, // මුළු මුදල
+        totalAmount: totalPrice,
       });
 
-      // 3. සාර්ථක නම් පණිවිඩයක් පෙන්වීම සහ Success Component එකට මාරු වීම
-      onConfirmed(selectedRoom._id); // පිටුව refresh කිරීමට හෝ status වෙනස් කිරීමට
+      
+      onConfirmed(selectedRoom._id); 
       setShowSuccess(true);
     } catch (error) {
-      // Backend එකෙන් එවන නිවැරදි error message එක පෙන්වීම
+      
       const errorMsg =
         error.response?.data?.error || "Booking failed. Please try again.";
       alert(errorMsg);
@@ -75,7 +74,10 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
   };
 
   if (showSuccess) {
-    return <BookingSuccess selectedRoom={selectedRoom} onClose={onClose} />;
+    return <BookingSuccess selectedRoom={selectedRoom} 
+    onClose={onClose} 
+    totalPrice={totalPrice}
+    />;
   }
 
   return (
@@ -132,7 +134,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
             </div>
             <div className="text-right">
               <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">
-                Total Price
+                Room Price
               </p>
               <p className="text-orange-500 text-2xl font-black font-mono">
                 Rs.{totalPrice.toLocaleString()}

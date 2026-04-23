@@ -31,7 +31,7 @@ const fetchRequests = async () => {
   const handleAction = async (id, newStatus) => {
     const actionToast = toast.loading("Processing...");
     try {
-      // ඔබේ routes වල ඇති confirmbooking/:id සහ cancelbooking/:id භාවිතා කරයි
+      // use routes confirmbooking/:id and cancelbooking/:id 
       const endpoint = newStatus === "Confirmed" 
         ? `http://localhost:5000/api/rooms/confirmbooking/${id}` 
         : `http://localhost:5000/api/rooms/cancelbooking/${id}`;
@@ -47,7 +47,7 @@ const fetchRequests = async () => {
   };
 
 const renderStatus = (status) => {
-  // Backend එකේ enum අගයන්ට අනුව (Case-sensitive විය හැක)
+  
   const s = status?.toLowerCase();
 
   switch (s) {
@@ -71,7 +71,7 @@ const renderStatus = (status) => {
         </span>
       );
     case "overdue":
-      // ✅ Overdue සඳහා විශේෂිත පෙනුම
+      //  Overdue 
       return (
         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-purple-50 text-purple-600 border border-purple-200 animate-pulse">
           <Clock size={12} className="animate-spin-slow" /> Overdue
@@ -129,7 +129,7 @@ const renderStatus = (status) => {
                     </div>
                   </td>
                   
-                  {/* ✅ මෙන්න අලුත් Status Column එක */}
+                  {/* Status Column*/}
                   <td className="px-5 py-4 text-center">
                     {renderStatus(req.status)}
                   </td>
