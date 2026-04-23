@@ -15,7 +15,7 @@ function BookingSuccess({ selectedRoom, onClose }) {
               Confirmation
             </p>
             <h2 className="text-black text-lg sm:text-2xl font-serif font-bold leading-tight">
-              Booking Confirmed
+              Booking Received
             </h2>
           </div>
           <button
@@ -43,39 +43,42 @@ function BookingSuccess({ selectedRoom, onClose }) {
             Thank You!
           </h3>
           <p className="text-gray-400 text-xs sm:text-sm mb-4 sm:mb-6 leading-relaxed px-2 sm:px-0">
-            Your booking for{" "}
-            <span className="text-orange-400 font-semibold">{selectedRoom.type}</span>{" "}
-            (Room No: {selectedRoom.roomNo}) has been successfully received.
+            Your booking request for{" "}
+            <span className="text-orange-400 font-semibold">{selectedRoom.roomType}</span>{" "}
+            {/* ✅ කාමර අංකය පෙන්වන ස්ථානය */}
+            (Room No: <span className="text-white font-bold">{selectedRoom.roomNumber}</span>) has been successfully received.
           </p>
 
           {/* Room Summary Box */}
           <div className="bg-white/[0.04] border border-white/[0.08] rounded-xl p-3 sm:p-4 mb-4 sm:mb-6 flex items-center gap-3 sm:gap-4 text-left">
             <img
               src={selectedRoom.image}
-              alt={selectedRoom.type}
+              alt={selectedRoom.roomType}
               className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg object-cover flex-shrink-0"
             />
             <div className="min-w-0">
-              <p className="text-white text-xs sm:text-sm font-medium truncate">{selectedRoom.type}</p>
+              <p className="text-white text-xs sm:text-sm font-medium truncate">{selectedRoom.roomType} Suite</p>
               <p className="text-gray-400 text-[9px] sm:text-xs mt-0.5">
-                🛏 {selectedRoom.bed} &nbsp;|&nbsp; 👤 {selectedRoom.guests}{" "}
-                {selectedRoom.guests === 1 ? "Guest" : "Guests"}
+              Room No: <span className="text-white font-bold">{selectedRoom.roomNumber}</span> 👤 {selectedRoom.capacity} Guests
               </p>
               <p className="text-orange-400 text-[9px] sm:text-xs font-bold mt-0.5">
-                Rs.{selectedRoom.price} / night
+                Rs.{selectedRoom.price?.toLocaleString()} / night
               </p>
             </div>
           </div>
 
           {/* Info note */}
-          <p className="text-gray-600 text-[10px] sm:text-[11px] mb-4 sm:mb-6 px-2 sm:px-0">
-            We will contact you shortly to confirm your reservation details.
-          </p>
+          <div className="bg-orange-500/5 border border-orange-500/10 rounded-lg p-3 mb-6">
+            <p className="text-orange-200/70 text-[10px] sm:text-[11px] leading-relaxed">
+              🔔 <span className="text-orange-400 font-bold uppercase">Note:</span> Your booking is currently under review. 
+              Admin will confirm it shortly.
+            </p>
+          </div>
 
           {/* Done Button */}
           <button
             onClick={onClose}
-            className="w-full bg-orange-500 text-black py-2.5 sm:py-3 rounded-full text-[10px] sm:text-xs uppercase tracking-widest font-bold hover:bg-orange-400 active:scale-95 transition-all mb-1"
+            className="w-full bg-orange-500 text-black py-2.5 sm:py-3 rounded-full text-[10px] sm:text-xs uppercase tracking-widest font-black hover:bg-orange-400 active:scale-95 transition-all mb-1 shadow-[0_10px_20px_rgba(249,115,22,0.2)]"
           >
             Done
           </button>

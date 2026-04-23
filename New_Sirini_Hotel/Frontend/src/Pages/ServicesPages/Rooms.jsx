@@ -60,11 +60,13 @@ function Rooms() {
           <p className="text-lg md:text-xl italic tracking-widest border-t border-b border-white py-2 px-4">
             Peaceful rooms designed for your perfect stay
           </p>
+           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
         </div>
 
         {/* Explore arrow pinned to bottom */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
           <Exploreindicator />
+        </div>
         </div>
       </header>
 

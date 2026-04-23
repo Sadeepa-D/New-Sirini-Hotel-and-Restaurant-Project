@@ -5,12 +5,20 @@ import RoomTableHeader from "./RoomTableHeader";
 import RoomTable from "./RoomTable";
 import RoomFormModal from "./RoomFormModal";
 import toast from "react-hot-toast";
+import RoomRequests from "./RoomRequests";
+import RoomConfirmedBooking from "./RoomConfirmedBooking";
 
 const RoomOperation = () => {
   const [rooms, setRooms] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingRoom, setEditingRoom] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+
+  //this is the refresh tables after booking confirm or cancel
+  const [refreshKey, setRefreshKey] = useState(0);
+
+
+  const [activeTab, setActiveTab] = useState("manage");
 
   const fetchRooms = async () => {
     try {
@@ -19,6 +27,11 @@ const RoomOperation = () => {
     } catch (err) {
       console.error("Error fetching rooms:", err);
     }
+  };
+
+  const handleActionCompleted = () => {
+    fetchRooms(); // Manage Rooms table එක refresh කරයි
+    setRefreshKey(prev => prev + 1); // Confirmed table එකට signal එකක් යවයි
   };
 
   useEffect(() => {
@@ -117,6 +130,32 @@ const RoomOperation = () => {
         onEdit={handleEdit}
         onDelete={handleDelete}
       />
+
+    {/* --- Booking Requests Section --- */}
+<div className="mt-10 animate-in fade-in slide-in-from-left-4 duration-500">
+  {/* Pending Requests Header */}
+  <div className="mb-4">
+    <h2 className="text-lg font-bold text-gray-800 uppercase tracking-wider">
+      Pending Room Requests
+    </h2>
+    <p className="text-gray-400 text-xs">Review and approve customer bookings</p>
+  </div>
+  
+  <RoomRequests onActionCompleted={handleActionCompleted} /> 
+
+  {/* Confirmed Bookings Header (එකම විලාසිතාව භාවිතා කර ඇත) */}
+  <div className="mt-10 mb-4">
+    <h2 className="text-lg font-bold text-gray-800 uppercase tracking-wider">
+      Approved Room Bookings
+    </h2>
+    <p className="text-gray-400 text-xs">Manage and monitor confirmed reservations</p>
+  </div>
+
+  <RoomConfirmedBooking 
+    refreshKey={refreshKey} 
+    onActionCompleted={handleActionCompleted} 
+  />
+</div>
 
       {isFormOpen && (
         <RoomFormModal
