@@ -146,7 +146,7 @@ const RoomOperation = () => {
   {/* Confirmed Bookings Header (එකම විලාසිතාව භාවිතා කර ඇත) */}
   <div className="mt-10 mb-4">
     <h2 className="text-lg font-bold text-gray-800 uppercase tracking-wider">
-      Approved Room Bookings
+      Approved Completed AND CANCELLED Room Bookings
     </h2>
     <p className="text-gray-400 text-xs">Manage and monitor confirmed reservations</p>
   </div>

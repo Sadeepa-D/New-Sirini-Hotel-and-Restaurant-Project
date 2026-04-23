@@ -193,6 +193,30 @@ const getOverdueRoomBookings = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+const setRoomBookingStatustoCompleted = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedBooking = await RoomBooking.findByIdAndUpdate(
+      id,
+      { status: "Completed" },
+      { new: true }
+    );
+    res.status(200).json(updatedBooking);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const getCompletedRoomBookings = async (req, res) => {
+  try {
+    const completed = await RoomBooking.find({ status: "Completed" });
+    res.status(200).json(completed);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createRoomBooking,
   deleteRoomBooking,
@@ -204,4 +228,6 @@ module.exports = {
   setRoomBookingStatustoConfirmed,
   setRoomBookingStatustoCancelled,
   getOverdueRoomBookings,
+  setRoomBookingStatustoCompleted,
+  getCompletedRoomBookings,
 };
