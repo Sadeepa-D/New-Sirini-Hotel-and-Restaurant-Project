@@ -33,9 +33,9 @@ function Rooms() {
   };
 
   const handleBookingConfirmed = (roomId) => {
-    setRoomList((prev) =>
-      prev.map((r) => (r._id === roomId ? { ...r, status: "reserved" } : r)),
-    );
+
+  console.log("Booking request received for room ID:", roomId);
+  
   };
 
   return (
@@ -81,7 +81,7 @@ function Rooms() {
                     alt={room.roomType}
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                   />
-                  <div className="absolute top-6 left-6 bg-white/20 backdrop-blur-md border border-white/30 px-4 py-2 rounded-2xl shadow-xl">
+                  <div className="absolute top-6 left-6 bg-black/50 backdrop-blur-md border border-white/30 px-4 py-2 rounded-2xl shadow-xl">
                     <p className="text-white text-[10px] uppercase tracking-widest font-medium opacity-90">
                       Room No.
                     </p>
@@ -159,14 +159,7 @@ function Rooms() {
                   {/* Status & Footer */}
                   <div className="flex flex-row items-center justify-between gap-4 pt-6 border-t border-gray-50 mt-auto">
                     <div className="flex items-center gap-3">
-                      <div className="relative flex items-center justify-center">
-                        <div
-                          className={`w-2.5 h-2.5 rounded-full animate-ping absolute opacity-20 ${room.status === "available" ? "bg-green-500" : room.status === "maintenance" ? "bg-yellow-500" : "bg-red-500"}`}
-                        />
-                        <div
-                          className={`w-2.5 h-2.5 rounded-full relative shadow-sm ${room.status === "available" ? "bg-green-500" : room.status === "maintenance" ? "bg-yellow-500" : "bg-red-500"}`}
-                        />
-                      </div>
+                      
                       <p
                         className={`text-[17px] font-black uppercase tracking-[0.2em] ${room.status === "available" ? "text-green-600" : room.status === "maintenance" ? "text-yellow-600" : "text-red-600"}`}
                       >

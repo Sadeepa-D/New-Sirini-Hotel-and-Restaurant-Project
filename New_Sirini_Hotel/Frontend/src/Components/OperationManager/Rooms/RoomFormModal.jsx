@@ -8,7 +8,7 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
       roomType: "Single",
       price: "",
       bedType: "Single Bed",
-      capacity: "",
+      capacity: "1", // Single තෝරා ඇති නිසා Default 1 ලෙස තැබුවා
       description: "",
       condition: "Fan",
       status: "available",
@@ -18,8 +18,27 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    let updatedForm = { ...form, [name]: value };
 
-    setForm({ ...form, [name]: value });
+    // ✅ Room Type එක අනුව Capacity එක ස්වයංක්‍රීයව වෙනස් කිරීම
+    if (name === "roomType") {
+      switch (value) {
+        case "Single":
+          updatedForm.capacity = "1";
+          break;
+        case "Double":
+        case "Suite":
+          updatedForm.capacity = "2";
+          break;
+        case "Family":
+          updatedForm.capacity = "4";
+          break;
+        default:
+          break;
+      }
+    }
+
+    setForm(updatedForm);
   };
 
   const handleFileChange = (e) => {
@@ -27,13 +46,30 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
   };
 
   const handleSubmit = () => {
+    // 1. අත්‍යවශ්‍ය field පරීක්ෂාව
     if (!form.roomNumber || !form.price || !form.capacity) {
       alert("Please fill in all required fields.");
       return;
     }
 
+    // 2. Image පරීක්ෂාව
     if (!initialData && !imageFile) {
       alert("Please upload a room image.");
+      return;
+    }
+
+    // 3. ✅ Final Validation (Submit කිරීමේදී නැවත තහවුරු කර ගැනීම)
+    const cap = parseInt(form.capacity);
+    if (form.roomType === "Single" && cap !== 1) {
+      alert("Single room must have a capacity of 1.");
+      return;
+    }
+    if (form.roomType === "Double" && cap !== 2) {
+      alert("Double room must have a capacity of 2.");
+      return;
+    }
+    if (form.roomType === "Family" && cap !== 4) {
+      alert("Family room must have a capacity of 4.");
       return;
     }
 
@@ -57,7 +93,7 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
         </div>
 
         <div className="px-4 sm:px-6 py-4 sm:py-5 space-y-3 sm:space-y-4">
-          {/* Image Upload Field */}
+          {/* Image Upload */}
           <div>
             <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
               Room Image *
@@ -78,7 +114,7 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
             </div>
           </div>
 
-          {/* Room Number & Type Row */}
+          {/* Room Number & Type */}
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
@@ -89,7 +125,7 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
                 value={form.roomNumber}
                 onChange={handleChange}
                 placeholder="e.g. 101"
-                className="w-full border border-gray-200 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
               />
             </div>
             <div>
@@ -100,7 +136,7 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
                 name="roomType"
                 value={form.roomType}
                 onChange={handleChange}
-                className="w-full border border-gray-200 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
               >
                 <option value="Single">Single</option>
                 <option value="Double">Double</option>
@@ -110,23 +146,7 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
             </div>
           </div>
 
-          {/* Condition Field (AC/Fan) */}
-          <div className="flex-1">
-            <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
-              Room Condition
-            </label>
-            <select
-              name="condition"
-              value={form.condition}
-              onChange={handleChange}
-              className="w-full border border-gray-200 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 focus:outline-none bg-white"
-            >
-              <option value="Fan">Fan</option>
-              <option value="AC">AC</option>
-            </select>
-          </div>
-
-          {/* Price & Bed Type Row */}
+          {/* Price & Capacity Row */}
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
@@ -137,9 +157,39 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
                 type="number"
                 value={form.price}
                 onChange={handleChange}
-                placeholder="e.g. 5000"
-                className="w-full border border-gray-200 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+                placeholder="5000"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
               />
+            </div>
+            <div>
+              <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
+                Capacity (Auto)
+              </label>
+              <input
+                name="capacity"
+                type="number"
+                value={form.capacity}
+                readOnly // ✅ User ට වෙනස් කළ නොහැකි ලෙස (Read Only) තැබුවා
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm bg-gray-50 text-gray-500 outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Condition & Bed Type */}
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            <div>
+              <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
+                Condition
+              </label>
+              <select
+                name="condition"
+                value={form.condition}
+                onChange={handleChange}
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
+              >
+                <option value="Fan">Fan</option>
+                <option value="AC">AC</option>
+              </select>
             </div>
             <div>
               <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
@@ -149,7 +199,7 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
                 name="bedType"
                 value={form.bedType}
                 onChange={handleChange}
-                className="w-full border border-gray-200 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 focus:outline-none bg-white cursor-pointer"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
               >
                 <option value="Single">Single Bed</option>
                 <option value="Double">Double Bed</option>
@@ -158,55 +208,41 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
               </select>
             </div>
           </div>
-          {/* Capacity & Availability Row */}
-          <div className="grid grid-cols-2 gap-3 sm:gap-4">
-            <div>
-              <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
-                Capacity *
-              </label>
-              <input
-                name="capacity"
-                type="number"
-                value={form.capacity}
-                onChange={handleChange}
-                placeholder="e.g. 2"
-                className="w-full border border-gray-200 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
-                Room Status
-              </label>
-              <select
-                name="status"
-                value={form.status}
-                onChange={handleChange}
-                className="w-full border border-gray-200 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 focus:outline-none"
-              >
-                <option value="available">Available</option>
-                <option value="reserved">Reserved</option>
-                <option value="maintenance">Maintenance</option>
-              </select>
-            </div>
+
+          {/* Status */}
+          <div>
+            <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
+              Room Status
+            </label>
+            <select
+              name="status"
+              value={form.status}
+              onChange={handleChange}
+              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
+            >
+              <option value="available">Available</option>
+              <option value="reserved">Reserved</option>
+              <option value="maintenance">Maintenance</option>
+            </select>
           </div>
 
-          {/* Description Field */}
-          <div className="mt-4">
+          {/* Description */}
+          <div>
             <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
-              Room Description
+              Description
             </label>
             <textarea
               name="description"
               value={form.description}
               onChange={handleChange}
               rows="3"
-              placeholder="Describe the room features, view, or special amenities..."
-              className="w-full border border-gray-200 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 focus:outline-none resize-none"
+              placeholder="Room details..."
+              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 outline-none resize-none"
             />
           </div>
         </div>
 
-        {/* Buttons */}
+        {/* Action Buttons */}
         <div className="flex gap-2 sm:gap-3 px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-100 sticky bottom-0 bg-white">
           <button
             onClick={onClose}

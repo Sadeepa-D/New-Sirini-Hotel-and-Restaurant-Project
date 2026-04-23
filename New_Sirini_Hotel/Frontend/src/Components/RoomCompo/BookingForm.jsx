@@ -83,6 +83,16 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
       className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-end sm:items-center justify-center z-50 px-0 sm:px-4 transition-all duration-500"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
+      {/* Custom style for date input to invert calendar icon color */}
+      <style>
+        {`
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      cursor: pointer;
+    }
+  `}
+      </style>
+
       <div className="bg-[#0c0c0c] border border-white/10 rounded-t-3xl sm:rounded-2xl w-full sm:max-w-lg shadow-[0_0_50px_rgba(249,115,22,0.1)] overflow-hidden max-h-[95vh] flex flex-col animate-in fade-in zoom-in duration-300">
         {/* Header */}
         <div className="bg-gradient-to-r from-orange-600 to-orange-400 px-6 py-5 flex justify-between items-center">
@@ -91,7 +101,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
               Reserve Your Stay
             </h2>
             <p className="text-black/70 text-[10px] font-bold uppercase tracking-widest">
-              {selectedRoom.type} Suite
+              {selectedRoom.roomType} Room
             </p>
           </div>
           <button

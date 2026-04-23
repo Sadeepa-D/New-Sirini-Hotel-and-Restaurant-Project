@@ -62,7 +62,7 @@ function BookingSuccess({ selectedRoom, onClose }) {
               Room No: <span className="text-white font-bold">{selectedRoom.roomNumber}</span> 👤 {selectedRoom.capacity} Guests
               </p>
               <p className="text-orange-400 text-[9px] sm:text-xs font-bold mt-0.5">
-                Rs.{selectedRoom.price?.toLocaleString()} / night
+                Rs.{selectedRoom.price?.toLocaleString()}
               </p>
             </div>
           </div>
