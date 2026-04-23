@@ -130,16 +130,18 @@ export default function ReceptionHallPackages() {
                       Rs. {pkg.price?.toLocaleString()}
                     </div>
 
-                    {/* Status Badge */}
-                    <div
-                      className={`absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm ${
-                        pkg.isAvailable !== false
-                          ? "bg-emerald-500 text-white"
-                          : "bg-rose-500 text-white"
-                      }`}
-                    >
-                      {pkg.isAvailable !== false ? "Available" : "Booked"}
-                    </div>
+                    {/* Status Badge - Only show when unavailable */}
+                    {!pkg.status && (
+                      <div
+                        className={`absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm ${
+                          pkg.availability
+                            ? "bg-emerald-500 text-white"
+                            : "bg-rose-500 text-white"
+                        }`}
+                      >
+                        {pkg.availability ? "Available" : "Unavailable"}
+                      </div>
+                    )}
                   </div>
 
                   {/* Content Section */}
