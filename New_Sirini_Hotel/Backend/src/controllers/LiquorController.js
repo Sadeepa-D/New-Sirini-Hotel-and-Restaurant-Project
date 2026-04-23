@@ -13,25 +13,22 @@ const addLiquor = async (req, res) => {
       origin,
       brand,
     } = req.body;
-    if (
-      !name ||
-      !price ||
-      !category ||
-      !alcoholPercentage ||
-      !description ||
-      !volume ||
-      !origin ||
-      !brand
-    ) {
-      return res.status(400).json({ message: "All fields are required" });
+
+    // 1. Validation check for body fields
+    if (!name || !price || !category) {
+      return res
+        .status(400)
+        .json({ message: "Name, Price, and Category are required" });
     }
 
-    const image = req.file ? req.file.secure_url : null;
-    const imagePublicId = req.file ? req.file.public_id : null;
-
-    if (!image) {
-      return res.status(400).json({ message: "Image is required" });
+    // 2. SAFETY CHECK: Ensure req.file exists before accessing properties
+    if (!req.file) {
+      return res.status(400).json({ message: "Please upload an image" });
     }
+
+    // Note: If using cloudinary-multer, the path is usually req.file.path or req.file.secure_url
+    const image = req.file.path || req.file.secure_url;
+    const imagePublicId = req.file.filename || req.file.public_id;
 
     const newLiquor = new Liquor({
       name,
@@ -64,6 +61,7 @@ const getAllLiquor = async (req, res) => {
     }
     res.status(200).json(liquor);
   } catch (error) {
+    console.error("DETAILED BACKEND ERROR:", error);
     res
       .status(500)
       .json({ message: "Error fetching liquor", error: error.message });
