@@ -41,21 +41,30 @@ function Rooms() {
   return (
     <div className="bg-[#f8f9fa] min-h-screen font-sans">
       {/* Header */}
-      <header className="relative w-full h-[70vh] md:h-screen overflow-hidden">
-        <img
-          src={MainRoom}
-          alt="Luxury Room Header"
-          className="w-full h-full object-cover object-center transition-transform duration-[2000ms] hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-black/40 shadow-inner"></div>
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-          <h1 className="font-serif font-bold text-white text-4xl md:text-7xl lg:text-8xl drop-shadow-[4px_4px_15px_rgba(0,0,0,0.8)] leading-tight">
-            Our Rooms
-          </h1>
-          <p className="text-white/90 italic text-sm md:text-xl font-light tracking-widest max-w-2xl drop-shadow-md">
+      <header className="relative w-full h-[calc(100vh-120px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
+        {/* Background */}
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: `url(${MainRoom})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <div className="absolute inset-0 bg-black/50"></div>
+        </div>
+
+        {/* Content - centered in hero */}
+        <div className="z-10 flex flex-col items-center justify-center gap-4">
+          <h1 className="text-4xl md:text-6xl font-light">Our Rooms</h1>
+          <p className="text-lg md:text-xl italic tracking-widest border-t border-b border-white py-2 px-4">
             Peaceful rooms designed for your perfect stay
           </p>
            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
+        </div>
+
+        {/* Explore arrow pinned to bottom */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
           <Exploreindicator />
         </div>
         </div>
