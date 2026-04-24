@@ -8,6 +8,11 @@ const mongoose = require("mongoose");
 
 const roomBookSchema = new mongoose.Schema(
   {
+    userid: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      // required: true,
+    },
     name: {
       type: String,
       required: true,
@@ -35,9 +40,9 @@ const roomBookSchema = new mongoose.Schema(
       type: Date,
       required: [true, "Check-out date is required"],
     },
-    roomNumber: { 
-      type: String, 
-      required: true 
+    roomNumber: {
+      type: String,
+      required: true,
     },
     status: {
       type: String,

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const upload = require("../config/CloudinaryConfig");
+const authmiddleware = require("../middleware/authMiddleware");
 const roomBookingController = require("../controllers/Room/RoomBookingCont");
 const roomController = require("../controllers/Room/RoomCont");
 
@@ -8,6 +9,11 @@ router.post("/book", roomBookingController.createRoomBooking);
 router.delete("/deletebooking/:id", roomBookingController.deleteRoomBooking);
 router.put("/updatebooking/:id", roomBookingController.editRoomBooking);
 router.get("/viewbookings", roomBookingController.getAllRoomBookings);
+router.get(
+  "/viewspecificuserbookings",
+  authmiddleware,
+  roomBookingController.getspecificuserbookings,
+);
 router.get(
   "/viewpendingbookings",
   roomBookingController.getPendingRoomBookings,
@@ -27,11 +33,11 @@ router.get(
 
 router.get(
   "/viewcompletedbookings",
-  roomBookingController.getCompletedRoomBookings
+  roomBookingController.getCompletedRoomBookings,
 );
 router.put(
   "/completebooking/:id",
-  roomBookingController.setRoomBookingStatustoCompleted
+  roomBookingController.setRoomBookingStatustoCompleted,
 );
 
 router.put(

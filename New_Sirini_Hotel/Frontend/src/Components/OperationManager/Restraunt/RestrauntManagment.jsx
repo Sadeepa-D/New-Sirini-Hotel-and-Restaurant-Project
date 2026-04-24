@@ -15,9 +15,7 @@ import axios from "axios";
 
 import AddRestrauntItemForm from "./AddRestrauntItemForm";
 
-// ─────────────────────────────────────────────
-// FoodCard – mirrors DrinkCard styling
-// ─────────────────────────────────────────────
+
 const FoodCard = ({ item, onClick }) => (
   <div
     onClick={onClick}
@@ -57,9 +55,8 @@ const FoodCard = ({ item, onClick }) => (
   </div>
 );
 
-// ─────────────────────────────────────────────
 // Main RestaurantManager
-// ─────────────────────────────────────────────
+
 const RestaurantManager = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -228,7 +225,7 @@ const RestaurantManager = () => {
               {items.map((item) => (
                 <div
                   key={item._id}
-                  className="flex-shrink-0"
+                  className="shrink-0"
                   style={{
                     width: `calc(${100 / itemsPerView}% - ${
                       ((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) /

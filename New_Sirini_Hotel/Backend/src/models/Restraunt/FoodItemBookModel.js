@@ -8,6 +8,9 @@ const mongoose = require("mongoose");
 
 const foodItemBookSchema = new mongoose.Schema(
   {
+    userId:{ type: mongoose.Schema.Types.ObjectId,
+    ref: "User"
+  },
     foodName: {
       type: String,
       required: true,
