@@ -1,7 +1,28 @@
 const express = require("express");
 const router = express.Router();
-const { registerUser, loginUser } = require("../controllers/UserController");
+const authMiddleware = require("../middleware/authMiddleware");
+const UserController = require("../controllers/UserController");
+const upload = require("../config/CloudinaryConfig");
 
-router.post("/register", registerUser);
-router.post("/login", loginUser);
+router.post("/register", UserController.registerUser);
+router.post("/login", UserController.loginUser);
+router.get("/profile", authMiddleware, UserController.getUserProfile);
+router.put(
+  "/profile/update",
+  authMiddleware,
+  upload.single("image"),
+  UserController.updateUserProfile,
+);
+router.put(
+  "/profile/updatepassword",
+  authMiddleware,
+  UserController.UpdatePassword,
+);
+router.get("/getall/users", UserController.getallUsers);
+router.put("/update/role", UserController.updateUserRole);
+router.put("/update/userstatus", UserController.suspendUser);
+router.put("/delete/user", UserController.deleteUser);
+router.put("/update/userdetails", UserController.updateuserdetails);
+router.put("/reset/userpassword", UserController.resetuserpassword);
+
 module.exports = router;

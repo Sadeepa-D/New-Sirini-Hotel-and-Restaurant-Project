@@ -1,22 +1,28 @@
 const FoodItems = require("../../models/Restraunt/FoodItemModel");
+const cloudinary = require("cloudinary");
 
 const createFoodItem = async (req, res) => {
   try {
-    const { foodname, price, description, ingredients, category } = req.body;
-    if (!foodname || !price || !description || !ingredients || !category) {
-      return res.status(400).json({ message: "All fields are required" });
+    const { name, price, description, category, portion, dietary, preparationTime } = req.body;
+    if (!name || !price || !description || !category) {
+      return res.status(400).json({ message: "Required fields are missing" });
     }
-    const image = req.file ? req.file.path : null;
+    const image = req.file ? req.file.secure_url : null;
+    const imagePublicId = req.file ? req.file.public_id : null;
     if (!image) {
       return res.status(400).json({ message: "Image is required" });
     }
     const newFoodItem = new FoodItems({
-      foodname,
+      foodname: name,
       price,
       description,
-      ingredients,
+      ingredients: ["Not specified"],
       category,
+      portion,
+      dietary,
+      preparationTime,
       image,
+      imagePublicId,
       availability: true,
     });
     await newFoodItem.save();
@@ -47,9 +53,24 @@ const updateFoodItem = async (req, res) => {
       return res.status(400).json({ message: "Food item ID is required" });
     }
     const updates = req.body;
-    if (req.file) {
-      updates.image = req.file.path;
+    if (updates.name) {
+      updates.foodname = updates.name;
+      delete updates.name;
     }
+
+    const existingFoodItem = await FoodItems.findById(id);
+    if (!existingFoodItem) {
+      return res.status(404).json({ message: "Food item not found" });
+    }
+
+    if (req.file) {
+      if (existingFoodItem.imagePublicId) {
+        await cloudinary.v2.uploader.destroy(existingFoodItem.imagePublicId);
+      }
+      updates.image = req.file.secure_url;
+      updates.imagePublicId = req.file.public_id;
+    }
+
     const updatedFoodItem = await FoodItems.findByIdAndUpdate(
       id,
       { $set: updates },
@@ -73,6 +94,18 @@ const deleteFoodItem = async (req, res) => {
     if (!id) {
       return res.status(400).json({ message: "Food item ID is required" });
     }
+    const foodItem = await FoodItems.findById(id);
+    if (!foodItem) {
+      return res.status(404).json({ message: "Food item not found" });
+    }
+    if (foodItem.imagePublicId) {
+      try {
+        await cloudinary.v2.uploader.destroy(foodItem.imagePublicId);
+      } catch (cloudinaryError) {
+        console.error("Error deleting image from Cloudinary:", cloudinaryError);
+        // Continue with database deletion even if Cloudinary deletion fails
+      }
+    }
     await FoodItems.findByIdAndDelete(id);
     res.status(200).json({ message: "Food item deleted successfully" });
   } catch (error) {
@@ -91,9 +124,12 @@ const toggleFoodItemAvailability = async (req, res) => {
     if (!foodItem) {
       return res.status(404).json({ message: "Food item not found" });
     }
-    foodItem.availability = !foodItem.availability;
-    await foodItem.save();
-    res.status(200).json(foodItem);
+    const updatedFoodItem = await FoodItems.findByIdAndUpdate(
+      id,
+      { $set: { availability: !foodItem.availability } },
+      { new: true }
+    );
+    res.status(200).json(updatedFoodItem);
   } catch (error) {
     res.status(500).json({
       message: "Error toggling food item availability",

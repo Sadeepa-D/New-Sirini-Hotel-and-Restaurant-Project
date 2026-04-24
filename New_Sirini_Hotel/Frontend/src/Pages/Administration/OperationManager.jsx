@@ -8,40 +8,10 @@ import {
   LogOut,
   Menu,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import LiquorManage from "../../Components/OperationManager/Liquor/LiquorMngHome";
-
-const Bookings = () => (
-  <div className="p-6 text-gray-600">
-    Bookings Component (Mount your data here)
-  </div>
-);
-const Rooms = () => (
-  <div className="p-6 text-gray-600">
-    Rooms Component (Mount your data here)
-  </div>
-);
-const Orders = () => (
-  <div className="p-6 text-gray-600">
-    Orders Component (Mount your data here)
-  </div>
-);
-const LiquorItems = () => (
-  <div className="p-6 text-gray-600">
-    <LiquorItems />
-  </div>
-);
-
-const RestrauntItems = () => (
-  <div className="p-6 text-gray-600">
-    Restaurant Items Component (Mount your data here)
-  </div>
-);
-
-const Logout = () => (
-  <div className="p-6 text-gray-600">
-    Logout Component (Mount your data here)
-  </div>
-);
+import RestaurantManager from "../../Components/OperationManager/Restraunt/RestrauntManagment";
+import toast from "react-hot-toast";
 
 // --- Dashboard Overview Component (Matches your Figma design) ---
 const DashboardOverview = () => {
@@ -84,8 +54,16 @@ const DashboardOverview = () => {
 
 // --- Main Layout Component ---
 const OperationManager = () => {
+  const usenavigate = useNavigate();
+
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    toast.success("Logged out successfully");
+    usenavigate("/login");
+  };
 
   const navItems = [
     { id: "dashboard", label: "Dashboard", icon: Home },
@@ -102,9 +80,7 @@ const OperationManager = () => {
       case "Liquor":
         return <LiquorManage />;
       case "Food":
-        return <RestrauntItems />;
-      case "Logout":
-        return <Logout />;
+        return <RestaurantManager />;
       default:
         return <DashboardOverview />;
     }
@@ -114,16 +90,6 @@ const OperationManager = () => {
     switch (activeTab) {
       case "dashboard":
         return "Dashboard Overview";
-      case "bookings":
-        return "Bookings";
-      case "rooms":
-        return "Rooms";
-      case "orders":
-        return "Orders";
-      case "revenue":
-        return "Revenue";
-      case "setting":
-        return "Settings";
       default:
         return "Dashboard Overview";
     }
@@ -172,8 +138,12 @@ const OperationManager = () => {
               <button
                 key={item.id}
                 onClick={() => {
-                  setActiveTab(item.id);
-                  setIsSidebarOpen(false); // Close sidebar on mobile after clicking
+                  if (item.id === "Logout") {
+                    handleLogout();
+                  } else {
+                    setActiveTab(item.id);
+                    setIsSidebarOpen(false);
+                  }
                 }}
                 className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-colors ${
                   isActive

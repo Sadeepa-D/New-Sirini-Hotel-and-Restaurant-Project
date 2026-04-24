@@ -1,4 +1,5 @@
 const ReceptionHallPackage = require("../../models/Reception/ReceptionHallPackages");
+const cloudinary = require("cloudinary");
 
 const createReceptionHallPackage = async (req, res) => {
   try {
@@ -6,7 +7,8 @@ const createReceptionHallPackage = async (req, res) => {
     if (!name || !description || !price || !features || !seatings) {
       return res.status(400).json({ message: "All fields are required" });
     }
-    const image = req.file ? req.file.path : null;
+    const image = req.file ? req.file.secure_url : null;
+    const imagePublicId = req.file ? req.file.public_id : null;
     if (!image) {
       return res.status(400).json({ message: "Image is required" });
     }
@@ -17,6 +19,7 @@ const createReceptionHallPackage = async (req, res) => {
       features,
       seatings,
       image,
+      imagePublicId,
       status: true,
     });
     await newPackage.save();
@@ -37,7 +40,7 @@ const getReceptionHallPackages = async (req, res) => {
         .status(404)
         .json({ message: "No reception hall packages found" });
     }
-    res.status(200).json({ packages });
+    res.status(200).json(packages);
   } catch (error) {
     console.error("Error fetching reception hall packages:", error);
     res.status(500).json({ message: "Server error" });
@@ -50,9 +53,20 @@ const updateReceptionHallPackage = async (req, res) => {
       return res.status(400).json({ message: "Package ID is required" });
     }
     const updates = req.body;
-    if (req.file) {
-      updates.image = req.file.path;
+
+    const existingPackage = await ReceptionHallPackage.findById(id);
+    if (!existingPackage) {
+      return res.status(404).json({ message: "Package not found" });
     }
+
+    if (req.file) {
+      if (existingPackage.imagePublicId) {
+        await cloudinary.v2.uploader.destroy(existingPackage.imagePublicId);
+      }
+      updates.image = req.file.secure_url;
+      updates.imagePublicId = req.file.public_id;
+    }
+
     const updatedPackage = await ReceptionHallPackage.findByIdAndUpdate(
       id,
       { $set: updates },
@@ -73,6 +87,19 @@ const deleteReceptionHallPackage = async (req, res) => {
     if (!id) {
       return res.status(400).json({ message: "Package ID is required" });
     }
+    const item = await ReceptionHallPackage.findById(id);
+    if (!item) {
+      return res.status(404).json({ message: "Package not found" });
+    }
+    if (item.imagePublicId) {
+      try {
+        await cloudinary.v2.uploader.destroy(item.imagePublicId);
+      } catch (cloudinaryError) {
+        console.error("Error deleting image from Cloudinary:", cloudinaryError);
+        // Continue with database deletion even if Cloudinary deletion fails
+      }
+    }
+
     const deletedPackage = await ReceptionHallPackage.findByIdAndDelete(id);
     if (!deletedPackage) {
       return res.status(404).json({ message: "Package not found" });

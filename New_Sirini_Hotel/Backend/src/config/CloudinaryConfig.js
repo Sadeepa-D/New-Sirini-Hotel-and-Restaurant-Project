@@ -1,8 +1,8 @@
-const cloudinary = require("cloudinary").v2;
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("cloudinary");
+const CloudinaryStorage = require("multer-storage-cloudinary");
 const multer = require("multer");
 
-cloudinary.config({
+cloudinary.v2.config({
   cloud_name: "dj866gslt",
   api_key: "664183556577417",
   api_secret: process.env.CLOUDINARY_SECRETE,
@@ -17,5 +17,4 @@ const storage = new CloudinaryStorage({
 });
 
 const upload = multer({ storage: storage });
-
 module.exports = upload;

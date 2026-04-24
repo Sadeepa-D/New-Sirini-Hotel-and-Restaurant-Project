@@ -13,6 +13,17 @@ const userSchema = mongoose.Schema(
       lowercase: true,
       match: [/^\S+@\S+\.\S+$/, "Please enter a valid email"],
     },
+
+    image: {
+      type: String,
+      default: null,
+    },
+
+    imagePublicId: {
+      type: String,
+      default: null,
+    },
+
     Phone: {
       type: String,
       required: [true, "please add Your Phone Number"],
@@ -20,12 +31,17 @@ const userSchema = mongoose.Schema(
     },
     Role: {
       type: String,
-      enum: ["user", "admin","manager"],
-      default: "user",
+      enum: ["User", "Admin", "Manager","Operational Manager"],
+      default: "User",
     },
     password: {
       type: String,
       required: [true, "Please add a Password"],
+    },
+    Status: {
+      type: String,
+      enum: ["Active", "Suspended", "Deleted"],
+      default: "Active",
     },
   },
   {

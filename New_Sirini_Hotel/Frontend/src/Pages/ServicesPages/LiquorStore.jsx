@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { BarChart3, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  BarChart3,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsDown,
+} from "lucide-react";
 import LiqourCard from "../../Components/LiqourStore/LiqourCard";
 import LiquorComparisonComp from "../../Components/LiqourStore/LiquorComparisonComp";
 import LiquorDetailsComp from "../../Components/LiqourStore/LIquorDetailsComp";
+import Exploreindicator from "../../Components/Exploreindicator";
 
 const LiquorStore = () => {
   const [selectedDrink, setSelectedDrink] = useState(null);
@@ -71,22 +77,25 @@ const LiquorStore = () => {
   };
 
   const handlePrevBeer = () => {
-    setBeerIndex(Math.max(0, beerIndex - 1));
+    setBeerIndex(Math.max(0, beerIndex - itemsPerView));
   };
 
   const handleNextBeer = () => {
     setBeerIndex((prev) =>
-      Math.max(0, Math.min(filteredBeerDrinks.length - itemsPerView, prev + 1)),
+      Math.min(filteredBeerDrinks.length - itemsPerView, prev + itemsPerView),
     );
   };
 
   const handlePrevOthers = () => {
-    setOthersIndex(Math.max(0, othersIndex - 1));
+    setOthersIndex(Math.max(0, othersIndex - itemsPerView));
   };
 
   const handleNextOthers = () => {
     setOthersIndex(
-      Math.min(filteredOtherDrinks.length - itemsPerView, othersIndex + 1),
+      Math.min(
+        filteredOtherDrinks.length - itemsPerView,
+        othersIndex + itemsPerView,
+      ),
     );
   };
   const filteredBeerDrinks = liquorItems.filter(
@@ -103,25 +112,53 @@ const LiquorStore = () => {
       drink.price <= priceRange[1],
   );
 
+  // Slice-based navigation (same as CateringMng)
+  const GAP = 16;
+  const cardWidth = `calc((100% - ${GAP * (itemsPerView - 1)}px) / ${itemsPerView})`;
+  const visibleBeerDrinks = filteredBeerDrinks.slice(
+    beerIndex,
+    beerIndex + itemsPerView,
+  );
+  const canGoBackBeer = beerIndex > 0;
+  const canGoNextBeer = beerIndex + itemsPerView < filteredBeerDrinks.length;
+  const visibleOtherDrinks = filteredOtherDrinks.slice(
+    othersIndex,
+    othersIndex + itemsPerView,
+  );
+  const canGoBackOthers = othersIndex > 0;
+  const canGoNextOthers =
+    othersIndex + itemsPerView < filteredOtherDrinks.length;
+
   return (
     <div className="min-h-screen bg-neutral-50">
-      <section
-        className="relative h-96 bg-cover bg-center"
-        style={{
-          backgroundImage:
-            "url(https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=1920&q=80)",
-        }}
-      >
-        <div className="absolute inset-0 bg-black/60"></div>
-        <div className="relative h-full flex flex-col items-center justify-center text-center px-4">
-          <h1 className="text-5xl md:text-6xl font-serif text-white mb-4">
-            Liquor
-          </h1>
-          <p className="text-xl text-amber-100/90 italic">
+      {/* HERO SECTION - Aligned with MainPage */}
+      <header className="relative w-full h-[calc(100vh-120px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
+        {/* Background */}
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage:
+              "url(https://images.unsplash.com/photo-1557149559-d74af2d38a1a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <div className="absolute inset-0 bg-black/50"></div>
+        </div>
+
+        {/* Content - centered in hero */}
+        <div className="z-10 flex flex-col items-center justify-center gap-4">
+          <h1 className="text-4xl md:text-6xl font-light">Our Liquor Store</h1>
+          <p className="text-lg md:text-xl italic tracking-widest border-t border-b border-white py-2 px-4">
             A perfect drink for every celebration
           </p>
         </div>
-      </section>
+
+        {/* Explore arrow pinned to bottom */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
+          <Exploreindicator />
+        </div>
+      </header>
 
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -178,7 +215,7 @@ const LiquorStore = () => {
             <h3 className="text-2xl font-bold text-neutral-900 mb-6">Beer</h3>
 
             <div className="relative">
-              {beerIndex > 0 && (
+              {canGoBackBeer && (
                 <button
                   onClick={handlePrevBeer}
                   className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
@@ -187,34 +224,47 @@ const LiquorStore = () => {
                 </button>
               )}
 
-              <div className="overflow-hidden">
-                <div
-                  className="flex gap-4 sm:gap-6 transition-transform duration-300"
-                  style={{
-                    transform: `translateX(-${beerIndex * (100 / itemsPerView)}%)`,
-                  }}
-                >
-                  {filteredBeerDrinks.map((drink) => (
-                    <div
-                      key={drink._id}
-                      className="flex-shrink-0"
-                      style={{
-                        width: `calc(${100 / itemsPerView}% - ${((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) / itemsPerView}px)`,
-                      }}
-                    >
-                      <LiqourCard drink={drink} onClick={handleDrinkClick} />
-                    </div>
-                  ))}
-                </div>
+              <div
+                key={beerIndex}
+                className="flex gap-4"
+                style={{ animation: "fadeIn 0.25s ease" }}
+              >
+                {visibleBeerDrinks.map((drink) => (
+                  <div
+                    key={drink._id}
+                    className="shrink-0"
+                    style={{ width: cardWidth }}
+                  >
+                    <LiqourCard drink={drink} onClick={handleDrinkClick} />
+                  </div>
+                ))}
               </div>
 
-              {beerIndex < filteredBeerDrinks.length - itemsPerView && (
+              {canGoNextBeer && (
                 <button
                   onClick={handleNextBeer}
                   className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
                 >
                   <ChevronRight className="w-6 h-6 text-neutral-900" />
                 </button>
+              )}
+
+              {filteredBeerDrinks.length > itemsPerView && (
+                <div className="flex justify-center gap-1.5 mt-4">
+                  {Array.from({
+                    length: Math.ceil(filteredBeerDrinks.length / itemsPerView),
+                  }).map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setBeerIndex(i * itemsPerView)}
+                      className={`w-2 h-2 rounded-full transition-colors ${
+                        Math.floor(beerIndex / itemsPerView) === i
+                          ? "bg-amber-500"
+                          : "bg-gray-300 hover:bg-gray-400"
+                      }`}
+                    />
+                  ))}
+                </div>
               )}
             </div>
           </div>
@@ -223,7 +273,7 @@ const LiquorStore = () => {
             <h3 className="text-2xl font-bold text-neutral-900 mb-6">Others</h3>
 
             <div className="relative">
-              {othersIndex > 0 && (
+              {canGoBackOthers && (
                 <button
                   onClick={handlePrevOthers}
                   className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
@@ -232,34 +282,49 @@ const LiquorStore = () => {
                 </button>
               )}
 
-              <div className="overflow-hidden">
-                <div
-                  className="flex gap-4 sm:gap-6 transition-transform duration-300"
-                  style={{
-                    transform: `translateX(-${othersIndex * (100 / itemsPerView)}%)`,
-                  }}
-                >
-                  {filteredOtherDrinks.map((drink) => (
-                    <div
-                      key={drink._id}
-                      className="flex-shrink-0"
-                      style={{
-                        width: `calc(${100 / itemsPerView}% - ${((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) / itemsPerView}px)`,
-                      }}
-                    >
-                      <LiqourCard drink={drink} onClick={handleDrinkClick} />
-                    </div>
-                  ))}
-                </div>
+              <div
+                key={othersIndex}
+                className="flex gap-4"
+                style={{ animation: "fadeIn 0.25s ease" }}
+              >
+                {visibleOtherDrinks.map((drink) => (
+                  <div
+                    key={drink._id}
+                    className="shrink-0"
+                    style={{ width: cardWidth }}
+                  >
+                    <LiqourCard drink={drink} onClick={handleDrinkClick} />
+                  </div>
+                ))}
               </div>
 
-              {othersIndex < filteredOtherDrinks.length - itemsPerView && (
+              {canGoNextOthers && (
                 <button
                   onClick={handleNextOthers}
                   className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
                 >
                   <ChevronRight className="w-6 h-6 text-neutral-900" />
                 </button>
+              )}
+
+              {filteredOtherDrinks.length > itemsPerView && (
+                <div className="flex justify-center gap-1.5 mt-4">
+                  {Array.from({
+                    length: Math.ceil(
+                      filteredOtherDrinks.length / itemsPerView,
+                    ),
+                  }).map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setOthersIndex(i * itemsPerView)}
+                      className={`w-2 h-2 rounded-full transition-colors ${
+                        Math.floor(othersIndex / itemsPerView) === i
+                          ? "bg-amber-500"
+                          : "bg-gray-300 hover:bg-gray-400"
+                      }`}
+                    />
+                  ))}
+                </div>
               )}
             </div>
           </div>
@@ -277,6 +342,12 @@ const LiquorStore = () => {
         onClose={() => setIsComparisonOpen(false)}
         allDrinks={liquorItems}
       />
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 };

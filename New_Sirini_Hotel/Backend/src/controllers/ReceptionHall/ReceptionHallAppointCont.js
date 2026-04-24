@@ -2,15 +2,19 @@ const ReceptionAppointment = require("../../models/Reception/ReciptionAppointMod
 
 const createReceptionAppointment = async (req, res) => {
   try {
-    const { name, email, phone, date } = req.body;
-    if (!name || !email || !phone || !date) {
+    const userId = req.userData.id;
+    const { name, email, phone, date, noOfGuests, eventType } = req.body;
+    if (!name || !email || !phone || !date || !noOfGuests || !eventType) {
       return res.status(400).json({ message: "All fields are required" });
     }
     const newAppointment = new ReceptionAppointment({
+      userId,
       name,
       email,
       phone,
       date,
+      noOfGuests,
+      eventType,
       status: "Pending",
     });
     await newAppointment.save();
@@ -165,7 +169,7 @@ const getCancelledReceptionAppointments = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-const getoOverdueReceptionAppointments = async (req, res) => {
+const getOverdueReceptionAppointments = async (req, res) => {
   try {
     const OverdueAppointments = await ReceptionAppointment.find({
       status: "Overdue",
@@ -179,6 +183,27 @@ const getoOverdueReceptionAppointments = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+const getSpecificUserReceptionAppointments = async (req, res) => {
+  try {
+    // 1. Get the logged-in user's ID from your auth middleware
+    const userId = req.userData.id;
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+    // 2. Find only the appointments that belong to this specific userId
+    const userAppointments = await ReceptionAppointment.find({
+      userId: userId,
+    });
+
+    // 3. Send the filtered appointments back to the frontend
+    res.status(200).json(userAppointments);
+  } catch (error) {
+    console.error("Error fetching user appointments:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   createReceptionAppointment,
   getReceptionAppointments,
@@ -189,5 +214,6 @@ module.exports = {
   getPendingReceptionAppointments,
   getCompletedReceptionAppointments,
   getCancelledReceptionAppointments,
-  getoOverdueReceptionAppointments,
+  getOverdueReceptionAppointments,
+  getSpecificUserReceptionAppointments,
 };

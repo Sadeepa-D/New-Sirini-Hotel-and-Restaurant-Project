@@ -30,16 +30,35 @@ const RoomSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    availability: {
-      type: Boolean,
+
+    //availability (Boolean) ඉවත් කර status (String) එක් කළා
+    status: {
+      type: String,
       required: true,
-      default: true,
+      enum: ["available", "reserved", "maintenance"], // මේ වචන 3 පමණක් භාර ගනී
+      default: "available",
     },
     image: {
       type: String,
       required: true,
     },
+
+    condition: {
+    type: String,
+    enum: ['AC', 'Fan'], // AC හෝ Fan පමණක් තෝරාගත හැකි ලෙස
+    default: 'Fan'
+  },
+
+    description: {
+    type: String,
+    default: "",
+  },
+    imagePublicId: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true },
 );
+
 module.exports = mongoose.model("Room", RoomSchema);

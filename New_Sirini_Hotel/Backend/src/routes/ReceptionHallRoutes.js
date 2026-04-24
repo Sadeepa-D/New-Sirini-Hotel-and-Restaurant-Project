@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const upload = require("../config/CloudinaryConfig");
+const authmiddleware = require("../middleware/authMiddleware");
 const ReceptionHallAppoint = require("../controllers/ReceptionHall/ReceptionHallAppointCont");
 const ReceptionHallPackg = require("../controllers/ReceptionHall/ReceptionHallPackg");
 const CateringItemsCont = require("../controllers/ReceptionHall/CateringItemsCont");
@@ -8,6 +9,7 @@ const AdvertismentCont = require("../controllers/ReceptionHall/AdvertismentCont"
 
 router.post(
   "/appointment/add",
+  authmiddleware,
   ReceptionHallAppoint.createReceptionAppointment,
 );
 router.get("/appointment/view", ReceptionHallAppoint.getReceptionAppointments);
@@ -24,7 +26,7 @@ router.put(
   ReceptionHallAppoint.updateReceptionAppointmentasCompleted,
 );
 router.put(
-  "/appointment/update/cancelled/:id",
+  "/appointment/update/Canceled/:id",
   ReceptionHallAppoint.updateReceptionAppointmentasCancelled,
 );
 router.get(
@@ -36,12 +38,17 @@ router.get(
   ReceptionHallAppoint.getCompletedReceptionAppointments,
 );
 router.get(
-  "/appointment/view/cancelled",
+  "/appointment/view/canceled",
   ReceptionHallAppoint.getCancelledReceptionAppointments,
 );
 router.get(
   "/appointment/view/overdue",
-  ReceptionHallAppoint.getoOverdueReceptionAppointments,
+  ReceptionHallAppoint.getOverdueReceptionAppointments,
+);
+router.get(
+  "/appointment/view/userspecific",
+  authmiddleware,
+  ReceptionHallAppoint.getSpecificUserReceptionAppointments,
 );
 router.post(
   "/package/add",
@@ -79,6 +86,7 @@ router.put(
 
 router.post(
   "/advertisment/add",
+  authmiddleware,
   upload.single("image"),
   AdvertismentCont.createAdvertisment,
 );
@@ -97,6 +105,10 @@ router.put(
   "/advertisment/toggle/rejected/:id",
   AdvertismentCont.toggleAdvertismentStatustoRejected,
 );
+router.put(
+  "/advertisment/toggle/pending/:id",
+  AdvertismentCont.toggleAdvertismentStatustoPending,
+);
 router.get(
   "/advertisment/view/approved",
   AdvertismentCont.getApprovedAdvertisments,
@@ -108,5 +120,10 @@ router.get(
 router.get(
   "/advertisment/view/rejected",
   AdvertismentCont.getRejectedAdvertisments,
+);
+router.get(
+  "/advertisment/view/userspecific",
+  authmiddleware,
+  AdvertismentCont.getSpecificUserAdvertisments,
 );
 module.exports = router;

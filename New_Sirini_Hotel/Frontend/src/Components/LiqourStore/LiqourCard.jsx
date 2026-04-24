@@ -27,7 +27,7 @@ const DrinkCard = ({ drink, onClick }) => {
         {/* Details */}
         <div className="flex flex-col items-center gap-2 mt-4 text-center w-full">
           <p className="text-white text-base tracking-wide font-medium drop-shadow-md">
-            Alcohol by Volume:{" "}
+            Alcohol by Volume:
             <span className="font-bold">{drink.alcoholPercentage}%</span>
           </p>
           <p className="text-white text-base tracking-wide font-medium drop-shadow-md">
