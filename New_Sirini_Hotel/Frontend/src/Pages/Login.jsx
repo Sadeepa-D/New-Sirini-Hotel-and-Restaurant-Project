@@ -75,7 +75,7 @@ const Login = () => {
           case "Operation Manager 1 (Restraunt,Liquor)":
             navigate("/operationmanager");
             break;
-          case "Operational Manager 2 (Reception, Room)":
+          case "Operation Manager 2 (Reception, Room)":
             navigate("/manager");
             break;
           case "User":
