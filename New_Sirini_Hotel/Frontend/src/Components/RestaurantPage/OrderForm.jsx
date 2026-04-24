@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
 export default function OrderForm({ item, onClose }) {
   const [form, setForm] = useState({
     name: "",
@@ -16,8 +15,18 @@ export default function OrderForm({ item, onClose }) {
   };
 
   const handleSubmit = async (e) => {
+    const token = localStorage.getItem("token");
     e.preventDefault();
     try {
+      const userDataStr = localStorage.getItem("user");
+      let userId = null;
+      if (userDataStr) {
+        try {
+          const userData = JSON.parse(userDataStr);
+          userId = userData._id;
+        } catch (e) {}
+      }
+
       const orderData = {
         fullName: form.name,
         // Strip non-numeric characters to match backend regex /^[0-9]{10}$/
@@ -26,11 +35,17 @@ export default function OrderForm({ item, onClose }) {
         pickupTime: form.pickupTime,
         quantity: form.quantity,
         foodName: item.name, // Include the food name in the order data
+        userId: userId,
       };
 
       await axios.post(
         `${import.meta.env.VITE_API_URL}/api/restraunt/placeorder`,
-        orderData
+        orderData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       setSubmitted(true);
@@ -38,7 +53,7 @@ export default function OrderForm({ item, onClose }) {
         onClose();
       }, 2000);
     } catch (error) {
-      console.error("Error placing order:", error);
+     // console.error("Error placing order:", error);
       alert("Failed to place order. Please try again.");
     }
   };
