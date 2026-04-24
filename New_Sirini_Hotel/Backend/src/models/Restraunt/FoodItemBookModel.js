@@ -8,6 +8,10 @@ const mongoose = require("mongoose");
 
 const foodItemBookSchema = new mongoose.Schema(
   {
+    foodName: {
+      type: String,
+      required: true,
+    },
     fullName: {
       type: String,
       required: true,

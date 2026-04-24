@@ -33,13 +33,11 @@ export default function Restaurant() {
       // Map backend data to frontend field names if they differ
       const mappedData = data.map((item) => ({
         id: item._id,
-        name: item.foodname,
+        name: item.name,
         price: item.price,
         description: item.description,
         image: item.image,
-        ingredients: Array.isArray(item.ingredients)
-          ? item.ingredients
-          : [item.ingredients],
+       
         category: item.category,
         availability: item.availability,
         label: item.availability ? "Available" : "Sold Out",
