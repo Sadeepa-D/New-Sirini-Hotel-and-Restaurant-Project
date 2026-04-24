@@ -9,6 +9,11 @@ const mongoose = require("mongoose");
 
 const RoomSchema = new mongoose.Schema(
   {
+    userid: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      // required: true,
+    },
     roomNumber: {
       type: Number,
       required: true,
@@ -31,11 +36,10 @@ const RoomSchema = new mongoose.Schema(
       required: true,
     },
 
-  
     status: {
       type: String,
       required: true,
-      enum: ["available", "reserved", "maintenance"], 
+      enum: ["available", "reserved", "maintenance"],
       default: "available",
     },
     image: {
@@ -44,15 +48,15 @@ const RoomSchema = new mongoose.Schema(
     },
 
     condition: {
-    type: String,
-    enum: ['AC', 'Fan'], 
-    default: 'Fan'
-  },
+      type: String,
+      enum: ["AC", "Fan"],
+      default: "Fan",
+    },
 
     description: {
-    type: String,
-    default: "",
-  },
+      type: String,
+      default: "",
+    },
     imagePublicId: {
       type: String,
       default: null,
