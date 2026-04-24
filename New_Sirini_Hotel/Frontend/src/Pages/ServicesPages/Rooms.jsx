@@ -3,6 +3,7 @@ import axios from "axios";
 import MainRoom from "../../assets/Rooms/Main_Room.png";
 import BookingForm from "../../Components/RoomCompo/BookingForm";
 import Exploreindicator from "../../Components/Exploreindicator";
+import toast from "react-hot-toast";
 
 function Rooms() {
   const [roomList, setRoomList] = useState([]);
@@ -10,6 +11,7 @@ function Rooms() {
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -28,9 +30,14 @@ function Rooms() {
   }, []);
 
   const handleBookNow = (room) => {
-    setSelectedRoom(room);
-    setIsModalOpen(true);
-  };
+  if (!isLoggedIn) {
+    toast.error("Please login to book a room");
+    return;
+  }
+
+  setSelectedRoom(room);
+  setIsModalOpen(true);
+};
 
   const handleBookingConfirmed = (roomId) => {
 
