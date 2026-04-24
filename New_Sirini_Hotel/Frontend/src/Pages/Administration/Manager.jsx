@@ -20,16 +20,16 @@ import toast from "react-hot-toast";
 // Dashboard Data
 const dashboardData = {
   monthly: [
-    { title: "Total Room Bookings", value: "24", sub: "This month" },
-    { title: "Rooms Available", value: "02", sub: "Out of 04 rooms" },
-    { title: "Guests Today", value: "16", sub: "Check-ins & stay" },
-    { title: "Total Revenue", value: "Rs.128,000", sub: "This month" },
+    { title: "Total Room Bookings", value: " ", sub: "This month" },
+    { title: "Rooms Available", value: " ", sub: "Out of 04 rooms" },
+    { title: "Guests Today", value: " ", sub: "Check-ins & stay" },
+    { title: "Total Revenue", value: " ", sub: "This month" },
   ],
   yearly: [
-    { title: "Total Room Bookings", value: "286", sub: "This year" },
-    { title: "Rooms Available", value: "02", sub: "Out of 04 rooms" },
-    { title: "Guests Today", value: "192", sub: "Total guests" },
-    { title: "Total Revenue", value: "Rs.1,540,000", sub: "This year" },
+    { title: "Total Room Bookings", value: " ", sub: "This year" },
+    { title: "Rooms Available", value: " ", sub: "Out of 04 rooms" },
+    { title: "Guests Today", value: " ", sub: "Total guests" },
+    { title: "Total Revenue", value: " ", sub: "This year" },
   ],
 };
 

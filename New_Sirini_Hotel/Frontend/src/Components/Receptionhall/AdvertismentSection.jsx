@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Camera, Music, Sparkles, Megaphone } from "lucide-react";
+import {
+  Camera,
+  Music,
+  Sparkles,
+  Megaphone,
+  ChevronRight,
+  ChevronLeft,
+} from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import AdvertisementCard from "./AdvertisementCard";
@@ -18,6 +25,10 @@ const AdvertisementSection = () => {
   const [activeCategory, setActiveCategory] = useState("Photography");
   const [showForm, setShowForm] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+  const [index, setIndex] = useState(0);
+  const [itemsPerView, setItemsPerView] = useState(
+    typeof window !== "undefined" && window.innerWidth < 640 ? 1 : 3,
+  );
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -40,6 +51,29 @@ const AdvertisementSection = () => {
     fetchAds();
   }, []);
 
+  useEffect(() => {
+    // Add fade animation styles
+    const style = document.createElement("style");
+    style.textContent = `
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(6px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+    `;
+    document.head.appendChild(style);
+    return () => document.head.removeChild(style);
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setItemsPerView(window.innerWidth < 640 ? 1 : 3);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const handleadrequest = () => {
     if (!isLoggedIn) {
       toast.error("You must be logged in to place an Advertisement.");
@@ -51,6 +85,22 @@ const AdvertisementSection = () => {
   };
 
   const filtered = ads.filter((ad) => ad.category === activeCategory);
+
+  useEffect(() => {
+    setIndex((prev) =>
+      Math.min(
+        prev,
+        Math.max(
+          0,
+          Math.floor((filtered.length - 1) / itemsPerView) * itemsPerView,
+        ),
+      ),
+    );
+  }, [filtered.length, itemsPerView]);
+
+  const visibleAds = filtered.slice(index, index + itemsPerView);
+  const canGoBack = index > 0;
+  const canGoNext = index + itemsPerView < filtered.length;
 
   if (loading)
     return (
@@ -128,11 +178,65 @@ const AdvertisementSection = () => {
       </div>
 
       {/* Cards Grid */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="max-w-7xl mx-auto">
         {filtered.length > 0 ? (
-          filtered.map((ad) => <AdvertisementCard key={ad._id} ad={ad} />)
+          <div className="relative">
+            {/* Left arrow */}
+            {canGoBack && (
+              <button
+                onClick={() => setIndex((i) => Math.max(0, i - itemsPerView))}
+                className="absolute -left-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow flex items-center justify-center hover:bg-gray-50"
+              >
+                <ChevronLeft size={16} className="text-gray-600" />
+              </button>
+            )}
+
+            {/* Visible cards */}
+            <div
+              key={index}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+              style={{ animation: "fadeIn 0.25s ease" }}
+            >
+              {visibleAds.map((ad) => (
+                <AdvertisementCard key={ad._id} ad={ad} />
+              ))}
+            </div>
+
+            {/* Right arrow */}
+            {canGoNext && (
+              <button
+                onClick={() =>
+                  setIndex((i) =>
+                    Math.min(filtered.length - itemsPerView, i + itemsPerView),
+                  )
+                }
+                className="absolute -right-6 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow flex items-center justify-center hover:bg-gray-50"
+              >
+                <ChevronRight size={16} className="text-gray-600" />
+              </button>
+            )}
+
+            {/* Page dots */}
+            {filtered.length > itemsPerView && (
+              <div className="flex justify-center gap-1.5 mt-6">
+                {Array.from({
+                  length: Math.ceil(filtered.length / itemsPerView),
+                }).map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setIndex(i * itemsPerView)}
+                    className={`w-2 h-2 rounded-full transition-colors ${
+                      Math.floor(index / itemsPerView) === i
+                        ? "bg-amber-500"
+                        : "bg-gray-200 hover:bg-gray-300"
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         ) : (
-          <div className="col-span-full text-center py-16">
+          <div className="text-center py-16">
             <p className="text-gray-400 text-sm uppercase tracking-widest">
               No advertisements in this category yet
             </p>

@@ -26,6 +26,9 @@ const ProfileSection = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+      if (!response.data.image) {
+        response.data.image = null;
+      }
       setExistingProfileData(response.data);
     } catch (error) {
       console.error("Error fetching profile data:", error);
