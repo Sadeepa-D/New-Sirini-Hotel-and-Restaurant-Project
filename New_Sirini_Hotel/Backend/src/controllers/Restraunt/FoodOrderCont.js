@@ -15,6 +15,7 @@ const GenarateFoodOrderCode = async () => {
 
 const createFoodOrder = async (req, res) => {
   try {
+    const userId= req.userData.id;
     const { foodName, fullName, quantity, phoneNumber, pickupDate, pickupTime } =
       req.body;
 
@@ -23,6 +24,7 @@ const createFoodOrder = async (req, res) => {
     }
 
     const newFoodOrder = new FoodOrder({
+      userId,
       foodName,
       fullName,
       quantity,
@@ -199,6 +201,20 @@ const getOverdueFoodOrders = async (req, res) => {
       .json({ message: "Failed to retrieve overdue food orders", error });
   }
 };
+// GET /api/restaurant/orders/userspecific
+const getUserOrders = async (req, res) => {
+  try {
+    const userId = req.userData.id; // comes from JWT payload
+
+    const orders = await FoodOrder.find({ userId })
+      .sort({ createdAt: -1 }); // newest first
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("Error fetching user orders:", error);
+    res.status(500).json({ message: "Server error fetching orders" });
+  }
+};
 module.exports = {
   createFoodOrder,
   getFoodOrders,
@@ -210,4 +226,5 @@ module.exports = {
   getCancelledFoodOrders,
   getInProgressFoodOrders,
   getOverdueFoodOrders,
+  getUserOrders,
 };
