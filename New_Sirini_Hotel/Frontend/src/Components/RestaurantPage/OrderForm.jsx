@@ -34,8 +34,9 @@ export default function OrderForm({ item, onClose }) {
         pickupDate: form.pickupDate,
         pickupTime: form.pickupTime,
         quantity: form.quantity,
-        foodName: item.name, // Include the food name in the order data
+        foodName: item.name, 
         userId: userId,
+        Price: item.price * form.quantity,
       };
 
       await axios.post(
