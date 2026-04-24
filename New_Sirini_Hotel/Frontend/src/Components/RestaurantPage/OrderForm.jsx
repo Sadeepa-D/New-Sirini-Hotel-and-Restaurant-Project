@@ -25,6 +25,7 @@ export default function OrderForm({ item, onClose }) {
         pickupDate: form.pickupDate,
         pickupTime: form.pickupTime,
         quantity: form.quantity,
+        foodName: item.name, // Include the food name in the order data
       };
 
       await axios.post(

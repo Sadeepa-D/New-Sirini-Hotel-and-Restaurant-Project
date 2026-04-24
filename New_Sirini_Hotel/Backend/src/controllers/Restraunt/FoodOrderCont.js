@@ -15,7 +15,7 @@ const GenarateFoodOrderCode = async () => {
 
 const createFoodOrder = async (req, res) => {
   try {
-    const { fullName, quantity, phoneNumber, pickupDate, pickupTime } =
+    const { foodName, fullName, quantity, phoneNumber, pickupDate, pickupTime } =
       req.body;
 
     if (!fullName || !quantity || !phoneNumber || !pickupDate || !pickupTime) {
@@ -23,6 +23,7 @@ const createFoodOrder = async (req, res) => {
     }
 
     const newFoodOrder = new FoodOrder({
+      foodName,
       fullName,
       quantity,
       phoneNumber,
