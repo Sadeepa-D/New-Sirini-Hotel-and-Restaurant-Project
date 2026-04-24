@@ -148,10 +148,10 @@ const CateringItemCard = () => {
                     {/* Availability badge */}
                     {!item.status && (
                       <div
-                        className={`absolute top-4 left-4 text-xs font-semibold px-3 py-1 rounded-full shadow-md ${
+                         className={`absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm ${
                           item.availability
-                            ? "bg-green-100 text-green-700"
-                            : "bg-red-100 text-red-600"
+                             ? "bg-emerald-500 text-white"
+                            : "bg-rose-500 text-white"
                         }`}
                       >
                         {item.availability ? "Available" : "Unavailable"}

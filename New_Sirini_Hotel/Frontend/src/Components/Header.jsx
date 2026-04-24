@@ -42,7 +42,11 @@ function Header() {
         },
       });
       const userData = response.data;
-      setUserImage(userData.image);
+      if (userData.image) {
+        setUserImage(userData.image);
+      }else {
+        setUserImage(null);
+      }
       return userData.image;
     } catch (error) {
       console.error("Error fetching user image:", error);
