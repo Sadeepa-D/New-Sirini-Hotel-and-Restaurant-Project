@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { X, Upload } from "lucide-react";
+import toast from "react-hot-toast";
 
 const AddRestrauntItemForm = ({ onClose, initialData, onSubmit }) => {
     const [imagePreview, setImagePreview] = useState(null);
     const [formData, setFormData] = useState({
         name: "",
         price: "",
-        category: "Rice & Curry",
-        portion: "Regular",
-        dietary: "Non-Vegetarian",
-        preparationTime: "",
-        image: "",
         description: "",
+        category: "Main Meals",
     });
 
     useEffect(() => {
@@ -38,12 +35,20 @@ const AddRestrauntItemForm = ({ onClose, initialData, onSubmit }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const data = new FormData();
-        Object.keys(formData).forEach((key) => {
-            data.append(key, formData[key]);
-        });
-        onSubmit(data);
         onClose();
+        const data = new FormData();
+       Object.keys(formData).forEach((key) => {
+        if (key === "image") {
+            // Only append if it's an actual File, not a URL string or undefined
+            if (formData[key] instanceof File) {
+                data.append(key, formData[key]);
+            }
+        } else {
+            data.append(key, formData[key]);
+        }
+    });
+        onSubmit(data);
+       toast.dismiss(loadingToast);
     };
 
     return (
@@ -149,7 +154,7 @@ const AddRestrauntItemForm = ({ onClose, initialData, onSubmit }) => {
 
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        {/* <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1">
                                 <label className="text-xs font-black uppercase text-gray-400 ml-2">
                                     Dietary Preference
@@ -167,7 +172,7 @@ const AddRestrauntItemForm = ({ onClose, initialData, onSubmit }) => {
                                 </select>
                             </div>
 
-                        </div>
+                        </div> */}
 
                         <div className="space-y-1">
                             <label className="text-xs font-black uppercase text-gray-400 ml-2">
