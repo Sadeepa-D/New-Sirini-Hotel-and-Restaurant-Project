@@ -67,15 +67,16 @@ const Login = () => {
         toast.success("Welcome back, " + data.user.name);
 
         // Role-based Redirection
-        switch (data.user.Role) {
+        const userRole = data.user.Role.trim();
+        switch (userRole) {
           case "Admin":
             navigate("/admin");
             break;
-          case "Manager":
-            navigate("/manager");
-            break;
-          case "Operational Manager":
+          case "Operation Manager 1 (Restraunt,Liquor)":
             navigate("/operationmanager");
+            break;
+          case "Operational Manager 2 (Reception, Room)":
+            navigate("/manager");
             break;
           case "User":
           default:

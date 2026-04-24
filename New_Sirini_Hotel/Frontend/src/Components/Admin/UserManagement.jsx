@@ -320,28 +320,35 @@ const UserManagement = () => {
               </button>
             </div>
             <div className="flex flex-col gap-2 mb-6">
-              {["user", "manager", "admin"].map((role) => (
-                <label
-                  key={role}
-                  className={`flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-colors ${
-                    newRole === role
-                      ? "border-yellow-400 bg-yellow-50"
-                      : "border-gray-100 hover:bg-gray-50"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="role"
-                    value={role}
-                    checked={newRole === role}
-                    onChange={(e) => setNewRole(e.target.value)}
-                    className="w-4 h-4 accent-yellow-500"
-                  />
-                  <span className="text-sm font-semibold text-gray-700 capitalize">
-                    {role}
-                  </span>
-                </label>
-              ))}
+              {[
+                " User",
+                " Operation Manager 1 (Restraunt,Liquor)",
+                " Operational Manager 2 (Reception, Room)",
+              ].map((role) => {
+                const updatingrole = role.trim();
+                return (
+                  <label
+                    key={updatingrole}
+                    className={`flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-colors ${
+                      newRole === updatingrole
+                        ? "border-yellow-400 bg-yellow-50"
+                        : "border-gray-100 hover:bg-gray-50"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="role"
+                      value={updatingrole}
+                      checked={newRole === updatingrole}
+                      onChange={(e) => setNewRole(e.target.value)}
+                      className="w-4 h-4 accent-yellow-500"
+                    />
+                    <span className="text-sm font-semibold text-gray-700 capitalize">
+                      {role}
+                    </span>
+                  </label>
+                );
+              })}
             </div>
             <div className="flex gap-3">
               <button
