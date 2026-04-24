@@ -1,5 +1,5 @@
 import React from "react";
-import { Plus, Search } from "lucide-react"; // Search icon එක එක් කළා
+import { Plus, Search } from "lucide-react"; // Search icon
 
 const RoomTableHeader = ({ onAdd, searchTerm, onSearch }) => {
   return (

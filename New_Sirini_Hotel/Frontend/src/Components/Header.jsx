@@ -44,7 +44,7 @@ function Header() {
       const userData = response.data;
       if (userData.image) {
         setUserImage(userData.image);
-      }else {
+      } else {
         setUserImage(null);
       }
       return userData.image;

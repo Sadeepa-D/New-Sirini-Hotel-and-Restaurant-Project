@@ -31,11 +31,11 @@ const RoomSchema = new mongoose.Schema(
       required: true,
     },
 
-    //availability (Boolean) ඉවත් කර status (String) එක් කළා
+  
     status: {
       type: String,
       required: true,
-      enum: ["available", "reserved", "maintenance"], // මේ වචන 3 පමණක් භාර ගනී
+      enum: ["available", "reserved", "maintenance"], 
       default: "available",
     },
     image: {
@@ -45,7 +45,7 @@ const RoomSchema = new mongoose.Schema(
 
     condition: {
     type: String,
-    enum: ['AC', 'Fan'], // AC හෝ Fan පමණක් තෝරාගත හැකි ලෙස
+    enum: ['AC', 'Fan'], 
     default: 'Fan'
   },
 

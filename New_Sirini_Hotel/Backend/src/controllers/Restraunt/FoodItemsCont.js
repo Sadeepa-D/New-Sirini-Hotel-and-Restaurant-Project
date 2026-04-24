@@ -3,7 +3,7 @@ const cloudinary = require("cloudinary");
 
 const createFoodItem = async (req, res) => {
   try {
-    const { name, price, description, category, portion, dietary, preparationTime } = req.body;
+    const { name, price, description, category } = req.body;
     if (!name || !price || !description || !category) {
       return res.status(400).json({ message: "Required fields are missing" });
     }
@@ -13,14 +13,10 @@ const createFoodItem = async (req, res) => {
       return res.status(400).json({ message: "Image is required" });
     }
     const newFoodItem = new FoodItems({
-      foodname: name,
+      name,
       price,
       description,
-      ingredients: ["Not specified"],
       category,
-      portion,
-      dietary,
-      preparationTime,
       image,
       imagePublicId,
       availability: true,

@@ -1,5 +1,5 @@
 import React from "react";
-import { Edit2, Trash2, Wind, Snowflake } from "lucide-react"; // අලුතින් Icons එක් කළා
+import { Edit2, Trash2, Wind, Snowflake } from "lucide-react"; 
 import StatusBadge from "./StatusBadge";
 
 const RoomTable = ({ rooms, onEdit, onDelete }) => {
@@ -16,7 +16,7 @@ const RoomTable = ({ rooms, onEdit, onDelete }) => {
               <th className="text-left px-4 sm:px-5 py-3 text-xs font-bold text-gray-500 uppercase tracking-wide">
                 Type
               </th>
-              {/* ✅ අලුතින් එක් කළ Condition Header එක */}
+             
               <th className="text-left px-4 sm:px-5 py-3 text-xs font-bold text-gray-500 uppercase tracking-wide">
                 Condition
               </th>
@@ -56,7 +56,7 @@ const RoomTable = ({ rooms, onEdit, onDelete }) => {
                     {room.roomType}
                   </td>
                   
-                  {/* ✅ අලුතින් එක් කළ Condition තීරුව */}
+                 
                   <td className="px-4 sm:px-5 py-4">
                     <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-bold text-[10px] uppercase tracking-wider ${
                       room.condition === "AC" 

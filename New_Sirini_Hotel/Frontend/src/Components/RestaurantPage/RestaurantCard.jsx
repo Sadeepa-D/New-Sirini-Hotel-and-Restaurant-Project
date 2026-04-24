@@ -14,7 +14,7 @@ export default function RestaurantCard({ item, itemsPerView, onOrder }) {
         <div className="relative h-48">
           <img
             src={item.image}
-            alt={item.name || item.foodname}
+            alt={item.name}
             className="w-full h-full object-cover"
           />
           <div className="absolute top-2 right-2">
@@ -25,7 +25,7 @@ export default function RestaurantCard({ item, itemsPerView, onOrder }) {
         </div>
         <div className="p-4 flex-grow flex flex-col">
           <h4 className="text-xl font-bold text-neutral-900 mb-1">
-            {item.name || item.foodname}
+            {item.name}
           </h4>
           <p className="text-sm text-neutral-500 mb-3">
             {item.ingredients ? item.ingredients.join(", ") : item.description}

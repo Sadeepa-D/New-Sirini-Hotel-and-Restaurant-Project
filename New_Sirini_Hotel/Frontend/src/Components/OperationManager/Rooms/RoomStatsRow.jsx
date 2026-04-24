@@ -9,15 +9,15 @@ const RoomStatsRow = ({ stats }) => {
       dot: "bg-green-500",
     },
     {
-      label: "Reserved", // ✅ Occupied වෙනුවට Reserved ලෙස වෙනස් කළා
-      value: stats.reserved || 0, // ✅ stats.occupied වෙනුවට stats.reserved
+      label: "Reserved", 
+      value: stats.reserved || 0, 
       color: "bg-red-50 text-red-700 border border-red-100",
       dot: "bg-red-500",
     },
     {
       label: "Maintenance",
       value: stats.maintenance || 0,
-      color: "bg-yellow-50 text-yellow-700 border border-yellow-100", // ✅ Maintenance සඳහා කහ පැහැය (Yellow) වඩාත් ගැලපේ
+      color: "bg-yellow-50 text-yellow-700 border border-yellow-100", 
       dot: "bg-yellow-500",
     },
   ];

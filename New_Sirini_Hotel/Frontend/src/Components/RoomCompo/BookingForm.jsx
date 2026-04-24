@@ -17,7 +17,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
     checkOutDate: "",
   });
 
-  // දින වෙනස් වන විට මුළු මුදල ගණනය කිරීම
+  // change the price according to num of dates selected
   useEffect(() => {
     if (formData.checkInDate && formData.checkOutDate) {
       const checkIn = new Date(formData.checkInDate);
@@ -40,7 +40,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 1. දින පරීක්ෂා කිරීම (Validation)
+    
     const checkIn = new Date(formData.checkInDate);
     const checkOut = new Date(formData.checkOutDate);
 
@@ -51,21 +51,20 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
 
     setLoading(true);
     try {
-      // 2. Backend එකට දත්ත යැවීම
-      // මෙහිදී 'totalAmount' එකත් ඇතුළත් කර තිබෙනවා
+     
       const res = await axios.post("http://localhost:5000/api/rooms/book", {
         ...formData,
         room: selectedRoom._id,
         roomNumber: selectedRoom.roomNumber,
         numberOfGuests: formData.guests,
-        totalAmount: totalPrice, // මුළු මුදල
+        totalAmount: totalPrice,
       });
 
-      // 3. සාර්ථක නම් පණිවිඩයක් පෙන්වීම සහ Success Component එකට මාරු වීම
-      onConfirmed(selectedRoom._id); // පිටුව refresh කිරීමට හෝ status වෙනස් කිරීමට
+      
+      onConfirmed(selectedRoom._id); 
       setShowSuccess(true);
     } catch (error) {
-      // Backend එකෙන් එවන නිවැරදි error message එක පෙන්වීම
+      
       const errorMsg =
         error.response?.data?.error || "Booking failed. Please try again.";
       alert(errorMsg);
@@ -75,7 +74,10 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
   };
 
   if (showSuccess) {
-    return <BookingSuccess selectedRoom={selectedRoom} onClose={onClose} />;
+    return <BookingSuccess selectedRoom={selectedRoom} 
+    onClose={onClose} 
+    totalPrice={totalPrice}
+    />;
   }
 
   return (
@@ -83,6 +85,16 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
       className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-end sm:items-center justify-center z-50 px-0 sm:px-4 transition-all duration-500"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
+      {/* Custom style for date input to invert calendar icon color */}
+      <style>
+        {`
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      cursor: pointer;
+    }
+  `}
+      </style>
+
       <div className="bg-[#0c0c0c] border border-white/10 rounded-t-3xl sm:rounded-2xl w-full sm:max-w-lg shadow-[0_0_50px_rgba(249,115,22,0.1)] overflow-hidden max-h-[95vh] flex flex-col animate-in fade-in zoom-in duration-300">
         {/* Header */}
         <div className="bg-gradient-to-r from-orange-600 to-orange-400 px-6 py-5 flex justify-between items-center">
@@ -91,7 +103,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
               Reserve Your Stay
             </h2>
             <p className="text-black/70 text-[10px] font-bold uppercase tracking-widest">
-              {selectedRoom.type} Suite
+              {selectedRoom.roomType} Room
             </p>
           </div>
           <button
@@ -122,7 +134,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
             </div>
             <div className="text-right">
               <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">
-                Total Price
+                Room Price
               </p>
               <p className="text-orange-500 text-2xl font-black font-mono">
                 Rs.{totalPrice.toLocaleString()}
