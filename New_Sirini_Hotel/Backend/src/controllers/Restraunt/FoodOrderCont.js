@@ -16,7 +16,7 @@ const GenarateFoodOrderCode = async () => {
 const createFoodOrder = async (req, res) => {
   try {
     const userId= req.userData.id;
-    const { foodName, fullName, quantity, phoneNumber, pickupDate, pickupTime } =
+    const { foodName, fullName, quantity, phoneNumber, pickupDate, pickupTime, Price } =
       req.body;
 
     if (!fullName || !quantity || !phoneNumber || !pickupDate || !pickupTime) {
@@ -33,6 +33,7 @@ const createFoodOrder = async (req, res) => {
       pickupTime,
       orderCode: await GenarateFoodOrderCode(),
       status: "In Progress",
+      Price,
     });
     const savedOrder = await newFoodOrder.save();
     res.status(201).json(savedOrder);
