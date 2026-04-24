@@ -24,6 +24,16 @@ router.get(
   "/viewoverduebookings",
   roomBookingController.getOverdueRoomBookings,
 );
+
+router.get(
+  "/viewcompletedbookings",
+  roomBookingController.getCompletedRoomBookings
+);
+router.put(
+  "/completebooking/:id",
+  roomBookingController.setRoomBookingStatustoCompleted
+);
+
 router.put(
   "/confirmbooking/:id",
   roomBookingController.setRoomBookingStatustoConfirmed,

@@ -20,7 +20,7 @@ const StatusBadge = ({ status }) => {
         ${styles[status] || "bg-gray-100 text-gray-600 border-gray-200"}
       `}
     >
-      {/* තත්ත්වය පෙන්වන වචනය */}
+     
       {status === "available" ? "Available" : 
        status === "maintenance" ? "Maintenance" : "Reserved"}
     </span>
