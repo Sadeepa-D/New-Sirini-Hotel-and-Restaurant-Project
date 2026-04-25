@@ -64,7 +64,17 @@ const LiqourandRestruant = () => {
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();
 
-  const monthlyrevenue = orders.reduce((total, order) => {
+  const currentmonthorders = orders.filter((order) => {
+    const orderDate = new Date(order.pickupDate);
+    return (
+      orderDate.getMonth() === currentMonth &&
+      orderDate.getFullYear() === currentYear
+    );
+  });
+  const activeMonthOrders = currentmonthorders.filter(
+    (order) => order.status !== "Deleted",
+  );
+  const monthlyrevenue = activeMonthOrders.reduce((total, order) => {
     const orderDate = new Date(order.pickupDate);
     const iscompleted = order.status === "Completed";
     const isthismonth =
@@ -75,26 +85,16 @@ const LiqourandRestruant = () => {
     }
     return total;
   }, 0);
-
-  const currentmonthorders = orders.filter((order) => {
-    const orderDate = new Date(order.pickupDate);
-    return (
-      orderDate.getMonth() === currentMonth &&
-      orderDate.getFullYear() === currentYear
-    );
-  });
-
   const orderStats = {
-    completed: currentmonthorders.filter(
-      (order) => order.status === "Completed",
-    ).length,
-    pending: currentmonthorders.filter(
-      (order) => order.status === "In Progress",
-    ).length,
-    cancelled: currentmonthorders.filter(
-      (order) => order.status === "Cancelled",
-    ).length,
+    completed: activeMonthOrders.filter((order) => order.status === "Completed")
+      .length,
+    pending: activeMonthOrders.filter((order) => order.status === "In Progress")
+      .length,
+    cancelled: activeMonthOrders.filter((order) => order.status === "Cancelled")
+      .length,
   };
+  const completionRate =
+    orderStats.total > 0 ? (orderStats.completed / orderStats.total) * 100 : 0;
 
   return (
     <div className="p-4 md:p-8 space-y-8 bg-transparent min-h-screen">
@@ -251,18 +251,19 @@ const LiqourandRestruant = () => {
           <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">
             Month-to-Date:
             <span className="text-slate-800">
-              {currentmonthorders.length} Total Orders
+              {orderStats.total} Active Orders
             </span>
           </p>
         </div>
         <div className="h-1.5 flex-1 max-w-md bg-slate-100 rounded-full overflow-hidden hidden md:block">
           <div
             className="h-full bg-amber-500 transition-all duration-1000"
-            style={{
-              width: `${(orderStats.completed / (currentmonthorders.length || 1)) * 100}%`,
-            }}
+            style={{ width: `${completionRate}%` }}
           />
         </div>
+        <span className="text-[10px] font-black text-amber-600 md:block hidden">
+          {Math.round(completionRate)}% Efficiency
+        </span>
       </div>
     </div>
   );
