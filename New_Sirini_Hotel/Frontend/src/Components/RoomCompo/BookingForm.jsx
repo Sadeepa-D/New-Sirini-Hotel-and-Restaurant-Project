@@ -40,9 +40,11 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    
+    const token = localStorage.getItem("token");
     const checkIn = new Date(formData.checkInDate);
     const checkOut = new Date(formData.checkOutDate);
+
+    
 
     if (checkOut <= checkIn) {
       alert("Check-out date must be after check-in date.");
@@ -58,6 +60,10 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
         roomNumber: selectedRoom.roomNumber,
         numberOfGuests: formData.guests,
         totalAmount: totalPrice,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
 
       

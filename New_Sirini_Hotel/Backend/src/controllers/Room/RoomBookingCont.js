@@ -11,6 +11,7 @@ const createRoomBooking = async (req, res) => {
       checkOutDate,
       roomNumber,
       numberOfGuests,
+      totalAmount,
     } = req.body;
 
     const newIn = new Date(checkInDate);
@@ -47,6 +48,7 @@ const createRoomBooking = async (req, res) => {
       roomNumber,
       numberOfGuests,
       status: "Pending",
+      totalAmount,
     });
 
     await newRoomBooking.save();
