@@ -83,6 +83,9 @@ const RestaurantSection = ({ data }) => {
                   <p className="text-gray-600 text-sm mb-1">
                     <span className="font-medium">Pick-up Time:</span> {order.pickupTime}
                   </p>
+                  <p className="text-gray-600 text-sm mb-1">
+                    <span className="font-medium">Total Price:</span> Rs. {order.Price}
+                  </p>
                 </div>
                 <div className="flex gap-2 mt-4 pt-4 border-t border-gray-100">
                   <button
