@@ -180,7 +180,7 @@ const LiqourandRestruant = () => {
           <div className="flex items-center gap-3">
             <div className="w-1 h-8 bg-amber-500 rounded-full" />
             <h3 className="text-lg font-black text-slate-800 uppercase tracking-tighter italic">
-              Order Lifecycle
+              {currentMonth + 1}/{currentYear} Order Analysis
             </h3>
           </div>
         </div>
