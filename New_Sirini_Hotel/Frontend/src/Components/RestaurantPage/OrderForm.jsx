@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
-export default function OrderForm({ item, onClose }) {
+export default function OrderForm({ item, editingOrder, onClose }) {
   const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    pickupDate: "",
-    pickupTime: "",
-    quantity: 1,
+    name: editingOrder ? editingOrder.fullName : "",
+    phone: editingOrder ? editingOrder.phoneNumber : "",
+    pickupDate: editingOrder ? new Date(editingOrder.pickupDate).toISOString().split('T')[0] : "",
+    pickupTime: editingOrder ? editingOrder.pickupTime : "",
+    quantity: editingOrder ? editingOrder.quantity : 1,
   });
   const [submitted, setSubmitted] = useState(false);
 
@@ -16,8 +15,18 @@ export default function OrderForm({ item, onClose }) {
   };
 
   const handleSubmit = async (e) => {
+    const token = localStorage.getItem("token");
     e.preventDefault();
     try {
+      const userDataStr = localStorage.getItem("user");
+      let userId = null;
+      if (userDataStr) {
+        try {
+          const userData = JSON.parse(userDataStr);
+          userId = userData._id;
+        } catch (e) {}
+      }
+
       const orderData = {
         fullName: form.name,
         // Strip non-numeric characters to match backend regex /^[0-9]{10}$/
@@ -25,21 +34,40 @@ export default function OrderForm({ item, onClose }) {
         pickupDate: form.pickupDate,
         pickupTime: form.pickupTime,
         quantity: form.quantity,
-        foodName: item.name, // Include the food name in the order data
+        foodName: item.name, 
+        userId: userId,
+        Price: item.price * form.quantity,
       };
 
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/restraunt/placeorder`,
-        orderData
-      );
+      if (editingOrder) {
+        await axios.put(
+          `${import.meta.env.VITE_API_URL}/api/restraunt/updateorder/${editingOrder._id}`,
+          orderData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      } else {
+        await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/restraunt/placeorder`,
+          orderData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      }
 
       setSubmitted(true);
       setTimeout(() => {
         onClose();
       }, 2000);
     } catch (error) {
-      console.error("Error placing order:", error);
-      alert("Failed to place order. Please try again.");
+     // console.error("Error placing order:", error);
+      alert(`Failed to ${editingOrder ? 'update' : 'place'} order. Please try again.`);
     }
   };
 
@@ -83,7 +111,7 @@ export default function OrderForm({ item, onClose }) {
           </button>
 
           <span className="text-xs font-semibold uppercase tracking-widest text-amber-600">
-            Order Now
+            {editingOrder ? "Edit Order" : "Order Now"}
           </span>
           <h2 className="text-2xl font-bold text-neutral-900 mt-1">{item.name}</h2>
           <p className="text-sm text-neutral-500 mt-1">{item.description}</p>
@@ -216,7 +244,7 @@ export default function OrderForm({ item, onClose }) {
                 type="submit"
                 className="w-full py-3.5 bg-amber-600 text-white font-semibold rounded-xl hover:bg-amber-700 active:scale-[0.98] transition-all shadow-md shadow-amber-200/50 text-base"
               >
-                Confirm Order
+                {editingOrder ? "Update Order" : "Confirm Order"}
               </button>
             </div>
 
@@ -224,7 +252,9 @@ export default function OrderForm({ item, onClose }) {
             {submitted && (
               <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg text-center">
                 <p className="text-orange-800 font-medium">
-                  Order placed.. we'll have your <span className="font-bold">{item.name}</span>, ready for pick up
+                  {editingOrder ? "Order updated successfully." : `Order placed.. we'll have your `}
+                  {!editingOrder && <span className="font-bold">{item.name}</span>}
+                  {!editingOrder && `, ready for pick up`}
                 </p>
               </div>
             )}

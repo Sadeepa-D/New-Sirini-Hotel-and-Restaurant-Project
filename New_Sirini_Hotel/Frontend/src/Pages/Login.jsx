@@ -67,15 +67,16 @@ const Login = () => {
         toast.success("Welcome back, " + data.user.name);
 
         // Role-based Redirection
-        switch (data.user.Role) {
+        const userRole = data.user.Role.trim();
+        switch (userRole) {
           case "Admin":
             navigate("/admin");
             break;
-          case "Manager":
-            navigate("/manager");
-            break;
-          case "Operational Manager":
+          case "Operation Manager 1 (Restraunt,Liquor)":
             navigate("/operationmanager");
+            break;
+          case "Operation Manager 2 (Reception, Room)":
+            navigate("/manager");
             break;
           case "User":
           default:
@@ -94,7 +95,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center bg-gradient-to-br from-slate-900 via-neutral-900 to-amber-950 px-4 py-12">
+    <div className="min-h-screen relative flex items-center justify-center bg-linear-to-br from-slate-900 via-neutral-900 to-amber-950 px-4 py-12">
       {/* Decorative Grid Background */}
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30 pointer-events-none"></div>
 
@@ -104,7 +105,7 @@ const Login = () => {
             <h1 className="text-4xl md:text-5xl font-serif text-white mb-2 tracking-wide">
               New Sirini Hotel
             </h1>
-            <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-amber-500 to-transparent mx-auto mb-4"></div>
+            <div className="w-16 h-0.5 bg-linear-to-r from-transparent via-amber-500 to-transparent mx-auto mb-4"></div>
             <p className="text-amber-100/70 text-sm tracking-widest uppercase">
               Welcome Back
             </p>
@@ -173,7 +174,7 @@ const Login = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-[1.01] active:scale-95 disabled:opacity-50 shadow-lg shadow-amber-900/20"
+              className="w-full bg-linear-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-[1.01] active:scale-95 disabled:opacity-50 shadow-lg shadow-amber-900/20"
             >
               {isLoading ? "Signing in..." : "Login"}
             </button>

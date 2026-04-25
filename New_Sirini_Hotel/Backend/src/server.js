@@ -21,6 +21,7 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
+
 app.use("/api/users", UserRoutes);
 app.use("/api/liquor", LiquorRoutes);
 app.use("/api/rooms", RoomRoutes);

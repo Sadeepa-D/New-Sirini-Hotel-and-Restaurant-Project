@@ -15,7 +15,8 @@ const GenarateFoodOrderCode = async () => {
 
 const createFoodOrder = async (req, res) => {
   try {
-    const { foodName, fullName, quantity, phoneNumber, pickupDate, pickupTime } =
+    const userId = req.userData.id;
+    const { foodName, fullName, quantity, phoneNumber, pickupDate, pickupTime, Price } =
       req.body;
 
     if (!fullName || !quantity || !phoneNumber || !pickupDate || !pickupTime) {
@@ -23,6 +24,7 @@ const createFoodOrder = async (req, res) => {
     }
 
     const newFoodOrder = new FoodOrder({
+      userId,
       foodName,
       fullName,
       quantity,
@@ -31,6 +33,7 @@ const createFoodOrder = async (req, res) => {
       pickupTime,
       orderCode: await GenarateFoodOrderCode(),
       status: "In Progress",
+      Price,
     });
     const savedOrder = await newFoodOrder.save();
     res.status(201).json(savedOrder);
@@ -52,7 +55,7 @@ const getFoodOrders = async (req, res) => {
 const editfoodOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const { fullName, quantity, phoneNumber, pickupDate, pickupTime } =
+    const { fullName, quantity, phoneNumber, pickupDate, pickupTime, Price } =
       req.body;
     if (!id) {
       return res.status(400).json({ message: "Food order ID is required" });
@@ -68,6 +71,7 @@ const editfoodOrder = async (req, res) => {
         phoneNumber,
         pickupDate,
         pickupTime,
+        ...(Price && { Price }),
       },
       { new: true },
     );
@@ -199,6 +203,20 @@ const getOverdueFoodOrders = async (req, res) => {
       .json({ message: "Failed to retrieve overdue food orders", error });
   }
 };
+// GET /api/restaurant/orders/userspecific
+const getUserOrders = async (req, res) => {
+  try {
+    const userId = req.userData.id; // comes from JWT payload
+
+    const orders = await FoodOrder.find({ userId })
+      .sort({ createdAt: -1 }); // newest first
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("Error fetching user orders:", error);
+    res.status(500).json({ message: "Server error fetching orders" });
+  }
+};
 module.exports = {
   createFoodOrder,
   getFoodOrders,
@@ -210,4 +228,5 @@ module.exports = {
   getCancelledFoodOrders,
   getInProgressFoodOrders,
   getOverdueFoodOrders,
+  getUserOrders,
 };
