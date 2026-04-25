@@ -74,15 +74,6 @@ const LiqourandRestruant = () => {
     return total;
   }, 0);
 
-  const totalRevenue = orders.reduce((total, order) => {
-    if (order.status === "Completed") {
-      if (order.Price) {
-        return total + order.Price;
-      }
-    }
-    return total;
-  }, 0);
-
   const currentmonthorders = orders.filter((order) => {
     const orderDate = new Date(order.createdAt);
     return (
