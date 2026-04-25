@@ -34,7 +34,7 @@ const NotFound = () => {
 
         {/* Content Section */}
         <div className="space-y-10 max-w-2xl mx-auto">
-          {/* ✅ 'whitespace-nowrap' භාවිතා කර 'New Sirini Hotel registry' එකම පේළියට ගෙන ආවා */}
+         
           <p className="text-amber-100/60 text-lg md:text-xl leading-relaxed">
             We couldn't find the room you're looking for in the{" "}
             <span className="text-amber-400 font-semibold whitespace-nowrap">

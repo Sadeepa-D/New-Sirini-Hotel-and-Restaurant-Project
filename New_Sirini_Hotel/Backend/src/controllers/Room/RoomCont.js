@@ -6,7 +6,7 @@ const createRoom = async (req, res) => {
   try {
     const { roomNumber, roomType, price, bedType, capacity, status, description } = req.body;
 
-    // අත්‍යවශ්‍ය දත්ත තිබේදැයි පරීක්ෂාව
+    //check if all required fields are provided
     if (!roomNumber || !roomType || !price || !bedType || !capacity) {
       return res.status(400).json({ message: "Please provide all required fields" });
     }
@@ -23,8 +23,8 @@ const createRoom = async (req, res) => {
       bedType,
       capacity,
       image,
-      status: status || "available", // පෝරමයෙන් එන status එක සුරකියි (available/reserved/maintenance)
-      description, // පෝරමයෙන් එන description එක සුරකියි
+      status: status || "available", 
+      description, 
       imagePublicId,
       availability: true,
     });
@@ -113,7 +113,7 @@ const deleteRoom = async (req, res) => {
   }
 };
 
-// ── 5. Toggle Status (මෙය optional, නමුත් status 3ක් ඇති නිසා පෝරමයෙන් update කිරීම වඩාත් සුදුසුයි) ──
+
 const toggleRoomAvailability = async (req, res) => {
   try {
     const { id } = req.params;
@@ -122,8 +122,7 @@ const toggleRoomAvailability = async (req, res) => {
       return res.status(404).json({ message: "Room not found" });
     }
     
-    // මෙය සරල toggle එකක් ලෙස තවදුරටත් ක්‍රියා නොකරයි (status 3ක් ඇති නිසා)
-    // අවශ්‍ය නම් "available" <-> "reserved" මාරු කිරීමට මෙය භාවිතා කළ හැක
+
     room.status = room.status === "available" ? "reserved" : "available";
     await room.save();
     res.status(200).json(room);
