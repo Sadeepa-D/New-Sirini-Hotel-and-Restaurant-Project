@@ -88,12 +88,14 @@ const RestaurantSection = ({ data }) => {
                   </p>
                 </div>
                 <div className="flex gap-2 mt-4 pt-4 border-t border-gray-100">
-                  <button
-                    onClick={() => handleEdit(order)}
-                    className="flex-1 bg-amber-50 text-amber-600 hover:bg-amber-100 py-1.5 rounded text-sm font-medium transition-colors"
-                  >
-                    Edit
-                  </button>
+                  {order.status !== "Completed" && order.status !== "Cancelled" && (
+                    <button
+                      onClick={() => handleEdit(order)}
+                      className="flex-1 bg-amber-50 text-amber-600 hover:bg-amber-100 py-1.5 rounded text-sm font-medium transition-colors"
+                    >
+                      Edit
+                    </button>
+                  )}
                   <button
                     onClick={() => handleDelete(order._id)}
                     className="flex-1 bg-red-50 text-red-600 hover:bg-red-100 py-1.5 rounded text-sm font-medium transition-colors"
