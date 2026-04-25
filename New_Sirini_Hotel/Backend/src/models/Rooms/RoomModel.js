@@ -9,7 +9,6 @@ const mongoose = require("mongoose");
 
 const RoomSchema = new mongoose.Schema(
   {
-   
     roomNumber: {
       type: Number,
       required: true,
