@@ -15,7 +15,7 @@ const GenarateFoodOrderCode = async () => {
 
 const createFoodOrder = async (req, res) => {
   try {
-    const userId= req.userData.id;
+    const userId = req.userData.id;
     const { foodName, fullName, quantity, phoneNumber, pickupDate, pickupTime, Price } =
       req.body;
 
@@ -55,7 +55,7 @@ const getFoodOrders = async (req, res) => {
 const editfoodOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const { fullName, quantity, phoneNumber, pickupDate, pickupTime } =
+    const { fullName, quantity, phoneNumber, pickupDate, pickupTime, Price } =
       req.body;
     if (!id) {
       return res.status(400).json({ message: "Food order ID is required" });
@@ -71,6 +71,7 @@ const editfoodOrder = async (req, res) => {
         phoneNumber,
         pickupDate,
         pickupTime,
+        ...(Price && { Price }),
       },
       { new: true },
     );

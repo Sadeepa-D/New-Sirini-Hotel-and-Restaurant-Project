@@ -5,6 +5,7 @@ import Exploreindicator from "../../Components/Exploreindicator";
 import resturantImg from "../../assets/resturant.png";
 import OrderForm from "../../Components/RestaurantPage/OrderForm";
 import RestaurantCard from "../../Components/RestaurantPage/RestaurantCard";
+import { useLocation, useNavigate } from "react-router-dom";
 
 // Initial hardcoded data removed. Data is now fetched from the backend API.
 
@@ -16,6 +17,10 @@ export default function Restaurant() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [mealData, setMealData] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+  const [editingOrder, setEditingOrder] = useState(null);
+  
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const mainmeals = mealData.filter((meal) => meal.category === "Main Meals");
   const softdrinks = mealData.filter((meal) => meal.category === "Soft Drinks");
@@ -69,6 +74,21 @@ export default function Restaurant() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    if (location.state?.editOrder && mealData.length > 0) {
+      const order = location.state.editOrder;
+      const matchedItem = mealData.find((m) => m.name === order.foodName);
+      if (matchedItem) {
+        setSelectedItem(matchedItem);
+        setEditingOrder(order);
+        // Clear the state so it doesn't re-trigger on refresh
+        navigate(location.pathname, { replace: true });
+      } else {
+        toast.error("Food item for this order is no longer available.");
+      }
+    }
+  }, [location.state, mealData, navigate, location.pathname]);
 
   const handleOrder = (item) => {
     if (!isLoggedIn) {
@@ -242,7 +262,14 @@ export default function Restaurant() {
       </div>
 
       {selectedItem && (
-        <OrderForm item={selectedItem} onClose={() => setSelectedItem(null)} />
+        <OrderForm 
+          item={selectedItem} 
+          editingOrder={editingOrder}
+          onClose={() => {
+            setSelectedItem(null);
+            setEditingOrder(null);
+          }} 
+        />
       )}
     </div>
   );
