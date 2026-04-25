@@ -66,6 +66,23 @@ const DashboardOverview = () => {
   const activeRestaurantItems = restraurantItems.filter(
     (item) => item.availability === true,
   ).length;
+
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
+  const monthlyrevenue = orders.reduce((total, order) => {
+    const orderDate = new Date(order.createdAt);
+    const iscompleted = order.status === "Completed";
+    const isthismonth =
+      orderDate.getMonth() === currentMonth &&
+      orderDate.getFullYear() === currentYear;
+    if (iscompleted && isthismonth && order.Price) {
+      return total + order.Price;
+    }
+    return total;
+  }, 0);
+
   const totalRevenue = orders.reduce((total, order) => {
     if (order.status === "Completed") {
       if (order.Price) {
@@ -94,7 +111,7 @@ const DashboardOverview = () => {
               Total Revenue
             </p>
             <p className="text-xl font-black text-gray-800 mt-0.5">
-              Rs. {totalRevenue.toLocaleString()}
+              Rs. {monthlyrevenue.toLocaleString()}
             </p>
           </div>
         </div>
