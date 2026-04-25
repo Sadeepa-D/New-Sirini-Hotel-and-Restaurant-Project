@@ -67,13 +67,13 @@ const Manager = () => {
   const getPageTitle = () => {
     switch (activeTab) {
       case "dashboard":
-        return "Manager Dashboard Overview";
+        return "Dashboard Overview";
       case "rooms":
         return "Rooms";
       case "reception":
         return "Reception";
       default:
-        return "Manager Dashboard Overview";
+        return "Dashboard Overview";
     }
   };
 
