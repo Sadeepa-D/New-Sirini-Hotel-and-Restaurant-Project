@@ -62,16 +62,29 @@ const RoomandReception = () => {
   const inactiveads = advertismentdata.filter(
     (ad) => ad.status === "rejected",
   ).length;
-  const pendingReq = apointmentdata.filter(
+
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
+  const currentMonthAppointments = apointmentdata.filter((appointment) => {
+    const appointmentDate = new Date(appointment.date);
+    return (
+      appointmentDate.getMonth() === currentMonth &&
+      appointmentDate.getFullYear() === currentYear
+    );
+  });
+
+  const pendingReq = currentMonthAppointments.filter(
     (req) => req.status === "Pending",
   ).length;
-  const completedReq = apointmentdata.filter(
+  const completedReq = currentMonthAppointments.filter(
     (req) => req.status === "Completed",
   ).length;
-  const cancelledReq = apointmentdata.filter(
+  const cancelledReq = currentMonthAppointments.filter(
     (req) => req.status === "Cancelled",
   ).length;
-  const overdueReq = apointmentdata.filter((req) => {
+  const overdueReq = currentMonthAppointments.filter((req) => {
     return req.status === "Pending" && new Date(req.date) < new Date();
   }).length;
 
