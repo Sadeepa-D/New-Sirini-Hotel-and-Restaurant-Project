@@ -83,10 +83,24 @@ const LiqourandRestruant = () => {
     return total;
   }, 0);
 
+  const currentmonthorders = orders.filter((order) => {
+    const orderDate = new Date(order.createdAt);
+    return (
+      orderDate.getMonth() === currentMonth &&
+      orderDate.getFullYear() === currentYear
+    );
+  });
+
   const orderStats = {
-    completed: orders.filter((order) => order.status === "Completed").length,
-    pending: orders.filter((order) => order.status === "In Progress").length,
-    cancelled: orders.filter((order) => order.status === "Cancelled").length,
+    completed: currentmonthorders.filter(
+      (order) => order.status === "Completed",
+    ).length,
+    pending: currentmonthorders.filter(
+      (order) => order.status === "In Progress",
+    ).length,
+    cancelled: currentmonthorders.filter(
+      (order) => order.status === "Cancelled",
+    ).length,
   };
 
   return (
