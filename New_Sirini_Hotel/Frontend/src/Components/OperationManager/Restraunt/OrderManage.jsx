@@ -6,7 +6,7 @@ import { CheckCircle, XCircle, Search, User, Clock, Check, X } from "lucide-reac
 const OrderManage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("Completed");
+  const [activeTab, setActiveTab] = useState("In Progress");
   const [searchTerm, setSearchTerm] = useState("");
 
   // Pagination
@@ -52,15 +52,15 @@ const OrderManage = () => {
 
   const pendingOrders = orders.filter((o) => o.status === "In Progress");
   const completedOrders = orders.filter((o) => o.status === "Completed");
-  const cancelledOrders = orders.filter((o) => o.status === "Cancelled");
+  const cancelledOrders = orders.filter((o) => o.status === "Cancelled" || o.status === "delete");
 
   const getFilteredHistory = () => {
     let list =
       activeTab === "Completed"
         ? completedOrders
         : activeTab === "Cancelled"
-        ? cancelledOrders
-        : pendingOrders;
+          ? cancelledOrders
+          : pendingOrders;
 
     if (searchTerm) {
       list = list.filter(
@@ -81,68 +81,7 @@ const OrderManage = () => {
   const currentOrders = filteredOrders.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(filteredOrders.length / cardsPerPage);
 
-  const OrderCard = ({ order, isPending }) => (
-    <div className="bg-white p-4 flex flex-col md:flex-row items-center justify-between border-b border-gray-100 hover:bg-gray-50 transition-colors">
-      <div className="flex items-center gap-4 w-full md:w-1/4 mb-4 md:mb-0">
-        <div className="w-10 h-10 bg-amber-50 rounded-full flex items-center justify-center shrink-0">
-          <User size={20} className="text-amber-500" />
-        </div>
-        <div>
-          <h4 className="font-bold text-gray-800 text-sm">{order.fullName}</h4>
-          <p className="text-xs text-gray-500">{order.phoneNumber}</p>
-          <p className="text-xs text-gray-400 mt-0.5">ID: {order.orderCode}</p>
-        </div>
-      </div>
 
-      <div className="w-full md:w-1/4 mb-4 md:mb-0">
-        <h4 className="font-bold text-gray-800 text-sm">{order.foodName}</h4>
-        <div className="text-xs text-gray-500 mt-1 flex flex-col gap-0.5">
-          <span>Date: {new Date(order.pickupDate).toLocaleDateString()}</span>
-          <span>Time: {order.pickupTime}</span>
-        </div>
-      </div>
-
-      <div className="w-full md:w-1/6 mb-4 md:mb-0">
-        <p className="text-sm font-semibold text-gray-800">Qty: {order.quantity}</p>
-        <p className="text-xs text-amber-600 font-bold mt-1">Rs. {order.Price}</p>
-      </div>
-
-      <div className="w-full md:w-1/6 mb-4 md:mb-0">
-        {order.status === "In Progress" && (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-600 text-xs font-bold">
-            <Clock size={12} /> PENDING
-          </span>
-        )}
-        {order.status === "Completed" && (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 border border-green-200 text-green-600 text-xs font-bold">
-            <CheckCircle size={12} /> COMPLETED
-          </span>
-        )}
-        {order.status === "Cancelled" && (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 border border-red-200 text-red-600 text-xs font-bold">
-            <XCircle size={12} /> CANCELLED
-          </span>
-        )}
-      </div>
-
-      {isPending && (
-        <div className="w-full md:w-auto flex items-center justify-end gap-2">
-          <button
-            onClick={() => handleStatusChange(order._id, "Completed")}
-            className="w-10 h-10 flex items-center justify-center bg-green-50 text-green-600 hover:bg-green-500 hover:text-white rounded-lg transition-colors"
-          >
-            <Check size={20} />
-          </button>
-          <button
-            onClick={() => handleStatusChange(order._id, "Cancelled")}
-            className="w-10 h-10 flex items-center justify-center bg-red-50 text-red-600 hover:bg-red-500 hover:text-white rounded-lg transition-colors"
-          >
-            <X size={20} />
-          </button>
-        </div>
-      )}
-    </div>
-  );
 
   const HistoryCard = ({ order }) => (
     <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col h-full">
@@ -157,14 +96,13 @@ const OrderManage = () => {
           </div>
         </div>
 
-        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-          order.status === "Completed"
+        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${order.status === "Completed"
             ? "bg-green-50 text-green-600"
-            : order.status === "Cancelled"
-            ? "bg-red-50 text-red-600"
-            : "bg-amber-50 text-amber-600"
-        }`}>
-          {order.status.toUpperCase()}
+            : order.status === "Cancelled" || order.status === "delete"
+              ? "bg-red-50 text-red-600"
+              : "bg-amber-50 text-amber-600"
+          }`}>
+          {order.status === "delete" ? "DELETED" : order.status.toUpperCase()}
         </span>
       </div>
 
@@ -182,32 +120,34 @@ const OrderManage = () => {
         </div>
       </div>
 
-      <div className="pt-3 border-t flex justify-between text-sm">
+      <div className="pt-3 border-t flex justify-between text-sm mb-4">
         <span>Qty: {order.quantity}</span>
         <span className="text-amber-600 font-bold">Rs. {order.Price}</span>
       </div>
+
+      {order.status === "In Progress" && (
+        <div className="flex gap-2 mt-auto">
+          <button
+            onClick={() => handleStatusChange(order._id, "Completed")}
+            className="flex-1 py-2 bg-green-600 text-white rounded-xl font-bold text-[10px] hover:bg-green-700 transition-colors flex items-center justify-center gap-1"
+          >
+            <Check size={12} /> COMPLETE
+          </button>
+          <button
+            onClick={() => handleStatusChange(order._id, "Cancelled")}
+            className="flex-1 py-2 bg-red-600 text-white rounded-xl font-bold text-[10px] hover:bg-red-700 transition-colors flex items-center justify-center gap-1"
+          >
+            <X size={12} /> DELETE
+          </button>
+        </div>
+      )}
     </div>
   );
 
   return (
     <div className="mt-12 space-y-12 pb-12">
 
-      {/* Pending Orders */}
-      <div>
-        <h2 className="text-2xl font-black text-gray-800 uppercase">
-          PENDING FOOD ORDERS
-        </h2>
 
-        <div className="bg-white rounded-2xl shadow-sm border mt-4">
-          {pendingOrders.length === 0 ? (
-            <div className="p-6 text-center text-gray-500">No pending orders.</div>
-          ) : (
-            pendingOrders.map((order) => (
-              <OrderCard key={order._id} order={order} isPending />
-            ))
-          )}
-        </div>
-      </div>
 
       {/* History Section */}
       <div>
@@ -221,9 +161,8 @@ const OrderManage = () => {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-lg text-sm font-bold ${
-                activeTab === tab ? "bg-amber-100 text-amber-600" : "bg-gray-100"
-              }`}
+              className={`px-4 py-2 rounded-lg text-sm font-bold ${activeTab === tab ? "bg-amber-100 text-amber-600" : "bg-gray-100"
+                }`}
             >
               {tab}
             </button>
