@@ -65,7 +65,7 @@ const LiqourandRestruant = () => {
   const currentYear = now.getFullYear();
 
   const monthlyrevenue = orders.reduce((total, order) => {
-    const orderDate = new Date(order.createdAt);
+    const orderDate = new Date(order.pickupDate);
     const iscompleted = order.status === "Completed";
     const isthismonth =
       orderDate.getMonth() === currentMonth &&
@@ -77,7 +77,7 @@ const LiqourandRestruant = () => {
   }, 0);
 
   const currentmonthorders = orders.filter((order) => {
-    const orderDate = new Date(order.createdAt);
+    const orderDate = new Date(order.pickupDate);
     return (
       orderDate.getMonth() === currentMonth &&
       orderDate.getFullYear() === currentYear
