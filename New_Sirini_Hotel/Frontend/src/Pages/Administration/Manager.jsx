@@ -1,104 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, use } from "react";
 import Logo from "../../assets/Logo.png";
 import RoomOperation from "../../Components/OperationManager/Rooms/RoomOperation";
 import ReceptionMngHome from "../../Components/OperationManager/Reception/ReceptionMngHome";
-import {
-  Home,
-  BedDouble,
-  ConciergeBell,
-  LogOut,
-  Menu,
-  Users,
-  CalendarCheck,
-  TrendingUp,
-  X,
-} from "lucide-react";
+import RoomandReception from "../../Components/OperationManager/Dashboard_Anlyze/RoomandReception";
+import { Home, BedDouble, ConciergeBell, LogOut, Menu, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-
-
-// Dashboard Data
-const dashboardData = {
-  monthly: [
-    { title: "Total Room Bookings", value: " ", sub: "This month" },
-    { title: "Rooms Available", value: " ", sub: "Out of 04 rooms" },
-    { title: "Guests Today", value: " ", sub: "Check-ins & stay" },
-    { title: "Total Revenue", value: " ", sub: "This month" },
-  ],
-  yearly: [
-    { title: "Total Room Bookings", value: " ", sub: "This year" },
-    { title: "Rooms Available", value: " ", sub: "Out of 04 rooms" },
-    { title: "Guests Today", value: " ", sub: "Total guests" },
-    { title: "Total Revenue", value: " ", sub: "This year" },
-  ],
-};
-
-// Dashboard Component
-const Dashboard = () => {
-  const [filter, setFilter] = useState("monthly");
-
-  const icons = [
-    <CalendarCheck size={24} className="text-gray-700" />,
-    <BedDouble size={24} className="text-gray-700" />,
-    <Users size={24} className="text-gray-700" />,
-    <TrendingUp size={24} className="text-gray-700" />,
-  ];
-
-  const stats = dashboardData[filter];
-
-  return (
-    <div className="p-3 sm:p-4 md:p-8">
-      {/* Filter Buttons */}
-      <div className="flex gap-2 mb-4 sm:mb-6">
-        <button
-          onClick={() => setFilter("monthly")}
-          className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
-            filter === "monthly"
-              ? "bg-yellow-500 text-black"
-              : "bg-white text-gray-500 hover:bg-gray-100"
-          }`}
-        >
-          Monthly
-        </button>
-        <button
-          onClick={() => setFilter("yearly")}
-          className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
-            filter === "yearly"
-              ? "bg-yellow-500 text-black"
-              : "bg-white text-gray-500 hover:bg-gray-100"
-          }`}
-        >
-          Yearly
-        </button>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
-        {stats.map((stat, index) => (
-          <div
-            key={index}
-            className="bg-white p-3 sm:p-5 md:p-6 rounded-xl shadow-sm flex flex-col justify-between min-h-[100px] sm:min-h-[130px] md:min-h-[150px] hover:shadow-md transition-shadow"
-          >
-            <div className="flex justify-between items-start">
-              <div>{icons[index]}</div>
-              <span className="text-[9px] sm:text-[10px] text-gray-400 uppercase tracking-wider font-semibold text-right leading-tight">
-                {stat.sub}
-              </span>
-            </div>
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mt-3 gap-1">
-              <span className="text-gray-600 font-bold text-xs sm:text-sm md:text-base leading-tight">
-                {stat.title}
-              </span>
-              <span className="text-sm sm:text-xl md:text-2xl font-bold text-gray-800 break-all">
-                {stat.value}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
+import axios from "axios";
 
 // Main Manager Layout
 const Manager = () => {
@@ -122,13 +30,13 @@ const Manager = () => {
   const renderContent = () => {
     switch (activeTab) {
       case "dashboard":
-        return <Dashboard />;
+        return <RoomandReception />;
       case "rooms":
         return <RoomOperation />;
       case "reception":
         return <ReceptionMngHome />;
       default:
-        return <Dashboard />;
+        return <RoomandReception />;
     }
   };
 
@@ -195,7 +103,7 @@ const Manager = () => {
               <button
                 key={item.id}
                 onClick={() => {
-                   if (item.id === "logout") {
+                  if (item.id === "logout") {
                     handleLogout();
                   } else {
                     setActiveTab(item.id);
