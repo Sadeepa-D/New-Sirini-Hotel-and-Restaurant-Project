@@ -1,10 +1,3 @@
-// Room Number එක
-// Room type එක
-// එක රෑකට price එක
-// තියෙන ඇඳේ type එක
-// ඉන්න පුලුවන් ගාන
-// Room avalability එක
-// Room image
 const mongoose = require("mongoose");
 
 const RoomSchema = new mongoose.Schema(
