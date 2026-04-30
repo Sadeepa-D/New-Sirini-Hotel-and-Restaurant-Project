@@ -50,18 +50,7 @@ const createAdvertisment = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-const getAdvertisments = async (req, res) => {
-  try {
-    const advertisments = await Adevertisment.find();
-    if (advertisments.length === 0) {
-      return res.status(404).json({ message: "No advertisments found" });
-    }
-    res.status(200).json(advertisments);
-  } catch (error) {
-    console.error("Error fetching advertisments:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
+
 const deleteAdvertisment = async (req, res) => {
   try {
     const { id } = req.params;
