@@ -1,14 +1,8 @@
-// Name එක
-// Email එක
-// Phone num එක
-// Check in date
-// Check out date
-
 const mongoose = require("mongoose");
 
 const roomBookSchema = new mongoose.Schema(
   {
-    userid: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       // required: true,
@@ -24,7 +18,7 @@ const roomBookSchema = new mongoose.Schema(
       lowercase: true,
       match: [
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-        "Please enter a valid email address",
+        "Please enter a valid email address", 
       ],
     },
     phone: {
@@ -48,6 +42,12 @@ const roomBookSchema = new mongoose.Schema(
       type: String,
       enum: ["Pending", "Confirmed", "Cancelled", "Overdue"],
       default: "Pending",
+    },
+
+    totalAmount: {
+      type: Number,
+      required: true,
+      default: 0
     },
   },
   {

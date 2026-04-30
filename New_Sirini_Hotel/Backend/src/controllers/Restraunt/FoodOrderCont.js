@@ -15,8 +15,8 @@ const GenarateFoodOrderCode = async () => {
 
 const createFoodOrder = async (req, res) => {
   try {
-    const userId= req.userData.id;
-    const { foodName, fullName, quantity, phoneNumber, pickupDate, pickupTime } =
+    const userId = req.userData.id;
+    const { foodName, fullName, quantity, phoneNumber, pickupDate, pickupTime, Price } =
       req.body;
 
     if (!fullName || !quantity || !phoneNumber || !pickupDate || !pickupTime) {
@@ -33,6 +33,7 @@ const createFoodOrder = async (req, res) => {
       pickupTime,
       orderCode: await GenarateFoodOrderCode(),
       status: "In Progress",
+      Price,
     });
     const savedOrder = await newFoodOrder.save();
     res.status(201).json(savedOrder);
@@ -54,7 +55,7 @@ const getFoodOrders = async (req, res) => {
 const editfoodOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const { fullName, quantity, phoneNumber, pickupDate, pickupTime } =
+    const { fullName, quantity, phoneNumber, pickupDate, pickupTime, Price } =
       req.body;
     if (!id) {
       return res.status(400).json({ message: "Food order ID is required" });
@@ -70,6 +71,7 @@ const editfoodOrder = async (req, res) => {
         phoneNumber,
         pickupDate,
         pickupTime,
+        ...(Price && { Price }),
       },
       { new: true },
     );
@@ -87,11 +89,15 @@ const deleteFoodOrder = async (req, res) => {
     if (!id) {
       return res.status(400).json({ message: "Food order ID is required" });
     }
-    const deletedOrder = await FoodOrder.findByIdAndDelete(id);
-    if (!deletedOrder) {
+    const updatedOrder = await FoodOrder.findByIdAndUpdate(
+      id,
+      { status: "delete" },
+      { new: true }
+    );
+    if (!updatedOrder) {
       return res.status(404).json({ message: "Food order not found" });
     }
-    res.status(200).json({ message: "Food order deleted successfully" });
+    res.status(200).json({ message: "Food order marked as deleted" });
   } catch (error) {
     res.status(500).json({ message: "Failed to delete food order", error });
   }
@@ -159,11 +165,13 @@ const getCompletedFoodOrders = async (req, res) => {
 
 const getCancelledFoodOrders = async (req, res) => {
   try {
-    const cancelledOrders = await FoodOrder.find({ status: "Cancelled" });
+    const cancelledOrders = await FoodOrder.find({
+      status: { $in: ["Cancelled", "delete"] },
+    });
     if (cancelledOrders.length === 0) {
       return res
         .status(404)
-        .json({ message: "No cancelled food orders found" });
+        .json({ message: "No cancelled or deleted food orders found" });
     }
     res.status(200).json(cancelledOrders);
   } catch (error) {

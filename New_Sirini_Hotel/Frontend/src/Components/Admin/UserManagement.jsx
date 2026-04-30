@@ -323,7 +323,7 @@ const UserManagement = () => {
               {[
                 " User",
                 " Operation Manager 1 (Restraunt,Liquor)",
-                " Operational Manager 2 (Reception, Room)",
+                " Operation Manager 2 (Reception, Room)",
               ].map((role) => {
                 const updatingrole = role.trim();
                 return (

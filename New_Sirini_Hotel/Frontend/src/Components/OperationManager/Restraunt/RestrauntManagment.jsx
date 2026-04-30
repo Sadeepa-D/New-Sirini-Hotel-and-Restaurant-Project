@@ -14,6 +14,7 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 
 import AddRestrauntItemForm from "./AddRestrauntItemForm";
+import OrderManage from "./OrderManage";
 
 
 const FoodCard = ({ item, onClick }) => (
@@ -306,6 +307,10 @@ const RestaurantManager = () => {
           }}
         />
       )}
+
+      {/* Order Manage Section */}
+      <hr className="my-12 border-gray-200" />
+      <OrderManage />
     </div>
   );
 };

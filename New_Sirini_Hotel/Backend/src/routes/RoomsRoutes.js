@@ -5,7 +5,7 @@ const authmiddleware = require("../middleware/authMiddleware");
 const roomBookingController = require("../controllers/Room/RoomBookingCont");
 const roomController = require("../controllers/Room/RoomCont");
 
-router.post("/book", roomBookingController.createRoomBooking);
+router.post("/book", authmiddleware, roomBookingController.createRoomBooking);
 router.delete("/deletebooking/:id", roomBookingController.deleteRoomBooking);
 router.put("/updatebooking/:id", roomBookingController.editRoomBooking);
 router.get("/viewbookings", roomBookingController.getAllRoomBookings);
