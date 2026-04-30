@@ -99,25 +99,7 @@ const deleteCateringItem = async (req, res) => {
     res.status(500).json({ message: "Error deleting catering item", error });
   }
 };
-const toggleCateringItemAvailability = async (req, res) => {
-  try {
-    const { id } = req.params;
-    if (!id) {
-      return res.status(400).json({ message: "Catering item ID is required" });
-    }
-    const item = await CateringItems.findById(id);
-    if (!item) {
-      return res.status(404).json({ message: "Catering item not found" });
-    }
-    item.status = !item.status;
-    const updatedItem = await item.save();
-    res.status(200).json(updatedItem);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error toggling catering item availability", error });
-  }
-};
+
 module.exports = {
   createCateringItem,
   getCateringItems,
