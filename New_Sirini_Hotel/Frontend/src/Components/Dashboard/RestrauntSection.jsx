@@ -24,7 +24,7 @@ const RestaurantSection = ({ data }) => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       setOrders(response.data);
       setLoading(false);
@@ -42,7 +42,9 @@ const RestaurantSection = ({ data }) => {
   const handleDelete = async (orderId) => {
     if (!window.confirm("Are you sure you want to delete this order?")) return;
     try {
-      const response = await axios.delete(`${VITE_URL}/api/restraunt/deleteorder/${orderId}`);
+      const response = await axios.delete(
+        `${VITE_URL}/api/restraunt/deleteorder/${orderId}`,
+      );
       if (response.status === 200) {
         toast.success("Order deleted successfully");
         fetchOrders(); // Refresh to move to cancelled/deleted view
@@ -54,7 +56,7 @@ const RestaurantSection = ({ data }) => {
   };
 
   const handleEdit = (order) => {
-    navigate('/restaurant', { state: { editOrder: order } });
+    navigate("/restaurant", { state: { editOrder: order } });
   };
 
   const filteredOrders = orders.filter((order) => {
