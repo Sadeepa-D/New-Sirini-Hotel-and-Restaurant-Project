@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 const RestaurantSection = ({ data }) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("In Progress");
   const navigate = useNavigate();
 
   const VITE_URL = import.meta.env.VITE_API_URL;
@@ -46,7 +47,7 @@ const RestaurantSection = ({ data }) => {
       );
       if (response.status === 200) {
         toast.success("Order deleted successfully");
-        setOrders(orders.filter((order) => order._id !== orderId));
+        fetchOrders(); // Refresh to move to cancelled/deleted view
       }
     } catch (error) {
       console.error("Error deleting order:", error);
@@ -58,68 +59,110 @@ const RestaurantSection = ({ data }) => {
     navigate("/restaurant", { state: { editOrder: order } });
   };
 
+  const filteredOrders = orders.filter((order) => {
+    if (activeTab === "In Progress") return order.status === "In Progress";
+    if (activeTab === "Completed") return order.status === "Completed";
+    if (activeTab === "Cancelled") return order.status === "Cancelled" || order.status === "delete";
+    return true;
+  });
+
   return (
     <div className="space-y-6 animate-in fade-in duration-300 relative">
-      <h2 className="text-xl font-bold text-gray-900 mb-6">My Food Orders </h2>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <h1 className="text-xl font-bold text-gray-900 uppercase">Restaurant Order Dashboard</h1>
 
-      {orders.length === 0 ? (
-        <p className="text-gray-500 text-center py-10 bg-gray-50 rounded-2xl border border-gray-100">
-          No active Food Orders found in your history.
-        </p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {orders.map((order) => (
-            <div
-              key={order._id}
-              className="bg-white p-4 rounded-lg shadow flex flex-col justify-between"
+        {/* Tabs */}
+        <div className="flex gap-2 bg-gray-50 p-1 rounded-xl border border-gray-200">
+          {["In Progress", "Completed", "Cancelled"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === tab
+                  ? "bg-amber-100 text-amber-700 shadow-sm"
+                  : "text-gray-500 hover:text-gray-700"
+                }`}
             >
+              {tab}
+            </button>
+          ))}
+        </div>
+      </div>
+
+
+      {loading ? (
+        <div className="py-12 text-center text-gray-500">Loading orders...</div>
+      ) : filteredOrders.length === 0 ? (
+        <div className="bg-white border-2 border-dashed border-gray-100 rounded-3xl p-12 text-center">
+          <p className="text-gray-400">No {activeTab.toLowerCase()} orders found.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredOrders.map((order) => (
+            <div key={order._id} className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col justify-between h-full">
               <div>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="font-semibold text-lg text-amber-700">
-                    {order.foodName}
-                  </span>
-                  <span className="text-sm px-2 py-1 bg-amber-100 text-amber-800 rounded-full font-medium">
-                    {order.status}
+                <div className="flex justify-between items-start mb-4">
+                  <div className="bg-amber-50 p-2 rounded-xl">
+                    <span className="font-bold text-sm text-amber-700">{order.foodName}</span>
+                  </div>
+                  <span className={`text-[10px] font-black px-2 py-1 rounded-lg uppercase ${order.status === "Completed"
+                      ? "bg-green-50 text-green-600"
+                      : order.status === "Cancelled" || order.status === "delete"
+                        ? "bg-red-50 text-red-600"
+                        : "bg-amber-50 text-amber-600"
+                    }`}>
+                    {order.status === "delete" ? "DELETED" : order.status}
                   </span>
                 </div>
-                <p className="text-gray-600 text-sm mb-1">
-                  <span className="font-medium">Quantity:</span>{" "}
-                  {order.quantity}
-                </p>
-                <p className="text-gray-600 text-sm mb-1">
-                  <span className="font-medium">Pick-up Date:</span>{" "}
-                  {new Date(order.pickupDate).toLocaleDateString()}
-                </p>
-                <p className="text-gray-600 text-sm mb-1">
-                  <span className="font-medium">Pick-up Time:</span>{" "}
-                  {order.pickupTime}
-                </p>
-                <p className="text-gray-600 text-sm mb-1">
-                  <span className="font-medium">Total Price:</span> Rs.{" "}
-                  {order.Price}
-                </p>
+
+                <div className="space-y-3 mb-4">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Order ID</span>
+                    <span className="font-mono text-gray-600 font-medium">{order.orderCode}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Quantity</span>
+                    <span className="text-gray-700 font-bold">{order.quantity} Items</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 pt-2">
+                    <div>
+                      <span className="text-[10px] text-gray-400 block uppercase font-bold tracking-wider">Date</span>
+                      <span className="text-xs text-gray-700 font-medium">{new Date(order.pickupDate).toLocaleDateString()}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-gray-400 block uppercase font-bold tracking-wider">Time</span>
+                      <span className="text-xs text-gray-700 font-medium">{order.pickupTime}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-gray-50 flex justify-between items-center">
+                  <span className="text-xs text-gray-400">Total Amount</span>
+                  <span className="text-amber-600 font-black">Rs. {order.Price}</span>
+                </div>
               </div>
-              <div className="flex gap-2 mt-4 pt-4 border-t border-gray-100">
-                {order.status !== "Completed" &&
-                  order.status !== "Cancelled" && (
-                    <button
-                      onClick={() => handleEdit(order)}
-                      className="flex-1 bg-amber-50 text-amber-600 hover:bg-amber-100 py-1.5 rounded text-sm font-medium transition-colors"
-                    >
-                      Edit
-                    </button>
-                  )}
-                <button
-                  onClick={() => handleDelete(order._id)}
-                  className="flex-1 bg-red-50 text-red-600 hover:bg-red-100 py-1.5 rounded text-sm font-medium transition-colors"
-                >
-                  Delete
-                </button>
-              </div>
+
+              {order.status === "In Progress" && (
+                <div className="flex gap-2 mt-6">
+                  <button
+                    onClick={() => handleEdit(order)}
+                    className="flex-1 bg-gray-50 text-gray-700 hover:bg-amber-100 hover:text-amber-700 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center justify-center"
+                  >
+                    EDIT
+                  </button>
+                  <button
+                    onClick={() => handleDelete(order._id)}
+                    className="flex-1 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white py-2.5 rounded-2xl text-xs font-black transition-all flex items-center justify-center"
+                  >
+                    DELETE
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>
       )}
+
+
     </div>
   );
 };
