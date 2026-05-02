@@ -1,56 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Logo from "../../assets/Logo.png";
-import {
-  Home,
-  BadgeDollarSign,
-  BottleWine,
-  Utensils,
-  LogOut,
-  Menu,
-} from "lucide-react";
+import { Home, BottleWine, Utensils, LogOut, Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import LiquorManage from "../../Components/OperationManager/Liquor/LiquorMngHome";
 import RestaurantManager from "../../Components/OperationManager/Restraunt/RestrauntManagment";
+import LiqourandRestruant from "../../Components/OperationManager/Dashboard_Anlyze/LiqourandRestruant";
 import toast from "react-hot-toast";
-
-// --- Dashboard Overview Component (Matches your Figma design) ---
-const DashboardOverview = () => {
-  const stats = [
-    {
-      title: "Orders",
-      value: "10",
-      icon: <Utensils size={28} className="text-gray-700" />,
-    },
-    {
-      title: "Total Revenue",
-      value: "Rs.75000",
-      icon: <BadgeDollarSign size={28} className="text-gray-700" />,
-    },
-  ];
-
-  return (
-    <div className="p-4 md:p-8">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {stats.map((stat, index) => (
-          <div
-            key={index}
-            className="bg-white p-6 rounded-lg shadow-sm flex flex-col justify-between min-h-[150px]"
-          >
-            <div>{stat.icon}</div>
-            <div className="flex justify-between items-end mt-4">
-              <span className="text-gray-600 font-bold text-lg">
-                {stat.title}
-              </span>
-              <span className="text-2xl font-bold text-gray-800">
-                {stat.value}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
+import axios from "axios";
 
 // --- Main Layout Component ---
 const OperationManager = () => {
@@ -58,6 +14,29 @@ const OperationManager = () => {
 
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [userdata, setUserdata] = useState([]);
+
+  const VITE_URL = import.meta.env.VITE_API_URL;
+
+  const token = localStorage.getItem("token");
+
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get(`${VITE_URL}/api/users/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setUserdata(response.data);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      toast.error("Failed to fetch user data");
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -76,13 +55,13 @@ const OperationManager = () => {
   const renderContent = () => {
     switch (activeTab) {
       case "dashboard":
-        return <DashboardOverview />;
+        return <LiqourandRestruant />;
       case "Liquor":
         return <LiquorManage />;
       case "Food":
         return <RestaurantManager />;
       default:
-        return <DashboardOverview />;
+        return <LiqourandRestruant />;
     }
   };
 
@@ -123,7 +102,7 @@ const OperationManager = () => {
               New Sirini Hotel
             </h2>
             <p className="text-[10px] font-bold text-gray-400 -mt-1 tracking-wide uppercase">
-              Admin Panel
+              Operation Manager 1
             </p>
           </div>
         </div>
@@ -133,6 +112,7 @@ const OperationManager = () => {
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
+            const isLogout = item.id === "Logout";
 
             return (
               <button
@@ -148,12 +128,20 @@ const OperationManager = () => {
                 className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-colors ${
                   isActive
                     ? "bg-yellow-500 text-white font-bold"
-                    : "text-gray-400 hover:bg-gray-900 hover:text-white"
+                    : isLogout
+                      ? "text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                      : "text-gray-400 hover:bg-gray-900 hover:text-white"
                 }`}
               >
                 <Icon
                   size={20}
-                  className={isActive ? "text-white" : "text-white"}
+                  className={
+                    isActive
+                      ? "text-white"
+                      : isLogout
+                        ? "text-red-400"
+                        : "text-white"
+                  }
                 />
                 <span className="text-sm tracking-wide">{item.label}</span>
               </button>
@@ -181,12 +169,19 @@ const OperationManager = () => {
 
           {/* User Profile */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center text-white shadow-sm">
-              {/* Dummy Avatar Graphic - Empty or Icon */}
+            <div className="w-14 h-14 bg-amber-500 rounded-2xl flex items-center justify-center text-white shadow-md overflow-hidden hover:scale-105 transition-transform cursor-pointer border-2 border-amber-500/20">
+              <img
+                src={userdata.image || Logo}
+                alt="Profile"
+                className="w-full h-full object-cover"
+                onClick={() => usenavigate("/dashboard")}
+              />
             </div>
             <div className="hidden sm:block text-right">
-              <p className="text-sm font-bold text-gray-800">Admin Name</p>
-              <p className="text-xs text-gray-500">Operational Manager</p>
+              <p className="text-sm font-bold text-gray-800">
+                {userdata.name || "User Name"}
+              </p>
+              <p className="text-xs text-gray-500">Operation Manager 1</p>
             </div>
           </div>
         </header>

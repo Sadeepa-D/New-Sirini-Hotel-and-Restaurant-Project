@@ -91,7 +91,7 @@ const UserDashboard = () => {
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar Navigation */}
-          <div className="w-full lg:w-72 flex-shrink-0">
+          <div className="w-full lg:w-72 shrink-0">
             <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-3 flex lg:flex-col overflow-x-auto lg:overflow-visible overflow-y-hidden hide-scrollbar gap-1.5">
               <NavButton
                 icon={User}
@@ -127,7 +127,7 @@ const UserDashboard = () => {
           </div>
 
           {/* Main Content Area */}
-          <div className="flex-1 bg-white rounded-2xl shadow-xl border border-gray-100 p-6 sm:p-10 min-h-[600px]">
+          <div className="flex-1 bg-white rounded-2xl shadow-xl border border-gray-100 p-6 sm:p-10 min-h-150">
             {activeTab === "profile" && <ProfileSection />}
             {activeTab === "rooms" && <RoomsSection data={mockRooms} />}
             {activeTab === "restaurant" && (
@@ -146,7 +146,7 @@ const UserDashboard = () => {
 const NavButton = ({ icon: Icon, label, isActive, onClick }) => (
   <button
     onClick={onClick}
-    className={`flex-shrink-0 flex items-center gap-3.5 px-5 py-3.5 rounded-xl transition-all duration-300 whitespace-nowrap min-w-max lg:min-w-0 font-sans text-left ${
+    className={`shrink-0 flex items-center gap-3.5 px-5 py-3.5 rounded-xl transition-all duration-300 whitespace-nowrap min-w-max lg:min-w-0 font-sans text-left ${
       isActive
         ? "bg-amber-50 text-amber-900 font-semibold shadow-sm ring-1 ring-amber-100"
         : "text-gray-500 hover:bg-gray-50 hover:text-gray-900 font-medium"

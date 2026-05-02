@@ -14,10 +14,9 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 
 import AddRestrauntItemForm from "./AddRestrauntItemForm";
+import OrderManage from "./OrderManage";
 
-// ─────────────────────────────────────────────
-// FoodCard – mirrors DrinkCard styling
-// ─────────────────────────────────────────────
+
 const FoodCard = ({ item, onClick }) => (
   <div
     onClick={onClick}
@@ -57,9 +56,8 @@ const FoodCard = ({ item, onClick }) => (
   </div>
 );
 
-// ─────────────────────────────────────────────
 // Main RestaurantManager
-// ─────────────────────────────────────────────
+
 const RestaurantManager = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -228,7 +226,7 @@ const RestaurantManager = () => {
               {items.map((item) => (
                 <div
                   key={item._id}
-                  className="flex-shrink-0"
+                  className="shrink-0"
                   style={{
                     width: `calc(${100 / itemsPerView}% - ${
                       ((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) /
@@ -309,6 +307,10 @@ const RestaurantManager = () => {
           }}
         />
       )}
+
+      {/* Order Manage Section */}
+      <hr className="my-12 border-gray-200" />
+      <OrderManage />
     </div>
   );
 };

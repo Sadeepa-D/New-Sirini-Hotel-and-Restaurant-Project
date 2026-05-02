@@ -1,8 +1,3 @@
-// Name
-// Email
-// Phone number
-// Date
-
 const mongoose = require("mongoose");
 
 const reciptionAppointSchema = new mongoose.Schema(
