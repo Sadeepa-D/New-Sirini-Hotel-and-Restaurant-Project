@@ -84,7 +84,7 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-gray-900">Reception Hall Ads</h2>
+        <h2 className="text-xl font-bold text-gray-900"> My Advertisements</h2>
         <button
           className="px-6 py-2.5 bg-black text-white rounded-full font-sans text-xs font-semibold uppercase tracking-wider hover:bg-amber-500 hover:text-black transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0"
           onClick={() => navigate("/reception")}

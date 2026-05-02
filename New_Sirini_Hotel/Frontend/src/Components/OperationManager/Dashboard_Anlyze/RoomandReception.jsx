@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { CalendarCheck, Megaphone, Users } from "lucide-react";
+import {
+  CalendarCheck,
+  Megaphone,
+  Users,
+  Bed,
+  CheckCircle2,
+  XCircle,
+  Wrench,
+  BarChart3,
+  Coins,
+  Zap,
+} from "lucide-react";
 import axios from "axios";
 
 const RoomandReception = () => {
@@ -7,6 +18,8 @@ const RoomandReception = () => {
   const [apointmentdata, setApointmentdata] = useState([]);
   const [advertismentdata, setadvertismentdata] = useState([]);
   const [packagedata, setPackageData] = useState([]);
+  const [roomdata, setRoomData] = useState([]);
+  const [roombookingdata, setRoomBookingData] = useState([]);
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -41,10 +54,30 @@ const RoomandReception = () => {
     }
   };
 
+  const fetchroom = async () => {
+    try {
+      const response = await axios.get(`${VITE_URL}/api/rooms/viewrooms`);
+      setRoomData(response.data);
+    } catch (error) {
+      console.error("Error fetching room data:", error);
+    }
+  };
+
+  const fetchroombookings = async () => {
+    try {
+      const response = await axios.get(`${VITE_URL}/api/rooms/viewbookings`);
+      setRoomBookingData(response.data);
+    } catch (error) {
+      console.error("Error fetching room booking data:", error);
+    }
+  };
+
   useEffect(() => {
     fetchappointmentdata();
     fetchadvertismentdata();
     fetchpackagedata();
+    fetchroom();
+    fetchroombookings();
   }, []);
 
   const activepackages = packagedata.filter(
@@ -87,6 +120,47 @@ const RoomandReception = () => {
   const overdueReq = currentMonthAppointments.filter((req) => {
     return req.status === "Pending" && new Date(req.date) < new Date();
   }).length;
+  const totalrooms = roomdata.length;
+  const availableRooms = roomdata.filter(
+    (room) => room.status === "available",
+  ).length;
+  const bookedRooms = roomdata.filter(
+    (room) => room.status === "reserved",
+  ).length;
+  const maintenanceRooms = roomdata.filter(
+    (room) => room.status === "maintenance",
+  ).length;
+  const currentmonthbookings = roombookingdata.filter((booking) => {
+    const bookingDate = new Date(booking.checkInDate);
+    return (
+      bookingDate.getMonth() === currentMonth &&
+      bookingDate.getFullYear() === currentYear
+    );
+  });
+
+  const totalmonthlybookings = currentmonthbookings.length;
+  const monthlycompletedbookings = currentmonthbookings.filter(
+    (booking) => booking.status === "Confirmed",
+  ).length;
+  const monthlycancelledbookings = currentmonthbookings.filter(
+    (booking) => booking.status === "Cancelled",
+  ).length;
+  const monthlyRoomRevenue = currentmonthbookings.reduce((total, booking) => {
+    if (total === null) total = 0;
+    return booking.status === "Confirmed"
+      ? total + (booking.totalAmount || 0)
+      : total;
+  }, 0);
+  const roomBookingCounts = currentmonthbookings.reduce((counts, booking) => {
+    const roomNum = booking.roomNumber;
+    counts[roomNum] = (counts[roomNum] || 0) + 1;
+    return counts;
+  }, {});
+
+  const mostBookedRoom = Object.entries(roomBookingCounts).reduce(
+    (max, entry) => (entry[1] > max[1] ? entry : max),
+    ["None", 0],
+  );
 
   return (
     <div className="p-3 sm:p-4 md:p-8">
@@ -205,6 +279,123 @@ const RoomandReception = () => {
               <span className="text-lg font-black">{cancelledReq}</span>
             </div>
           </div>
+        </div>
+      </div>
+      {/* --- Room Management Analysis Section --- */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+        {/* Card 4: Detailed Room Inventory */}
+        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 group hover:shadow-xl transition-all">
+          <div className="flex justify-between items-center mb-4">
+            <div className="p-3 bg-indigo-50 rounded-2xl text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+              <Bed size={22} />
+            </div>
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-tighter">
+              Inventory
+            </p>
+          </div>
+          <h4 className="text-gray-900 font-serif italic text-lg mb-4">
+            Room Status
+          </h4>
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs font-bold border-b border-gray-50 pb-2">
+              <span className="text-gray-500">Available</span>
+              <span className="text-green-600">{availableRooms}</span>
+            </div>
+            <div className="flex justify-between text-xs font-bold border-b border-gray-50 pb-2">
+              <span className="text-gray-500">Booked</span>
+              <span className="text-amber-600">{bookedRooms}</span>
+            </div>
+            <div className="flex justify-between text-xs font-bold">
+              <span className="text-gray-500">Maintenance</span>
+              <span className="text-red-500 flex items-center gap-1">
+                <Wrench size={10} /> {maintenanceRooms}
+              </span>
+            </div>
+          </div>
+        </div>
+        {/* Card 5: Monthly Performance */}
+        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 group hover:shadow-xl transition-all">
+          <div className="flex justify-between items-center mb-4">
+            <div className="p-3 bg-emerald-50 rounded-2xl text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all">
+              <BarChart3 size={22} />
+            </div>
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-tighter">
+              Volume
+            </p>
+          </div>
+          <h4 className="text-gray-900 font-serif italic text-lg mb-4">
+            Monthly Traffic
+          </h4>
+          <div className="flex items-end gap-2">
+            <span className="text-3xl font-black text-gray-800">
+              {totalmonthlybookings}
+            </span>
+            <span className="text-[10px] font-bold text-gray-400 mb-1.5 uppercase">
+              Reservations
+            </span>
+          </div>
+          <div className="mt-4 flex gap-2">
+            <div className="flex-1 bg-green-50 rounded-lg p-2 text-center">
+              <p className="text-[8px] font-black text-green-700 uppercase">
+                Success
+              </p>
+              <p className="text-sm font-black text-green-800">
+                {monthlycompletedbookings}
+              </p>
+            </div>
+            <div className="flex-1 bg-red-50 rounded-lg p-2 text-center">
+              <p className="text-[8px] font-black text-red-700 uppercase">
+                Failed
+              </p>
+              <p className="text-sm font-black text-red-800">
+                {monthlycancelledbookings}
+              </p>
+            </div>
+          </div>
+        </div>
+        {/* Card 6: Top Performer (The "Star" Room) */}
+        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 group hover:shadow-xl transition-all relative overflow-hidden">
+          <div className="flex justify-between items-center mb-4">
+            <div className="p-3 bg-amber-50 rounded-2xl text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-all">
+              <Zap size={22} />
+            </div>
+            <span className="bg-amber-100 text-amber-700 text-[8px] font-black px-2 py-1 rounded-full uppercase">
+              Peak Activity
+            </span>
+          </div>
+          <h4 className="text-gray-900 font-serif italic text-lg mb-2">
+            Hottest Room
+          </h4>
+          <p className="text-4xl font-black text-gray-800 mb-1">
+            Room {mostBookedRoom[0]}
+          </p>
+          <p className="text-xs font-medium text-gray-500">
+            Occupied 
+            <span className="text-amber-600 font-bold">
+              {mostBookedRoom[1]} times
+            </span>
+            this month
+          </p>
+          <div className="absolute -bottom-4 -right-4 text-amber-500/5 rotate-12 group-hover:scale-110 transition-transform">
+            <Zap size={120} />
+          </div>
+        </div>
+        {/* Card 7: Room Revenue */}
+        <div className="bg-gradient-to-br from-gray-900 to-black p-6 rounded-[2rem] shadow-xl border border-white/5 group hover:border-amber-500/50 transition-all">
+          <div className="flex justify-between items-center mb-6">
+            <div className="p-3 bg-amber-500/10 rounded-2xl text-amber-500 border border-amber-500/20">
+              <Coins size={22} />
+            </div>
+            <p className="text-[9px] font-black text-amber-500/60 uppercase tracking-widest">Revenue Hub</p>
+          </div>
+          <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1">Total Room Income</p>
+          <p className="text-3xl font-black text-white italic tracking-tighter">
+            Rs. {monthlyRoomRevenue.toLocaleString()}
+          </p>
+        <div className="mt-6 h-1 w-full bg-white/5 rounded-full overflow-hidden">
+        <div className="h-full bg-amber-500 w-[65%]" />
+        </div>
+          <p className="text-[9px] text-gray-500 mt-2 italic">Calculated from confirmed monthly stays</p>
         </div>
       </div>
     </div>

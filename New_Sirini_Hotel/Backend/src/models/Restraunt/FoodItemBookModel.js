@@ -1,9 +1,3 @@
-// Full name
-// Phone Number
-// Quantity
-// Pickup date
-// Pickup time
-
 const mongoose = require("mongoose");
 
 const foodItemBookSchema = new mongoose.Schema(
