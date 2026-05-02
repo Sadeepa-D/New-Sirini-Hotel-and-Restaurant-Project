@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import receptionImg from "../../assets/reception.jpg";
 import ReceptionHallPackages from "../../Components/Receptionhall/ReceptionHallPackages";
 import BookingForm from "../../Components/Receptionhall/receptionform";
-// import CustomizeEvents from "../../Components/Receptionhall/customizeevents";
 import CateringItemCard from "../../Components/Receptionhall/CateringItemCard";
 import AdvertismentSection from "../../Components/Receptionhall/AdvertismentSection";
 import Exploreindicator from "../../Components/Exploreindicator";
+import Calander from "../../Components/Calander";
 import toast from "react-hot-toast";
 
 export default function Reception() {
@@ -87,17 +87,26 @@ export default function Reception() {
         )}
       </div>
       {/* Content Section */}
-      <section className="bg-white py-14 px-4 sm:px-8">
-        <div className="text-center mb-10">
-          <h2 className="font-cinzel text-4xl sm:text-5xl md:text-6xl text-gray-800 mb-3">
-            <span className="font-cormorant italic text-gray-700 font-light">
-              Every Occasion
-            </span>
-          </h2>
-          <p className="text-gray-500 text-base sm:text-lg md:text-xl mt-2 max-w-2xl mx-auto">
-            From intimate engagements to grand corporate conferences, we curate
-            exceptional experiences.
-          </p>
+      <section className="bg-white py-8 sm:py-10 px-4 sm:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
+            {/* Text Content */}
+            <div className="flex flex-col justify-center">
+              <h2 className="font-cinzel text-4xl sm:text-5xl text-gray-800 mb-4">
+                <span className="font-cormorant italic text-gray-700 font-light">
+                  Every Occasion
+                </span>
+              </h2>
+              <p className="text-gray-500 text-base sm:text-lg mt-2 leading-relaxed">
+                From intimate engagements to grand corporate conferences, we
+                curate exceptional experiences.
+              </p>
+            </div>
+            {/* Calendar */}
+            <div className="flex justify-center lg:justify-end">
+              <Calander />
+            </div>
+          </div>
         </div>
       </section>
       <ReceptionHallPackages />
