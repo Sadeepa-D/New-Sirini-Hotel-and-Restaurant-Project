@@ -1,19 +1,56 @@
 import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import receptionImg from "../../assets/reception.jpg";
 import ReceptionHallPackages from "../../Components/Receptionhall/ReceptionHallPackages";
 import BookingForm from "../../Components/Receptionhall/receptionform";
-// import CustomizeEvents from "../../Components/Receptionhall/customizeevents";
 import CateringItemCard from "../../Components/Receptionhall/CateringItemCard";
 import AdvertismentSection from "../../Components/Receptionhall/AdvertismentSection";
 import Exploreindicator from "../../Components/Exploreindicator";
+import Calander from "../../Components/Calander";
 import toast from "react-hot-toast";
 
 export default function Reception() {
-  // 2. State to handle form visibility
+  const VITE_URL = import.meta.env.VITE_API_URL;
+  
+  // 1. State to handle form visibility
   const [showForm, setShowForm] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
-  // 2. Create the reference
+  
+  // 2. State for calendar data
+  const [bookedDates, setBookedDates] = useState([]);
+  const [loadingDates, setLoadingDates] = useState(true);
+  
+  // 3. Create the reference
   const formSectionRef = useRef(null);
+
+  // 4. Fetch booked dates from API
+  const fetchBookedDates = async () => {
+    try {
+      const response = await axios.get(
+        `${VITE_URL}/api/receptionhall/booking/dates`,
+      );
+
+      const rawData = response.data;
+
+      // ✅ Extract eventDate field and normalize to YYYY-MM-DD
+      const normalized = rawData.map((item) => {
+        const date = new Date(item.eventDate);
+        const y = date.getUTCFullYear();
+        const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+        const d = String(date.getUTCDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      });
+      setBookedDates(normalized);
+    } catch (error) {
+      console.error("Error fetching booked dates:", error);
+    } finally {
+      setLoadingDates(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBookedDates();
+  }, []);
 
   const handleadrequest = () => {
     if (!isLoggedIn) {
@@ -25,7 +62,7 @@ export default function Reception() {
     }
   };
 
-  // 3. Effect to scroll when showForm becomes true
+  // 5. Effect to scroll when showForm becomes true
   useEffect(() => {
     if (showForm && formSectionRef.current) {
       formSectionRef.current.scrollIntoView({
@@ -87,17 +124,26 @@ export default function Reception() {
         )}
       </div>
       {/* Content Section */}
-      <section className="bg-white py-14 px-4 sm:px-8">
-        <div className="text-center mb-10">
-          <h2 className="font-cinzel text-4xl sm:text-5xl md:text-6xl text-gray-800 mb-3">
-            <span className="font-cormorant italic text-gray-700 font-light">
-              Every Occasion
-            </span>
-          </h2>
-          <p className="text-gray-500 text-base sm:text-lg md:text-xl mt-2 max-w-2xl mx-auto">
-            From intimate engagements to grand corporate conferences, we curate
-            exceptional experiences.
-          </p>
+      <section className="bg-white py-8 sm:py-10 px-4 sm:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
+            {/* Text Content */}
+            <div className="flex flex-col justify-center">
+              <h2 className="font-cinzel text-4xl sm:text-5xl text-gray-800 mb-4">
+                <span className="font-cormorant italic text-gray-700 font-light">
+                  Every Occasion
+                </span>
+              </h2>
+              <p className="text-gray-500 text-base sm:text-lg mt-2 leading-relaxed">
+                From intimate engagements to grand corporate conferences, we
+                curate exceptional experiences.
+              </p>
+            </div>
+            {/* Calendar */}
+            <div className="flex justify-center lg:justify-end">
+              <Calander BookedDates={bookedDates} loading={loadingDates} />
+            </div>
+          </div>
         </div>
       </section>
       <ReceptionHallPackages />
