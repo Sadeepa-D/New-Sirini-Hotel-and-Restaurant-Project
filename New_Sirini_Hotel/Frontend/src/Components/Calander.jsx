@@ -1,41 +1,9 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 
-const Calander = () => {
-  const VITE_URL = import.meta.env.VITE_API_URL;
-  const [BookedDates, setBookedDates] = useState([]);
-  const [loading, setLoading] = useState(true);
+const Calander = ({ BookedDates = [], loading = false }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
-
-  const fetchBookedDates = async () => {
-    try {
-      const response = await axios.get(
-        `${VITE_URL}/api/receptionhall/booking/dates`,
-      );
-
-      const rawData = response.data;
-
-      // ✅ Extract eventDate field and normalize to YYYY-MM-DD
-      const normalized = rawData.map((item) => {
-        const date = new Date(item.eventDate);
-        const y = date.getUTCFullYear();
-        const m = String(date.getUTCMonth() + 1).padStart(2, "0");
-        const d = String(date.getUTCDate()).padStart(2, "0");
-        return `${y}-${m}-${d}`;
-      });
-      setBookedDates(normalized);
-    } catch (error) {
-      console.error("Error fetching booked dates:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchBookedDates();
-  }, []);
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);

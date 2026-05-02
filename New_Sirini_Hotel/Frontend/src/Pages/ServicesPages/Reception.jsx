@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import receptionImg from "../../assets/reception.jpg";
 import ReceptionHallPackages from "../../Components/Receptionhall/ReceptionHallPackages";
 import BookingForm from "../../Components/Receptionhall/receptionform";
@@ -9,11 +10,47 @@ import Calander from "../../Components/Calander";
 import toast from "react-hot-toast";
 
 export default function Reception() {
-  // 2. State to handle form visibility
+  const VITE_URL = import.meta.env.VITE_API_URL;
+  
+  // 1. State to handle form visibility
   const [showForm, setShowForm] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
-  // 2. Create the reference
+  
+  // 2. State for calendar data
+  const [bookedDates, setBookedDates] = useState([]);
+  const [loadingDates, setLoadingDates] = useState(true);
+  
+  // 3. Create the reference
   const formSectionRef = useRef(null);
+
+  // 4. Fetch booked dates from API
+  const fetchBookedDates = async () => {
+    try {
+      const response = await axios.get(
+        `${VITE_URL}/api/receptionhall/booking/dates`,
+      );
+
+      const rawData = response.data;
+
+      // ✅ Extract eventDate field and normalize to YYYY-MM-DD
+      const normalized = rawData.map((item) => {
+        const date = new Date(item.eventDate);
+        const y = date.getUTCFullYear();
+        const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+        const d = String(date.getUTCDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      });
+      setBookedDates(normalized);
+    } catch (error) {
+      console.error("Error fetching booked dates:", error);
+    } finally {
+      setLoadingDates(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBookedDates();
+  }, []);
 
   const handleadrequest = () => {
     if (!isLoggedIn) {
@@ -25,7 +62,7 @@ export default function Reception() {
     }
   };
 
-  // 3. Effect to scroll when showForm becomes true
+  // 5. Effect to scroll when showForm becomes true
   useEffect(() => {
     if (showForm && formSectionRef.current) {
       formSectionRef.current.scrollIntoView({
@@ -104,7 +141,7 @@ export default function Reception() {
             </div>
             {/* Calendar */}
             <div className="flex justify-center lg:justify-end">
-              <Calander />
+              <Calander BookedDates={bookedDates} loading={loadingDates} />
             </div>
           </div>
         </div>
