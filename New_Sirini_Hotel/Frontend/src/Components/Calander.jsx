@@ -72,7 +72,7 @@ const Calander = ({ BookedDates = [], loading = false }) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-2.5 max-w-xs w-full">
+    <div className="fixed bottom-4 right-4 z-60 bg-white rounded-2xl shadow-md border border-gray-200 p-2.5 max-w-xs w-full">
       {/* Header */}
       <div className="flex items-center gap-2 mb-2">
         <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
