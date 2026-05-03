@@ -27,15 +27,7 @@ const createReceptionAppointment = async (req, res) => {
   }
 };
 
-const getReceptionAppointments = async (req, res) => {
-  try {
-    const appointments = await ReceptionAppointment.find();
-    res.status(200).json(appointments);
-  } catch (error) {
-    console.error("Error fetching reception appointments:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
+
 
 const deleteReceptionAppointment = async (req, res) => {
   try {
