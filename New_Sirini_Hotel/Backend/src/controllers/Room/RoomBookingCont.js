@@ -2,7 +2,7 @@ const RoomBooking = require("../../models/Rooms/RoomBookModel");
 
 const createRoomBooking = async (req, res) => {
   try {
-    const userId= req.userData.id;
+    const userId = req.userData.id;
     const {
       name,
       email,
@@ -14,11 +14,14 @@ const createRoomBooking = async (req, res) => {
       totalAmount,
     } = req.body;
 
-    const newIn = new Date(checkInDate);
-    newIn.setHours(0, 0, 0, 0);
+    // Parse date string (YYYY-MM-DD) as UTC midnight, not local timezone
+    const parseUTCDate = (dateStr) => {
+      const [year, month, day] = dateStr.split("-").map(Number);
+      return new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+    };
 
-    const newOut = new Date(checkOutDate);
-    newOut.setHours(0, 0, 0, 0);
+    const newIn = parseUTCDate(checkInDate);
+    const newOut = parseUTCDate(checkOutDate);
 
     const existingBooking = await RoomBooking.findOne({
       roomNumber: roomNumber,
@@ -242,6 +245,22 @@ const getspecificuserbookings = async (req, res) => {
   }
 };
 
+const getUnavilableDatesForRoom = async (req, res) => {
+  try {
+    const { roomNumber } = req.params;
+    if (!roomNumber) {
+      return res.status(400).json({ error: "Room number is required" });
+    }
+    const unavialbleDates = await RoomBooking.find(
+      { roomNumber, status: { $in: ["Confirmed", "Pending"] } },
+      "checkInDate checkOutDate",
+    );
+    res.status(200).json(unavialbleDates);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createRoomBooking,
   deleteRoomBooking,
@@ -256,4 +275,5 @@ module.exports = {
   setRoomBookingStatustoCompleted,
   getCompletedRoomBookings,
   getspecificuserbookings,
+  getUnavilableDatesForRoom,
 };

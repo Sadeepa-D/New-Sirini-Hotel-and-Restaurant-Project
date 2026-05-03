@@ -3,22 +3,51 @@ import axios from "axios";
 import MainRoom from "../../assets/Rooms/Main_Room.png";
 import BookingForm from "../../Components/RoomCompo/BookingForm";
 import Exploreindicator from "../../Components/Exploreindicator";
+import Calander from "../../Components/Calander";
 import toast from "react-hot-toast";
 
 function Rooms() {
+  const VITE_URL = import.meta.env.VITE_API_URL;
   const [roomList, setRoomList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+  const [bookedDates, setBookedDates] = useState([]);
+
+  const fetchBookedDates = async (roomNumber) => {
+    try {
+      const response = await axios.get(
+        `${VITE_URL}/api/rooms/unavailablerooms/dates/${roomNumber}`,
+      );
+      const rawData = response.data;
+
+      const unavailableDates = [];
+
+      const normalized = rawData.map((item) => {
+        const startdate = new Date(item.checkInDate);
+        const enddate = new Date(item.checkOutDate);
+        const current = new Date(startdate);
+        while (current <= enddate) {
+          const y = current.getUTCFullYear();
+          const m = String(current.getUTCMonth() + 1).padStart(2, "0");
+          const d = String(current.getUTCDate()).padStart(2, "0");
+          unavailableDates.push(`${y}-${m}-${d}`);
+          current.setDate(current.getDate() + 1);
+        }
+      });
+      console.log("Fetched Booked Dates:", unavailableDates);
+      setBookedDates(unavailableDates);
+    } catch (error) {
+      console.error("Error fetching booked dates:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:5000/api/rooms/viewrooms",
-        );
+        const res = await axios.get(`${VITE_URL}/api/rooms/viewrooms`);
         setRoomList(res.data);
       } catch (err) {
         setError("Failed to load rooms. Please try again.");
@@ -30,19 +59,18 @@ function Rooms() {
   }, []);
 
   const handleBookNow = (room) => {
-  if (!isLoggedIn) {
-    toast.error("Please login to book a room");
-    return;
-  }
+    if (!isLoggedIn) {
+      toast.error("Please login to book a room");
+      return;
+    }
 
-  setSelectedRoom(room);
-  setIsModalOpen(true);
-};
+    setSelectedRoom(room);
+    setIsModalOpen(true);
+    fetchBookedDates(room.roomNumber);
+  };
 
   const handleBookingConfirmed = (roomId) => {
-
-  console.log("Booking request received for room ID:", roomId);
-  
+    console.log("Booking request received for room ID:", roomId);
   };
 
   return (
@@ -67,13 +95,12 @@ function Rooms() {
           <p className="text-lg md:text-xl italic tracking-widest border-t border-b border-white py-2 px-4">
             Peaceful rooms designed for your perfect stay
           </p>
-           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
-        </div>
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10"></div>
 
-        {/* Explore arrow pinned to bottom */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
-          <Exploreindicator />
-        </div>
+          {/* Explore arrow pinned to bottom */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
+            <Exploreindicator />
+          </div>
         </div>
       </header>
 
@@ -133,7 +160,7 @@ function Rooms() {
                     </div>
 
                     <h3 className="text-3xl md:text-4xl font-serif text-white mb-4 leading-tight group-hover:text-orange-600 transition-colors duration-500">
-                      {room.roomType}{" "}
+                      {room.roomType}
                       <span className="text-lg font-serif text-white italic font-sans">
                         Room
                       </span>
@@ -175,7 +202,6 @@ function Rooms() {
                   {/* Status & Footer */}
                   <div className="flex flex-row items-center justify-between gap-4 pt-6 border-t border-gray-50 mt-auto">
                     <div className="flex items-center gap-3">
-                      
                       <p
                         className={`text-[17px] font-black uppercase tracking-[0.2em] ${room.status === "available" ? "text-green-600" : room.status === "maintenance" ? "text-yellow-600" : "text-red-600"}`}
                       >
@@ -201,11 +227,14 @@ function Rooms() {
       </main>
 
       {isModalOpen && selectedRoom && (
-        <BookingForm
-          selectedRoom={selectedRoom}
-          onClose={() => setIsModalOpen(false)}
-          onConfirmed={handleBookingConfirmed}
-        />
+        <>
+          <BookingForm
+            selectedRoom={selectedRoom}
+            onClose={() => setIsModalOpen(false)}
+            onConfirmed={handleBookingConfirmed}
+          />
+          <Calander BookedDates={bookedDates} />
+        </>
       )}
     </div>
   );
