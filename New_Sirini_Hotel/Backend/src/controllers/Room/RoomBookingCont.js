@@ -14,11 +14,14 @@ const createRoomBooking = async (req, res) => {
       totalAmount,
     } = req.body;
 
-    const newIn = new Date(checkInDate);
-    newIn.setHours(0, 0, 0, 0);
+    // Parse date string (YYYY-MM-DD) as UTC midnight, not local timezone
+    const parseUTCDate = (dateStr) => {
+      const [year, month, day] = dateStr.split("-").map(Number);
+      return new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+    };
 
-    const newOut = new Date(checkOutDate);
-    newOut.setHours(0, 0, 0, 0);
+    const newIn = parseUTCDate(checkInDate);
+    const newOut = parseUTCDate(checkOutDate);
 
     const existingBooking = await RoomBooking.findOne({
       roomNumber: roomNumber,
