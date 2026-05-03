@@ -6,6 +6,7 @@ const ReceptionHallAppoint = require("../controllers/ReceptionHall/ReceptionHall
 const ReceptionHallPackg = require("../controllers/ReceptionHall/ReceptionHallPackg");
 const CateringItemsCont = require("../controllers/ReceptionHall/CateringItemsCont");
 const AdvertismentCont = require("../controllers/ReceptionHall/AdvertismentCont");
+const ReceptionHallBookCont = require("../controllers/ReceptionHall/ReceptionHallBookCont");
 
 router.post(
   "/appointment/add",
@@ -126,4 +127,7 @@ router.get(
   authmiddleware,
   AdvertismentCont.getSpecificUserAdvertisments,
 );
+router.get("/booking/dates", ReceptionHallBookCont.GetBookingDates);
+router.post("/booking/add", ReceptionHallBookCont.createReceptionHallBooking);
+
 module.exports = router;

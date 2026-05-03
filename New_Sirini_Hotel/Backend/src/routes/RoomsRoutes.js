@@ -61,5 +61,9 @@ router.put(
   "/changeroomavailability/:id",
   roomController.toggleRoomAvailability,
 );
+router.get(
+  "/unavailablerooms/dates/:roomNumber",
+  roomBookingController.getUnavilableDatesForRoom,
+);
 
 module.exports = router;
