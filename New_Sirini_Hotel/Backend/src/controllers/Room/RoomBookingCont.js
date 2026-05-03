@@ -2,7 +2,7 @@ const RoomBooking = require("../../models/Rooms/RoomBookModel");
 
 const createRoomBooking = async (req, res) => {
   try {
-    const userId= req.userData.id;
+    const userId = req.userData.id;
     const {
       name,
       email,
@@ -242,6 +242,22 @@ const getspecificuserbookings = async (req, res) => {
   }
 };
 
+const getUnavilableDatesForRoom = async (req, res) => {
+  try {
+    const { roomNumber } = req.params;
+    if (!roomNumber) {
+      return res.status(400).json({ error: "Room number is required" });
+    }
+    const unavialbleDates = await RoomBooking.find(
+      { roomNumber, status: { $in: ["Confirmed", "Pending"] } },
+      "checkInDate checkOutDate",
+    );
+    res.status(200).json(unavialbleDates);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createRoomBooking,
   deleteRoomBooking,
@@ -256,4 +272,5 @@ module.exports = {
   setRoomBookingStatustoCompleted,
   getCompletedRoomBookings,
   getspecificuserbookings,
+  getUnavilableDatesForRoom,
 };
