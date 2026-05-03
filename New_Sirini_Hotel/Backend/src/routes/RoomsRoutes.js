@@ -62,7 +62,7 @@ router.put(
   roomController.toggleRoomAvailability,
 );
 router.get(
-  "/unavailablerooms/:roomNumber",
+  "/unavailablerooms/dates/:roomNumber",
   roomBookingController.getUnavilableDatesForRoom,
 );
 

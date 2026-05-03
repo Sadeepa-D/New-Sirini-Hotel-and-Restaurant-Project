@@ -3,6 +3,7 @@ import axios from "axios";
 import MainRoom from "../../assets/Rooms/Main_Room.png";
 import BookingForm from "../../Components/RoomCompo/BookingForm";
 import Exploreindicator from "../../Components/Exploreindicator";
+import Calander from "../../Components/Calander";
 import toast from "react-hot-toast";
 
 function Rooms() {
@@ -13,6 +14,28 @@ function Rooms() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+  const [bookedDates, setBookedDates] = useState([]);
+
+  const fetchBookedDates = async (roomNumber) => {
+    try {
+      const response = await axios.get(
+        `${VITE_URL}/api/rooms/unavailablerooms/dates/${roomNumber}`,
+      );
+      const rawData = response.data;
+
+      const normalized = rawData.map((item) => {
+        const date = new Date(item.checkInDate);
+        const y = date.getUTCFullYear();
+        const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+        const d = String(date.getUTCDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      });
+      console.log("Fetched booked dates for room", roomNumber, ":", normalized);
+      setBookedDates(normalized);
+    } catch (error) {
+      console.error("Error fetching booked dates:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -36,6 +59,7 @@ function Rooms() {
 
     setSelectedRoom(room);
     setIsModalOpen(true);
+    fetchBookedDates(room.roomNumber);
   };
 
   const handleBookingConfirmed = (roomId) => {
@@ -129,7 +153,7 @@ function Rooms() {
                     </div>
 
                     <h3 className="text-3xl md:text-4xl font-serif text-white mb-4 leading-tight group-hover:text-orange-600 transition-colors duration-500">
-                      {room.roomType}{" "}
+                      {room.roomType}
                       <span className="text-lg font-serif text-white italic font-sans">
                         Room
                       </span>
@@ -195,7 +219,7 @@ function Rooms() {
         )}
       </main>
 
-      {isModalOpen && selectedRoom && (
+      {isModalOpen && selectedRoom &&(
         <BookingForm
           selectedRoom={selectedRoom}
           onClose={() => setIsModalOpen(false)}
