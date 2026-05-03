@@ -11,15 +11,15 @@ import toast from "react-hot-toast";
 
 export default function Reception() {
   const VITE_URL = import.meta.env.VITE_API_URL;
-  
+
   // 1. State to handle form visibility
   const [showForm, setShowForm] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
-  
+
   // 2. State for calendar data
   const [bookedDates, setBookedDates] = useState([]);
   const [loadingDates, setLoadingDates] = useState(true);
-  
+
   // 3. Create the reference
   const formSectionRef = useRef(null);
 
@@ -32,7 +32,6 @@ export default function Reception() {
 
       const rawData = response.data;
 
-      // ✅ Extract eventDate field and normalize to YYYY-MM-DD
       const normalized = rawData.map((item) => {
         const date = new Date(item.eventDate);
         const y = date.getUTCFullYear();

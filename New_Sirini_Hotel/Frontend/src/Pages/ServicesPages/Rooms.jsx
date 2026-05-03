@@ -6,6 +6,7 @@ import Exploreindicator from "../../Components/Exploreindicator";
 import toast from "react-hot-toast";
 
 function Rooms() {
+  const VITE_URL = import.meta.env.VITE_API_URL;
   const [roomList, setRoomList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -16,9 +17,7 @@ function Rooms() {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:5000/api/rooms/viewrooms",
-        );
+        const res = await axios.get(`${VITE_URL}/api/rooms/viewrooms`);
         setRoomList(res.data);
       } catch (err) {
         setError("Failed to load rooms. Please try again.");
@@ -30,19 +29,17 @@ function Rooms() {
   }, []);
 
   const handleBookNow = (room) => {
-  if (!isLoggedIn) {
-    toast.error("Please login to book a room");
-    return;
-  }
+    if (!isLoggedIn) {
+      toast.error("Please login to book a room");
+      return;
+    }
 
-  setSelectedRoom(room);
-  setIsModalOpen(true);
-};
+    setSelectedRoom(room);
+    setIsModalOpen(true);
+  };
 
   const handleBookingConfirmed = (roomId) => {
-
-  console.log("Booking request received for room ID:", roomId);
-  
+    console.log("Booking request received for room ID:", roomId);
   };
 
   return (
@@ -67,13 +64,12 @@ function Rooms() {
           <p className="text-lg md:text-xl italic tracking-widest border-t border-b border-white py-2 px-4">
             Peaceful rooms designed for your perfect stay
           </p>
-           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
-        </div>
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10"></div>
 
-        {/* Explore arrow pinned to bottom */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
-          <Exploreindicator />
-        </div>
+          {/* Explore arrow pinned to bottom */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
+            <Exploreindicator />
+          </div>
         </div>
       </header>
 
@@ -175,7 +171,6 @@ function Rooms() {
                   {/* Status & Footer */}
                   <div className="flex flex-row items-center justify-between gap-4 pt-6 border-t border-gray-50 mt-auto">
                     <div className="flex items-center gap-3">
-                      
                       <p
                         className={`text-[17px] font-black uppercase tracking-[0.2em] ${room.status === "available" ? "text-green-600" : room.status === "maintenance" ? "text-yellow-600" : "text-red-600"}`}
                       >
