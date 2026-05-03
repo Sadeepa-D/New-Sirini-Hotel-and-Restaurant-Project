@@ -18,11 +18,17 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
     checkOutDate: "",
   });
 
+  // Parse date string (YYYY-MM-DD) and create UTC date, not local timezone
+  const parseUTCDate = (dateStr) => {
+    const [year, month, day] = dateStr.split("-").map(Number);
+    return new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+  };
+
   // change the price according to num of dates selected
   useEffect(() => {
     if (formData.checkInDate && formData.checkOutDate) {
-      const checkIn = new Date(formData.checkInDate);
-      const checkOut = new Date(formData.checkOutDate);
+      const checkIn = parseUTCDate(formData.checkInDate);
+      const checkOut = parseUTCDate(formData.checkOutDate);
       const timeDiff = checkOut.getTime() - checkIn.getTime();
       const nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
@@ -42,8 +48,8 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
     e.preventDefault();
 
     const token = localStorage.getItem("token");
-    const checkIn = new Date(formData.checkInDate);
-    const checkOut = new Date(formData.checkOutDate);
+    const checkIn = parseUTCDate(formData.checkInDate);
+    const checkOut = parseUTCDate(formData.checkOutDate);
 
     if (checkOut <= checkIn) {
       alert("Check-out date must be after check-in date.");
