@@ -219,12 +219,15 @@ function Rooms() {
         )}
       </main>
 
-      {isModalOpen && selectedRoom &&(
-        <BookingForm
-          selectedRoom={selectedRoom}
-          onClose={() => setIsModalOpen(false)}
-          onConfirmed={handleBookingConfirmed}
-        />
+      {isModalOpen && selectedRoom && (
+        <>
+          <BookingForm
+            selectedRoom={selectedRoom}
+            onClose={() => setIsModalOpen(false)}
+            onConfirmed={handleBookingConfirmed}
+          />
+          <Calander BookedDates={bookedDates} />
+        </>
       )}
     </div>
   );
