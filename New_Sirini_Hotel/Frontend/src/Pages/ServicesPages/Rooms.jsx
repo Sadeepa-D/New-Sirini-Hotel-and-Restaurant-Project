@@ -23,15 +23,22 @@ function Rooms() {
       );
       const rawData = response.data;
 
+      const unavailableDates = [];
+
       const normalized = rawData.map((item) => {
-        const date = new Date(item.checkInDate);
-        const y = date.getUTCFullYear();
-        const m = String(date.getUTCMonth() + 1).padStart(2, "0");
-        const d = String(date.getUTCDate()).padStart(2, "0");
-        return `${y}-${m}-${d}`;
+        const startdate = new Date(item.checkInDate);
+        const enddate = new Date(item.checkOutDate);
+        const current = new Date(startdate);
+        while (current <= enddate) {
+          const y = current.getUTCFullYear();
+          const m = String(current.getUTCMonth() + 1).padStart(2, "0");
+          const d = String(current.getUTCDate()).padStart(2, "0");
+          unavailableDates.push(`${y}-${m}-${d}`);
+          current.setDate(current.getDate() + 1);
+        }
       });
-      console.log("Fetched booked dates for room", roomNumber, ":", normalized);
-      setBookedDates(normalized);
+      console.log("Fetched Booked Dates:", unavailableDates);
+      setBookedDates(unavailableDates);
     } catch (error) {
       console.error("Error fetching booked dates:", error);
     }
