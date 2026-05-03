@@ -1,33 +1,7 @@
 const CateringItems = require("../../models/Reception/CateringItems");
 const cloudinary = require("cloudinary");
 
-const createCateringItem = async (req, res) => {
-  try {
-    const { name, ingredients, priceperserving } = req.body;
-    if (!name || !ingredients || !priceperserving) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
-    const image = req.file ? req.file.secure_url : null;
-    const imagePublicId = req.file ? req.file.public_id : null;
-    if (!image) {
-      return res.status(400).json({ message: "Image is required" });
-    }
-    const newCateringItem = new CateringItems({
-      name,
-      ingredients,
-      priceperserving,
-      image,
-      imagePublicId,
-      status: true,
-    });
-    await newCateringItem.save();
-    res.status(201).json({
-      message: "Catering item created successfully",
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Error creating catering item", error });
-  }
-};
+
 const getCateringItems = async (req, res) => {
   try {
     const items = await CateringItems.find();
