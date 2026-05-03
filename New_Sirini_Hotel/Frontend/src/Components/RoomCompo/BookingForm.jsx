@@ -3,6 +3,7 @@ import axios from "axios";
 import BookingSuccess from "../RoomCompo/SuccessMsg";
 
 function BookingForm({ selectedRoom, onClose, onConfirmed }) {
+  const VITE_URL = import.meta.env.VITE_API_URL;
   const [showSuccess, setShowSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [totalPrice, setTotalPrice] = useState(selectedRoom.price);
@@ -44,8 +45,6 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
     const checkIn = new Date(formData.checkInDate);
     const checkOut = new Date(formData.checkOutDate);
 
-    
-
     if (checkOut <= checkIn) {
       alert("Check-out date must be after check-in date.");
       return;
@@ -53,24 +52,25 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
 
     setLoading(true);
     try {
-     
-      const res = await axios.post("http://localhost:5000/api/rooms/book", {
-        ...formData,
-        room: selectedRoom._id,
-        roomNumber: selectedRoom.roomNumber,
-        numberOfGuests: formData.guests,
-        totalAmount: totalPrice,
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      const res = await axios.post(
+        `${VITE_URL}/api/rooms/book`,
+        {
+          ...formData,
+          room: selectedRoom._id,
+          roomNumber: selectedRoom.roomNumber,
+          numberOfGuests: formData.guests,
+          totalAmount: totalPrice,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
 
-      
-      onConfirmed(selectedRoom._id); 
+      onConfirmed(selectedRoom._id);
       setShowSuccess(true);
     } catch (error) {
-      
       const errorMsg =
         error.response?.data?.error || "Booking failed. Please try again.";
       alert(errorMsg);
@@ -80,10 +80,13 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
   };
 
   if (showSuccess) {
-    return <BookingSuccess selectedRoom={selectedRoom} 
-    onClose={onClose} 
-    totalPrice={totalPrice}
-    />;
+    return (
+      <BookingSuccess
+        selectedRoom={selectedRoom}
+        onClose={onClose}
+        totalPrice={totalPrice}
+      />
+    );
   }
 
   return (
