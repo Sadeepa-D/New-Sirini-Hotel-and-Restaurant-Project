@@ -4,6 +4,7 @@ import {
   Search,
   X,
   CalendarDays,
+  Calendar,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -12,6 +13,7 @@ import toast from "react-hot-toast";
 import ReceptionHallBookingCard from "./ReceptionHallBookingCard";
 import ReceptionHallBookForm from "./ReceptionHallBookForm";
 import ConfirmDialog from "../../ConfrimDialog";
+import Calander from "../../Calander";
 
 const ReceptionHallBookMng = () => {
   const VITE_URL = import.meta.env.VITE_API_URL;
@@ -24,6 +26,7 @@ const ReceptionHallBookMng = () => {
   const [itemsPerView, setItemsPerView] = useState(
     typeof window !== "undefined" && window.innerWidth < 640 ? 1 : 3,
   );
+
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
     id: null,
@@ -31,6 +34,32 @@ const ReceptionHallBookMng = () => {
     title: "",
     message: "",
   });
+  const [showcalander, setShowCalander] = useState(false);
+  const [bookedDates, setBookedDates] = useState([]);
+  const [loadingDates, setLoadingDates] = useState(true);
+
+  const fetchBookedDates = async () => {
+    try {
+      const response = await axios.get(
+        `${VITE_URL}/api/receptionhall/booking/dates`,
+      );
+
+      const rawData = response.data;
+
+      const normalized = rawData.map((item) => {
+        const date = new Date(item.eventDate);
+        const y = date.getUTCFullYear();
+        const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+        const d = String(date.getUTCDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      });
+      setBookedDates(normalized);
+    } catch (error) {
+      console.error("Error fetching booked dates:", error);
+    } finally {
+      setLoadingDates(false);
+    }
+  };
 
   const fetchBookings = async () => {
     try {
@@ -47,6 +76,7 @@ const ReceptionHallBookMng = () => {
 
   useEffect(() => {
     fetchBookings();
+    fetchBookedDates();
   }, []);
 
   useEffect(() => {
@@ -143,6 +173,13 @@ const ReceptionHallBookMng = () => {
             className="flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors shadow-sm"
           >
             <Plus size={16} /> Add Bookings
+          </button>
+          <button
+            onClick={() => setShowCalander(!showcalander)}
+            className="flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors shadow-sm"
+          >
+            {showcalander ? <X size={16} /> : <Calendar size={16} />}
+            {showcalander ? "Hide Calendar" : "Show Calendar"}
           </button>
         </div>
       </div>
@@ -284,6 +321,9 @@ const ReceptionHallBookMng = () => {
         onConfirm={handleDelete}
         onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
       />
+      {showcalander && (
+        <Calander BookedDates={bookedDates} loading={loadingDates} />
+      )}
     </div>
   );
 };
