@@ -35,22 +35,7 @@ const getReceptionAppointments = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-const deleteReceptionAppointment = async (req, res) => {
-  try {
-    const { id } = req.params;
-    if (!id) {
-      return res.status(400).json({ message: "Appointment ID is required" });
-    }
-    const deletedAppointment = await ReceptionAppointment.findByIdAndDelete(id);
-    if (!deletedAppointment) {
-      return res.status(404).json({ message: "Appointment not found" });
-    }
-    res.status(200).json({ message: "Appointment deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting reception appointment:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
+
 const updateReceptionAppointment = async (req, res) => {
   try {
     const { id } = req.params;
