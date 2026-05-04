@@ -10,6 +10,7 @@ const createRoom = async (req, res) => {
     if (!roomNumber || !roomType || !price || !bedType || !capacity) {
       return res.status(400).json({ message: "Please provide all required fields" });
     }
+    
     const image = req.file ? req.file.url : null;
     const imagePublicId = req.file ? req.file.public_id : null;
     if (!image) {
