@@ -329,7 +329,7 @@ const LiquorManager = () => {
         type={confirmDialog.type}
         title={confirmDialog.title}
         message={confirmDialog.message}
-        onConfirm={handleConfirmDialog}
+        onConfirm={handleConfirmDelete}
         onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
       />
     </div>
