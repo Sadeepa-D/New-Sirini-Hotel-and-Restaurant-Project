@@ -86,10 +86,9 @@ const AppointmentMng = () => {
             Reception Hall
           </p>
           <h2 className="font-cinzel text-2xl sm:text-3xl text-gray-800 font-semibold">
-            Booking Requests
+            Appointment Requests
           </h2>
         </div>
-
         <div className="flex items-center gap-2 bg-gray-50 p-1.5 rounded-2xl overflow-x-auto">
           {tabs.map((tab) => (
             <button

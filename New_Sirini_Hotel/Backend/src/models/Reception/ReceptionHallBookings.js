@@ -29,6 +29,11 @@ const receptionHallBookingSchema = new mongoose.Schema(
     specialRequests: {
       type: String,
     },
+    status: {
+      type: String,
+      enum: ["Pending", "Confirmed", "Completed", "Cancelled"],
+      default: "Pending",
+    },
   },
   { timestamps: true },
 );

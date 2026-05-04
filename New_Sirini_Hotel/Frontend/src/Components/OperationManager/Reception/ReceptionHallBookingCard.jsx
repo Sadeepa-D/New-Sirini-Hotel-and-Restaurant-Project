@@ -1,0 +1,102 @@
+import React from "react";
+import {
+  User, Mail, Phone, CalendarDays, Users,
+  UtensilsCrossed, MessageSquare, Pencil, Trash2, Clock,
+} from "lucide-react";
+
+const ReceptionHallBookingCard = ({ booking, onEdit, onDelete }) => {
+  const { customerName, customerEmail, customerPhone, eventDate, eventType, numberOfGuests, specialRequests, status } = booking;
+
+  const statusConfig = {
+    Pending:   { bg: "bg-yellow-100", text: "text-yellow-700", dot: "bg-yellow-400" },
+    Confirmed: { bg: "bg-green-100",  text: "text-green-700",  dot: "bg-green-400" },
+    Cancelled: { bg: "bg-red-100",    text: "text-red-600",    dot: "bg-red-400" },
+    Completed: { bg: "bg-blue-100",   text: "text-blue-700",   dot: "bg-blue-400" },
+  };
+
+  const s = statusConfig[status] || statusConfig.Pending;
+
+  const formattedDate = eventDate
+    ? new Date(eventDate).toLocaleDateString("en-US", {
+        weekday: "short", year: "numeric", month: "short", day: "numeric",
+      })
+    : "N/A";
+
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col">
+
+      {/* Top color bar by event type */}
+      <div className="h-1.5 w-full rounded-t-2xl bg-amber-400" />
+
+      <div className="p-4 sm:p-5 flex flex-col flex-1 gap-3">
+
+        {/* Header row */}
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
+              <User size={18} className="text-amber-600" />
+            </div>
+            <div>
+              <h3 className="font-bold text-gray-800 text-sm leading-tight">{customerName}</h3>
+              <span className="text-xs text-amber-600 font-semibold">{eventType}</span>
+            </div>
+          </div>
+          <div className={`flex items-center gap-1.5 ${s.bg} ${s.text} text-xs font-bold px-2.5 py-1 rounded-full shrink-0`}>
+            <div className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
+            {status || "Pending"}
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="h-px bg-gray-100" />
+
+        {/* Details */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div className="flex items-center gap-2">
+            <Mail size={13} className="text-gray-400 shrink-0" />
+            <span className="text-xs text-gray-500 truncate">{customerEmail}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Phone size={13} className="text-gray-400 shrink-0" />
+            <span className="text-xs text-gray-500">{customerPhone}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <CalendarDays size={13} className="text-gray-400 shrink-0" />
+            <span className="text-xs text-gray-500">{formattedDate}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Users size={13} className="text-gray-400 shrink-0" />
+            <span className="text-xs text-gray-500">{numberOfGuests} Guests</span>
+          </div>
+        </div>
+
+        {/* Special requests */}
+        {specialRequests && (
+          <div className="flex items-start gap-2 bg-gray-50 rounded-xl p-3">
+            <MessageSquare size={13} className="text-gray-400 shrink-0 mt-0.5" />
+            <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">{specialRequests}</p>
+          </div>
+        )}
+
+        {/* Action buttons */}
+        <div className="flex gap-2 mt-auto pt-2 border-t border-gray-100">
+          <button
+            onClick={() => onEdit(booking)}
+            className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 text-xs font-semibold transition-colors"
+          >
+            <Pencil size={13} /> Edit
+          </button>
+          <button
+            onClick={() => onDelete(booking._id)}
+            className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 text-xs font-semibold transition-colors"
+          >
+            <Trash2 size={13} /> Delete
+          </button>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
+export default ReceptionHallBookingCard;
