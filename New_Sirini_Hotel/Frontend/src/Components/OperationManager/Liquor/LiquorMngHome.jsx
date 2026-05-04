@@ -13,6 +13,7 @@ import axios from "axios";
 import AddLiquorForm from "../Liquor/AddLiquorForm";
 import DrinkCard from "../../LiqourStore/LiqourCard";
 import LiquorDetailsComp from "../../LiqourStore/LIquorDetailsComp";
+import ConfirmDialog from "../../ConfrimDialog";
 
 const LiquorManager = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -24,6 +25,13 @@ const LiquorManager = () => {
   const [beerIndex, setBeerIndex] = useState(0);
   const [othersIndex, setOthersIndex] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(4);
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    id: null,
+    type: "delete",
+    title: "",
+    message: "",
+  });
 
   const fetchLiquorItems = async () => {
     try {
@@ -60,18 +68,29 @@ const LiquorManager = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this item?")) {
-      const loadingtoast = toast.loading("Deleting item...");
-      try {
-        await axios.delete(
-          `${import.meta.env.VITE_API_URL}/api/liquor/delete/${id}`,
-        );
-        toast.dismiss(loadingtoast);
-        toast.success("Item deleted successfully");
-        fetchLiquorItems();
-      } catch (error) {
-        console.error("Error deleting item:", error);
-      }
+    setConfirmDialog({
+      isOpen: true,
+      id,
+      type: "delete",
+      title: "Delete Liquor Item?",
+      message:
+        "Are you sure you want to delete this liquor item? This action cannot be undone.",
+    });
+  };
+
+  const handleConfirmDelete = async () => {
+    const { id } = confirmDialog;
+    setConfirmDialog({ isOpen: false, id: null });
+    const loadingtoast = toast.loading("Deleting item...");
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}/api/liquor/delete/${id}`,
+      );
+      toast.dismiss(loadingtoast);
+      toast.success("Item deleted successfully");
+      fetchLiquorItems();
+    } catch (error) {
+      console.error("Error deleting item:", error);
     }
   };
 
@@ -305,6 +324,14 @@ const LiquorManager = () => {
           to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        type={confirmDialog.type}
+        title={confirmDialog.title}
+        message={confirmDialog.message}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
+      />
     </div>
   );
 };
