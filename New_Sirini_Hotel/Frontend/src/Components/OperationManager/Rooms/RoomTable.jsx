@@ -1,109 +1,99 @@
 import React from "react";
-import { Edit2, Trash2, Wind, Snowflake } from "lucide-react"; 
+import { Edit3, Trash2, Wind, Snowflake, Users, Info, ImageIcon } from "lucide-react";
 import StatusBadge from "./StatusBadge";
 
-const RoomTable = ({ rooms, onEdit, onDelete }) => {
+const RoomCards = ({ rooms, onEdit, onDelete }) => {
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          {/* Head */}
-          <thead>
-            <tr className="bg-gray-50 border-b border-gray-100">
-              <th className="text-left px-4 sm:px-5 py-3 text-xs font-bold text-gray-500 uppercase tracking-wide">
-                Room
-              </th>
-              <th className="text-left px-4 sm:px-5 py-3 text-xs font-bold text-gray-500 uppercase tracking-wide">
-                Type
-              </th>
-             
-              <th className="text-left px-4 sm:px-5 py-3 text-xs font-bold text-gray-500 uppercase tracking-wide">
-                Condition
-              </th>
-              <th className="text-left px-4 sm:px-5 py-3 text-xs font-bold text-gray-500 uppercase tracking-wide">
-                Price
-              </th>
-              <th className="text-left px-4 sm:px-5 py-3 text-xs font-bold text-gray-500 uppercase tracking-wide">
-                Capacity
-              </th>
-              <th className="text-left px-4 sm:px-5 py-3 text-xs font-bold text-gray-500 uppercase tracking-wide">
-                Status
-              </th>
-              <th className="hidden md:table-cell text-left px-4 sm:px-5 py-3 text-xs font-bold text-gray-500 uppercase tracking-wide">
-                Description
-              </th>
-              <th className="text-center px-4 sm:px-5 py-3 text-xs font-bold text-gray-500 uppercase tracking-wide">
-                Actions
-              </th>
-            </tr>
-          </thead>
+    <div className="p-4 bg-gray-50">
+      {rooms.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-16 bg-white rounded-2xl border-2 border-dashed border-gray-200">
+          <p className="text-gray-500 font-medium">No rooms in inventory</p>
+        </div>
+      ) : (
+        /* Increased column count to decrease individual card width */
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+          {rooms.map((room) => (
+            <div 
+              key={room._id} 
+              className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300 flex flex-col group"
+            >
+              {/* 1. Decreased Image Height */}
+              <div className="relative h-40 w-full bg-gray-100 overflow-hidden">
+                {room.image ? (
+                  <img 
+                    src={room.image} 
+                    alt={room.roomType}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400">
+                    <ImageIcon size={32} strokeWidth={1} />
+                  </div>
+                )}
+                
+                <div className="absolute top-2 right-2 scale-90 origin-top-right">
+                  <StatusBadge status={room.status} />
+                </div>
+              </div>
 
-          {/* Body */}
-          <tbody>
-            {rooms.length === 0 ? (
-              <tr>
-                <td colSpan={8} className="text-center py-12 text-gray-400 font-medium">
-                  No rooms found.
-                </td>
-              </tr>
-            ) : (
-              rooms.map((room) => (
-                <tr key={room._id} className="border-b border-gray-50 hover:bg-gray-50 transition">
-                  <td className="px-4 sm:px-5 py-4 font-bold text-gray-900">
-                    #{room.roomNumber}
-                  </td>
-                  <td className="px-4 sm:px-5 py-4 text-gray-600">
-                    {room.roomType}
-                  </td>
-                  
-                 
-                  <td className="px-4 sm:px-5 py-4">
-                    <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-bold text-[10px] uppercase tracking-wider ${
-                      room.condition === "AC" 
-                        ? "bg-blue-50 text-blue-600 border border-blue-100" 
-                        : "bg-orange-50 text-orange-600 border border-orange-100"
-                    }`}>
-                      {room.condition === "AC" ? <Snowflake size={12} /> : <Wind size={12} />}
-                      {room.condition || "Fan"}
-                    </div>
-                  </td>
-
-                  <td className="px-4 sm:px-5 py-4 text-gray-800 font-semibold">
+              {/* 2. Compact Content Area */}
+              <div className="p-4 flex-grow flex flex-col">
+                <div className="mb-3">
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-[#D4AF37] block">
+                    Room No {room.roomNumber}
+                  </span>
+                  <h5 className="text-base font-bold text-gray-900 leading-tight truncate">
+                    {room.roomType} Room
+                  </h5>
+                  <p className="text-sm font-black text-gray-700 mt-1">
                     Rs.{Number(room.price).toLocaleString()}
-                  </td>
-                  <td className="px-4 sm:px-5 py-4 text-gray-600">
-                    {room.capacity} {room.capacity === 1 ? "Guest" : "Guests"}
-                  </td>
-                  <td className="px-4 sm:px-5 py-4">
-                    <StatusBadge status={room.status} />
-                  </td>
-                  <td className="hidden md:table-cell px-4 sm:px-5 py-4 text-gray-500 max-w-[180px] truncate">
-                    {room.description || "No description provided"}
-                  </td>
-                  <td className="px-4 sm:px-5 py-4">
-                    <div className="flex items-center justify-center gap-2">
-                      <button
-                        onClick={() => onEdit(room)}
-                        className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition"
-                      >
-                        <Edit2 size={15} />
-                      </button>
-                      <button
-                        onClick={() => onDelete(room._id)}
-                        className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition"
-                      >
-                        <Trash2 size={15} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+                  </p>
+                </div>
+
+                {/* Compact Features Row */}
+                <div className="flex gap-2 mb-3">
+                  <div className={`flex items-center gap-1.5 px-2 py-1 rounded-md border text-[10px] font-bold uppercase ${
+                    room.condition === "AC" 
+                      ? "bg-blue-50 border-blue-100 text-blue-600" 
+                      : "bg-orange-50 border-orange-100 text-orange-600"
+                  }`}>
+                    {room.condition === "AC" ? <Snowflake size={12} /> : <Wind size={12} />}
+                    {room.condition || "Fan"}
+                  </div>
+
+                  <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-gray-100 bg-gray-50 text-gray-500 text-[10px] font-bold uppercase">
+                    <Users size={12} />
+                    {room.capacity}
+                  </div>
+                </div>
+
+                {/* Shortened Description (Max 1 line) */}
+                <p className="text-[11px] text-gray-400 line-clamp-1 italic mb-4">
+                  {room.description || "No description provided."}
+                </p>
+
+                {/* 3. Small Action Buttons */}
+                <div className="flex gap-2 pt-3 border-t border-gray-50">
+                  <button
+                    onClick={() => onEdit(room)}
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-black text-white rounded-lg hover:bg-[#D4AF37] transition-all font-bold text-[10px] uppercase tracking-wider"
+                  >
+                    <Edit3 size={12} /> Edit
+                  </button>
+                  <button
+                    onClick={() => onDelete(room._id)}
+                    className="w-10 flex items-center justify-center py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all border border-red-100"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
-export default RoomTable;
+export default RoomCards;

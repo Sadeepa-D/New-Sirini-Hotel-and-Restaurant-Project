@@ -15,6 +15,7 @@ import {
 import axios from "axios";
 import toast from "react-hot-toast";
 import AdvertisementCard from "./AdvertisementCard";
+import ConfirmDialog from "../../ConfrimDialog";
 
 const statusConfig = {
   pending: {
@@ -48,6 +49,13 @@ const AdvertismentMng = () => {
   const [itemsPerView, setItemsPerView] = useState(
     typeof window !== "undefined" && window.innerWidth < 640 ? 1 : 3,
   );
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    id: null,
+    type: "",
+    title: "",
+    message: "",
+  });
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -154,7 +162,23 @@ const AdvertismentMng = () => {
       toast.error("Failed to reject advertisement");
     }
   };
-  const handleDelete = async (id) => {
+
+  const handleConfirmDelete = async (id) => {
+    setConfirmDialog({
+      isOpen: true,
+      id: id,
+      type: "delete",
+      title: "Delete Advertisement",
+      message: "Are you sure you want to delete this advertisement?",
+    });
+  };
+
+  const handleDelete = async () => {
+    const { id } = confirmDialog;
+    setConfirmDialog({
+      isOpen: false,
+      id: null,
+    });
     try {
       const response = await axios.delete(
         `${VITE_URL}/api/receptionhall/advertisment/delete/${id}`,
@@ -301,7 +325,7 @@ const AdvertismentMng = () => {
                   ad={ad}
                   onApprove={handleApprove}
                   onReject={handleReject}
-                  onDelete={handleDelete}
+                  onDelete={handleConfirmDelete}
                   onResetPending={handlepending}
                   showAdminActions={true}
                   showEditDelete={false}
@@ -374,6 +398,14 @@ const AdvertismentMng = () => {
           to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        type={confirmDialog.type}
+        title={confirmDialog.title}
+        message={confirmDialog.message}
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
+      />
     </div>
   );
 };

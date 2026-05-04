@@ -12,6 +12,7 @@ import {
 import axios from "axios";
 import toast from "react-hot-toast";
 import CateringAddForm from "./CateringAddForm";
+import ConfirmDialog from "../../ConfrimDialog";
 
 const ActionRibbon = ({ item, onToggle, onEdit, onDelete }) => (
   <div className="absolute right-2 top-2 flex flex-col gap-1.5 z-10">
@@ -51,6 +52,13 @@ const CateringMng = () => {
   const [itemsPerView, setItemsPerView] = useState(
     typeof window !== "undefined" && window.innerWidth < 640 ? 1 : 3,
   );
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    id: null,
+    type: "",
+    title: "",
+    message: "",
+  });
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -115,7 +123,22 @@ const CateringMng = () => {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleconfrimDelete = (id) => {
+    setConfirmDialog({
+      isOpen: true,
+      id,
+      type: "delete",
+      title: "Delete Catering Item",
+      message: "Are you sure you want to delete this item?",
+    });
+  };
+
+  const handleDelete = async () => {
+    const { id } = confirmDialog;
+    setConfirmDialog({
+      isOpen: false,
+      id: null,
+    });
     try {
       await axios.delete(`${VITE_URL}/api/receptionhall/catering/delete/${id}`);
       await fetchItems();
@@ -245,7 +268,7 @@ const CateringMng = () => {
                   item={item}
                   onToggle={handleToggle}
                   onEdit={handleEdit}
-                  onDelete={handleDelete}
+                  onDelete={handleconfrimDelete}
                 />
 
                 {/* Card info */}
@@ -344,6 +367,14 @@ const CateringMng = () => {
           to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        type={confirmDialog.type}
+        title={confirmDialog.title}
+        message={confirmDialog.message}
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
+      />
     </div>
   );
 };
