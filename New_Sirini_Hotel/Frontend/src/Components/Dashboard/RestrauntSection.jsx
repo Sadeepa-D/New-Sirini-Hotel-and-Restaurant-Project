@@ -2,12 +2,20 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import ConfirmDialog from "../ConfrimDialog";
 
 const RestaurantSection = ({ data }) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("In Progress");
   const navigate = useNavigate();
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    id: null,
+    type: "delete",
+    title: "",
+    message: "",
+  });
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -39,18 +47,32 @@ const RestaurantSection = ({ data }) => {
     fetchOrders();
   }, []);
 
-  const handleDelete = async (orderId) => {
-    if (!window.confirm("Are you sure you want to delete this order?")) return;
+  const handleDelete = (orderId) => {
+    setConfirmDialog({
+      isOpen: true,
+      id: orderId,
+      type: "delete",
+      title: "Delete Order?",
+      message: "Are you sure you want to delete this order? This action cannot be undone.",
+    });
+  };
+
+  const handleConfirmDelete = async () => {
+    const { id } = confirmDialog;
+    setConfirmDialog({ isOpen: false, id: null });
+    const loadingtoast = toast.loading("Deleting order...");
     try {
       const response = await axios.delete(
-        `${VITE_URL}/api/restraunt/deleteorder/${orderId}`,
+        `${VITE_URL}/api/restraunt/deleteorder/${id}`,
       );
       if (response.status === 200) {
+        toast.dismiss(loadingtoast);
         toast.success("Order deleted successfully");
         fetchOrders(); // Refresh to move to cancelled/deleted view
       }
     } catch (error) {
       console.error("Error deleting order:", error);
+      toast.dismiss(loadingtoast);
       toast.error("Failed to delete order");
     }
   };
@@ -162,7 +184,14 @@ const RestaurantSection = ({ data }) => {
         </div>
       )}
 
-
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        type={confirmDialog.type}
+        title={confirmDialog.title}
+        message={confirmDialog.message}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
+      />
     </div>
   );
 };
