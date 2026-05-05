@@ -169,7 +169,7 @@ function Header() {
               {/* Log Out Button */}
               <button
                 onClick={handlelogout}
-                className="w-28 py-1.5 border border-white text-white rounded font-bold transition-all duration-300 hover:bg-red-600 hover:border-red-600 hover:text-white hover:-translate-y-1 hover:shadow-lg hover:shadow-red-600/50"
+                className="w-20 py-1 border border-white text-white rounded font-bold text-xs transition-all duration-300 hover:bg-red-600 hover:border-red-600 hover:text-white hover:-translate-y-1 hover:shadow-lg hover:shadow-red-600/50"
               >
                 Log Out
               </button>
@@ -260,7 +260,7 @@ function Header() {
                 {/* Log Out Button */}
                 <button
                   onClick={handlelogout}
-                  className="w-28 py-1.5 border border-white text-white rounded font-bold transition-all duration-300 hover:bg-red-600 hover:border-red-600 hover:text-white hover:-translate-y-1 hover:shadow-lg hover:shadow-red-600/50"
+                  className="w-16 py-1 border border-white text-white rounded font-bold text-xs transition-all duration-300 hover:bg-red-600 hover:border-red-600 hover:text-white hover:-translate-y-1 hover:shadow-lg hover:shadow-red-600/50"
                 >
                   Log Out
                 </button>
