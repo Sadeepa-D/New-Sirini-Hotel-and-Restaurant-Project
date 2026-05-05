@@ -15,6 +15,7 @@ import axios from "axios";
 
 import AddRestrauntItemForm from "./AddRestrauntItemForm";
 import OrderManage from "./OrderManage";
+import ConfirmDialog from "../../ConfrimDialog";
 
 
 const FoodCard = ({ item, onClick }) => (
@@ -65,6 +66,13 @@ const RestaurantManager = () => {
   const [foodItems, setFoodItems] = useState([]);
   const [indexes, setIndexes] = useState({});
   const [itemsPerView, setItemsPerView] = useState(4);
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    id: null,
+    type: "delete",
+    title: "",
+    message: "",
+  });
 
   const CATEGORIES = ["Main Meals", "Soft Drinks", "Fresh Juice"];
 
@@ -97,13 +105,29 @@ const RestaurantManager = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this item?")) return;
+    setConfirmDialog({
+      isOpen: true,
+      id,
+      type: "delete",
+      title: "Delete Food Item?",
+      message:
+        "Are you sure you want to delete this food item? This action cannot be undone.",
+    });
+  };
+
+  const handleConfirmDelete = async () => {
+    const { id } = confirmDialog;
+    setConfirmDialog({ isOpen: false, id: null });
+    const loadingtoast = toast.loading("Deleting item...");
     try {
       await axios.delete(`${import.meta.env.VITE_API_URL}/api/restraunt/deletefooditem/${id}`);
+      toast.dismiss(loadingtoast);
       toast.success("Item deleted successfully");
       fetchFoodItems();
     } catch (err) {
       console.error("Error deleting item:", err);
+      toast.dismiss(loadingtoast);
+      toast.error("Error deleting item");
     }
   };
 
@@ -311,6 +335,15 @@ const RestaurantManager = () => {
       {/* Order Manage Section */}
       <hr className="my-12 border-gray-200" />
       <OrderManage />
+
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        type={confirmDialog.type}
+        title={confirmDialog.title}
+        message={confirmDialog.message}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
+      />
     </div>
   );
 };
