@@ -31,9 +31,15 @@ const UserManagement = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [newRole, setNewRole] = useState("");
 
+  const token = localStorage.getItem("token");
+
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(`${VITE_URL}/api/users/getall/users`);
+      const response = await axios.get(`${VITE_URL}/api/users/getall/users`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setUsers(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -43,10 +49,18 @@ const UserManagement = () => {
   const updateuserrole = async (id) => {
     const loadingtoast = toast.loading("Updating user role...");
     try {
-      const response = await axios.put(`${VITE_URL}/api/users/update/role`, {
-        userId: id,
-        newRole: newRole,
-      });
+      const response = await axios.put(
+        `${VITE_URL}/api/users/update/role`,
+        {
+          userId: id,
+          newRole: newRole,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
       toast.dismiss(loadingtoast);
       toast.success("User role updated successfully!");
       fetchUsers();
@@ -77,6 +91,11 @@ const UserManagement = () => {
           userId: users._id,
           newStatus: newStatus,
         },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       toast.dismiss(loadingtoast);
       toast.success("User status updated successfully!");
@@ -90,10 +109,18 @@ const UserManagement = () => {
   const deleteuser = async (users) => {
     const loadingtoast = toast.loading("Deleting user...");
     try {
-      const response = await axios.put(`${VITE_URL}/api/users/delete/user`, {
-        userId: users._id,
-        deleteStatus: "Deleted",
-      });
+      const response = await axios.put(
+        `${VITE_URL}/api/users/delete/user`,
+        {
+          userId: users._id,
+          deleteStatus: "Deleted",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
       toast.dismiss(loadingtoast);
       toast.success("User deleted successfully!");
       fetchUsers();
@@ -114,6 +141,11 @@ const UserManagement = () => {
           name: editdata.name,
           email: editdata.email,
           Phone: editdata.Phone,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
       );
       toast.dismiss(loadingtoast);
@@ -150,6 +182,11 @@ const UserManagement = () => {
         {
           userId: selectedUser._id,
           newPassword: tempPassword,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
       );
       toast.dismiss(loadingtoast);

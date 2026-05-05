@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middleware/authMiddleware");
+const RoleBaseMiddleware = require("../middleware/RoleBaseMiddleware");
 const UserController = require("../controllers/UserController");
 const upload = require("../config/CloudinaryConfig");
 
@@ -18,11 +19,11 @@ router.put(
   authMiddleware,
   UserController.UpdatePassword,
 );
-router.get("/getall/users", UserController.getallUsers);
-router.put("/update/role", UserController.updateUserRole);
-router.put("/update/userstatus", UserController.suspendUser);
-router.put("/delete/user", UserController.deleteUser);
-router.put("/update/userdetails", UserController.updateuserdetails);
-router.put("/reset/userpassword", UserController.resetuserpassword);
+router.get("/getall/users",authMiddleware,RoleBaseMiddleware(["Admin"]), UserController.getallUsers);
+router.put("/update/role",authMiddleware,RoleBaseMiddleware(["Admin"]), UserController.updateUserRole);
+router.put("/update/userstatus",authMiddleware,RoleBaseMiddleware(["Admin"]), UserController.suspendUser);
+router.put("/delete/user", authMiddleware, RoleBaseMiddleware(["Admin"]), UserController.deleteUser);
+router.put("/update/userdetails", authMiddleware, RoleBaseMiddleware(["Admin"]), UserController.updateuserdetails);
+router.put("/reset/userpassword", authMiddleware, RoleBaseMiddleware(["Admin"]), UserController.resetuserpassword);
 
 module.exports = router;
