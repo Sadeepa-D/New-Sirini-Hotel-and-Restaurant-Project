@@ -157,15 +157,16 @@ const RoomsSection = () => {
 const TabBtn = ({ active, onClick, label, icon, count }) => (
   <button
     onClick={onClick}
-    className={`flex items-center gap-2 px-6 py-3 rounded-xl text-[11px] uppercase tracking-widest transition-all whitespace-nowrap font-sans
+    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] uppercase tracking-wider transition-all whitespace-nowrap font-sans
     ${active 
-        ? "bg-white text-orange-600 shadow-md ring-1 ring-black/5 font-semibold" 
+        ? "bg-white text-orange-600 shadow-sm ring-1 ring-black/5 font-semibold" 
         : "text-gray-400 hover:text-gray-600 font-normal"
     }`}
   >
-    {icon} 
+    
+    {React.cloneElement(icon, { size: 12 })} 
     <span>{label}</span>
-    <span className={`ml-1 text-[10px] opacity-60 font-mono`}>
+    <span className={`ml-0.5 text-[9px] opacity-60 font-mono italic`}>
       ({count})
     </span>
   </button>
