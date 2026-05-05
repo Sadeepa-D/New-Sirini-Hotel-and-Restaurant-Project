@@ -198,24 +198,14 @@ const ReceptionHallBookMng = () => {
       <div className="flex flex-wrap gap-3">
         {[
           {
-            label: "Total",
-            value: bookings.length,
-            color: "text-gray-700",
-          },
-          {
-            label: "Pending",
-            value: bookings.filter((b) => b.status === "Pending").length,
-            color: "text-yellow-600",
-          },
-          {
             label: "Confirmed",
             value: bookings.filter((b) => b.status === "Confirmed").length,
             color: "text-green-600",
           },
           {
-            label: "Completed",
-            value: bookings.filter((b) => b.status === "Completed").length,
-            color: "text-blue-600",
+            label: "Cancelled",
+            value: bookings.filter((b) => b.status === "Cancelled").length,
+            color: "text-red-600",
           },
         ].map(({ label, value, color }) => (
           <div
