@@ -26,18 +26,12 @@ const ReceptionHallBookingCard = ({ booking, onEdit, onCancel, onConfirm }) => {
   } = booking;
 
   const statusConfig = {
-    Pending: {
-      bg: "bg-yellow-100",
-      text: "text-yellow-700",
-      dot: "bg-yellow-400",
-    },
     Confirmed: {
       bg: "bg-green-100",
       text: "text-green-700",
       dot: "bg-green-400",
     },
     Cancelled: { bg: "bg-red-100", text: "text-red-600", dot: "bg-red-400" },
-    Completed: { bg: "bg-blue-100", text: "text-blue-700", dot: "bg-blue-400" },
   };
 
   const s = statusConfig[status] || statusConfig.Pending;
