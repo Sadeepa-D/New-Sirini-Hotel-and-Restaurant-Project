@@ -12,6 +12,7 @@ import {
 import axios from "axios";
 import toast from "react-hot-toast";
 import PackageAddForm from "./PackageAddForm";
+import ConfirmDialog from "../../ConfrimDialog";
 
 const ActionRibbon = ({ item, onToggle, onEdit, onDelete }) => (
   <div className="absolute right-2 top-2 flex flex-col gap-1.5 z-10">
@@ -51,6 +52,13 @@ const PackagesMng = () => {
   const [itemsPerView, setItemsPerView] = useState(
     typeof window !== "undefined" && window.innerWidth < 640 ? 1 : 3,
   );
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    id: null,
+    type: "",
+    title: "",
+    message: "",
+  });
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -114,7 +122,19 @@ const PackagesMng = () => {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleconfrimDelete = (id) => {
+    setConfirmDialog({
+      isOpen: true,
+      id,
+      type: "delete",
+      title: "Confirm Deletion",
+      message: "Are you sure you want to delete this package?",
+    });
+  };
+
+  const handleDelete = async () => {
+    const { id } = confirmDialog;
+    setConfirmDialog({ isOpen: false, id: null });
     try {
       await axios.delete(`${VITE_URL}/api/receptionhall/package/delete/${id}`);
       setPackages((prev) => prev.filter((p) => p._id !== id));
@@ -245,7 +265,7 @@ const PackagesMng = () => {
                   item={item}
                   onToggle={handleToggle}
                   onEdit={handleEdit}
-                  onDelete={handleDelete}
+                  onDelete={handleconfrimDelete}
                 />
 
                 {/* Info */}
@@ -353,6 +373,14 @@ const PackagesMng = () => {
           to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        type={confirmDialog.type}
+        title={confirmDialog.title}
+        message={confirmDialog.message}
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
+      />
     </div>
   );
 };

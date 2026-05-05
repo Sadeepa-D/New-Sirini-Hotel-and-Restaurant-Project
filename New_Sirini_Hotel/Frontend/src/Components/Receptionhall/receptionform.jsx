@@ -96,7 +96,7 @@ export default function BookingForm({ editData = null, onSuccess }) {
     <section className="bg-white py-16 px-4 sm:px-8 border-t border-gray-100">
       <div className="text-center mb-10">
         <h2 className="font-cormorant italic text-3xl sm:text-5xl text-amber-500 font-semibold mb-2">
-          {editData ? "Update Your Booking" : "Book Your Reception Hall"}
+          {editData ? "Update Your Request" : "Place Your Reception Hall Visit"}
         </h2>
         <p className="text-gray-400 text-sm uppercase tracking-widest">
           {editData ? "Edit Details" : "plan your visit"}
@@ -168,7 +168,7 @@ export default function BookingForm({ editData = null, onSuccess }) {
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">
-                No of Guests :
+                No of Expected Guests :
               </label>
               <input
                 type="number"
@@ -185,7 +185,7 @@ export default function BookingForm({ editData = null, onSuccess }) {
               type="submit"
               className="bg-amber-400 hover:bg-amber-500 text-black text-lg font-bold px-16 py-3.5 transition-all duration-300 shadow-md hover:shadow-lg active:scale-[0.98]"
             >
-              {editData ? "Save Changes" : "Submit Booking"}{" "}
+              {editData ? "Save Changes" : "Submit Request"}
             </button>
           </div>
         </form>

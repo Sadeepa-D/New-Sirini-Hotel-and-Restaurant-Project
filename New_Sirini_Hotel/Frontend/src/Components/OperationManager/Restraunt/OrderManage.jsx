@@ -2,12 +2,20 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { CheckCircle, XCircle, Search, User, Clock, Check, X } from "lucide-react";
+import ConfirmDialog from "../../ConfrimDialog";
 
 const OrderManage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("In Progress");
   const [searchTerm, setSearchTerm] = useState("");
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    id: null,
+    type: "delete",
+    title: "",
+    message: "",
+  });
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -46,6 +54,32 @@ const OrderManage = () => {
       fetchOrders();
     } catch (error) {
       console.error("Error updating status:", error);
+      toast.error("Failed to update status");
+    }
+  };
+
+  const confirmDeleteOrder = (id) => {
+    setConfirmDialog({
+      isOpen: true,
+      id,
+      type: "delete",
+      title: "Delete Order?",
+      message: "Are you sure you want to delete this order? This action cannot be undone.",
+    });
+  };
+
+  const handleConfirmDelete = async () => {
+    const { id } = confirmDialog;
+    setConfirmDialog({ isOpen: false, id: null });
+    const loadingtoast = toast.loading("Deleting order...");
+    try {
+      await axios.put(`${VITE_URL}/api/restraunt/updateorderstatus/cancelled/${id}`);
+      toast.dismiss(loadingtoast);
+      toast.success(`Order marked as Cancelled`);
+      fetchOrders();
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.dismiss(loadingtoast);
       toast.error("Failed to update status");
     }
   };
@@ -134,7 +168,7 @@ const OrderManage = () => {
             <Check size={12} /> COMPLETE
           </button>
           <button
-            onClick={() => handleStatusChange(order._id, "Cancelled")}
+            onClick={() => confirmDeleteOrder(order._id)}
             className="flex-1 py-2 bg-red-600 text-white rounded-xl font-bold text-[10px] hover:bg-red-700 transition-colors flex items-center justify-center gap-1"
           >
             <X size={12} /> DELETE
@@ -213,6 +247,15 @@ const OrderManage = () => {
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        type={confirmDialog.type}
+        title={confirmDialog.title}
+        message={confirmDialog.message}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
+      />
     </div>
   );
 };

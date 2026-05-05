@@ -129,5 +129,9 @@ router.get(
 );
 router.get("/booking/dates", ReceptionHallBookCont.GetBookingDates);
 router.post("/booking/add", ReceptionHallBookCont.createReceptionHallBooking);
+router.get("/booking/view", ReceptionHallBookCont.getReceptionHallBookings);
+router.delete("/booking/delete/:id", ReceptionHallBookCont.deleteReceptionHallBooking);
+router.put("/booking/update/:id", ReceptionHallBookCont.editReceptionHallBooking);
+router.put("/booking/update/status/:id/:status", ReceptionHallBookCont.updateBookingStatus);
 
 module.exports = router;
