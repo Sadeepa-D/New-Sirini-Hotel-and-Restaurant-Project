@@ -3,6 +3,7 @@ import PackagesMng from "./PackagesMng";
 import CateringMng from "./CateringMng";
 import AdvertismentMng from "./AdvertismentMng";
 import AppointmentMng from "./AppointmentMng";
+import ReceptionHallBookMng from "./ReceptionHallBookMng";
 
 const ReceptionMngHome = () => {
   return (
@@ -11,6 +12,7 @@ const ReceptionMngHome = () => {
       <CateringMng />
       <AdvertismentMng />
       <AppointmentMng />
+      <ReceptionHallBookMng />
     </div>
   );
 };
