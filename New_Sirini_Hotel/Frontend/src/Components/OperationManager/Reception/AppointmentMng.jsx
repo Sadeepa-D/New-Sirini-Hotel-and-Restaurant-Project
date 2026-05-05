@@ -85,16 +85,16 @@ const AppointmentMng = () => {
           <p className="text-amber-500 text-xs uppercase tracking-[0.3em] font-medium mb-1">
             Reception Hall
           </p>
-          <h2 className="font-cinzel text-2xl sm:text-3xl text-gray-800 font-semibold">
+          <h2 className="font-cinzel text-2xl sm:text-3xl text-gray-800 font-semibold whitespace-nowrap">
             Appointment Requests
           </h2>
         </div>
-        <div className="flex items-center gap-2 bg-gray-50 p-1.5 rounded-2xl overflow-x-auto">
+        <div className="flex items-center gap-2 bg-gray-50 p-1.5 rounded-2xl flex-wrap">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
                 activeTab === tab
                   ? "bg-white text-amber-600 shadow-sm"
                   : "text-gray-400 hover:text-gray-600"
