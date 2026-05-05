@@ -32,20 +32,7 @@ const createReceptionHallPackage = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-const getReceptionHallPackages = async (req, res) => {
-  try {
-    const packages = await ReceptionHallPackage.find();
-    if (packages.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No reception hall packages found" });
-    }
-    res.status(200).json(packages);
-  } catch (error) {
-    console.error("Error fetching reception hall packages:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
+
 const updateReceptionHallPackage = async (req, res) => {
   try {
     const { id } = req.params;
