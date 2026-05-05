@@ -12,6 +12,8 @@ import toast from "react-hot-toast";
 export default function Reception() {
   const VITE_URL = import.meta.env.VITE_API_URL;
 
+  const [showcalander, setShowCalander] = useState(false);
+
   // 1. State to handle form visibility
   const [showForm, setShowForm] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
@@ -95,13 +97,21 @@ export default function Reception() {
             Your special moments, handled with elegance
           </p>
 
-          {/* Booking Button */}
-          <button
-            onClick={() => handleadrequest()}
-            className="bg-yellow-500 hover:bg-amber-700 text-black px-8 py-3 rounded-full font-semibold uppercase tracking-widest text-sm transition-all duration-300 shadow-lg mt-4"
-          >
-            {showForm ? "Close Booking" : "Book Your Visit"}
-          </button>
+          {/* Booking and calander Button */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-4">
+            <button
+              onClick={() => handleadrequest()}
+              className="bg-yellow-500 hover:bg-amber-700 text-black px-8 py-3 rounded-full font-semibold uppercase tracking-widest text-sm transition-all duration-300 shadow-lg mt-4"
+            >
+              {showForm ? "Close Booking" : "Book Your Visit"}
+            </button>
+            <button
+              onClick={() => setShowCalander(!showcalander)}
+              className="bg-amber-500 hover:bg-amber-600 text-white px-8 py-3 rounded-full font-semibold uppercase tracking-widest text-sm transition-all duration-300 shadow-lg mt-4"
+            >
+              {showcalander ? "Hide Calendar" : "Show Calendar"}
+            </button>
+          </div>
         </div>
 
         {/* Explore arrow pinned to bottom */}
@@ -123,31 +133,30 @@ export default function Reception() {
         )}
       </div>
       {/* Content Section */}
-      <section className="bg-white py-8 sm:py-10 px-4 sm:px-8">
+      {/* <section className="bg-white py-8 sm:py-10 px-4 sm:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
-            {/* Text Content */}
-            <div className="flex flex-col justify-center">
-              <h2 className="font-cinzel text-4xl sm:text-5xl text-gray-800 mb-4">
-                <span className="font-cormorant italic text-gray-700 font-light">
-                  Every Occasion
-                </span>
-              </h2>
-              <p className="text-gray-500 text-base sm:text-lg mt-2 leading-relaxed">
-                From intimate engagements to grand corporate conferences, we
-                curate exceptional experiences.
-              </p>
-            </div>
-            {/* Calendar */}
-            <div className="flex justify-center lg:justify-end">
-              <Calander BookedDates={bookedDates} loading={loadingDates} />
-            </div>
+          <div className="flex flex-col items-center justify-center text-center">
+            <h2 className="font-cinzel text-4xl sm:text-5xl text-gray-800 mb-4">
+              <span className="font-cormorant italic text-gray-700 font-light">
+                Every Occasion
+              </span>
+            </h2>
+            <p className="text-gray-500 text-base sm:text-lg mt-2 leading-relaxed max-w-2xl">
+              From intimate engagements to grand corporate conferences, we
+              curate exceptional experiences.
+            </p>
           </div>
         </div>
-      </section>
+      </section> */}
       <ReceptionHallPackages />
       <CateringItemCard />
       <AdvertismentSection />
+      {/* Calendar */}
+      {showcalander && (
+        <div className="flex justify-center lg:justify-end">
+          <Calander BookedDates={bookedDates} loading={loadingDates} />
+        </div>
+      )}
     </div>
   );
 }

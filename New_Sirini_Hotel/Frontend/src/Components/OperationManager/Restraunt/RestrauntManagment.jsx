@@ -15,6 +15,7 @@ import axios from "axios";
 
 import AddRestrauntItemForm from "./AddRestrauntItemForm";
 import OrderManage from "./OrderManage";
+import ConfirmDialog from "../../ConfrimDialog";
 
 
 const FoodCard = ({ item, onClick }) => (
@@ -36,18 +37,17 @@ const FoodCard = ({ item, onClick }) => (
     <div className="p-3 flex flex-col gap-1 flex-1 justify-between">
       <div>
         <span className="inline-block bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-full w-fit max-w-full truncate">
-        {item.name || item.foodname}
-      </span>
-      {item.label && (
-        <p className="text-gray-400 text-xs">Label: {item.label}</p>
-      )}
+          {item.name || item.foodname}
+        </span>
+        {item.label && (
+          <p className="text-gray-400 text-xs">Label: {item.label}</p>
+        )}
       </div>
       <div className="mt-2 space-y-1">
         <p className="text-white text-sm font-semibold">Price: LKR {item.price}</p>
         <p
-          className={`text-xs font-bold tracking-wide ${
-            item.availability !== false ? "text-green-400" : "text-red-400"
-          }`}
+          className={`text-xs font-bold tracking-wide ${item.availability !== false ? "text-green-400" : "text-red-400"
+            }`}
         >
           {item.availability !== false ? "AVAILABLE" : "UNAVAILABLE"}
         </p>
@@ -65,6 +65,14 @@ const RestaurantManager = () => {
   const [foodItems, setFoodItems] = useState([]);
   const [indexes, setIndexes] = useState({});
   const [itemsPerView, setItemsPerView] = useState(4);
+
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    id: null,
+    type: "delete",
+    title: "",
+    message: "",
+  });
 
   const CATEGORIES = ["Main Meals", "Soft Drinks", "Fresh Juice"];
 
@@ -97,13 +105,29 @@ const RestaurantManager = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this item?")) return;
+    setConfirmDialog({
+      isOpen: true,
+      id,
+      type: "delete",
+      title: "Delete Food Item?",
+      message:
+        "Are you sure you want to delete this food item? This action cannot be undone.",
+    });
+  };
+
+  const handleConfirmDelete = async () => {
+    const { id } = confirmDialog;
+    setConfirmDialog({ isOpen: false, id: null });
+    const loadingtoast = toast.loading("Deleting item...");
     try {
       await axios.delete(`${import.meta.env.VITE_API_URL}/api/restraunt/deletefooditem/${id}`);
+      toast.dismiss(loadingtoast);
       toast.success("Item deleted successfully");
       fetchFoodItems();
     } catch (err) {
       console.error("Error deleting item:", err);
+      toast.dismiss(loadingtoast);
+      toast.error("Error deleting item");
     }
   };
 
@@ -154,15 +178,14 @@ const RestaurantManager = () => {
   // ── Carousel card with action buttons ──
   const renderCarouselCard = (item) => (
     <div key={item._id} className="relative group h-full">
-      <FoodCard item={item} onClick={() => {}} />
+      <FoodCard item={item} onClick={() => { }} />
       <div className="absolute top-4 right-4 flex flex-col gap-2 z-50">
         {/* Toggle Availability */}
         <button
-          className={`p-2 rounded-full shadow-md transition ${
-            item.availability !== false
+          className={`p-2 rounded-full shadow-md transition ${item.availability !== false
               ? "bg-green-100 text-green-600 hover:bg-green-600 hover:text-white"
               : "bg-red-100 text-red-600 hover:bg-red-600 hover:text-white"
-          }`}
+            }`}
           onClick={(e) => {
             e.stopPropagation();
             handleToggleAvailability(item._id);
@@ -228,10 +251,9 @@ const RestaurantManager = () => {
                   key={item._id}
                   className="shrink-0"
                   style={{
-                    width: `calc(${100 / itemsPerView}% - ${
-                      ((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) /
+                    width: `calc(${100 / itemsPerView}% - ${((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) /
                       itemsPerView
-                    }px)`,
+                      }px)`,
                   }}
                 >
                   {renderCarouselCard(item)}
@@ -311,6 +333,15 @@ const RestaurantManager = () => {
       {/* Order Manage Section */}
       <hr className="my-12 border-gray-200" />
       <OrderManage />
+
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        type={confirmDialog.type}
+        title={confirmDialog.title}
+        message={confirmDialog.message}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
+      />
     </div>
   );
 };
