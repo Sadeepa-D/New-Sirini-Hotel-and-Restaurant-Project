@@ -37,6 +37,7 @@ const ReceptionHallBookMng = () => {
   const [showcalander, setShowCalander] = useState(false);
   const [bookedDates, setBookedDates] = useState([]);
   const [loadingDates, setLoadingDates] = useState(true);
+  const [statusFilter, setStatusFilter] = useState("All");
 
   const fetchBookedDates = async () => {
     try {
@@ -88,11 +89,20 @@ const ReceptionHallBookMng = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const filtered = bookings.filter(
-    (b) =>
+  // const filtered = bookings.filter(
+  //   (b) =>
+  //     b.customerName?.toLowerCase().includes(search.toLowerCase()) ||
+  //     b.eventType?.toLowerCase().includes(search.toLowerCase()),
+  // );
+  const filtered = bookings.filter((b) => {
+    const matchesSearch =
       b.customerName?.toLowerCase().includes(search.toLowerCase()) ||
-      b.eventType?.toLowerCase().includes(search.toLowerCase()),
-  );
+      b.eventType?.toLowerCase().includes(search.toLowerCase());
+
+    const matchesStatus = statusFilter === "All" || b.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
 
   useEffect(() => {
     setIndex((prev) =>
@@ -196,26 +206,29 @@ const ReceptionHallBookMng = () => {
 
       {/* Stats */}
       <div className="flex flex-wrap gap-3">
-        {[
-          {
-            label: "Confirmed",
-            value: bookings.filter((b) => b.status === "Confirmed").length,
-            color: "text-green-600",
-          },
-          {
-            label: "Cancelled",
-            value: bookings.filter((b) => b.status === "Cancelled").length,
-            color: "text-red-600",
-          },
-        ].map(({ label, value, color }) => (
-          <div
-            key={label}
-            className="bg-white border border-gray-100 rounded-xl px-4 py-2 shadow-sm"
-          >
-            <span className="text-xs text-gray-400">{label}: </span>
-            <strong className={`text-sm ${color}`}>{value}</strong>
-          </div>
-        ))}
+        {/* Filter Tabs */}
+        <div className="flex flex-wrap gap-2">
+          {["All", "Confirmed", "Cancelled"].map((status) => (
+            <button
+              key={status}
+              onClick={() => {
+                setStatusFilter(status);
+                setIndex(0); // Reset carousel to the first page when changing filters
+              }}
+              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-300 shadow-sm border ${
+                statusFilter === status
+                  ? "bg-slate-800 text-white border-slate-800"
+                  : "bg-white text-slate-500 border-gray-100 hover:bg-gray-50"
+              }`}
+            >
+              {status} (
+              {status === "All"
+                ? bookings.length
+                : bookings.filter((b) => b.status === status).length}
+              )
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Cards Carousel */}
