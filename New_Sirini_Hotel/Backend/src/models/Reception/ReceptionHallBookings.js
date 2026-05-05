@@ -31,8 +31,8 @@ const receptionHallBookingSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Pending", "Confirmed", "Completed", "Cancelled"],
-      default: "Pending",
+      enum: ["Confirmed", "Cancelled"],
+      default: "Confirmed",
     },
   },
   { timestamps: true },

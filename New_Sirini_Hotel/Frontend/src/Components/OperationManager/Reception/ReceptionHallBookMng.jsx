@@ -105,32 +105,42 @@ const ReceptionHallBookMng = () => {
     setShowForm(true);
   };
 
-  const handleconfirmDelete = (id) => {
+  const handleconfirmCancel = (id) => {
     setConfirmDialog({
       isOpen: true,
       id,
-      type: "delete",
-      title: "Delete Booking",
-      message: "Are you sure you want to delete this booking?",
+      type: "cancel",
+      title: "Cancel Booking",
+      message: "Are you sure you want to cancel this booking?",
+      status: "Cancelled",
     });
   };
 
-  const handleDelete = async () => {
-    const { id } = confirmDialog;
+  const handleconfirmConfrim = (id) => {
+    setConfirmDialog({
+      isOpen: true,
+      id,
+      type: "Confirm",
+      title: "Confirm Booking",
+      message: "Are you sure you want to confirm this booking?",
+      status: "Confirmed",
+    });
+  };
+
+  const handlebookingstatus = async () => {
+    const { id, status } = confirmDialog;
     setConfirmDialog({ isOpen: false, id: null });
-    const loadingToast = toast.loading("Deleting booking...");
     try {
-      const response = await axios.delete(
-        `${VITE_URL}/api/receptionhall/booking/delete/${id}`,
+      const response = await axios.put(
+        `${VITE_URL}/api/receptionhall/booking/update/status/${id}/${status}`,
       );
       if (response.status === 200) {
-        toast.success("Booking deleted successfully");
+        toast.success(`Booking ${status.toLowerCase()} successfully`);
         fetchBookings();
       }
     } catch (error) {
-      toast.error("Failed to delete booking");
-    } finally {
-      toast.dismiss(loadingToast);
+      console.error("Error updating booking status:", error);
+      toast.error("Failed to update booking status");
     }
   };
 
@@ -254,7 +264,8 @@ const ReceptionHallBookMng = () => {
                 <ReceptionHallBookingCard
                   booking={booking}
                   onEdit={handleEdit}
-                  onDelete={handleconfirmDelete}
+                  onCancel={handleconfirmCancel}
+                  onConfirm={handleconfirmConfrim}
                 />
               </div>
             ))}
@@ -318,7 +329,7 @@ const ReceptionHallBookMng = () => {
         type={confirmDialog.type}
         title={confirmDialog.title}
         message={confirmDialog.message}
-        onConfirm={handleDelete}
+        onConfirm={handlebookingstatus}
         onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
       />
       {showcalander && (

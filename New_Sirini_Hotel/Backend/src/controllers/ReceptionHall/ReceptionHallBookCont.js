@@ -31,7 +31,7 @@ const createReceptionHallBooking = async (req, res) => {
       eventType,
       numberOfGuests,
       specialRequests,
-      status: "Pending",
+      status: "Confirmed",
     });
     await newBooking.save();
     res.status(201).json(newBooking);
@@ -104,7 +104,7 @@ const updateBookingStatus = async (req, res) => {
         .status(400)
         .json({ message: "Booking ID and status are required" });
     }
-    if (!["Pending", "Confirmed", "Completed", "Cancelled"].includes(status)) {
+    if (!["Confirmed", "Cancelled"].includes(status)) {
       return res.status(400).json({ message: "Invalid status value" });
     }
     const updatedBooking = await receptionandHallBook.findByIdAndUpdate(
