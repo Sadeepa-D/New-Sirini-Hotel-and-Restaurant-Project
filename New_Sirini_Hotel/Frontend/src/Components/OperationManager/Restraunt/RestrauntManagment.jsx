@@ -37,18 +37,17 @@ const FoodCard = ({ item, onClick }) => (
     <div className="p-3 flex flex-col gap-1 flex-1 justify-between">
       <div>
         <span className="inline-block bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-full w-fit max-w-full truncate">
-        {item.name || item.foodname}
-      </span>
-      {item.label && (
-        <p className="text-gray-400 text-xs">Label: {item.label}</p>
-      )}
+          {item.name || item.foodname}
+        </span>
+        {item.label && (
+          <p className="text-gray-400 text-xs">Label: {item.label}</p>
+        )}
       </div>
       <div className="mt-2 space-y-1">
         <p className="text-white text-sm font-semibold">Price: LKR {item.price}</p>
         <p
-          className={`text-xs font-bold tracking-wide ${
-            item.availability !== false ? "text-green-400" : "text-red-400"
-          }`}
+          className={`text-xs font-bold tracking-wide ${item.availability !== false ? "text-green-400" : "text-red-400"
+            }`}
         >
           {item.availability !== false ? "AVAILABLE" : "UNAVAILABLE"}
         </p>
@@ -66,6 +65,7 @@ const RestaurantManager = () => {
   const [foodItems, setFoodItems] = useState([]);
   const [indexes, setIndexes] = useState({});
   const [itemsPerView, setItemsPerView] = useState(4);
+
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
     id: null,
@@ -178,15 +178,14 @@ const RestaurantManager = () => {
   // ── Carousel card with action buttons ──
   const renderCarouselCard = (item) => (
     <div key={item._id} className="relative group h-full">
-      <FoodCard item={item} onClick={() => {}} />
+      <FoodCard item={item} onClick={() => { }} />
       <div className="absolute top-4 right-4 flex flex-col gap-2 z-50">
         {/* Toggle Availability */}
         <button
-          className={`p-2 rounded-full shadow-md transition ${
-            item.availability !== false
+          className={`p-2 rounded-full shadow-md transition ${item.availability !== false
               ? "bg-green-100 text-green-600 hover:bg-green-600 hover:text-white"
               : "bg-red-100 text-red-600 hover:bg-red-600 hover:text-white"
-          }`}
+            }`}
           onClick={(e) => {
             e.stopPropagation();
             handleToggleAvailability(item._id);
@@ -252,10 +251,9 @@ const RestaurantManager = () => {
                   key={item._id}
                   className="shrink-0"
                   style={{
-                    width: `calc(${100 / itemsPerView}% - ${
-                      ((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) /
+                    width: `calc(${100 / itemsPerView}% - ${((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) /
                       itemsPerView
-                    }px)`,
+                      }px)`,
                   }}
                 >
                   {renderCarouselCard(item)}
