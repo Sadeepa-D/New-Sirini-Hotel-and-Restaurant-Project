@@ -65,7 +65,7 @@ const AppointmentCard = ({
         </p>
       </div>
 
-      <h3 className="text-gray-800 font-bold text-lg mb-3 flex items-center gap-2">
+      <h3 className="text-gray-800 font-bold text-lg mb-3 flex items-center gap-2 whitespace-nowrap">
         <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-600">
           <User size={16} />
         </div>

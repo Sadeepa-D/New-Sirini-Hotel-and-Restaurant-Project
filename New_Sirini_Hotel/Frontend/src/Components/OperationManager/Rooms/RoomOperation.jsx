@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import RoomStatsRow from "./RoomStatsRow";
 import RoomTableHeader from "./RoomTableHeader";
-import RoomTable from "./RoomTable";
+import RoomCards from "./RoomCards";
 import RoomFormModal from "./RoomFormModal";
 import toast from "react-hot-toast";
-import RoomRequests from "./RoomRequests";
-import RoomConfirmedBooking from "./RoomConfirmedBooking";
+
+import RoomBookedDetails from "./RoomBookedDetails";
 
 const RoomOperation = () => {
   const [rooms, setRooms] = useState([]);
@@ -127,7 +127,7 @@ const RoomOperation = () => {
         onSearch={(e) => setSearchTerm(e.target.value)}
       />
 
-      <RoomTable
+      <RoomCards
         rooms={filteredRooms}
         onEdit={handleEdit}
         onDelete={handleDelete}
@@ -136,24 +136,19 @@ const RoomOperation = () => {
     {/* --- Booking Requests Section --- */}
 <div className="mt-10 animate-in fade-in slide-in-from-left-4 duration-500">
   {/* Pending Requests Header */}
-  <div className="mb-4">
-    <h2 className="text-lg font-bold text-gray-800 uppercase tracking-wider">
-      Pending Room Requests
-    </h2>
-    <p className="text-gray-400 text-xs">Review and approve customer bookings</p>
-  </div>
+ 
   
-  <RoomRequests onActionCompleted={handleActionCompleted} /> 
+ 
 
   {/* Confirmed Bookings Header  */}
   <div className="mt-10 mb-4">
     <h2 className="text-lg font-bold text-gray-800 uppercase tracking-wider">
-      Approved Completed AND CANCELLED Room Bookings
+      Manage Booking Details
     </h2>
     <p className="text-gray-400 text-xs">Manage and monitor confirmed reservations</p>
   </div>
 
-  <RoomConfirmedBooking 
+  <RoomBookedDetails
     refreshKey={refreshKey} 
     onActionCompleted={handleActionCompleted} 
   />
