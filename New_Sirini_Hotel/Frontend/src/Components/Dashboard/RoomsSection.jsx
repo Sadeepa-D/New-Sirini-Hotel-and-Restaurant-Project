@@ -110,7 +110,7 @@ const RoomsSection = () => {
                     </div>
                     <div>
                         <p className="text-[10px] text-gray-400 uppercase font-bold tracking-[0.2em] leading-none mb-1">Room No</p>
-                        <p className="text-xl font-bold text-gray-900 italic font-sans italic">#{room.roomNumber}</p>
+                        <p className="text-xl font-bold text-gray-900 italic font-sans italic">{room.roomNumber}</p>
                     </div>
                 </div>
                 <StatusBadge status={room.status} />
@@ -119,14 +119,14 @@ const RoomsSection = () => {
               {/* Booking Info Box */}
               <div className="bg-gray-50 rounded-[1.5rem] p-5 flex items-center justify-between mb-8">
                 <div className="space-y-1">
-                    <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Arrival</p>
+                    <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Check In</p>
                     <p className="text-xs font-bold text-gray-800 font-sans">
                         {new Date(room.checkInDate).toLocaleDateString("en-GB")}
                     </p>
                 </div>
                 <div className="h-10 w-[1px] bg-gray-200"></div>
                 <div className="text-right space-y-1">
-                    <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Departure</p>
+                    <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Check Out</p>
                     <p className="text-xs font-bold text-gray-800 font-sans">
                         {new Date(room.checkOutDate).toLocaleDateString("en-GB")}
                     </p>
