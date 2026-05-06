@@ -92,7 +92,7 @@ const RestaurantManager = () => {
 
     const handleResize = () => {
       const w = window.innerWidth;
-      setItemsPerView(w < 640 ? 1 : w < 1024 ? 2 : w < 1280 ? 3 : 4);
+      setItemsPerView(w < 640 ? 1 : w < 768 ? 2 : w < 1024 ? 3 : 4);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
