@@ -142,6 +142,7 @@ const RestaurantManager = () => {
   };
 
   const handleSave = async (formData) => {
+    const loadingToast = toast.loading(editingItem ? "Updating item..." : "Adding item...");
     try {
       if (editingItem) {
         await axios.put(
@@ -149,20 +150,21 @@ const RestaurantManager = () => {
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
-        toast.success("Item updated successfully");
+        toast.success("Item updated successfully", { id: loadingToast });
       } else {
         await axios.post(
           `${import.meta.env.VITE_API_URL}/api/restraunt/addfooditem`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
-        toast.success("Item added successfully");
+        toast.success("Item added successfully", { id: loadingToast });
       }
       fetchFoodItems();
       setIsFormOpen(false);
       setEditingItem(null);
     } catch (err) {
       console.error("Error saving item:", err);
+      toast.error("Error saving item", { id: loadingToast });
     }
   };
 
