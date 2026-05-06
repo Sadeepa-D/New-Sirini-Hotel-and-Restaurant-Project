@@ -152,11 +152,12 @@ function Rooms() {
                   </div>
 
                   <div>
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center justify-center gap-2 mb-2">
                       <span className="w-8 h-[1px] bg-orange-500"></span>
                       <span className="text-orange-500 text-[10px] font-black uppercase tracking-[0.3em]">
                         New Sirini Hotel Rooms
                       </span>
+                      <span className="w-8 h-[1px] bg-orange-500"></span>
                     </div>
 
                     <h3 className="text-3xl md:text-4xl font-serif text-white mb-4 leading-tight group-hover:text-orange-600 transition-colors duration-500">
