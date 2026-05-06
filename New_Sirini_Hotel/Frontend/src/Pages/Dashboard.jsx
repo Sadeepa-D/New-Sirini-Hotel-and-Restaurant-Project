@@ -98,10 +98,8 @@ const UserDashboard = () => {
           {/* Main Content Area */}
           <div className="flex-1 bg-white rounded-2xl shadow-xl border border-gray-100 p-6 sm:p-10 min-h-150">
             {activeTab === "profile" && <ProfileSection />}
-            {activeTab === "rooms" && <RoomsSection data={mockRooms} />}
-            {activeTab === "restaurant" && (
-              <RestrauntSection data={mockOrders} />
-            )}
+            {activeTab === "rooms" && <RoomsSection />}
+            {activeTab === "restaurant" && <RestrauntSection />}
             {activeTab === "appointments" && <AppointmentsSection />}
             {activeTab === "ads" && <AdsSection />}
           </div>
