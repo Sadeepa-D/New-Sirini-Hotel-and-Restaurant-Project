@@ -26,7 +26,6 @@ const createReceptionAppointment = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 const getReceptionAppointments = async (req, res) => {
   try {
     const appointments = await ReceptionAppointment.find();
@@ -36,7 +35,6 @@ const getReceptionAppointments = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 const deleteReceptionAppointment = async (req, res) => {
   try {
     const { id } = req.params;
@@ -183,7 +181,6 @@ const getOverdueReceptionAppointments = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 const getSpecificUserReceptionAppointments = async (req, res) => {
   try {
     // 1. Get the logged-in user's ID from your auth middleware
@@ -203,6 +200,7 @@ const getSpecificUserReceptionAppointments = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 module.exports = {
   createReceptionAppointment,

@@ -162,7 +162,7 @@ function Rooms() {
                     <h3 className="text-3xl md:text-4xl font-serif text-white mb-4 leading-tight group-hover:text-orange-600 transition-colors duration-500">
                       {room.roomType}
                       <span className="text-lg font-serif text-white italic font-sans">
-                        Room
+                        &nbsp;Room
                       </span>
                     </h3>
 
