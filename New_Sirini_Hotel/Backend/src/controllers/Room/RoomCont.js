@@ -76,7 +76,7 @@ const updateRoom = async (req, res) => {
     const updatedRoom = await RoomModel.findByIdAndUpdate(
       id,
       { $set: updates },
-      { returnDocument: 'after' } // Mongoose warning එක ඉවත් කිරීමට සහ අලුත් දත්ත ලබා ගැනීමට
+      { returnDocument: 'after' } 
     );
 
     if (!updatedRoom) {
