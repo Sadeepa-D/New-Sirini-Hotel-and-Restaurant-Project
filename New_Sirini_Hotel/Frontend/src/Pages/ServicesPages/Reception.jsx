@@ -7,6 +7,7 @@ import CateringItemCard from "../../Components/Receptionhall/CateringItemCard";
 import AdvertismentSection from "../../Components/Receptionhall/AdvertismentSection";
 import Exploreindicator from "../../Components/Exploreindicator";
 import Calander from "../../Components/Calander";
+import CateringSelectionHub from "../../Components/Receptionhall/CateringSelectionHub";
 import toast from "react-hot-toast";
 
 export default function Reception() {
@@ -150,6 +151,7 @@ export default function Reception() {
       </section> */}
       <ReceptionHallPackages />
       <CateringItemCard />
+      <CateringSelectionHub />
       <AdvertismentSection />
       {/* Calendar */}
       {showcalander && (

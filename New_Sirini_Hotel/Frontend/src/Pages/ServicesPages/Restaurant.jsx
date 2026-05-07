@@ -45,7 +45,7 @@ export default function Restaurant() {
        
         category: item.category,
         availability: item.availability,
-        label: item.availability ? "Available" : "Sold Out",
+        label: item.availability ? "Available" : "Unavailable",
       }));
       setMealData(mappedData);
     } catch (error) {
