@@ -11,6 +11,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import AdvertisementCard from "./AdvertisementCard";
 import AdvertismentForm from "./AdvertismentForm";
+import LoginMessage from "../../Components/LoginMessage";
 
 const categories = [
   { label: "Photography", icon: Camera },
@@ -29,6 +30,7 @@ const AdvertisementSection = () => {
   const [itemsPerView, setItemsPerView] = useState(
     typeof window !== "undefined" && window.innerWidth < 640 ? 1 : 3,
   );
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -76,7 +78,7 @@ const AdvertisementSection = () => {
 
   const handleadrequest = () => {
     if (!isLoggedIn) {
-      toast.error("You must be logged in to place an Advertisement.");
+      setShowLoginModal(true);
       setShowForm(false);
       return;
     } else {
@@ -244,6 +246,10 @@ const AdvertisementSection = () => {
         )}
       </div>
       {showForm && <AdvertismentForm onClose={() => setShowForm(false)} />}
+      <LoginMessage
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+      />
     </section>
   );
 };
