@@ -5,11 +5,11 @@ import axios from "axios";
 import Exploreindicator from "../Components/Exploreindicator";
 
 const NewSiriniHotel = () => {
-  const VITE_API = import.meta.env.VITE_API;
+  const VITE_API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [galleryItems, setGalleryItems] = useState([]);
-  const [fillteredCategory, setfillteredCategory] = useState("Reception");
+  const [activeFilter, setActiveFilter] = useState("Reception");
 
   const services = [
     {
@@ -40,16 +40,21 @@ const NewSiriniHotel = () => {
 
   const fetchgalleryItems = async () => {
     try {
-      const response = await axios.get(`${VITE_API}/api/gallery/view`);
+      const response = await axios.get(`${VITE_API_URL}/api/gallery/view`);
       setGalleryItems(response.data);
     } catch (error) {
       console.error("Error fetching gallery items:", error);
+      setGalleryItems([]);
     }
   };
 
   useEffect(() => {
     fetchgalleryItems();
   }, []);
+
+  const filteredGalleryItems = Array.isArray(galleryItems)
+    ? galleryItems.filter((item) => item.category === activeFilter)
+    : [];
 
   return (
     <div className="font-serif bg-gray-100 text-gray-900">
@@ -127,9 +132,9 @@ const NewSiriniHotel = () => {
           {["Reception", "Rooms", "Restaurant"].map((cat) => (
             <button
               key={cat}
-              onClick={() => setFilteredCategory(cat)}
+              onClick={() => setActiveFilter(cat)}
               className={`px-8 py-2 rounded-full text-sm font-medium tracking-wider transition-all duration-300 border ${
-                fillteredCategory === cat
+                activeFilter === cat
                   ? "bg-black text-white border-black shadow-lg scale-105"
                   : "bg-white text-gray-600 border-gray-200 hover:border-amber-500 hover:text-amber-600"
               }`}
@@ -137,6 +142,36 @@ const NewSiriniHotel = () => {
               {cat}
             </button>
           ))}
+        </div>
+        {/* Dynamic Image Grid */}
+        <div className="min-h-[400px]">
+          {filteredGalleryItems.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredGalleryItems.map((item) => (
+                <div
+                  key={item._id}
+                  className="group relative aspect-square rounded-[2rem] overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500"
+                >
+                  <img
+                    src={item.image}
+                    alt={item.category}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                    <span className="text-white text-[10px] font-black uppercase tracking-widest border border-white/40 px-3 py-1 rounded-lg backdrop-blur-sm">
+                      {item.category}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-gray-50 rounded-[3rem] py-20 border-2 border-dashed border-gray-200">
+              <p className="text-gray-400 italic font-serif">
+                No photographs found in this category.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
