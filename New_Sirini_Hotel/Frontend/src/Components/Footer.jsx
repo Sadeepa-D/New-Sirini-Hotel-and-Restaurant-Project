@@ -85,16 +85,16 @@ function Footer() {
               <li className="flex items-start gap-3">
                 <MdLocationOn className="w-5 h-5 text-yellow-500 shrink-0 mt-0.5" />
                 <span className="text-gray-300 text-base">
-                  Kamburupitiya, Matara, Sri Lanka.
+                  Kirinda road,New Sirini Hotel Kamburupitiya
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <MdPhone className="w-5 h-5 text-yellow-500 shrink-0" />
                 <a
-                  href="tel:041-0568476"
+                  href="tel:0770161835"
                   className="!text-gray-300 !no-underline hover:!text-yellow-500 transition-colors text-base"
                 >
-                  041-0568476
+                  0770161835
                 </a>
               </li>
               <li className="flex items-center gap-3">
