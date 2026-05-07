@@ -8,6 +8,7 @@ import AdvertismentSection from "../../Components/Receptionhall/AdvertismentSect
 import Exploreindicator from "../../Components/Exploreindicator";
 import Calander from "../../Components/Calander";
 import CateringSelectionHub from "../../Components/Receptionhall/CateringSelectionHub";
+import LoginMessage from "../../Components/LoginMessage";
 import toast from "react-hot-toast";
 
 export default function Reception() {
@@ -22,6 +23,8 @@ export default function Reception() {
   // 2. State for calendar data
   const [bookedDates, setBookedDates] = useState([]);
   const [loadingDates, setLoadingDates] = useState(true);
+
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   // 3. Create the reference
   const formSectionRef = useRef(null);
@@ -56,7 +59,7 @@ export default function Reception() {
 
   const handleadrequest = () => {
     if (!isLoggedIn) {
-      toast.error("You must be logged in to place Your Appointment.");
+      setShowLoginModal(true);
       setShowForm(false);
       return;
     } else {
@@ -159,6 +162,10 @@ export default function Reception() {
           <Calander BookedDates={bookedDates} loading={loadingDates} />
         </div>
       )}
+      <LoginMessage
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+      />
     </div>
   );
 }
