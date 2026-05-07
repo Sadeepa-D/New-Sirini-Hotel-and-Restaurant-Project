@@ -107,7 +107,7 @@ const NewSiriniHotel = () => {
       <section id="gallery" className="bg-gray-200 py-12 text-center">
         <h2 className="text-4xl mb-8 font-serif">Gallery</h2>
         <div className="flex flex-wrap justify-center gap-4 mb-10">
-          {["All", "Reception", "Rooms", "Restaurant", "Liquor"].map((cat) => (
+          {["Reception", "Rooms", "Restaurant"].map((cat) => (
             <button
               key={cat}
               className="px-6 py-1 bg-black text-white rounded-full text-sm hover:bg-yellow-500 transition"
