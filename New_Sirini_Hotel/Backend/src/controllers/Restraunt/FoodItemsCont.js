@@ -3,13 +3,18 @@ const cloudinary = require("cloudinary");
 
 const createFoodItem = async (req, res) => {
   try {
-    const { name, price, description, category } = req.body;
+    console.log("Creating food item, body:", req.body);
+    console.log("File:", req.file);
+    const { name, price, description, category, ingredients } = req.body;
     if (!name || !price || !description || !category) {
+      console.log("Missing fields");
       return res.status(400).json({ message: "Required fields are missing" });
     }
-    const image = req.file ? req.file.secure_url : null;
-    const imagePublicId = req.file ? req.file.public_id : null;
+    const image = req.file ? req.file.secure_url : req.file ? req.file.path : null;
+    const imagePublicId = req.file ? req.file.public_id : req.file ? req.file.filename : null;
+    console.log("Image URL:", image);
     if (!image) {
+      console.log("Missing image");
       return res.status(400).json({ message: "Image is required" });
     }
     const newFoodItem = new FoodItems({
@@ -17,13 +22,16 @@ const createFoodItem = async (req, res) => {
       price,
       description,
       category,
+      ingredients: ingredients ? (Array.isArray(ingredients) ? ingredients : ingredients.split(",")) : [],
       image,
       imagePublicId,
       availability: true,
     });
     await newFoodItem.save();
+    console.log("Saved successfully");
     res.status(201).json(newFoodItem);
   } catch (error) {
+    console.error("Error in createFoodItem:", error);
     res
       .status(500)
       .json({ message: "Error creating food item", error: error.message });
@@ -48,10 +56,10 @@ const updateFoodItem = async (req, res) => {
     if (!id) {
       return res.status(400).json({ message: "Food item ID is required" });
     }
-    const updates = req.body;
-    if (updates.name) {
-      updates.foodname = updates.name;
-      delete updates.name;
+    const updates = { ...req.body };
+    
+    if (updates.ingredients && typeof updates.ingredients === "string") {
+      updates.ingredients = updates.ingredients.split(",");
     }
 
     const existingFoodItem = await FoodItems.findById(id);

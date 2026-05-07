@@ -92,7 +92,7 @@ const RestaurantManager = () => {
 
     const handleResize = () => {
       const w = window.innerWidth;
-      setItemsPerView(w < 640 ? 1 : w < 1024 ? 2 : w < 1280 ? 3 : 4);
+      setItemsPerView(w < 640 ? 1 : w < 768 ? 2 : w < 1024 ? 3 : 4);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -142,6 +142,7 @@ const RestaurantManager = () => {
   };
 
   const handleSave = async (formData) => {
+    const loadingToast = toast.loading(editingItem ? "Updating item..." : "Adding item...");
     try {
       if (editingItem) {
         await axios.put(
@@ -149,20 +150,21 @@ const RestaurantManager = () => {
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
-        toast.success("Item updated successfully");
+        toast.success("Item updated successfully", { id: loadingToast });
       } else {
         await axios.post(
           `${import.meta.env.VITE_API_URL}/api/restraunt/addfooditem`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
-        toast.success("Item added successfully");
+        toast.success("Item added successfully", { id: loadingToast });
       }
       fetchFoodItems();
       setIsFormOpen(false);
       setEditingItem(null);
     } catch (err) {
       console.error("Error saving item:", err);
+      toast.error("Error saving item", { id: loadingToast });
     }
   };
 
