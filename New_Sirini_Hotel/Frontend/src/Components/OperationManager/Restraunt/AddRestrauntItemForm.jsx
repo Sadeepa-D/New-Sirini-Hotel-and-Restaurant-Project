@@ -48,7 +48,6 @@ const AddRestrauntItemForm = ({ onClose, initialData, onSubmit }) => {
         }
     });
         onSubmit(data);
-       toast.dismiss(loadingToast);
     };
 
     return (
