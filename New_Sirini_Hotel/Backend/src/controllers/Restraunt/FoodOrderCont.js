@@ -123,17 +123,39 @@ const editfoodOrder = async (req, res) => {
 const deleteFoodOrder = async (req, res) => {
   try {
     const { id } = req.params;
+    const userRole = req.userData.role;
+
     if (!id) {
       return res.status(400).json({ message: "Food order ID is required" });
     }
-    const updatedOrder = await FoodOrder.findByIdAndUpdate(
-      id,
-      { status: "delete" },
-      { new: true }
-    );
-    if (!updatedOrder) {
+
+    const order = await FoodOrder.findById(id);
+    if (!order) {
       return res.status(404).json({ message: "Food order not found" });
     }
+
+    // Check if user is NOT an Operation Manager or Admin
+    const isStaff = userRole && (userRole.includes("Operation Manager") || userRole === "Admin");
+
+    if (!isStaff) {
+      const { slDate, slTime } = getCurrentSLTime();
+      const pickupDateStr = new Date(order.pickupDate).toISOString().split('T')[0];
+      const pickupDateTime = new Date(`${pickupDateStr}T${order.pickupTime}`);
+      const currentSLDateTime = new Date(`${slDate}T${slTime}`);
+
+      const diffInMs = pickupDateTime - currentSLDateTime;
+      const diffInHours = diffInMs / (1000 * 60 * 60);
+
+      if (diffInHours < 1) {
+        return res.status(400).json({ 
+          message: "Cannot cancel now. Less than 1 hour left. Please contact hotel for cancellation." 
+        });
+      }
+    }
+
+    order.status = "delete";
+    await order.save();
+    
     res.status(200).json({ message: "Food order marked as deleted" });
   } catch (error) {
     res.status(500).json({ message: "Failed to delete food order", error });
