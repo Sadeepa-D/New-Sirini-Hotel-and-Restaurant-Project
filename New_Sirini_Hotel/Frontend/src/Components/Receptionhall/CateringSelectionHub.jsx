@@ -101,10 +101,10 @@ const CateringSelectionHub = () => {
             <input
               type="number"
               min="1"
-              max={200}
+              max="200"
               value={participants}
               onChange={(e) =>
-                setParticipants(Math.max(1, parseInt(e.target.value) || 0))
+                setParticipants(Math.min(200, Math.max(1, parseInt(e.target.value) || 0)))
               }
               className="w-full pl-12 pr-4 py-4 bg-white border border-gray-200 rounded-2xl focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 outline-none transition-all font-bold text-gray-700 shadow-sm"
               placeholder="E.g. 150"

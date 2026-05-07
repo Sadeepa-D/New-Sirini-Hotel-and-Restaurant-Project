@@ -5,6 +5,7 @@ import Exploreindicator from "../../Components/Exploreindicator";
 import resturantImg from "../../assets/resturant.png";
 import OrderForm from "../../Components/RestaurantPage/OrderForm";
 import RestaurantCard from "../../Components/RestaurantPage/RestaurantCard";
+import LoginMessage from "../../Components/LoginMessage";
 import { useLocation, useNavigate } from "react-router-dom";
 
 // Initial hardcoded data removed. Data is now fetched from the backend API.
@@ -18,7 +19,8 @@ export default function Restaurant() {
   const [mealData, setMealData] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [editingOrder, setEditingOrder] = useState(null);
-  
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -42,7 +44,7 @@ export default function Restaurant() {
         price: item.price,
         description: item.description,
         image: item.image,
-       
+
         category: item.category,
         availability: item.availability,
         label: item.availability ? "Available" : "Unavailable",
@@ -92,7 +94,7 @@ export default function Restaurant() {
 
   const handleOrder = (item) => {
     if (!isLoggedIn) {
-      toast.error("You must be logged in to place an order.");
+      setShowLoginModal(true);
       return;
     }
     setSelectedItem(item);
@@ -262,15 +264,19 @@ export default function Restaurant() {
       </div>
 
       {selectedItem && (
-        <OrderForm 
-          item={selectedItem} 
+        <OrderForm
+          item={selectedItem}
           editingOrder={editingOrder}
           onClose={() => {
             setSelectedItem(null);
             setEditingOrder(null);
-          }} 
+          }}
         />
       )}
+      <LoginMessage
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+      />
     </div>
   );
 }
