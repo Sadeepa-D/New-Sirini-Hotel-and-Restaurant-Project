@@ -6,6 +6,7 @@ import Exploreindicator from "../../Components/Exploreindicator";
 import Calander from "../../Components/Calander";
 import toast from "react-hot-toast";
 
+
 function Rooms() {
   const VITE_URL = import.meta.env.VITE_API_URL;
   const [roomList, setRoomList] = useState([]);
@@ -15,6 +16,7 @@ function Rooms() {
   const [error, setError] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [bookedDates, setBookedDates] = useState([]);
+  
 
   const fetchBookedDates = async (roomNumber) => {
     try {
@@ -152,11 +154,12 @@ function Rooms() {
                   </div>
 
                   <div>
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center justify-center gap-2 mb-2">
                       <span className="w-8 h-[1px] bg-orange-500"></span>
                       <span className="text-orange-500 text-[10px] font-black uppercase tracking-[0.3em]">
                         New Sirini Hotel Rooms
                       </span>
+                      <span className="w-8 h-[1px] bg-orange-500"></span>
                     </div>
 
                     <h3 className="text-3xl md:text-4xl font-serif text-white mb-4 leading-tight group-hover:text-orange-600 transition-colors duration-500">
@@ -203,11 +206,13 @@ function Rooms() {
                   <div className="flex flex-row items-center justify-between gap-4 pt-6 border-t border-gray-50 mt-auto">
                     <div className="flex items-center gap-3">
                       <p
-                        className={`text-[17px] font-black uppercase tracking-[0.2em] ${room.status === "available" ? "text-green-600" : room.status === "maintenance" ? "text-yellow-600" : "text-red-600"}`}
+                        className={`text-[17px] font-black uppercase tracking-[0.2em] relative
+    ${room.status === "available" ? "text-green-600" : "text-gray-400"}`}
                       >
-                        {room.status === "maintenance"
-                          ? "Maintenance"
-                          : room.status}
+                        {room.status}
+                        {room.status === "available" && (
+                          <span className="absolute -bottom-1 left-0 w-1/2 h-[3px] bg-green-500 rounded-full"></span>
+                        )}
                       </p>
                     </div>
 
