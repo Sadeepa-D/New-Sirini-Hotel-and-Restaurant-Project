@@ -190,7 +190,7 @@ function Header() {
                   closeMenu();
                 }}
                 className="w-28 py-1.5 border border-white text-white rounded
-                             hover:bg-yellow-500 hover:text-black hover:border-yellow-500
+                             hover:bg-yellow-500 hover:!text-black font-bold hover:border-yellow-500
                              transition-colors duration-300"
               >
                 Sign up
