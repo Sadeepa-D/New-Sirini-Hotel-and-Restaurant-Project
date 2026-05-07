@@ -141,9 +141,9 @@ const CateringItemCard = () => {
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-500" />
 
                     {/* Price badge */}
-                    <div className="absolute top-4 right-4 bg-amber-500 text-amber-900 text-xs sm:text-sm font-bold px-4 py-1.5 rounded-full shadow-md">
+                    {/* <div className="absolute top-4 right-4 bg-amber-500 text-amber-900 text-xs sm:text-sm font-bold px-4 py-1.5 rounded-full shadow-md">
                       Rs. {item.priceperserving}
-                    </div>
+                    </div> */}
 
                     {/* Availability badge */}
                     {!item.status && (
