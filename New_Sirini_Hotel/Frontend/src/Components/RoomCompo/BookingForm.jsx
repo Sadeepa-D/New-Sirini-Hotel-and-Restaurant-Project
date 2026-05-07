@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import BookingSuccess from "../RoomCompo/SuccessMsg";
+import {
+  Clock,
+  CheckCircle2,
+  XCircle,
+  Archive,
+  Check,
+  AlertTriangle,
+} from "lucide-react";
 
 function BookingForm({ selectedRoom, onClose, onConfirmed }) {
   const VITE_URL = import.meta.env.VITE_API_URL;
@@ -264,13 +272,21 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all"
               />
             </div>
-            
-               <div className="sm:col-span-2">
-              <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl px-4 py-3.5 mt-2 flex items-start gap-3">
-                <span className="text-orange-500 text-sm">🔔</span>
-                <p className="text-orange-100/70 text-[11px] leading-relaxed font-sans">
-                  <span className="text-orange-400 font-bold uppercase tracking-wider mr-1">Note:</span> 
-                  After you book the room, you cannot change the room number. Please review your selection.
+
+            {/* add a note for show user after booking cannot change the room number */}
+            <div className="sm:col-span-2">
+              <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl px-4 py-3.5 mt-2 flex items-start gap-3 group hover:border-orange-500/40 transition-all">
+                <AlertTriangle
+                  className="text-orange-500 mt-0.5"
+                  size={18}
+                  strokeWidth={2.5}
+                />
+                <p className="text-orange-100/70 text-[11px] leading-relaxed font-sans flex-1">
+                  <span className="text-orange-400 font-bold uppercase tracking-wider mr-1">
+                    Warning:
+                  </span>
+                  After you book the room, you cannot change the room number.
+                  Please review your selection carefully.
                 </p>
               </div>
             </div>
