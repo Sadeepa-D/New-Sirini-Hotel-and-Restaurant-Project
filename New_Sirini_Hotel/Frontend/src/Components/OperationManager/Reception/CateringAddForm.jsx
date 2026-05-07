@@ -15,7 +15,7 @@ const CateringAddForm = ({ onClose, fetchitems, editItem }) => {
   const initialState = {
     name: "",
     ingredients: "",
-    priceperserving: "",
+    price: "",
     image: null,
   };
   const [formData, setFormData] = useState(initialState);
@@ -29,7 +29,7 @@ const CateringAddForm = ({ onClose, fetchitems, editItem }) => {
         ingredients: Array.isArray(editItem.ingredients)
           ? editItem.ingredients.join(",")
           : editItem.ingredients || "",
-        priceperserving: editItem.priceperserving || "",
+        price: editItem.price || "",
         image: null,
       });
       setPreview(editItem.image);
@@ -57,7 +57,7 @@ const CateringAddForm = ({ onClose, fetchitems, editItem }) => {
     const data = new FormData();
     data.append("name", formData.name);
     data.append("ingredients", formData.ingredients);
-    data.append("priceperserving", formData.priceperserving);
+    data.append("price", formData.price);
 
     // Only append image if a new one is selected
     if (formData.image) {
@@ -183,11 +183,11 @@ const CateringAddForm = ({ onClose, fetchitems, editItem }) => {
             <Banknote size={18} className="text-orange-400" />
             <input
               type="text"
-              name="priceperserving"
-              value={formData.priceperserving}
+              name="price"
+              value={formData.price}
               onChange={handleChange}
               required
-              placeholder="Price Detail (e.g. 10000 for 100 plates)"
+              placeholder="Price"
               className="w-full text-sm outline-none bg-transparent"
             />
           </div>
