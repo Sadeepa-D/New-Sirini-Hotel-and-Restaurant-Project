@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 export default function OrderForm({ item, editingOrder, onClose }) {
   const [form, setForm] = useState({
     name: editingOrder ? editingOrder.fullName : "",
+    email: editingOrder ? editingOrder.email : "",
     phone: editingOrder ? editingOrder.phoneNumber : "",
     pickupDate: editingOrder ? new Date(editingOrder.pickupDate).toISOString().split('T')[0] : "",
     pickupTime: editingOrder ? editingOrder.pickupTime : "",
@@ -58,6 +59,7 @@ export default function OrderForm({ item, editingOrder, onClose }) {
 
       const orderData = {
         fullName: form.name,
+        email: form.email,
         // Strip non-numeric characters to match backend regex /^[0-9]{10}$/
         phoneNumber: form.phone.replace(/\D/g, ""),
         pickupDate: form.pickupDate,
@@ -100,13 +102,25 @@ export default function OrderForm({ item, editingOrder, onClose }) {
     }
   };
 
-  // Prevent background scroll
+  // Prefill email and prevent background scroll
   useEffect(() => {
+    if (!editingOrder) {
+      const userDataStr = localStorage.getItem("user");
+      if (userDataStr) {
+        try {
+          const userData = JSON.parse(userDataStr);
+          if (userData.email) {
+            setForm((f) => ({ ...f, email: userData.email }));
+          }
+        } catch (e) {}
+      }
+    }
+
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "";
     };
-  }, []);
+  }, [editingOrder]);
 
   return (
     <div
@@ -176,6 +190,18 @@ export default function OrderForm({ item, editingOrder, onClose }) {
                 />
               </div>
 
+              <div>
+                <label className="block text-xs font-semibold text-neutral-600 mb-1.5 uppercase tracking-wide">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={form.email}
+                  readOnly
+                  className="w-full border border-neutral-200 bg-neutral-50 rounded-lg px-4 py-2.5 text-sm text-neutral-500 cursor-not-allowed outline-none"
+                />
+              </div>
             </div>
 
             {/* Row 2 */}
