@@ -101,6 +101,7 @@ const CateringSelectionHub = () => {
             <input
               type="number"
               min="1"
+              max={200}
               value={participants}
               onChange={(e) =>
                 setParticipants(Math.max(1, parseInt(e.target.value) || 0))
