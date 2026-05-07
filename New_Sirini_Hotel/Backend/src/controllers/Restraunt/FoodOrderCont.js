@@ -1,5 +1,24 @@
 const FoodOrder = require("../../models/Restraunt/FoodItemBookModel");
 
+const getCurrentSLTime = () => {
+  const now = new Date();
+  const slDate = new Intl.DateTimeFormat('en-CA', { 
+    timeZone: 'Asia/Colombo', 
+    year: 'numeric', 
+    month: '2-digit', 
+    day: '2-digit' 
+  }).format(now);
+  
+  const slTime = new Intl.DateTimeFormat('en-GB', { 
+    timeZone: 'Asia/Colombo', 
+    hour: '2-digit', 
+    minute: '2-digit', 
+    hour12: false 
+  }).format(now);
+  
+  return { slDate, slTime };
+};
+
 const GenarateFoodOrderCode = async () => {
   const prefix = "SH";
   const randomNumber = Math.floor(1000 + Math.random() * 9000);
@@ -21,6 +40,15 @@ const createFoodOrder = async (req, res) => {
 
     if (!fullName || !quantity || !phoneNumber || !pickupDate || !pickupTime) {
       return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Sri Lanka Time Validation
+    const { slDate, slTime } = getCurrentSLTime();
+    if (pickupDate < slDate) {
+      return res.status(400).json({ message: "Selected date is in the past. Please choose today or a future date." });
+    }
+    if (pickupDate === slDate && pickupTime <= slTime) {
+      return res.status(400).json({ message: "Selected time has already passed for today. Please choose a future time." });
     }
 
     const newFoodOrder = new FoodOrder({
@@ -62,6 +90,15 @@ const editfoodOrder = async (req, res) => {
     }
     if (!fullName || !quantity || !phoneNumber || !pickupDate || !pickupTime) {
       return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Sri Lanka Time Validation
+    const { slDate, slTime } = getCurrentSLTime();
+    if (pickupDate < slDate) {
+      return res.status(400).json({ message: "Selected date is in the past. Please choose today or a future date." });
+    }
+    if (pickupDate === slDate && pickupTime <= slTime) {
+      return res.status(400).json({ message: "Selected time has already passed for today. Please choose a future time." });
     }
     const updatedOrder = await FoodOrder.findByIdAndUpdate(
       id,
