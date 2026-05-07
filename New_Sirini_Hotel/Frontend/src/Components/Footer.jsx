@@ -23,7 +23,7 @@ function Footer() {
             </p>
             <div className="flex gap-3">
               <a
-                href="#"
+                href="https://www.facebook.com/share/1CrEf5Ksbq/"
                 className="bg-transparent border border-white rounded-full p-2 hover:bg-yellow-500 transition-all duration-300 hover:scale-110 group"
                 aria-label="Facebook"
               >
