@@ -6,6 +6,7 @@ import Exploreindicator from "../../Components/Exploreindicator";
 import Calander from "../../Components/Calander";
 import toast from "react-hot-toast";
 
+
 function Rooms() {
   const VITE_URL = import.meta.env.VITE_API_URL;
   const [roomList, setRoomList] = useState([]);
@@ -15,6 +16,7 @@ function Rooms() {
   const [error, setError] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [bookedDates, setBookedDates] = useState([]);
+  
 
   const fetchBookedDates = async (roomNumber) => {
     try {

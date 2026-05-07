@@ -286,7 +286,6 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
                     Warning:
                   </span>
                   After you book the room, you cannot change the room number.
-                  Please review your selection carefully.
                 </p>
               </div>
             </div>
