@@ -3,7 +3,14 @@ import Logo from "../../assets/Logo.png";
 import RoomOperation from "../../Components/OperationManager/Rooms/RoomOperation";
 import ReceptionMngHome from "../../Components/OperationManager/Reception/ReceptionMngHome";
 import RoomandReception from "../../Components/OperationManager/Dashboard_Anlyze/RoomandReception";
-import { Home, BedDouble, ConciergeBell, LogOut, Menu } from "lucide-react";
+import {
+  Home,
+  BedDouble,
+  ConciergeBell,
+  LogOut,
+  Menu,
+  LayoutDashboard,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -45,7 +52,7 @@ const Manager = () => {
   };
 
   const navItems = [
-    { id: "dashboard", label: "Dashboard", icon: Home },
+    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { id: "rooms", label: "Rooms", icon: BedDouble },
     { id: "reception", label: "Reception", icon: ConciergeBell },
     { id: "logout", label: "Logout", icon: LogOut },
@@ -69,9 +76,9 @@ const Manager = () => {
       case "dashboard":
         return "Dashboard Overview";
       case "rooms":
-        return "Rooms";
+        return "Rooms Management";
       case "reception":
-        return "Reception";
+        return "Reception Management";
       default:
         return "Dashboard Overview";
     }
@@ -171,6 +178,12 @@ const Manager = () => {
 
           {/* User Profile */}
           <div className="flex items-center gap-3">
+            <Home
+              size={30}
+              onClick={() => {
+                usenavigate("/");
+              }}
+            />
             <div className="w-14 h-14 bg-amber-500 rounded-2xl flex items-center justify-center text-white shadow-md overflow-hidden hover:scale-105 transition-transform cursor-pointer border-2 border-amber-500/20">
               <img
                 src={userdata.image || Logo}
