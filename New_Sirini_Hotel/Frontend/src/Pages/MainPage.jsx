@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from "../assets/Logo.png";
+import axios from "axios";
 import Exploreindicator from "../Components/Exploreindicator";
 
 const NewSiriniHotel = () => {
+  const VITE_API = import.meta.env.VITE_API;
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [galleryItems, setGalleryItems] = useState([]);
+  const [fillteredCategory, setfillteredCategory] = useState("Reception");
 
   const services = [
     {
@@ -33,6 +37,19 @@ const NewSiriniHotel = () => {
       path: "/liquor",
     },
   ];
+
+  const fetchgalleryItems = async () => {
+    try {
+      const response = await axios.get(`${VITE_API}/api/gallery/view`);
+      setGalleryItems(response.data);
+    } catch (error) {
+      console.error("Error fetching gallery items:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchgalleryItems();
+  }, []);
 
   return (
     <div className="font-serif bg-gray-100 text-gray-900">
@@ -110,14 +127,16 @@ const NewSiriniHotel = () => {
           {["Reception", "Rooms", "Restaurant"].map((cat) => (
             <button
               key={cat}
-              className="px-6 py-1 bg-black text-white rounded-full text-sm hover:bg-yellow-500 transition"
+              onClick={() => setFilteredCategory(cat)}
+              className={`px-8 py-2 rounded-full text-sm font-medium tracking-wider transition-all duration-300 border ${
+                fillteredCategory === cat
+                  ? "bg-black text-white border-black shadow-lg scale-105"
+                  : "bg-white text-gray-600 border-gray-200 hover:border-amber-500 hover:text-amber-600"
+              }`}
             >
               {cat}
             </button>
           ))}
-        </div>
-        <div className="bg-gray-300 h-64 md:h-96 mx-4 rounded-lg flex items-center justify-center text-gray-500">
-          [Gallery Content Placeholder]
         </div>
       </section>
 
@@ -140,17 +159,17 @@ const NewSiriniHotel = () => {
           <div className="text-yellow-500 text-xl">★★★★★</div>
         </div>
         <div className="w-full rounded-lg overflow-hidden shadow-xl h-64 md:h-96">
-  <iframe
-    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1015647.6659904498!2d79.35278087812499!3d6.080244600000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae14581018f8001%3A0x5b446489a6e6e3ef!2sNew%20Sirini%20Hotel!5e0!3m2!1sen!2slk!4v1778137116664!5m2!1sen!2slk"
-    width="100%"
-    height="100%"
-    style={{ border: 0 }}
-    allowFullScreen=""
-    loading="lazy"
-    referrerPolicy="no-referrer-when-downgrade"
-    title="Google Map Location"
-  ></iframe>
-</div>
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1015647.6659904498!2d79.35278087812499!3d6.080244600000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae14581018f8001%3A0x5b446489a6e6e3ef!2sNew%20Sirini%20Hotel!5e0!3m2!1sen!2slk!4v1778137116664!5m2!1sen!2slk"
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            allowFullScreen=""
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            title="Google Map Location"
+          ></iframe>
+        </div>
       </section>
     </div>
   );
