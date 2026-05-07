@@ -204,11 +204,13 @@ function Rooms() {
                   <div className="flex flex-row items-center justify-between gap-4 pt-6 border-t border-gray-50 mt-auto">
                     <div className="flex items-center gap-3">
                       <p
-                        className={`text-[17px] font-black uppercase tracking-[0.2em] ${room.status === "available" ? "text-green-600" : room.status === "maintenance" ? "text-yellow-600" : "text-red-600"}`}
+                        className={`text-[17px] font-black uppercase tracking-[0.2em] relative
+    ${room.status === "available" ? "text-green-600" : "text-gray-400"}`}
                       >
-                        {room.status === "maintenance"
-                          ? "Maintenance"
-                          : room.status}
+                        {room.status}
+                        {room.status === "available" && (
+                          <span className="absolute -bottom-1 left-0 w-1/2 h-[3px] bg-green-500 rounded-full"></span>
+                        )}
                       </p>
                     </div>
 
