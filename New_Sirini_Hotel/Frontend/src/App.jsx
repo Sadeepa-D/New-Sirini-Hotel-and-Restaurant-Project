@@ -16,6 +16,8 @@ import Rooms from "./Pages/ServicesPages/Rooms";
 import Restaurant from "./Pages/ServicesPages/Restaurant";
 import Dashboard from "./Pages/Dashboard";
 import NotFound from "./Pages/NotFound";
+import Unauthorized from "./Pages/Unauthorized";
+import ProtectedRoutes from "./Components/ProtectedRoutes";
 
 const PublicLayout = ({ children }) => (
   <>
@@ -75,9 +77,32 @@ export const App = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/register" element={<Registration />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/manager" element={<Manager />} />
-        <Route path="/operationmanager" element={<OperationManager />} />
+
+        <Route element={<ProtectedRoutes allowedRoles={["Admin"]} />}>
+          <Route path="/admin" element={<Admin />} />
+        </Route>
+
+        <Route
+          element={
+            <ProtectedRoutes
+              allowedRoles={["Admin","Operation Manager 2 (Reception, Room)"]}
+            />
+          }
+        >
+          <Route path="/manager" element={<Manager />} />
+        </Route>
+
+        <Route
+          element={
+            <ProtectedRoutes
+              allowedRoles={["Admin","Operation Manager 1 (Restraunt,Liquor)"]}
+            />
+          }
+        >
+          <Route path="/operationmanager" element={<OperationManager />} />
+        </Route>
+
+        <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>

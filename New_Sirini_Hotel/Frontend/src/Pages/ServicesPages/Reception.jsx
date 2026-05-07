@@ -107,7 +107,7 @@ export default function Reception() {
             </button>
             <button
               onClick={() => setShowCalander(!showcalander)}
-              className="bg-amber-500 hover:bg-amber-600 text-white px-8 py-3 rounded-full font-semibold uppercase tracking-widest text-sm transition-all duration-300 shadow-lg mt-4"
+              className="bg-yellow-500 hover:bg-amber-600 text-black px-8 py-3 rounded-full font-semibold uppercase tracking-widest text-sm transition-all duration-300 shadow-lg mt-4"
             >
               {showcalander ? "Hide Calendar" : "Show Calendar"}
             </button>

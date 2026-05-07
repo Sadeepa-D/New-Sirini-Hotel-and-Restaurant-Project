@@ -6,6 +6,7 @@ import {
   CalendarDays,
   Megaphone,
   LogOut,
+  ArrowLeft,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -19,43 +20,6 @@ import AdsSection from "../Components/Dashboard/AdsSection";
 const UserDashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("profile");
-
-  // Mock Data for UI Demonstration
-  const mockRooms = [
-    {
-      id: "RM-1024",
-      type: "Deluxe Ocean View",
-      checkIn: "Oct 15, 2024",
-      checkOut: "Oct 18, 2024",
-      status: "Confirmed",
-      price: "$450",
-    },
-    {
-      id: "RM-1025",
-      type: "Standard Suite",
-      checkIn: "Nov 02, 2024",
-      checkOut: "Nov 05, 2024",
-      status: "Pending",
-      price: "$200",
-    },
-  ];
-
-  const mockOrders = [
-    {
-      id: "ORD-992",
-      items: "2x Grilled Salmon, 1x Red Wine",
-      date: "Oct 15, 2024 - 19:30",
-      status: "Preparing",
-      total: "$85",
-    },
-    {
-      id: "ORD-980",
-      items: "1x Continental Breakfast",
-      date: "Oct 14, 2024 - 08:00",
-      status: "Delivered",
-      total: "$25",
-    },
-  ];
 
   const handlelogout = () => {
     // Clear user session (e.g., remove token, clear local storage)
@@ -72,6 +36,11 @@ const UserDashboard = () => {
         <div className="mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 border-b border-gray-200 pb-6">
           <div>
             <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-2">
+              <ArrowLeft
+                size={28}
+                className="inline-block mr-2 text-gray-400 hover:text-gray-600 cursor-pointer transition-colors duration-300"
+                onClick={() => navigate(-1)}
+              />
               My Account
             </h1>
             <p className="text-gray-500 italic tracking-wide text-lg">
@@ -129,10 +98,8 @@ const UserDashboard = () => {
           {/* Main Content Area */}
           <div className="flex-1 bg-white rounded-2xl shadow-xl border border-gray-100 p-6 sm:p-10 min-h-150">
             {activeTab === "profile" && <ProfileSection />}
-            {activeTab === "rooms" && <RoomsSection data={mockRooms} />}
-            {activeTab === "restaurant" && (
-              <RestrauntSection data={mockOrders} />
-            )}
+            {activeTab === "rooms" && <RoomsSection />}
+            {activeTab === "restaurant" && <RestrauntSection />}
             {activeTab === "appointments" && <AppointmentsSection />}
             {activeTab === "ads" && <AdsSection />}
           </div>
