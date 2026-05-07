@@ -24,7 +24,8 @@ const FoodItemSchema = new mongoose.Schema(
     },
     ingredients: {
       type: [String],
-      required: true,
+      required: false,
+      default: [],
     },
     category: {
       type: String,

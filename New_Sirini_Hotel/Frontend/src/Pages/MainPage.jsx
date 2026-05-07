@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from "../assets/Logo.png";
+import axios from "axios";
 import Exploreindicator from "../Components/Exploreindicator";
 
 const NewSiriniHotel = () => {
+  const VITE_API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [galleryItems, setGalleryItems] = useState([]);
+  const [activeFilter, setActiveFilter] = useState("Reception");
 
   const services = [
     {
@@ -33,6 +37,24 @@ const NewSiriniHotel = () => {
       path: "/liquor",
     },
   ];
+
+  const fetchgalleryItems = async () => {
+    try {
+      const response = await axios.get(`${VITE_API_URL}/api/gallery/view`);
+      setGalleryItems(response.data);
+    } catch (error) {
+      console.error("Error fetching gallery items:", error);
+      setGalleryItems([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchgalleryItems();
+  }, []);
+
+  const filteredGalleryItems = Array.isArray(galleryItems)
+    ? galleryItems.filter((item) => item.category === activeFilter)
+    : [];
 
   return (
     <div className="font-serif bg-gray-100 text-gray-900">
@@ -104,20 +126,72 @@ const NewSiriniHotel = () => {
       </section>
 
       {/* --- Gallery Filter --- */}
-      <section id="gallery" className="bg-gray-200 py-12 text-center">
-        <h2 className="text-4xl mb-8 font-serif">Gallery</h2>
-        <div className="flex flex-wrap justify-center gap-4 mb-10">
-          {["All", "Reception", "Rooms", "Restaurant", "Liquor"].map((cat) => (
-            <button
-              key={cat}
-              className="px-6 py-1 bg-black text-white rounded-full text-sm hover:bg-yellow-500 transition"
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-        <div className="bg-gray-300 h-64 md:h-96 mx-4 rounded-lg flex items-center justify-center text-gray-500">
-          [Gallery Content Placeholder]
+      <section id="gallery" className="bg-gray-100 py-6 text-center">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl mb-4 font-serif text-gray-800 tracking-tight">
+            Gallery
+          </h2>
+
+          {/* Category Buttons */}
+          <div className="flex flex-wrap justify-center gap-2 mb-6">
+            {["Reception", "Rooms", "Restaurant"].map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveFilter(cat)}
+                className={`px-6 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 border ${
+                  activeFilter === cat
+                    ? "bg-slate-900 text-amber-500 border-slate-900 shadow-lg scale-105"
+                    : "bg-white text-gray-400 border-gray-200 hover:border-amber-500 hover:text-amber-600"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {/* Scrollable Container */}
+          <div className="max-w-6xl mx-auto">
+            {filteredGalleryItems.length > 0 ? (
+              <div
+                className="pr-2 overflow-y-auto 
+                     h-[530px] 
+                     scrollbar-thin 
+                     scrollbar-thumb-amber-500 
+                     scrollbar-track-transparent"
+                style={{
+                  scrollbarWidth: "thin",
+                  scrollbarColor: "#f59e0b transparent",
+                }}
+              >
+                {/* Changed to grid-cols-4 */}
+                <div className="grid grid-cols-4 gap-2">
+                  {filteredGalleryItems.map((item) => (
+                    <div
+                      key={item._id}
+                      className="group relative aspect-[4/3] rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-500"
+                    >
+                      <img
+                        src={item.image}
+                        alt={item.category}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2">
+                        <span className="text-white text-[7px] font-bold uppercase tracking-widest border border-white/40 px-1.5 py-0.5 rounded backdrop-blur-sm">
+                          {item.category}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white rounded-[2rem] py-16 border border-gray-200">
+                <p className="text-gray-400 text-sm italic">
+                  No photographs found.
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
@@ -140,17 +214,17 @@ const NewSiriniHotel = () => {
           <div className="text-yellow-500 text-xl">★★★★★</div>
         </div>
         <div className="w-full rounded-lg overflow-hidden shadow-xl h-64 md:h-96">
-  <iframe
-    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1015647.6659904498!2d79.35278087812499!3d6.080244600000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae14581018f8001%3A0x5b446489a6e6e3ef!2sNew%20Sirini%20Hotel!5e0!3m2!1sen!2slk!4v1778137116664!5m2!1sen!2slk"
-    width="100%"
-    height="100%"
-    style={{ border: 0 }}
-    allowFullScreen=""
-    loading="lazy"
-    referrerPolicy="no-referrer-when-downgrade"
-    title="Google Map Location"
-  ></iframe>
-</div>
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1015647.6659904498!2d79.35278087812499!3d6.080244600000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae14581018f8001%3A0x5b446489a6e6e3ef!2sNew%20Sirini%20Hotel!5e0!3m2!1sen!2slk!4v1778137116664!5m2!1sen!2slk"
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            allowFullScreen=""
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            title="Google Map Location"
+          ></iframe>
+        </div>
       </section>
     </div>
   );

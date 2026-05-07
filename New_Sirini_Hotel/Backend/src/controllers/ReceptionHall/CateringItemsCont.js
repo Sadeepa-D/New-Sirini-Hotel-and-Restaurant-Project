@@ -3,8 +3,8 @@ const cloudinary = require("cloudinary");
 
 const createCateringItem = async (req, res) => {
   try {
-    const { name, ingredients, priceperserving } = req.body;
-    if (!name || !ingredients || !priceperserving) {
+    const { name, ingredients, price } = req.body;
+    if (!name || !ingredients || !price) {
       return res.status(400).json({ message: "All fields are required" });
     }
     const image = req.file ? req.file.secure_url : null;
@@ -12,18 +12,17 @@ const createCateringItem = async (req, res) => {
     if (!image) {
       return res.status(400).json({ message: "Image is required" });
     }
+
     const newCateringItem = new CateringItems({
       name,
       ingredients,
-      priceperserving,
+      price,
       image,
       imagePublicId,
       status: true,
     });
     await newCateringItem.save();
-    res.status(201).json({
-      message: "Catering item created successfully",
-    });
+    res.status(201).json(newCateringItem);
   } catch (error) {
     res.status(500).json({ message: "Error creating catering item", error });
   }
@@ -31,9 +30,6 @@ const createCateringItem = async (req, res) => {
 const getCateringItems = async (req, res) => {
   try {
     const items = await CateringItems.find();
-    if (items.length === 0) {
-      return res.status(404).json({ message: "No catering items found" });
-    }
     res.status(200).json(items);
   } catch (error) {
     res.status(500).json({ message: "Error fetching catering items", error });
@@ -67,7 +63,7 @@ const updateCateringItem = async (req, res) => {
     if (!updatedItem) {
       return res.status(404).json({ message: "Catering item not found" });
     }
-    res.status(201).json({ message: "Catering item updated successfully" });
+    res.status(201).json(updatedItem);
   } catch (error) {
     res.status(500).json({ message: "Error updating catering item", error });
   }

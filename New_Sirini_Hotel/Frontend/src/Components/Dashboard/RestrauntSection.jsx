@@ -47,10 +47,51 @@ const RestaurantSection = ({ data }) => {
     fetchOrders();
   }, []);
 
-  const handleDelete = (orderId) => {
+  const handleDelete = (order) => {
+    const userDataStr = localStorage.getItem("user");
+    let userRole = "";
+    if (userDataStr) {
+      try {
+        const userData = JSON.parse(userDataStr);
+        userRole = userData.role || "";
+      } catch (e) { }
+    }
+
+    // Check if user is NOT an Operation Manager or Admin
+    const isStaff = userRole.includes("Operation Manager") || userRole === "Admin";
+
+    if (!isStaff) {
+      const now = new Date();
+      const slDateStr = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Colombo',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).format(now);
+
+      const slTimeStr = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Colombo',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }).format(now);
+
+      const pickupDateStr = new Date(order.pickupDate).toISOString().split('T')[0];
+      const pickupDateTime = new Date(`${pickupDateStr}T${order.pickupTime}`);
+      const currentSLDateTime = new Date(`${slDateStr}T${slTimeStr}`);
+
+      const diffInMs = pickupDateTime - currentSLDateTime;
+      const diffInHours = diffInMs / (1000 * 60 * 60);
+
+      if (diffInHours < 1) {
+        toast.error("Cannot cancel now. Less than 1 hour left. Please contact hotel for cancellation.");
+        return;
+      }
+    }
+
     setConfirmDialog({
       isOpen: true,
-      id: orderId,
+      id: order._id,
       type: "delete",
       title: "Delete Order?",
       message: "Are you sure you want to delete this order? This action cannot be undone.",
@@ -100,8 +141,8 @@ const RestaurantSection = ({ data }) => {
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === tab
-                  ? "bg-amber-100 text-amber-700 shadow-sm"
-                  : "text-gray-500 hover:text-gray-700"
+                ? "bg-amber-100 text-amber-700 shadow-sm"
+                : "text-gray-500 hover:text-gray-700"
                 }`}
             >
               {tab}
@@ -127,10 +168,10 @@ const RestaurantSection = ({ data }) => {
                     <span className="font-bold text-sm text-amber-700">{order.foodName}</span>
                   </div>
                   <span className={`text-[10px] font-black px-2 py-1 rounded-lg uppercase ${order.status === "Completed"
-                      ? "bg-green-50 text-green-600"
-                      : order.status === "Cancelled" || order.status === "delete"
-                        ? "bg-red-50 text-red-600"
-                        : "bg-amber-50 text-amber-600"
+                    ? "bg-green-50 text-green-600"
+                    : order.status === "Cancelled" || order.status === "delete"
+                      ? "bg-red-50 text-red-600"
+                      : "bg-amber-50 text-amber-600"
                     }`}>
                     {order.status === "delete" ? "DELETED" : order.status}
                   </span>
@@ -172,7 +213,7 @@ const RestaurantSection = ({ data }) => {
                     EDIT
                   </button>
                   <button
-                    onClick={() => handleDelete(order._id)}
+                    onClick={() => handleDelete(order)}
                     className="flex-1 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white py-2.5 rounded-2xl text-xs font-black transition-all flex items-center justify-center"
                   >
                     DELETE
