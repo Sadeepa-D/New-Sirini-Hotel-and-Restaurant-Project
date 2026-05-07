@@ -126,52 +126,72 @@ const NewSiriniHotel = () => {
       </section>
 
       {/* --- Gallery Filter --- */}
-      <section id="gallery" className="bg-gray-200 py-12 text-center">
-        <h2 className="text-4xl mb-8 font-serif">Gallery</h2>
-        <div className="flex flex-wrap justify-center gap-4 mb-10">
-          {["Reception", "Rooms", "Restaurant"].map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveFilter(cat)}
-              className={`px-8 py-2 rounded-full text-sm font-medium tracking-wider transition-all duration-300 border ${
-                activeFilter === cat
-                  ? "bg-black text-white border-black shadow-lg scale-105"
-                  : "bg-white text-gray-600 border-gray-200 hover:border-amber-500 hover:text-amber-600"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-        {/* Dynamic Image Grid */}
-        <div className="min-h-[400px]">
-          {filteredGalleryItems.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredGalleryItems.map((item) => (
-                <div
-                  key={item._id}
-                  className="group relative aspect-square rounded-[2rem] overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500"
-                >
-                  <img
-                    src={item.image}
-                    alt={item.category}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                    <span className="text-white text-[10px] font-black uppercase tracking-widest border border-white/40 px-3 py-1 rounded-lg backdrop-blur-sm">
-                      {item.category}
-                    </span>
-                  </div>
+      <section id="gallery" className="bg-gray-100 py-6 text-center">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl mb-4 font-serif text-gray-800 tracking-tight">
+            Gallery
+          </h2>
+
+          {/* Category Buttons */}
+          <div className="flex flex-wrap justify-center gap-2 mb-6">
+            {["Reception", "Rooms", "Restaurant"].map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveFilter(cat)}
+                className={`px-6 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 border ${
+                  activeFilter === cat
+                    ? "bg-slate-900 text-amber-500 border-slate-900 shadow-lg scale-105"
+                    : "bg-white text-gray-400 border-gray-200 hover:border-amber-500 hover:text-amber-600"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {/* Scrollable Container */}
+          <div className="max-w-6xl mx-auto">
+            {filteredGalleryItems.length > 0 ? (
+              <div
+                className="pr-2 overflow-y-auto 
+                     h-[530px] 
+                     scrollbar-thin 
+                     scrollbar-thumb-amber-500 
+                     scrollbar-track-transparent"
+                style={{
+                  scrollbarWidth: "thin",
+                  scrollbarColor: "#f59e0b transparent",
+                }}
+              >
+                {/* Changed to grid-cols-4 */}
+                <div className="grid grid-cols-4 gap-2">
+                  {filteredGalleryItems.map((item) => (
+                    <div
+                      key={item._id}
+                      className="group relative aspect-[4/3] rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-500"
+                    >
+                      <img
+                        src={item.image}
+                        alt={item.category}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2">
+                        <span className="text-white text-[7px] font-bold uppercase tracking-widest border border-white/40 px-1.5 py-0.5 rounded backdrop-blur-sm">
+                          {item.category}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="bg-gray-50 rounded-[3rem] py-20 border-2 border-dashed border-gray-200">
-              <p className="text-gray-400 italic font-serif">
-                No photographs found in this category.
-              </p>
-            </div>
-          )}
+              </div>
+            ) : (
+              <div className="bg-white rounded-[2rem] py-16 border border-gray-200">
+                <p className="text-gray-400 text-sm italic">
+                  No photographs found.
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
