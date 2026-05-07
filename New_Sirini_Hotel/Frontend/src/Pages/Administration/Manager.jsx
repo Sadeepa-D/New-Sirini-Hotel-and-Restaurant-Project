@@ -76,9 +76,9 @@ const Manager = () => {
       case "dashboard":
         return "Dashboard Overview";
       case "rooms":
-        return "Rooms";
+        return "Rooms Management";
       case "reception":
-        return "Reception";
+        return "Reception Management";
       default:
         return "Dashboard Overview";
     }

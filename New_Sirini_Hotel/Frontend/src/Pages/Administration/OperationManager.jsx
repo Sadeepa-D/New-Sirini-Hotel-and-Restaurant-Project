@@ -76,6 +76,10 @@ const OperationManager = () => {
     switch (activeTab) {
       case "dashboard":
         return "Dashboard Overview";
+      case "Liquor":
+        return "Liquor Management";
+      case "Food":
+        return "Restaurant Management";
       default:
         return "Dashboard Overview";
     }
