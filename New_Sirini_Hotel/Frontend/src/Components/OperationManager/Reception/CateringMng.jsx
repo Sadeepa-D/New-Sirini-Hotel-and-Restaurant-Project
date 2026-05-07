@@ -70,7 +70,7 @@ const CateringMng = () => {
       const data = response.data;
       setItems(data);
     } catch (err) {
-      setError("Failed to fetch items");
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -292,7 +292,7 @@ const CateringMng = () => {
                       ))}
                   </div>
                   <span className="inline-block mt-2 text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
-                    Rs: {item.priceperserving}
+                    Rs: {item.price}
                   </span>
                 </div>
               </div>
