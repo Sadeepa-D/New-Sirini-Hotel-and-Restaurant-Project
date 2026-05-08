@@ -179,6 +179,8 @@ const RestaurantManager = () => {
       setEditingItem(null);
     } catch (err) {
       console.error("Error saving item:", err);
+      const errorMessage = err.response?.data?.message || "Error saving item";
+      toast.error(errorMessage, { id: loadingToast });
     }
   };
 
