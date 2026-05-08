@@ -104,15 +104,19 @@ export default function OrderForm({ item, editingOrder, onClose }) {
 
   // Prefill email and prevent background scroll
   useEffect(() => {
-    if (!editingOrder) {
-      const userDataStr = localStorage.getItem("user");
-      if (userDataStr) {
-        try {
-          const userData = JSON.parse(userDataStr);
-          if (userData.email) {
-            setForm((f) => ({ ...f, email: userData.email }));
-          }
-        } catch (e) {}
+    const userDataStr = localStorage.getItem("user");
+    if (userDataStr) {
+      try {
+        const userData = JSON.parse(userDataStr);
+        setForm((f) => ({
+          ...f,
+          // Only auto-fill if the field is currently empty
+          email: f.email || userData.email || "",
+          name: f.name || userData.name || userData.fullName || "",
+          phone: f.phone || userData.Phone || userData.phone || "",
+        }));
+      } catch (e) {
+        console.error("Error parsing user data for auto-fill:", e);
       }
     }
 
