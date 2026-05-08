@@ -1,5 +1,24 @@
 const FoodOrder = require("../../models/Restraunt/FoodItemBookModel");
 
+const getCurrentSLTime = () => {
+  const now = new Date();
+  const slDate = new Intl.DateTimeFormat('en-CA', { 
+    timeZone: 'Asia/Colombo', 
+    year: 'numeric', 
+    month: '2-digit', 
+    day: '2-digit' 
+  }).format(now);
+  
+  const slTime = new Intl.DateTimeFormat('en-GB', { 
+    timeZone: 'Asia/Colombo', 
+    hour: '2-digit', 
+    minute: '2-digit', 
+    hour12: false 
+  }).format(now);
+  
+  return { slDate, slTime };
+};
+
 const GenarateFoodOrderCode = async () => {
   const prefix = "SH";
   const randomNumber = Math.floor(1000 + Math.random() * 9000);
@@ -16,17 +35,27 @@ const GenarateFoodOrderCode = async () => {
 const createFoodOrder = async (req, res) => {
   try {
     const userId = req.userData.id;
-    const { foodName, fullName, quantity, phoneNumber, pickupDate, pickupTime, Price } =
+    const { foodName, fullName, email, quantity, phoneNumber, pickupDate, pickupTime, Price } =
       req.body;
 
-    if (!fullName || !quantity || !phoneNumber || !pickupDate || !pickupTime) {
+    if (!fullName || !email || !quantity || !phoneNumber || !pickupDate || !pickupTime) {
       return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Sri Lanka Time Validation
+    const { slDate, slTime } = getCurrentSLTime();
+    if (pickupDate < slDate) {
+      return res.status(400).json({ message: "Selected date is in the past. Please choose today or a future date." });
+    }
+    if (pickupDate === slDate && pickupTime <= slTime) {
+      return res.status(400).json({ message: "Selected time has already passed for today. Please choose a future time." });
     }
 
     const newFoodOrder = new FoodOrder({
       userId,
       foodName,
       fullName,
+      email,
       quantity,
       phoneNumber,
       pickupDate,
@@ -55,18 +84,28 @@ const getFoodOrders = async (req, res) => {
 const editfoodOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const { fullName, quantity, phoneNumber, pickupDate, pickupTime, Price } =
+    const { fullName, email, quantity, phoneNumber, pickupDate, pickupTime, Price } =
       req.body;
     if (!id) {
       return res.status(400).json({ message: "Food order ID is required" });
     }
-    if (!fullName || !quantity || !phoneNumber || !pickupDate || !pickupTime) {
+    if (!fullName || !email || !quantity || !phoneNumber || !pickupDate || !pickupTime) {
       return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Sri Lanka Time Validation
+    const { slDate, slTime } = getCurrentSLTime();
+    if (pickupDate < slDate) {
+      return res.status(400).json({ message: "Selected date is in the past. Please choose today or a future date." });
+    }
+    if (pickupDate === slDate && pickupTime <= slTime) {
+      return res.status(400).json({ message: "Selected time has already passed for today. Please choose a future time." });
     }
     const updatedOrder = await FoodOrder.findByIdAndUpdate(
       id,
       {
         fullName,
+        email,
         quantity,
         phoneNumber,
         pickupDate,
@@ -86,17 +125,39 @@ const editfoodOrder = async (req, res) => {
 const deleteFoodOrder = async (req, res) => {
   try {
     const { id } = req.params;
+    const userRole = req.userData.role;
+
     if (!id) {
       return res.status(400).json({ message: "Food order ID is required" });
     }
-    const updatedOrder = await FoodOrder.findByIdAndUpdate(
-      id,
-      { status: "delete" },
-      { new: true }
-    );
-    if (!updatedOrder) {
+
+    const order = await FoodOrder.findById(id);
+    if (!order) {
       return res.status(404).json({ message: "Food order not found" });
     }
+
+    // Check if user is NOT an Operation Manager or Admin
+    const isStaff = userRole && (userRole.includes("Operation Manager") || userRole === "Admin");
+
+    if (!isStaff) {
+      const { slDate, slTime } = getCurrentSLTime();
+      const pickupDateStr = new Date(order.pickupDate).toISOString().split('T')[0];
+      const pickupDateTime = new Date(`${pickupDateStr}T${order.pickupTime}`);
+      const currentSLDateTime = new Date(`${slDate}T${slTime}`);
+
+      const diffInMs = pickupDateTime - currentSLDateTime;
+      const diffInHours = diffInMs / (1000 * 60 * 60);
+
+      if (diffInHours < 1) {
+        return res.status(400).json({ 
+          message: "Cannot cancel now. Less than 1 hour left. Please contact hotel for cancellation." 
+        });
+      }
+    }
+
+    order.status = "delete";
+    await order.save();
+    
     res.status(200).json({ message: "Food order marked as deleted" });
   } catch (error) {
     res.status(500).json({ message: "Failed to delete food order", error });
