@@ -178,12 +178,13 @@ const Manager = () => {
 
           {/* User Profile */}
           <div className="flex items-center gap-3">
-            <Home
-              size={30}
+            <button
               onClick={() => {
                 usenavigate("/");
               }}
-            />
+            >
+              <Home size={30} />
+            </button>
             <div className="w-14 h-14 bg-amber-500 rounded-2xl flex items-center justify-center text-white shadow-md overflow-hidden hover:scale-105 transition-transform cursor-pointer border-2 border-amber-500/20">
               <img
                 src={userdata.image || Logo}

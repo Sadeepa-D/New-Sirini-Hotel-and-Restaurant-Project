@@ -97,7 +97,7 @@ const AppointmentCard = ({
               </button>
               <button
                 className="flex-1 flex items-center justify-center gap-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold py-1.5 rounded-lg transition-colors"
-                onClick={() => onUpdate(appointment._id, "cancelled")}
+                onClick={() => onUpdate(appointment._id, "canceled")}
               >
                 Cancel
               </button>
