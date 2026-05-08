@@ -42,8 +42,8 @@ export default function Restaurant() {
       const mappedData = data.map((item) => ({
         id: item._id,
         name: item.name,
-        regular_price: item.regular_price,
-        portions: item.portions,
+        normal_price: item.normal_price,
+        full_price: item.full_price,
         has_portions: item.has_portions,
         description: item.description,
         image: item.image,
@@ -53,7 +53,11 @@ export default function Restaurant() {
       }));
       setMealData(mappedData);
     } catch (error) {
-      console.error("Error fetching food items:", error);
+      if (error.response && error.response.status === 404) {
+        setMealData([]);
+      } else {
+        console.error("Error fetching food items:", error);
+      }
     }
   };
 

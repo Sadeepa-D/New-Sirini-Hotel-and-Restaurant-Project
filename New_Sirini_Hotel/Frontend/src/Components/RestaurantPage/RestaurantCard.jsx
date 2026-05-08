@@ -26,24 +26,21 @@ export default function RestaurantCard({ item, itemsPerView, onOrder }) {
           <h4 className="text-xl font-bold text-neutral-900 mb-1">
             {item.name}
           </h4>
-          <p className="text-sm text-neutral-500 mb-3">
-            {item.ingredients ? item.ingredients.join(", ") : item.description}
+          <p className="text-xs text-neutral-500 mb-4 line-clamp-2">
+            {item.description}
           </p>
           <div className="mt-auto flex items-center justify-between gap-4">
             <div className="flex-grow">
-              {!item.has_portions ? (
-                <span className="text-lg font-bold text-amber-600">
-                  Rs. {item.regular_price}
+              <div className="flex flex-col">
+                <span className="text-[13px] font-bold text-amber-600 leading-tight">
+                  Normal: Rs. {item.normal_price}
                 </span>
-              ) : (
-                <div className="flex flex-col">
-                  {item.portions?.map((p, idx) => (
-                    <span key={idx} className="text-[13px] font-bold text-amber-600 leading-tight">
-                      {p.portion_name}: Rs. {p.price}
-                    </span>
-                  ))}
-                </div>
-              )}
+                {item.has_portions && (
+                  <span className="text-[13px] font-bold text-amber-600 leading-tight">
+                    Full: Rs. {item.full_price}
+                  </span>
+                )}
+              </div>
             </div>
             <button
               onClick={() => onOrder(item)}
