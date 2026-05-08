@@ -10,7 +10,7 @@ const AddRestrauntItemForm = ({ onClose, initialData, onSubmit }) => {
         normal_price: "",
         full_price: "",
         description: "",
-        category: "Main Meals",
+        category: "Chopsy Rice",
         has_portions: false,
     });
 
@@ -167,9 +167,13 @@ const AddRestrauntItemForm = ({ onClose, initialData, onSubmit }) => {
                                     onChange={handleChange}
                                     className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00] appearance-none"
                                 >
-                                    <option value="Main Meals">Main Meals</option>
-                                    <option value="Soft Drinks">Soft Drinks</option>
-                                    <option value="Fresh Juice">Fresh Juice</option>
+                                    <option value="Chopsy Rice">Chopsy Rice</option>
+                                    <option value="Rice & Nasi Goreng">Rice & Nasi Goreng</option>
+                                    <option value="Kottu">Kottu</option>
+                                    <option value="Noodles">Noodles</option>
+                                    <option value="Bites">Bites</option>
+                                    <option value="Side Dishes">Side Dishes</option>
+                                    <option value="Snacks">Snacks</option>
                                 </select>
                             </div>
                         </div>

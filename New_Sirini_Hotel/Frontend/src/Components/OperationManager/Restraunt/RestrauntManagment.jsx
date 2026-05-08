@@ -84,7 +84,15 @@ const RestaurantManager = () => {
     message: "",
   });
 
-  const CATEGORIES = ["Main Meals", "Soft Drinks", "Fresh Juice"];
+  const CATEGORIES = [
+    "Chopsy Rice",
+    "Rice & Nasi Goreng",
+    "Kottu",
+    "Noodles",
+    "Bites",
+    "Side Dishes",
+    "Snacks"
+  ];
 
   const fetchFoodItems = async () => {
     try {
