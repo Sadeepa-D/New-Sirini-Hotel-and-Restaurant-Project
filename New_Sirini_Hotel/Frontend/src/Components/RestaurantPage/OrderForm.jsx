@@ -9,8 +9,15 @@ export default function OrderForm({ item, editingOrder, onClose }) {
     pickupDate: editingOrder ? new Date(editingOrder.pickupDate).toISOString().split('T')[0] : "",
     pickupTime: editingOrder ? editingOrder.pickupTime : "",
     quantity: editingOrder ? editingOrder.quantity : 1,
+    portion: editingOrder ? editingOrder.portion : (item.has_portions ? "Normal" : ""),
   });
   const [submitted, setSubmitted] = useState(false);
+
+  const getPrice = () => {
+    if (!item.has_portions) return item.regular_price || 0;
+    const selectedPortion = item.portions?.find(p => p.portion_name === form.portion);
+    return selectedPortion ? selectedPortion.price : 0;
+  };
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,18 +29,18 @@ export default function OrderForm({ item, editingOrder, onClose }) {
 
     // Get current Sri Lankan date and time
     const now = new Date();
-    const slDateStr = new Intl.DateTimeFormat('en-CA', { 
-      timeZone: 'Asia/Colombo', 
-      year: 'numeric', 
-      month: '2-digit', 
-      day: '2-digit' 
+    const slDateStr = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Colombo',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
     }).format(now);
-    
-    const slTimeStr = new Intl.DateTimeFormat('en-GB', { 
-      timeZone: 'Asia/Colombo', 
-      hour: '2-digit', 
-      minute: '2-digit', 
-      hour12: false 
+
+    const slTimeStr = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Colombo',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
     }).format(now);
 
     // Validation
@@ -54,7 +61,7 @@ export default function OrderForm({ item, editingOrder, onClose }) {
         try {
           const userData = JSON.parse(userDataStr);
           userId = userData._id;
-        } catch (e) {}
+        } catch (e) { }
       }
 
       const orderData = {
@@ -65,9 +72,10 @@ export default function OrderForm({ item, editingOrder, onClose }) {
         pickupDate: form.pickupDate,
         pickupTime: form.pickupTime,
         quantity: form.quantity,
-        foodName: item.name, 
+        portion: item.has_portions ? form.portion : null,
+        foodName: item.name,
         userId: userId,
-        Price: item.price * form.quantity,
+        Price: getPrice() * form.quantity,
       };
 
       if (editingOrder) {
@@ -93,32 +101,52 @@ export default function OrderForm({ item, editingOrder, onClose }) {
       }
 
       setSubmitted(true);
-      setTimeout(() => {
-        onClose();
-      }, 2000);
+      toast.success(`Added to cart ${item.name} successfully`, {
+        position: "top-center"
+      });
+      onClose();
     } catch (error) {
-     // console.error("Error placing order:", error);
+      // console.error("Error placing order:", error);
       alert(`Failed to ${editingOrder ? 'update' : 'place'} order. Please try again.`);
     }
   };
 
-  // Prefill email and prevent background scroll
+  // Fetch user profile from backend for auto-fill
   useEffect(() => {
-    const userDataStr = localStorage.getItem("user");
-    if (userDataStr) {
-      try {
-        const userData = JSON.parse(userDataStr);
-        setForm((f) => ({
-          ...f,
-          // Only auto-fill if the field is currently empty
-          email: f.email || userData.email || "",
-          name: f.name || userData.name || userData.fullName || "",
-          phone: f.phone || userData.Phone || userData.phone || "",
-        }));
-      } catch (e) {
-        console.error("Error parsing user data for auto-fill:", e);
+    const fetchUserProfile = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/profile`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          const userData = response.data;
+          setForm((f) => ({
+            ...f,
+            email: f.email || userData.email || "",
+            name: f.name || userData.name || "",
+            phone: f.phone || userData.Phone || "",
+          }));
+        } catch (error) {
+          console.error("Error fetching user profile for auto-fill:", error);
+          // Fallback to localStorage if backend fails
+          const userDataStr = localStorage.getItem("user");
+          if (userDataStr) {
+            try {
+              const userData = JSON.parse(userDataStr);
+              setForm((f) => ({
+                ...f,
+                email: f.email || userData.email || "",
+                name: f.name || userData.name || userData.fullName || "",
+                phone: f.phone || userData.Phone || userData.phone || "",
+              }));
+            } catch (e) { }
+          }
+        }
       }
-    }
+    };
+
+    fetchUserProfile();
 
     document.body.style.overflow = "hidden";
     return () => {
@@ -140,7 +168,7 @@ export default function OrderForm({ item, editingOrder, onClose }) {
         <div className="relative px-6 pt-6 pb-4 border-b border-neutral-100">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center transition-colors"
+            className="absolute top-4 right-2 w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center transition-colors z-10"
           >
             <svg
               className="w-4 h-4 text-neutral-600"
@@ -157,27 +185,57 @@ export default function OrderForm({ item, editingOrder, onClose }) {
             </svg>
           </button>
 
-          <span className="text-xs font-semibold uppercase tracking-widest text-amber-600">
-            {editingOrder ? "Edit Order" : "Order Now"}
-          </span>
-          <h2 className="text-2xl font-bold text-neutral-900 mt-1">{item.name}</h2>
-          <p className="text-sm text-neutral-500 mt-1">{item.description}</p>
+          <div className="flex justify-between items-center gap-4">
+            <div className="flex-1">
+              <span className="text-xs font-semibold uppercase tracking-widest text-amber-600">
+                {editingOrder ? "Edit Order" : "ADD TO CART"}
+              </span>
+              <h2 className="text-2xl font-bold text-neutral-900 mt-1">{item.name}</h2>
+              <p className="text-sm text-neutral-500 mt-1 line-clamp-2">{item.description}</p>
 
-          {/* Small label pill - optional, looks nice */}
-          <div className="mt-3 inline-block">
-            <span
-              className="px-3 py-1 rounded-full text-xs font-bold text-white"
-              style={{ background: "#d97706" }}
-            >
-              {item.label}
-            </span>
+              {/* Small label pill */}
+              <div className="mt-3">
+                <span
+                  className="px-3 py-1 rounded-full text-xs font-bold text-white inline-block"
+                  style={{ background: "#d97706" }}
+                >
+                  {item.category}
+                </span>
+              </div>
+            </div>
+
+            <div className="hidden sm:block flex-shrink-0">
+              <div className="w-28 h-28 rounded-2xl overflow-hidden shadow-xl border-2 border-white ring-4 ring-amber-50">
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-full h-full object-cover transition-transform hover:scale-110 duration-500"
+                />
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Form / Success content */}
         <div className="p-6 md:p-8">
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            {/* Row 1 */}
+            {/* Row 1: Email */}
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-neutral-600 mb-1.5 uppercase tracking-wide">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={form.email}
+                  readOnly
+                  className="w-full border border-neutral-200 bg-neutral-50 rounded-lg px-4 py-2.5 text-sm text-neutral-500 cursor-not-allowed outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Row 2: Full Name & Phone Number */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-neutral-600 mb-1.5 uppercase tracking-wide">
@@ -196,22 +254,6 @@ export default function OrderForm({ item, editingOrder, onClose }) {
 
               <div>
                 <label className="block text-xs font-semibold text-neutral-600 mb-1.5 uppercase tracking-wide">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={form.email}
-                  readOnly
-                  className="w-full border border-neutral-200 bg-neutral-50 rounded-lg px-4 py-2.5 text-sm text-neutral-500 cursor-not-allowed outline-none"
-                />
-              </div>
-            </div>
-
-            {/* Row 2 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-neutral-600 mb-1.5 uppercase tracking-wide">
                   Phone Number
                 </label>
                 <input
@@ -227,8 +269,29 @@ export default function OrderForm({ item, editingOrder, onClose }) {
                   className="w-full border border-neutral-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition"
                 />
               </div>
+            </div>
 
-              <div>
+            {/* Row 3: Portion & Quantity */}
+            <div className={`grid grid-cols-1 ${item.has_portions ? "sm:grid-cols-2" : ""} gap-4`}>
+              {item.has_portions && (
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-600 mb-1.5 uppercase tracking-wide">
+                    Portion
+                  </label>
+                  <select
+                    name="portion"
+                    value={form.portion}
+                    onChange={handleChange}
+                    required
+                    className="w-full border border-neutral-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition bg-white"
+                  >
+                    <option value="Normal">Normal</option>
+                    <option value="Full">Full</option>
+                  </select>
+                </div>
+              )}
+
+              <div className={!item.has_portions ? "w-full" : ""}>
                 <label className="block text-xs font-semibold text-neutral-600 mb-1.5 uppercase tracking-wide">
                   Quantity
                 </label>
@@ -254,7 +317,7 @@ export default function OrderForm({ item, editingOrder, onClose }) {
               </div>
             </div>
 
-            {/* Row 3 */}
+            {/* Row 4: Pickup Date & Time */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-neutral-600 mb-1.5 uppercase tracking-wide">
@@ -289,10 +352,10 @@ export default function OrderForm({ item, editingOrder, onClose }) {
             <div className="mt-2 p-4 bg-amber-50 border border-amber-200 rounded-xl">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-amber-800">
-                  Rs. {item.price} × {form.quantity}
+                  Rs. {getPrice()} × {form.quantity}
                 </span>
                 <span className="text-xl font-bold text-amber-700">
-                  Rs. {item.price * form.quantity}
+                  Rs. {getPrice() * form.quantity}
                 </span>
               </div>
             </div>
@@ -303,20 +366,9 @@ export default function OrderForm({ item, editingOrder, onClose }) {
                 type="submit"
                 className="w-full py-3.5 bg-amber-600 text-white font-semibold rounded-xl hover:bg-amber-700 active:scale-[0.98] transition-all shadow-md shadow-amber-200/50 text-base"
               >
-                {editingOrder ? "Update Order" : "Confirm Order"}
+                {editingOrder ? "Update Cart Item " : "Add to Cart"}
               </button>
             </div>
-
-            {/* Success Message */}
-            {submitted && (
-              <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg text-center">
-                <p className="text-orange-800 font-medium">
-                  {editingOrder ? "Order updated successfully." : `Order placed.. we'll have your `}
-                  {!editingOrder && <span className="font-bold">{item.name}</span>}
-                  {!editingOrder && `, ready for pick up`}
-                </p>
-              </div>
-            )}
           </form>
         </div>
       </div>

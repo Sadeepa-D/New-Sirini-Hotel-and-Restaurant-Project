@@ -10,11 +10,19 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 // Initial hardcoded data removed. Data is now fetched from the backend API.
 
+const CATEGORIES = [
+  "Chopsy Rice",
+  "Rice & Nasi Goreng",
+  "Kottu",
+  "Noodles",
+  "Bites",
+  "Side Dishes",
+  "Snacks"
+];
+
 export default function Restaurant() {
   const [itemsPerView, setItemsPerView] = useState(4);
-  const [mealsIndex, setMealsIndex] = useState(0);
-  const [softdrinkIndex, setSoftdrinkIndex] = useState(0);
-  const [freshJuiceIndex, setFreshJuiceIndex] = useState(0);
+  const [categoryIndices, setCategoryIndices] = useState({});
   const [selectedItem, setSelectedItem] = useState(null);
   const [mealData, setMealData] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
@@ -24,27 +32,21 @@ export default function Restaurant() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const mainmeals = mealData.filter((meal) => meal.category === "Main Meals");
-  const softdrinks = mealData.filter((meal) => meal.category === "Soft Drinks");
-  const freshJuice = mealData.filter((meal) => meal.category === "Fresh Juice");
-
   const fetchFoodItems = async () => {
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/restraunt/viewfooditems`,
       );
-      console.log("Restaurant API Response:", response.data);
-
       const data = Array.isArray(response.data) ? response.data : [];
 
-      // Map backend data to frontend field names if they differ
       const mappedData = data.map((item) => ({
         id: item._id,
         name: item.name,
-        price: item.price,
+        regular_price: item.regular_price,
+        portions: item.portions,
+        has_portions: item.has_portions,
         description: item.description,
         image: item.image,
-
         category: item.category,
         availability: item.availability,
         label: item.availability ? "Available" : "Unavailable",
@@ -61,17 +63,9 @@ export default function Restaurant() {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 640) {
-        setItemsPerView(1);
-      } else if (window.innerWidth < 1024) {
-        setItemsPerView(2);
-      } else if (window.innerWidth < 1280) {
-        setItemsPerView(3);
-      } else {
-        setItemsPerView(4);
-      }
+      const w = window.innerWidth;
+      setItemsPerView(w < 640 ? 1 : w < 1024 ? 2 : w < 1280 ? 3 : 4);
     };
-
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -84,7 +78,6 @@ export default function Restaurant() {
       if (matchedItem) {
         setSelectedItem(matchedItem);
         setEditingOrder(order);
-        // Clear the state so it doesn't re-trigger on refresh
         navigate(location.pathname, { replace: true });
       } else {
         toast.error("Food item for this order is no longer available.");
@@ -100,23 +93,21 @@ export default function Restaurant() {
     setSelectedItem(item);
   };
 
-  const handlePrevMeals = () => setMealsIndex(Math.max(0, mealsIndex - 1));
-  const handleNextMeals = () =>
-    setMealsIndex(Math.min(mainmeals.length - itemsPerView, mealsIndex + 1));
+  const getCategoryIndex = (cat) => categoryIndices[cat] || 0;
+  
+  const handlePrev = (cat) => {
+    setCategoryIndices(prev => ({
+      ...prev,
+      [cat]: Math.max(0, (prev[cat] || 0) - 1)
+    }));
+  };
 
-  const handlePrevSoftdrinks = () =>
-    setSoftdrinkIndex(Math.max(0, softdrinkIndex - 1));
-  const handleNextSoftdrinks = () =>
-    setSoftdrinkIndex(
-      Math.min(softdrinks.length - itemsPerView, softdrinkIndex + 1),
-    );
-
-  const handlePrevFreshJuice = () =>
-    setFreshJuiceIndex(Math.max(0, freshJuiceIndex - 1));
-  const handleNextFreshJuice = () =>
-    setFreshJuiceIndex(
-      Math.min(freshJuice.length - itemsPerView, freshJuiceIndex + 1),
-    );
+  const handleNext = (cat, itemsCount) => {
+    setCategoryIndices(prev => ({
+      ...prev,
+      [cat]: Math.min(itemsCount - itemsPerView, (prev[cat] || 0) + 1)
+    }));
+  };
 
   const MenuSection = ({ title, items, index, onPrev, onNext, onOrder }) => (
     <div className="mb-16">
@@ -231,36 +222,22 @@ export default function Restaurant() {
 
       {/* Categories Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {mainmeals.length > 0 && (
-          <MenuSection
-            title="Main Meals"
-            items={mainmeals}
-            index={mealsIndex}
-            onPrev={handlePrevMeals}
-            onNext={handleNextMeals}
-            onOrder={handleOrder}
-          />
-        )}
-        {softdrinks.length > 0 && (
-          <MenuSection
-            title="Soft Drinks"
-            items={softdrinks}
-            index={softdrinkIndex}
-            onPrev={handlePrevSoftdrinks}
-            onNext={handleNextSoftdrinks}
-            onOrder={handleOrder}
-          />
-        )}
-        {freshJuice.length > 0 && (
-          <MenuSection
-            title="Fresh Juice"
-            items={freshJuice}
-            index={freshJuiceIndex}
-            onPrev={handlePrevFreshJuice}
-            onNext={handleNextFreshJuice}
-            onOrder={handleOrder}
-          />
-        )}
+        {CATEGORIES.map((cat) => {
+          const catItems = mealData.filter(item => item.category === cat);
+          if (catItems.length === 0) return null;
+          
+          return (
+            <MenuSection
+              key={cat}
+              title={cat}
+              items={catItems}
+              index={getCategoryIndex(cat)}
+              onPrev={() => handlePrev(cat)}
+              onNext={() => handleNext(cat, catItems.length)}
+              onOrder={handleOrder}
+            />
+          );
+        })}
       </div>
 
       {selectedItem && (
