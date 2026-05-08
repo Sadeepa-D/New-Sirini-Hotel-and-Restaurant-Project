@@ -95,32 +95,52 @@ export default function OrderForm({ item, editingOrder, onClose }) {
       }
 
       setSubmitted(true);
-      setTimeout(() => {
-        onClose();
-      }, 2000);
+      toast.success(`Added to cart ${item.name} successfully`, {
+        position: "top-center"
+      });
+      onClose();
     } catch (error) {
       // console.error("Error placing order:", error);
       alert(`Failed to ${editingOrder ? 'update' : 'place'} order. Please try again.`);
     }
   };
 
-  // Prefill email and prevent background scroll
+  // Fetch user profile from backend for auto-fill
   useEffect(() => {
-    const userDataStr = localStorage.getItem("user");
-    if (userDataStr) {
-      try {
-        const userData = JSON.parse(userDataStr);
-        setForm((f) => ({
-          ...f,
-          // Only auto-fill if the field is currently empty
-          email: f.email || userData.email || "",
-          name: f.name || userData.name || userData.fullName || "",
-          phone: f.phone || userData.Phone || userData.phone || "",
-        }));
-      } catch (e) {
-        console.error("Error parsing user data for auto-fill:", e);
+    const fetchUserProfile = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/profile`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          const userData = response.data;
+          setForm((f) => ({
+            ...f,
+            email: f.email || userData.email || "",
+            name: f.name || userData.name || "",
+            phone: f.phone || userData.Phone || "",
+          }));
+        } catch (error) {
+          console.error("Error fetching user profile for auto-fill:", error);
+          // Fallback to localStorage if backend fails
+          const userDataStr = localStorage.getItem("user");
+          if (userDataStr) {
+            try {
+              const userData = JSON.parse(userDataStr);
+              setForm((f) => ({
+                ...f,
+                email: f.email || userData.email || "",
+                name: f.name || userData.name || userData.fullName || "",
+                phone: f.phone || userData.Phone || userData.phone || "",
+              }));
+            } catch (e) { }
+          }
+        }
       }
-    }
+    };
+
+    fetchUserProfile();
 
     document.body.style.overflow = "hidden";
     return () => {
@@ -338,20 +358,11 @@ export default function OrderForm({ item, editingOrder, onClose }) {
                 type="submit"
                 className="w-full py-3.5 bg-amber-600 text-white font-semibold rounded-xl hover:bg-amber-700 active:scale-[0.98] transition-all shadow-md shadow-amber-200/50 text-base"
               >
-                {editingOrder ? "Update Order" : "Confirm Order"}
+                {editingOrder ? "Update Cart Item " : "Add to Cart"}
               </button>
             </div>
 
-            {/* Success Message */}
-            {submitted && (
-              <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg text-center">
-                <p className="text-orange-800 font-medium">
-                  {editingOrder ? "Order updated successfully." : `Order placed.. we'll have your `}
-                  {!editingOrder && <span className="font-bold">{item.name}</span>}
-                  {!editingOrder && `, ready for pick up`}
-                </p>
-              </div>
-            )}
+
           </form>
         </div>
       </div>
