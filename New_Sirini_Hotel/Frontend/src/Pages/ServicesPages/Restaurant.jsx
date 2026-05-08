@@ -41,10 +41,11 @@ export default function Restaurant() {
       const mappedData = data.map((item) => ({
         id: item._id,
         name: item.name,
-        price: item.price,
+        regular_price: item.regular_price,
+        portions: item.portions,
+        has_portions: item.has_portions,
         description: item.description,
         image: item.image,
-
         category: item.category,
         availability: item.availability,
         label: item.availability ? "Available" : "Unavailable",

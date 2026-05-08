@@ -34,7 +34,7 @@ const FoodCard = ({ item, onClick }) => (
     </div>
 
     {/* Info */}
-    <div className="p-3 flex flex-col gap-1 flex-1 justify-between">
+    <div className="p-3 flex flex-col gap-1 flex-1">
       <div>
         <span className="inline-block bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-full w-fit max-w-full truncate">
           {item.name || item.foodname}
@@ -43,10 +43,20 @@ const FoodCard = ({ item, onClick }) => (
           <p className="text-gray-400 text-xs">Label: {item.label}</p>
         )}
       </div>
-      <div className="mt-2 space-y-1">
-        <p className="text-white text-sm font-semibold">Price: LKR {item.price}</p>
+      <div className="mt-2 space-y-1 flex-1 flex flex-col justify-end">
+        {!item.has_portions ? (
+          <p className="text-white text-sm font-semibold">Price: LKR {item.regular_price}</p>
+        ) : (
+          <div className="space-y-0.5">
+            {item.portions?.map((p, idx) => (
+              <p key={idx} className="text-white text-[11px] font-medium leading-tight">
+                {p.portion_name}: LKR {p.price}
+              </p>
+            ))}
+          </div>
+        )}
         <p
-          className={`text-xs font-bold tracking-wide ${item.availability !== false ? "text-green-400" : "text-red-400"
+          className={`text-xs font-bold tracking-wide mt-1 ${item.availability !== false ? "text-green-400" : "text-red-400"
             }`}
         >
           {item.availability !== false ? "AVAILABLE" : "UNAVAILABLE"}
