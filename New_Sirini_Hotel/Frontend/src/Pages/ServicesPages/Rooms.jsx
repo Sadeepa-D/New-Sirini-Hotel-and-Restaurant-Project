@@ -5,6 +5,7 @@ import BookingForm from "../../Components/RoomCompo/BookingForm";
 import Exploreindicator from "../../Components/Exploreindicator";
 import Calander from "../../Components/Calander";
 import toast from "react-hot-toast";
+import LoginMessage from "../../Components/LoginMessage";
 
 
 function Rooms() {
@@ -16,6 +17,7 @@ function Rooms() {
   const [error, setError] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [bookedDates, setBookedDates] = useState([]);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   
 
   const fetchBookedDates = async (roomNumber) => {
@@ -62,7 +64,7 @@ function Rooms() {
 
   const handleBookNow = (room) => {
     if (!isLoggedIn) {
-      toast.error("Please login to book a room");
+      setShowLoginModal(true);
       return;
     }
 
@@ -230,6 +232,11 @@ function Rooms() {
           </div>
         )}
       </main>
+
+      <LoginMessage
+        isOpen={showLoginModal} 
+        onClose={() => setShowLoginModal(false)} 
+      />
 
       {isModalOpen && selectedRoom && (
         <>

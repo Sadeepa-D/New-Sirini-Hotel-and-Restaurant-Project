@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Logo from "../../assets/Logo.png";
-import { Home, BottleWine, Utensils, LogOut, Menu } from "lucide-react";
+import {
+  Home,
+  BottleWine,
+  Utensils,
+  LogOut,
+  Menu,
+  LayoutDashboard,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import LiquorManage from "../../Components/OperationManager/Liquor/LiquorMngHome";
 import RestaurantManager from "../../Components/OperationManager/Restraunt/RestrauntManagment";
@@ -45,7 +52,7 @@ const OperationManager = () => {
   };
 
   const navItems = [
-    { id: "dashboard", label: "Dashboard", icon: Home },
+    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { id: "Liquor", label: "Liquor Items", icon: BottleWine },
     { id: "Food", label: "Restaurant Items", icon: Utensils },
     { id: "Logout", label: "Logout", icon: LogOut },
@@ -69,6 +76,10 @@ const OperationManager = () => {
     switch (activeTab) {
       case "dashboard":
         return "Dashboard Overview";
+      case "Liquor":
+        return "Liquor Management";
+      case "Food":
+        return "Restaurant Management";
       default:
         return "Dashboard Overview";
     }
@@ -169,6 +180,12 @@ const OperationManager = () => {
 
           {/* User Profile */}
           <div className="flex items-center gap-3">
+            <Home
+              size={30}
+              onClick={() => {
+                usenavigate("/");
+              }}
+            />
             <div className="w-14 h-14 bg-amber-500 rounded-2xl flex items-center justify-center text-white shadow-md overflow-hidden hover:scale-105 transition-transform cursor-pointer border-2 border-amber-500/20">
               <img
                 src={userdata.image || Logo}

@@ -11,6 +11,10 @@ const foodItemBookSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    email: {
+      type: String,
+      required: true,
+    },
     phoneNumber: {
       type: String,
       required: [true, "Phone number is required"],

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 export default function OrderForm({ item, editingOrder, onClose }) {
   const [form, setForm] = useState({
     name: editingOrder ? editingOrder.fullName : "",
+    email: editingOrder ? editingOrder.email : "",
     phone: editingOrder ? editingOrder.phoneNumber : "",
     pickupDate: editingOrder ? new Date(editingOrder.pickupDate).toISOString().split('T')[0] : "",
     pickupTime: editingOrder ? editingOrder.pickupTime : "",
@@ -15,8 +17,36 @@ export default function OrderForm({ item, editingOrder, onClose }) {
   };
 
   const handleSubmit = async (e) => {
-    const token = localStorage.getItem("token");
     e.preventDefault();
+    const token = localStorage.getItem("token");
+
+    // Get current Sri Lankan date and time
+    const now = new Date();
+    const slDateStr = new Intl.DateTimeFormat('en-CA', { 
+      timeZone: 'Asia/Colombo', 
+      year: 'numeric', 
+      month: '2-digit', 
+      day: '2-digit' 
+    }).format(now);
+    
+    const slTimeStr = new Intl.DateTimeFormat('en-GB', { 
+      timeZone: 'Asia/Colombo', 
+      hour: '2-digit', 
+      minute: '2-digit', 
+      hour12: false 
+    }).format(now);
+
+    // Validation
+    // if (form.pickupDate < slDateStr) {
+    //   toast.error("Selected date is in the past. Please choose today or a future date.");
+    //   return;
+    // }
+
+    if (form.pickupDate === slDateStr && form.pickupTime <= slTimeStr) {
+      toast.error("Selected time has already passed for today. Please choose a future time.");
+      return;
+    }
+
     try {
       const userDataStr = localStorage.getItem("user");
       let userId = null;
@@ -29,6 +59,7 @@ export default function OrderForm({ item, editingOrder, onClose }) {
 
       const orderData = {
         fullName: form.name,
+        email: form.email,
         // Strip non-numeric characters to match backend regex /^[0-9]{10}$/
         phoneNumber: form.phone.replace(/\D/g, ""),
         pickupDate: form.pickupDate,
@@ -71,13 +102,25 @@ export default function OrderForm({ item, editingOrder, onClose }) {
     }
   };
 
-  // Prevent background scroll
+  // Prefill email and prevent background scroll
   useEffect(() => {
+    if (!editingOrder) {
+      const userDataStr = localStorage.getItem("user");
+      if (userDataStr) {
+        try {
+          const userData = JSON.parse(userDataStr);
+          if (userData.email) {
+            setForm((f) => ({ ...f, email: userData.email }));
+          }
+        } catch (e) {}
+      }
+    }
+
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "";
     };
-  }, []);
+  }, [editingOrder]);
 
   return (
     <div
@@ -147,6 +190,18 @@ export default function OrderForm({ item, editingOrder, onClose }) {
                 />
               </div>
 
+              <div>
+                <label className="block text-xs font-semibold text-neutral-600 mb-1.5 uppercase tracking-wide">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={form.email}
+                  readOnly
+                  className="w-full border border-neutral-200 bg-neutral-50 rounded-lg px-4 py-2.5 text-sm text-neutral-500 cursor-not-allowed outline-none"
+                />
+              </div>
             </div>
 
             {/* Row 2 */}
@@ -207,7 +262,7 @@ export default function OrderForm({ item, editingOrder, onClose }) {
                   value={form.pickupDate}
                   onChange={handleChange}
                   required
-                  min={new Date().toISOString().split("T")[0]}
+                  min={new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Colombo', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date())}
                   className="w-full border border-neutral-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition"
                 />
               </div>

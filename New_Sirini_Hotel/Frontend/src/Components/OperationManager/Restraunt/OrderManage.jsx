@@ -100,6 +100,7 @@ const OrderManage = () => {
       list = list.filter(
         (o) =>
           o.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          o.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           o.orderCode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           o.foodName?.toLowerCase().includes(searchTerm.toLowerCase())
       );
@@ -125,8 +126,9 @@ const OrderManage = () => {
             <User size={20} className="text-amber-500" />
           </div>
           <div>
-            <h4 className="font-bold text-gray-800 text-sm">{order.fullName}</h4>
-            <p className="text-xs text-gray-500">{order.phoneNumber}</p>
+            <h4 className="font-bold text-gray-800 text-sm leading-tight">{order.fullName}</h4>
+            <p className="text-[10px] text-gray-500 leading-tight">{order.email}</p>
+            <p className="text-[10px] text-gray-400 leading-tight">{order.phoneNumber}</p>
           </div>
         </div>
 
@@ -141,15 +143,20 @@ const OrderManage = () => {
       </div>
 
       <div className="flex-1 mb-4">
-        <h4 className="font-bold text-gray-800 text-sm mb-2">{order.foodName}</h4>
+        <div className="flex justify-between items-start mb-2">
+          <h4 className="font-bold text-gray-800 text-sm">{order.foodName}</h4>
+          <span className="text-[10px] font-mono font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">
+            #{order.orderCode}
+          </span>
+        </div>
         <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
           <div>
             <span className="text-gray-400 block">Pick-up Date</span>
-            <span>{new Date(order.pickupDate).toLocaleDateString()}</span>
+            <span className="font-medium">{new Date(order.pickupDate).toLocaleDateString()}</span>
           </div>
           <div>
             <span className="text-gray-400 block">Pick-up Time</span>
-            <span>{order.pickupTime}</span>
+            <span className="font-medium">{order.pickupTime}</span>
           </div>
         </div>
       </div>
