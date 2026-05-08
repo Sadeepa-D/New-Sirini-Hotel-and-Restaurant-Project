@@ -39,6 +39,7 @@ const foodItemBookSchema = new mongoose.Schema(
     orderCode: { type: String, unique: true },
     portion: {
       type: String,
+    //  required: true,
       enum: ["Normal", "Full"],
       default: "Normal",
     },
