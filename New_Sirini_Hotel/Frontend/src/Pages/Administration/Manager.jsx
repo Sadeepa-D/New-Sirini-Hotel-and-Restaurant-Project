@@ -71,24 +71,11 @@ const Manager = () => {
     }
   };
 
-  const getPageTitle = () => {
-    switch (activeTab) {
-      case "dashboard":
-        return "Dashboard Overview";
-      case "rooms":
-        return "Rooms Management";
-      case "reception":
-        return "Reception Management";
-      default:
-        return "Dashboard Overview";
-    }
-  };
-
   return (
     <div className="flex flex-col h-screen bg-black font-sans">
       {/* Top Header */}
       <header className="bg-white mx-2 mt-3 mb-2 rounded-xl shadow-sm px-4 py-3">
-        {/* ── MOBILE layout (< md): two rows ── */}
+        {/* MOBILE layout */}
         <div className="md:hidden">
           {/* Row 1: Logo + Profile */}
           <div className="flex items-center justify-between mb-2">
@@ -125,7 +112,6 @@ const Manager = () => {
             </div>
           </div>
 
-          {/* Row 2: Icon-only tabs (all 4 fit on mobile) */}
           <div className="flex items-center gap-1 bg-gray-100 rounded-xl p-1 shadow-inner">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -157,7 +143,7 @@ const Manager = () => {
           </div>
         </div>
 
-        {/* ── DESKTOP layout (≥ md): single row, 3-column grid ── */}
+        {/* DESKTOP layout */}
         <div className="hidden md:grid md:grid-cols-3 md:items-center">
           {/* Left: Logo */}
           <div className="flex items-center gap-3">

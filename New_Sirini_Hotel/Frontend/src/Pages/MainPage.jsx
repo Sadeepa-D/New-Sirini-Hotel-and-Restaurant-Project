@@ -60,7 +60,7 @@ const NewSiriniHotel = () => {
     <div className="font-serif bg-gray-100 text-gray-900">
       {/* --- Hero Section --- */}
       {/* Hero Section */}
-      <header className="relative w-full h-[calc(100vh-120px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
+      <header className="relative w-full h-[calc(100vh-80px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
         {/* Background */}
         <div
           className="absolute inset-0 z-0"
