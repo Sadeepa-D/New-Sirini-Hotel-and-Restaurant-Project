@@ -35,10 +35,10 @@ const GenarateFoodOrderCode = async () => {
 const createFoodOrder = async (req, res) => {
   try {
     const userId = req.userData.id;
-    const { foodName, fullName, email, quantity, phoneNumber, pickupDate, pickupTime, Price } =
+    const { foodName, fullName, email, quantity, phoneNumber, pickupDate, pickupTime, Price, portion } =
       req.body;
 
-    if (!fullName || !email || !quantity || !phoneNumber || !pickupDate || !pickupTime) {
+    if (!fullName || !email || !quantity || !phoneNumber || !pickupDate || !pickupTime || !portion) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -63,6 +63,7 @@ const createFoodOrder = async (req, res) => {
       orderCode: await GenarateFoodOrderCode(),
       status: "In Progress",
       Price,
+      portion,
     });
     const savedOrder = await newFoodOrder.save();
     res.status(201).json(savedOrder);
@@ -84,12 +85,12 @@ const getFoodOrders = async (req, res) => {
 const editfoodOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const { fullName, email, quantity, phoneNumber, pickupDate, pickupTime, Price } =
+    const { fullName, email, quantity, phoneNumber, pickupDate, pickupTime, Price, portion } =
       req.body;
     if (!id) {
       return res.status(400).json({ message: "Food order ID is required" });
     }
-    if (!fullName || !email || !quantity || !phoneNumber || !pickupDate || !pickupTime) {
+    if (!fullName || !email || !quantity || !phoneNumber || !pickupDate || !pickupTime || !portion) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -110,6 +111,7 @@ const editfoodOrder = async (req, res) => {
         phoneNumber,
         pickupDate,
         pickupTime,
+        portion,
         ...(Price && { Price }),
       },
       { new: true },
