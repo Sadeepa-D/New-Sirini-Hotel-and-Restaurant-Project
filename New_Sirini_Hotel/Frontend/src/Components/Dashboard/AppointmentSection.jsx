@@ -35,6 +35,7 @@ const AppointmentsSection = ({ data }) => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchappointments();
   }, []);
@@ -58,54 +59,59 @@ const AppointmentsSection = ({ data }) => {
       toast.dismiss(loadingToast);
     }
   };
+
   if (loading) {
     return (
-      <div className="py-10 text-center text-gray-500 animate-pulse">
-        Loading appointments...
+      <div className="flex flex-col items-center justify-center py-20 gap-4">
+        <div className="w-10 h-10 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
+        <p className="text-gray-400 text-sm animate-pulse">Loading appointments…</p>
       </div>
     );
   }
-  return (
-    <div className="space-y-6 animate-in fade-in duration-300 relative">
-      <h2 className="text-xl font-bold text-gray-900 mb-6">My Appointments</h2>
 
-      {/* 3. Render the Cards */}
+  return (
+    <div className="space-y-6 font-sans relative">
+      {/* ── Header ── */}
+      <div>
+        <h2 className="text-xl font-bold text-gray-900 tracking-tight">My Appointments</h2>
+        <p className="text-gray-400 text-xs mt-0.5">View and manage your reception hall bookings</p>
+      </div>
+
+      {/* ── Cards / Empty ── */}
       {appointments.length === 0 ? (
-        <p className="text-gray-500 text-center py-10 bg-gray-50 rounded-2xl border border-gray-100">
-          You have no appointments yet.
-        </p>
+        <div className="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+          <CalendarDays size={36} className="text-gray-200 mb-3" />
+          <p className="text-gray-400 text-sm font-medium">You have no appointments yet.</p>
+        </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {appointments.map((app) => (
             <AppointmentCard
               key={app._id}
               appointment={app}
-              onEdit={(data) => setEditingAppt(data)} // Opens the modal with this appointment's data
+              onEdit={(data) => setEditingAppt(data)}
               onCancel={handlecancel}
             />
           ))}
         </div>
       )}
 
-      {/* 4. Edit Modal Overlay (Only shows when editingAppt has data) */}
+      {/* ── Edit Modal ── */}
       {editingAppt && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl w-full max-w-4xl relative my-auto shadow-2xl">
-            {/* Close Button */}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl w-full max-w-4xl relative my-auto shadow-2xl border border-gray-100">
             <button
               onClick={() => setEditingAppt(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-800 z-10 bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full text-sm font-bold transition-colors"
+              className="absolute top-4 right-4 z-10 p-2 bg-gray-100 hover:bg-red-50 hover:text-red-500 text-gray-500 rounded-full transition-all duration-200"
             >
-              ✕ Close
+              <XCircle size={20} />
             </button>
-
-            {/* Reuse Booking Form in Edit Mode */}
             <div className="max-h-[90vh] overflow-y-auto rounded-2xl hide-scrollbar">
               <AppointForm
                 editData={editingAppt}
                 onSuccess={() => {
-                  setEditingAppt(null); // Close modal on success
-                  fetchappointments(); // Refresh the list with new data
+                  setEditingAppt(null);
+                  fetchappointments();
                 }}
               />
             </div>
@@ -115,4 +121,5 @@ const AppointmentsSection = ({ data }) => {
     </div>
   );
 };
+
 export default AppointmentsSection;
