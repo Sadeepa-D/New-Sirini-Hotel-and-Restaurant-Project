@@ -5,9 +5,8 @@ export default function RestaurantCard({ item, itemsPerView, onOrder }) {
     <div
       className="flex-shrink-0"
       style={{
-        width: `calc(${100 / itemsPerView}% - ${
-          ((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) / itemsPerView
-        }px)`,
+        width: `calc(${100 / itemsPerView}% - ${((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) / itemsPerView
+          }px)`,
       }}
     >
       <div className="bg-white rounded-xl shadow-md overflow-hidden border border-neutral-100 h-full flex flex-col hover:shadow-lg transition-shadow">
@@ -30,18 +29,29 @@ export default function RestaurantCard({ item, itemsPerView, onOrder }) {
           <p className="text-sm text-neutral-500 mb-3">
             {item.ingredients ? item.ingredients.join(", ") : item.description}
           </p>
-          <div className="mt-auto flex items-center justify-between">
-            <span className="text-lg font-bold text-amber-600">
-              Rs. {item.price}
-            </span>
+          <div className="mt-auto flex items-center justify-between gap-4">
+            <div className="flex-grow">
+              {!item.has_portions ? (
+                <span className="text-lg font-bold text-amber-600">
+                  Rs. {item.regular_price}
+                </span>
+              ) : (
+                <div className="flex flex-col">
+                  {item.portions?.map((p, idx) => (
+                    <span key={idx} className="text-[13px] font-bold text-amber-600 leading-tight">
+                      {p.portion_name}: Rs. {p.price}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
             <button
               onClick={() => onOrder(item)}
               disabled={item.availability === false}
-              className={`px-4 py-2 text-white text-sm font-medium rounded-lg transition-colors ${
-                item.availability !== false
+              className={`px-4 py-2 text-white text-sm font-medium rounded-lg transition-colors ${item.availability !== false
                   ? "bg-amber-600 hover:bg-orange-700"
                   : "bg-gray-400 cursor-not-allowed opacity-70"
-              }`}
+                }`}
             >
               {item.availability !== false ? "Order" : "Unavailable"}
             </button>

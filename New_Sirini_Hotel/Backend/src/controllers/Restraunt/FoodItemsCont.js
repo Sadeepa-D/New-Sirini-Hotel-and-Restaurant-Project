@@ -4,31 +4,52 @@ const cloudinary = require("cloudinary");
 const createFoodItem = async (req, res) => {
   try {
     console.log("Creating food item, body:", req.body);
-    console.log("File:", req.file);
-    const { name, price, description, category, ingredients } = req.body;
-    if (!name || !price || !description || !category) {
-      console.log("Missing fields");
+    let { name, regular_price, description, category, has_portions, portions } = req.body;
+
+    // Convert strings from FormData
+    has_portions = has_portions === "true" || has_portions === true;
+    if (typeof portions === "string") {
+      try {
+        portions = JSON.parse(portions);
+      } catch (e) {
+        portions = [];
+      }
+    }
+
+    if (!name || !description || !category) {
       return res.status(400).json({ message: "Required fields are missing" });
     }
+
+    if (has_portions) {
+      if (!portions || portions.length < 2) {
+        return res.status(400).json({ message: "Both portion prices are required when portions are enabled" });
+      }
+    } else {
+      if (!regular_price) {
+        return res.status(400).json({ message: "Regular price is required when portions are disabled" });
+      }
+    }
+
     const image = req.file ? req.file.secure_url : req.file ? req.file.path : null;
     const imagePublicId = req.file ? req.file.public_id : req.file ? req.file.filename : null;
-    console.log("Image URL:", image);
+    
     if (!image) {
-      console.log("Missing image");
       return res.status(400).json({ message: "Image is required" });
     }
+
     const newFoodItem = new FoodItems({
       name,
-      price,
       description,
       category,
-      ingredients: ingredients ? (Array.isArray(ingredients) ? ingredients : ingredients.split(",")) : [],
       image,
       imagePublicId,
+      has_portions,
+      regular_price: has_portions ? null : regular_price,
+      portions: has_portions ? portions : [],
+      status: "available",
       availability: true,
     });
     await newFoodItem.save();
-    console.log("Saved successfully");
     res.status(201).json(newFoodItem);
   } catch (error) {
     console.error("Error in createFoodItem:", error);
@@ -56,10 +77,19 @@ const updateFoodItem = async (req, res) => {
     if (!id) {
       return res.status(400).json({ message: "Food item ID is required" });
     }
+
     const updates = { ...req.body };
     
-    if (updates.ingredients && typeof updates.ingredients === "string") {
-      updates.ingredients = updates.ingredients.split(",");
+    // Convert strings from FormData
+    if (updates.has_portions !== undefined) {
+      updates.has_portions = updates.has_portions === "true" || updates.has_portions === true;
+    }
+    if (typeof updates.portions === "string") {
+      try {
+        updates.portions = JSON.parse(updates.portions);
+      } catch (e) {
+        updates.portions = [];
+      }
     }
 
     const existingFoodItem = await FoodItems.findById(id);
@@ -69,10 +99,21 @@ const updateFoodItem = async (req, res) => {
 
     if (req.file) {
       if (existingFoodItem.imagePublicId) {
-        await cloudinary.v2.uploader.destroy(existingFoodItem.imagePublicId);
+        try {
+          await cloudinary.v2.uploader.destroy(existingFoodItem.imagePublicId);
+        } catch (err) {
+          console.error("Cloudinary delete error:", err);
+        }
       }
       updates.image = req.file.secure_url;
       updates.imagePublicId = req.file.public_id;
+    }
+
+    // Logic for portions vs regular price
+    if (updates.has_portions === true) {
+      updates.regular_price = null;
+    } else if (updates.has_portions === false) {
+      updates.portions = [];
     }
 
     const updatedFoodItem = await FoodItems.findByIdAndUpdate(

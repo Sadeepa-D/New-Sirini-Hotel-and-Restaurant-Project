@@ -6,14 +6,23 @@ const AddRestrauntItemForm = ({ onClose, initialData, onSubmit }) => {
     const [imagePreview, setImagePreview] = useState(null);
     const [formData, setFormData] = useState({
         name: "",
-        price: "",
+        regular_price: "",
+        normal_price: "",
+        full_price: "",
         description: "",
-        category: "Main Meals",
+        category: "Chopsy Rice",
+        has_portions: false,
     });
 
     useEffect(() => {
         if (initialData) {
-            setFormData(initialData);
+            setFormData({
+                ...initialData,
+                regular_price: initialData.regular_price || "",
+                normal_price: initialData.portions?.[0]?.price || "",
+                full_price: initialData.portions?.[1]?.price || "",
+                has_portions: initialData.has_portions || false,
+            });
             if (typeof initialData.image === "string" && initialData.image) {
                 setImagePreview(initialData.image);
             }
@@ -21,13 +30,15 @@ const AddRestrauntItemForm = ({ onClose, initialData, onSubmit }) => {
     }, [initialData]);
 
     const handleChange = (e) => {
-        const { name, value, files } = e.target;
+        const { name, value, files, type, checked } = e.target;
         if (name === "image") {
             const file = files[0];
             setFormData((prev) => ({ ...prev, image: file }));
             if (file) {
                 setImagePreview(URL.createObjectURL(file));
             }
+        } else if (type === "checkbox") {
+            setFormData((prev) => ({ ...prev, [name]: checked }));
         } else {
             setFormData((prev) => ({ ...prev, [name]: value }));
         }
@@ -35,18 +46,47 @@ const AddRestrauntItemForm = ({ onClose, initialData, onSubmit }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onClose();
-        const data = new FormData();
-       Object.keys(formData).forEach((key) => {
-        if (key === "image") {
-            // Only append if it's an actual File, not a URL string or undefined
-            if (formData[key] instanceof File) {
-                data.append(key, formData[key]);
+        
+        // Validation
+        if (formData.has_portions) {
+            if (!formData.normal_price || !formData.full_price) {
+                toast.error("Both portion prices are required");
+                return;
             }
         } else {
-            data.append(key, formData[key]);
+            if (!formData.regular_price) {
+                toast.error("Regular price is required");
+                return;
+            }
         }
-    });
+
+        onClose();
+        const data = new FormData();
+        
+        const submissionData = {
+            name: formData.name,
+            category: formData.category,
+            description: formData.description,
+            has_portions: formData.has_portions,
+            regular_price: formData.has_portions ? null : formData.regular_price,
+            portions: formData.has_portions ? [
+                { portion_name: "Normal", price: formData.normal_price },
+                { portion_name: "Full", price: formData.full_price }
+            ] : []
+        };
+
+        Object.keys(submissionData).forEach((key) => {
+            if (key === "portions") {
+                data.append(key, JSON.stringify(submissionData[key]));
+            } else {
+                data.append(key, submissionData[key]);
+            }
+        });
+
+        if (formData.image instanceof File) {
+            data.append("image", formData.image);
+        }
+
         onSubmit(data);
     };
 
@@ -127,51 +167,81 @@ const AddRestrauntItemForm = ({ onClose, initialData, onSubmit }) => {
                                     onChange={handleChange}
                                     className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00] appearance-none"
                                 >
-                                    <option value="Main Meals">Main Meals</option>
-                                    <option value="Soft Drinks">Soft Drinks</option>
-                                    <option value="Fresh Juice">Fresh Juice</option>
-
+                                    <option value="Chopsy Rice">Chopsy Rice</option>
+                                    <option value="Rice & Nasi Goreng">Rice & Nasi Goreng</option>
+                                    <option value="Kottu">Kottu</option>
+                                    <option value="Noodles">Noodles</option>
+                                    <option value="Bites">Bites</option>
+                                    <option value="Side Dishes">Side Dishes</option>
+                                    <option value="Snacks">Snacks</option>
                                 </select>
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-1">
-                                <label className="text-xs font-black uppercase text-gray-400 ml-2">
-                                    Price (LKR)
-                                </label>
-                                <input
-                                    name="price"
-                                    value={formData.price}
-                                    onChange={handleChange}
-                                    type="number"
-                                    required
-                                    className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00]"
-                                    placeholder="0.00"
-                                />
-                            </div>
-
+                        {/* Portion Toggle */}
+                        <div className="flex items-center gap-3 px-2 py-1">
+                            <input
+                                type="checkbox"
+                                name="has_portions"
+                                id="has_portions"
+                                checked={formData.has_portions}
+                                onChange={handleChange}
+                                className="w-5 h-5 accent-[#FFAB00] cursor-pointer"
+                            />
+                            <label htmlFor="has_portions" className="text-sm font-bold text-gray-600 cursor-pointer">
+                                This item has multiple portion sizes
+                            </label>
                         </div>
 
-                        {/* <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-1">
-                                <label className="text-xs font-black uppercase text-gray-400 ml-2">
-                                    Dietary Preference
-                                </label>
-                                <select
-                                    name="dietary"
-                                    value={formData.dietary}
-                                    onChange={handleChange}
-                                    className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00] appearance-none"
-                                >
-                                    <option value="Non-Vegetarian">Non-Vegetarian</option>
-                                    <option value="Vegetarian">Vegetarian</option>
-                                    <option value="Vegan">Vegan</option>
-                                    <option value="Drinks">Drinks</option>
-                                </select>
-                            </div>
-
-                        </div> */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {!formData.has_portions ? (
+                                <div className="space-y-1 md:col-span-2">
+                                    <label className="text-xs font-black uppercase text-gray-400 ml-2">
+                                        Regular Price (LKR)
+                                    </label>
+                                    <input
+                                        name="regular_price"
+                                        value={formData.regular_price}
+                                        onChange={handleChange}
+                                        type="number"
+                                        required={!formData.has_portions}
+                                        className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00]"
+                                        placeholder="0.00"
+                                    />
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="space-y-1">
+                                        <label className="text-xs font-black uppercase text-gray-400 ml-2">
+                                            Normal Portion Price (LKR)
+                                        </label>
+                                        <input
+                                            name="normal_price"
+                                            value={formData.normal_price}
+                                            onChange={handleChange}
+                                            type="number"
+                                            required={formData.has_portions}
+                                            className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00]"
+                                            placeholder="0.00"
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-xs font-black uppercase text-gray-400 ml-2">
+                                            Full Portion Price (LKR)
+                                        </label>
+                                        <input
+                                            name="full_price"
+                                            value={formData.full_price}
+                                            onChange={handleChange}
+                                            type="number"
+                                            required={formData.has_portions}
+                                            className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00]"
+                                            placeholder="0.00"
+                                        />
+                                    </div>
+                                </>
+                            )}
+                        </div>
 
                         <div className="space-y-1">
                             <label className="text-xs font-black uppercase text-gray-400 ml-2">
