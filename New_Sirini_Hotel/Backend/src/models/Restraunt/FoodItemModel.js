@@ -26,16 +26,14 @@ const FoodItemSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    regular_price: {
+    normal_price: {
       type: Number,
-      required: function() { return !this.has_portions; }
+      required: true,
     },
-    portions: [
-      {
-        portion_name: { type: String },
-        price: { type: Number }
-      }
-    ],
+    full_price: {
+      type: Number,
+      default: null,
+    },
     status: {
       type: String,
       enum: ["available", "unavailable"],

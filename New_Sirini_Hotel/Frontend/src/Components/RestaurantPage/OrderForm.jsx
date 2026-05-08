@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+
 export default function OrderForm({ item, editingOrder, onClose }) {
   const [form, setForm] = useState({
     name: editingOrder ? editingOrder.fullName : "",
@@ -9,14 +10,15 @@ export default function OrderForm({ item, editingOrder, onClose }) {
     pickupDate: editingOrder ? new Date(editingOrder.pickupDate).toISOString().split('T')[0] : "",
     pickupTime: editingOrder ? editingOrder.pickupTime : "",
     quantity: editingOrder ? editingOrder.quantity : 1,
-    portion: editingOrder ? editingOrder.portion : (item.has_portions ? "Normal" : ""),
+    portion: editingOrder ? editingOrder.portion : "Normal",
   });
   const [submitted, setSubmitted] = useState(false);
 
   const getPrice = () => {
-    if (!item.has_portions) return item.regular_price || 0;
-    const selectedPortion = item.portions?.find(p => p.portion_name === form.portion);
-    return selectedPortion ? selectedPortion.price : 0;
+    if (!item.has_portions || form.portion === "Normal") {
+      return item.normal_price || 0;
+    }
+    return item.full_price || 0;
   };
 
   const handleChange = (e) => {
@@ -27,7 +29,6 @@ export default function OrderForm({ item, editingOrder, onClose }) {
     e.preventDefault();
     const token = localStorage.getItem("token");
 
-    // Get current Sri Lankan date and time
     const now = new Date();
     const slDateStr = new Intl.DateTimeFormat('en-CA', {
       timeZone: 'Asia/Colombo',
@@ -42,12 +43,6 @@ export default function OrderForm({ item, editingOrder, onClose }) {
       minute: '2-digit',
       hour12: false
     }).format(now);
-
-    // Validation
-    // if (form.pickupDate < slDateStr) {
-    //   toast.error("Selected date is in the past. Please choose today or a future date.");
-    //   return;
-    // }
 
     if (form.pickupDate === slDateStr && form.pickupTime <= slTimeStr) {
       toast.error("Selected time has already passed for today. Please choose a future time.");
@@ -67,7 +62,6 @@ export default function OrderForm({ item, editingOrder, onClose }) {
       const orderData = {
         fullName: form.name,
         email: form.email,
-        // Strip non-numeric characters to match backend regex /^[0-9]{10}$/
         phoneNumber: form.phone.replace(/\D/g, ""),
         pickupDate: form.pickupDate,
         pickupTime: form.pickupTime,
@@ -106,12 +100,10 @@ export default function OrderForm({ item, editingOrder, onClose }) {
       });
       onClose();
     } catch (error) {
-      // console.error("Error placing order:", error);
       alert(`Failed to ${editingOrder ? 'update' : 'place'} order. Please try again.`);
     }
   };
 
-  // Fetch user profile from backend for auto-fill
   useEffect(() => {
     const fetchUserProfile = async () => {
       const token = localStorage.getItem("token");
@@ -129,7 +121,6 @@ export default function OrderForm({ item, editingOrder, onClose }) {
           }));
         } catch (error) {
           console.error("Error fetching user profile for auto-fill:", error);
-          // Fallback to localStorage if backend fails
           const userDataStr = localStorage.getItem("user");
           if (userDataStr) {
             try {
@@ -164,7 +155,6 @@ export default function OrderForm({ item, editingOrder, onClose }) {
         className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header with close button */}
         <div className="relative px-6 pt-6 pb-4 border-b border-neutral-100">
           <button
             onClick={onClose}
@@ -193,7 +183,6 @@ export default function OrderForm({ item, editingOrder, onClose }) {
               <h2 className="text-2xl font-bold text-neutral-900 mt-1">{item.name}</h2>
               <p className="text-sm text-neutral-500 mt-1 line-clamp-2">{item.description}</p>
 
-              {/* Small label pill */}
               <div className="mt-3">
                 <span
                   className="px-3 py-1 rounded-full text-xs font-bold text-white inline-block"
@@ -216,10 +205,8 @@ export default function OrderForm({ item, editingOrder, onClose }) {
           </div>
         </div>
 
-        {/* Form / Success content */}
         <div className="p-6 md:p-8">
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            {/* Row 1: Email */}
             <div className="grid grid-cols-1 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-neutral-600 mb-1.5 uppercase tracking-wide">
@@ -235,7 +222,6 @@ export default function OrderForm({ item, editingOrder, onClose }) {
               </div>
             </div>
 
-            {/* Row 2: Full Name & Phone Number */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-neutral-600 mb-1.5 uppercase tracking-wide">
@@ -271,7 +257,6 @@ export default function OrderForm({ item, editingOrder, onClose }) {
               </div>
             </div>
 
-            {/* Row 3: Portion & Quantity */}
             <div className={`grid grid-cols-1 ${item.has_portions ? "sm:grid-cols-2" : ""} gap-4`}>
               {item.has_portions && (
                 <div>
@@ -317,7 +302,6 @@ export default function OrderForm({ item, editingOrder, onClose }) {
               </div>
             </div>
 
-            {/* Row 4: Pickup Date & Time */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-neutral-600 mb-1.5 uppercase tracking-wide">
@@ -348,7 +332,6 @@ export default function OrderForm({ item, editingOrder, onClose }) {
               </div>
             </div>
 
-            {/* Total Price */}
             <div className="mt-2 p-4 bg-amber-50 border border-amber-200 rounded-xl">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-amber-800">
@@ -360,7 +343,6 @@ export default function OrderForm({ item, editingOrder, onClose }) {
               </div>
             </div>
 
-            {/* Submit Button */}
             <div className="mt-6">
               <button
                 type="submit"
