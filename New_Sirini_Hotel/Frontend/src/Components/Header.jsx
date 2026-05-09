@@ -63,7 +63,6 @@ function Header() {
     { label: "Services", path: "/#services" },
     { label: "Gallery", path: "/#gallery" },
     { label: "About Us", path: "/#about" },
-    { label: "Contact Us", path: "/#contact" },
   ];
 
   const isActive = (path) => location.pathname === path;
