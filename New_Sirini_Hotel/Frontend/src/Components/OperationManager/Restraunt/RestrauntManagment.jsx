@@ -242,6 +242,7 @@ const RestaurantManager = () => {
     if (items.length === 0) return null;
 
     const idx = getIndex(category);
+    const visibleItems = items.slice(idx, idx + itemsPerView);
 
     return (
       <div key={category} className="mb-12">
@@ -250,41 +251,30 @@ const RestaurantManager = () => {
           {/* Left arrow */}
           {idx > 0 && (
             <button
-              onClick={() => setIndex(category, Math.max(0, idx - 1))}
+              onClick={() => setIndex(category, Math.max(0, idx - itemsPerView))}
               className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
             >
               <ChevronLeft className="w-6 h-6 text-neutral-900" />
             </button>
           )}
 
-          <div className="overflow-hidden">
-            <div
-              className="flex gap-4 sm:gap-6 transition-transform duration-300"
-              style={{
-                transform: `translateX(-${idx * (100 / itemsPerView)}%)`,
-              }}
-            >
-              {items.map((item) => (
-                <div
-                  key={item._id}
-                  className="shrink-0"
-                  style={{
-                    width: `calc(${100 / itemsPerView}% - ${((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) /
-                      itemsPerView
-                      }px)`,
-                  }}
-                >
-                  {renderCarouselCard(item)}
-                </div>
-              ))}
-            </div>
+          {/* Grid — only current page items rendered, no transform needed */}
+          <div
+            className="grid gap-4"
+            style={{ gridTemplateColumns: `repeat(${itemsPerView}, 1fr)` }}
+          >
+            {visibleItems.map((item) => (
+              <div key={item._id}>
+                {renderCarouselCard(item)}
+              </div>
+            ))}
           </div>
 
           {/* Right arrow */}
-          {idx < items.length - itemsPerView && (
+          {idx + itemsPerView < items.length && (
             <button
               onClick={() =>
-                setIndex(category, Math.min(items.length - itemsPerView, idx + 1))
+                setIndex(category, idx + itemsPerView)
               }
               className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
             >
