@@ -67,7 +67,7 @@ const RestaurantManager = () => {
   const [editingItem, setEditingItem] = useState(null);
   const [foodItems, setFoodItems] = useState([]);
   const [indexes, setIndexes] = useState({});
-  const [itemsPerView, setItemsPerView] = useState(4);
+  const [itemsPerView, setItemsPerView] = useState(5);
 
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
@@ -107,7 +107,7 @@ const RestaurantManager = () => {
 
     const handleResize = () => {
       const w = window.innerWidth;
-      setItemsPerView(w < 640 ? 1 : w < 768 ? 2 : w < 1024 ? 3 : 4);
+      setItemsPerView(w < 640 ? 1 : w < 768 ? 2 : w < 1024 ? 3 : w < 1280 ? 4 : 5);
     };
     handleResize();
     window.addEventListener("resize", handleResize);

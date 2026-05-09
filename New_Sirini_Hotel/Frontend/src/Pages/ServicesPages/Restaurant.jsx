@@ -6,6 +6,7 @@ import resturantImg from "../../assets/resturant.png";
 import OrderForm from "../../Components/RestaurantPage/OrderForm";
 import RestaurantCard from "../../Components/RestaurantPage/RestaurantCard";
 import LoginMessage from "../../Components/LoginMessage";
+import ProcessFlow from "../../Components/RestaurantPage/ProcessFlow";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
 import CartComp from "../../Components/RestaurantPage/CartComp";
@@ -248,6 +249,9 @@ export default function Restaurant() {
         </div>
       </div>
 
+      {/* Process Flow Section */}
+      <ProcessFlow />
+
       {/* Categories Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {CATEGORIES.map((cat) => {
@@ -271,8 +275,8 @@ export default function Restaurant() {
       {/* Floating Cart Button */}
       <div className="fixed bottom-8 right-8 z-50">
         <button
-          className="flex items-center justify-center w-20 h-20 bg-amber-500 text-white shadow-[0_8px_30px_rgb(245,158,11,0.4)] hover:bg-amber-600 hover:scale-110 transition-all duration-300"
-          style={{ borderRadius: "50%" }}
+          className="flex items-center justify-center w-20 h-20 bg-amber-500 text-white hover:bg-amber-600 hover:scale-110 transition-all duration-300 rounded-full"
+          style={{ boxShadow: "0 8px 30px rgba(245, 158, 11, 0.4)" }}
           onClick={() => {
             if (!isLoggedIn) {
               setShowLoginModal(true);
