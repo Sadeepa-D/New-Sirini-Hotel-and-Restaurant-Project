@@ -29,7 +29,7 @@ export default function ProcessFlow() {
     },
     {
       id: 5,
-      title: 'Payment Completed',
+      title: 'Visit & finish payment',
       subtitle: 'Complete',
       icon: CreditCard,
     },
