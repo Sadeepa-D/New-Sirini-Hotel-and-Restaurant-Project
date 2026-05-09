@@ -59,7 +59,7 @@ function Footer() {
                 <li key={to}>
                   <Link
                     to={to}
-                    className="group flex items-center gap-2 text-gray-400 hover:text-yellow-500 transition-colors duration-200 text-sm !no-underline"
+                    className="group flex items-center gap-2 !text-gray-400 hover:!text-yellow-500 transition-colors duration-200 text-sm !no-underline"
                   >
                     <ChevronRight
                       size={14}
@@ -93,7 +93,7 @@ function Footer() {
                 </div>
                 <a
                   href="tel:0770161835"
-                  className="text-gray-400 hover:text-yellow-500 transition-colors text-sm !no-underline"
+                  className="!text-gray-400 hover:!text-yellow-500 transition-colors text-sm !no-underline"
                 >
                   0770161835
                 </a>
@@ -104,7 +104,7 @@ function Footer() {
                 </div>
                 <a
                   href="mailto:newsirini@gmail.com"
-                  className="text-gray-400 hover:text-yellow-500 transition-colors text-sm !no-underline"
+                  className="!text-gray-400 hover:!text-yellow-500 transition-colors text-sm !no-underline"
                 >
                   newsirini@gmail.com
                 </a>
