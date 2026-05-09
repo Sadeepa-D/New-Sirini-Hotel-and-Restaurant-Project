@@ -4,7 +4,7 @@ import AdvertisementCard from "../OperationManager/Reception/AdvertisementCard";
 import AdvertismentForm from "../Receptionhall/AdvertismentForm";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { Megaphone, Plus } from "lucide-react";
+import { Megaphone, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 
 const AdsSection = ({ data, onEdit, onDelete }) => {
   const navigate = useNavigate();
@@ -13,6 +13,11 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
   const [loading, setLoading] = useState(true);
   const [editingAd, setEditingAd] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
+
+  const [index, setIndex] = useState(0);
+  const [itemsPerView, setItemsPerView] = useState(
+    typeof window !== "undefined" && window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : 3
+  );
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -45,6 +50,23 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
   useEffect(() => {
     fetchads();
   }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setItemsPerView(
+        window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : 3,
+      );
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    setIndex((prev) =>
+      Math.min(prev, Math.max(0, ads.length - itemsPerView))
+    );
+  }, [ads.length, itemsPerView]);
 
   const handleEdit = (ad) => {
     setEditingAd(ad);
@@ -84,6 +106,12 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
     );
   }
 
+  const visibleItems = ads.slice(index, index + itemsPerView);
+  const canGoBack = index > 0;
+  const canGoNext = index + itemsPerView < ads.length;
+  const GAP = 16;
+  const cardWidth = `calc((100% - ${GAP * (itemsPerView - 1)}px) / ${itemsPerView})`;
+
   return (
     <div className="space-y-6 font-sans">
       {/* ── Header ── */}
@@ -113,17 +141,68 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {ads.map((ad) => (
-            <AdvertisementCard
-              key={ad._id}
-              ad={ad}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              showAdminActions={false}
-              showEditDelete={true}
-            />
-          ))}
+        <div className="relative mt-4">
+          {/* Left arrow */}
+          {canGoBack && (
+            <button
+              onClick={() => setIndex((i) => Math.max(0, i - itemsPerView))}
+              className="absolute left-0 sm:-left-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-all"
+            >
+              <ChevronLeft size={16} className="text-gray-600" />
+            </button>
+          )}
+
+          {/* Visible cards */}
+          <div
+            key={index}
+            className="flex gap-4"
+            style={{ animation: "fadeIn 0.25s ease" }}
+          >
+            {visibleItems.map((ad) => (
+              <div key={ad._id} className="shrink-0" style={{ width: cardWidth }}>
+                <AdvertisementCard
+                  ad={ad}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  showAdminActions={false}
+                  showEditDelete={true}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Right arrow */}
+          {canGoNext && (
+            <button
+              onClick={() =>
+                setIndex((i) =>
+                  Math.min(ads.length - itemsPerView, i + itemsPerView),
+                )
+              }
+              className="absolute right-0 sm:-right-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-all"
+            >
+              <ChevronRight size={16} className="text-gray-600" />
+            </button>
+          )}
+
+          {/* Page dots */}
+          {ads.length > itemsPerView && (
+            <div className="flex justify-center gap-1.5 mt-6">
+              {Array.from({
+                length: Math.ceil(ads.length / itemsPerView),
+              }).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setIndex(i * itemsPerView)}
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    Math.floor(index / itemsPerView) === i
+                      ? "bg-amber-500"
+                      : "bg-gray-200 hover:bg-gray-300"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -137,6 +216,12 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
           }}
         />
       )}
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 };
