@@ -98,7 +98,7 @@ const LiquorDetailsComp = ({ drink, isOpen, onClose }) => {
               <div className="flex items-center justify-between px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl">
                 <div className="flex items-center gap-1.5 text-gray-400 text-xs">
                   <Percent size={13} className="text-purple-400" />
-                  ABV
+                  ABV:
                 </div>
                 <span className="text-white text-sm font-bold">
                   {drink.alcoholPercentage}%
@@ -109,7 +109,7 @@ const LiquorDetailsComp = ({ drink, isOpen, onClose }) => {
               <div className="flex items-center justify-between px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl">
                 <div className="flex items-center gap-1.5 text-gray-400 text-xs">
                   <FlaskConical size={13} className="text-blue-400" />
-                  Volume
+                  Vol:
                 </div>
                 <span className="text-white text-sm font-bold">
                   {drink.volume}
@@ -121,9 +121,11 @@ const LiquorDetailsComp = ({ drink, isOpen, onClose }) => {
                 <div className="flex items-center justify-between px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl">
                   <div className="flex items-center gap-1.5 text-gray-400 text-xs">
                     <Globe size={13} className="text-green-400" />
-                    Origin
                   </div>
-                  <span className="text-white text-sm font-bold">
+                  <span
+                    className="text-white text-sm truncate font-bold"
+                    title={drink.origin}
+                  >
                     {drink.origin}
                   </span>
                 </div>
@@ -134,9 +136,11 @@ const LiquorDetailsComp = ({ drink, isOpen, onClose }) => {
                 <div className="flex items-center justify-between px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl">
                   <div className="flex items-center gap-1.5 text-gray-400 text-xs">
                     <Tag size={13} className="text-pink-400" />
-                    Brand
                   </div>
-                  <span className="text-white text-sm font-bold text-right truncate ml-2">
+                  <span
+                    className="text-white text-sm font-bold text-right truncate ml-2"
+                    title={drink.brand}
+                  >
                     {drink.brand}
                   </span>
                 </div>

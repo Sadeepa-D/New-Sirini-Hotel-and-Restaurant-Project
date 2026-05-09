@@ -67,11 +67,6 @@ const DrinkCard = ({ drink, onClick }) => {
               <p className="text-amber-400 text-sm font-bold leading-none">LKR {drink.price}</p>
             </div>
           </div>
-
-          {/* View detail hint */}
-          <div className="px-3 py-1.5 bg-amber-500 rounded-xl shadow-md shadow-amber-500/30 group-hover:bg-amber-400 transition-colors duration-200">
-            <p className="text-black text-[11px] font-bold uppercase tracking-wide">View</p>
-          </div>
         </div>
       </div>
     </div>
