@@ -3,6 +3,16 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import ConfirmDialog from "../ConfrimDialog";
+import {
+  UtensilsCrossed,
+  Hash,
+  ShoppingBag,
+  CalendarDays,
+  Clock,
+  BadgeDollarSign,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 
 const RestaurantSection = ({ data }) => {
   const [orders, setOrders] = useState([]);
@@ -57,7 +67,6 @@ const RestaurantSection = ({ data }) => {
       } catch (e) { }
     }
 
-    // Check if user is NOT an Operation Manager or Admin
     const isStaff = userRole.includes("Operation Manager") || userRole === "Admin";
 
     if (!isStaff) {
@@ -109,7 +118,7 @@ const RestaurantSection = ({ data }) => {
       if (response.status === 200) {
         toast.dismiss(loadingtoast);
         toast.success("Order deleted successfully");
-        fetchOrders(); // Refresh to move to cancelled/deleted view
+        fetchOrders();
       }
     } catch (error) {
       console.error("Error deleting order:", error);
@@ -129,97 +138,144 @@ const RestaurantSection = ({ data }) => {
     return true;
   });
 
-  return (
-    <div className="space-y-6 animate-in fade-in duration-300 relative">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <h1 className="text-xl font-bold text-gray-900 uppercase">Restaurant Order Dashboard</h1>
+  const tabs = ["In Progress", "Completed", "Cancelled"];
 
-        {/* Tabs */}
-        <div className="flex gap-2 bg-gray-50 p-1 rounded-xl border border-gray-200">
-          {["In Progress", "Completed", "Cancelled"].map((tab) => (
+  const tabCounts = {
+    "In Progress": orders.filter(o => o.status === "In Progress").length,
+    "Completed": orders.filter(o => o.status === "Completed").length,
+    "Cancelled": orders.filter(o => o.status === "Cancelled" || o.status === "delete").length,
+  };
+
+  const statusStyle = (status) => {
+    if (status === "Completed") return "bg-green-50 text-green-600 border-green-200";
+    if (status === "Cancelled" || status === "delete") return "bg-red-50 text-red-500 border-red-200";
+    return "bg-amber-50 text-amber-600 border-amber-200";
+  };
+
+  return (
+    <div className="space-y-6 font-sans relative">
+      {/* ── Header ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-gray-900 tracking-tight">Restaurant Orders</h2>
+          <p className="text-gray-400 text-xs mt-0.5">Manage and track your food orders</p>
+        </div>
+
+        {/* Tab bar */}
+        <div className="flex bg-gray-100 p-1 rounded-xl border border-gray-200 gap-0.5 shadow-inner overflow-x-auto">
+          {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === tab
-                ? "bg-amber-100 text-amber-700 shadow-sm"
-                : "text-gray-500 hover:text-gray-700"
-                }`}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-[10px] uppercase tracking-wider transition-all whitespace-nowrap font-semibold ${
+                activeTab === tab
+                  ? "bg-white text-amber-600 shadow-sm ring-1 ring-black/5"
+                  : "text-gray-400 hover:text-gray-600 font-normal"
+              }`}
             >
               {tab}
+              <span className={`text-[9px] font-mono ${activeTab === tab ? "text-amber-400" : "opacity-50"}`}>
+                ({tabCounts[tab]})
+              </span>
             </button>
           ))}
         </div>
       </div>
 
-
+      {/* ── Content ── */}
       {loading ? (
-        <div className="py-12 text-center text-gray-500">Loading orders...</div>
+        <div className="flex flex-col items-center justify-center py-20 gap-4">
+          <div className="w-10 h-10 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
+          <p className="text-gray-400 text-sm animate-pulse">Loading orders…</p>
+        </div>
       ) : filteredOrders.length === 0 ? (
-        <div className="bg-white border-2 border-dashed border-gray-100 rounded-3xl p-12 text-center">
-          <p className="text-gray-400">No {activeTab.toLowerCase()} orders found.</p>
+        <div className="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+          <UtensilsCrossed size={36} className="text-gray-200 mb-3" />
+          <p className="text-gray-400 text-sm font-medium">No {activeTab.toLowerCase()} orders found.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredOrders.map((order) => (
-            <div key={order._id} className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col justify-between h-full">
-              <div>
+            <div
+              key={order._id}
+              className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex flex-col"
+            >
+              {/* Top accent bar */}
+              <div className="h-1 w-full bg-gradient-to-r from-amber-400 to-amber-300" />
+
+              <div className="p-5 flex flex-col flex-1">
+                {/* Food name + status */}
                 <div className="flex justify-between items-start mb-4">
-                  <div className="bg-amber-50 p-2 rounded-xl">
-                    <span className="font-bold text-sm text-amber-700">{order.foodName}</span>
+                  <div className="flex items-center gap-2">
+                    <div className="p-2 bg-amber-50 border border-amber-100 rounded-xl">
+                      <UtensilsCrossed size={16} className="text-amber-500" />
+                    </div>
+                    <span className="font-bold text-sm text-gray-900 leading-tight">{order.foodName}</span>
                   </div>
-                  <span className={`text-[10px] font-black px-2 py-1 rounded-lg uppercase ${order.status === "Completed"
-                    ? "bg-green-50 text-green-600"
-                    : order.status === "Cancelled" || order.status === "delete"
-                      ? "bg-red-50 text-red-600"
-                      : "bg-amber-50 text-amber-600"
-                    }`}>
-                    {order.status === "delete" ? "DELETED" : order.status}
+                  <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase border ${statusStyle(order.status)}`}>
+                    {order.status === "delete" ? "Deleted" : order.status}
                   </span>
                 </div>
 
-                <div className="space-y-3 mb-4">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Order ID</span>
-                    <span className="font-mono text-gray-600 font-medium">{order.orderCode}</span>
+                {/* Details */}
+                <div className="space-y-2.5 mb-4 flex-1">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="flex items-center gap-1.5 text-gray-400">
+                      <Hash size={12} className="text-gray-300" /> Order ID
+                    </span>
+                    <span className="font-mono text-gray-600 font-semibold">{order.orderCode}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Quantity</span>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="flex items-center gap-1.5 text-gray-400">
+                      <ShoppingBag size={12} className="text-gray-300" /> Quantity
+                    </span>
                     <span className="text-gray-700 font-bold">{order.quantity} Items</span>
                   </div>
-                  <div className="grid grid-cols-2 gap-4 pt-2">
-                    <div>
-                      <span className="text-[10px] text-gray-400 block uppercase font-bold tracking-wider">Date</span>
-                      <span className="text-xs text-gray-700 font-medium">{new Date(order.pickupDate).toLocaleDateString()}</span>
+
+                  <div className="grid grid-cols-2 gap-3 pt-1">
+                    <div className="bg-gray-50 rounded-xl px-3 py-2 border border-gray-100">
+                      <span className="flex items-center gap-1 text-[9px] text-gray-400 uppercase font-bold tracking-wider mb-1">
+                        <CalendarDays size={10} /> Date
+                      </span>
+                      <span className="text-xs text-gray-700 font-semibold">
+                        {new Date(order.pickupDate).toLocaleDateString()}
+                      </span>
                     </div>
-                    <div>
-                      <span className="text-[10px] text-gray-400 block uppercase font-bold tracking-wider">Time</span>
-                      <span className="text-xs text-gray-700 font-medium">{order.pickupTime}</span>
+                    <div className="bg-gray-50 rounded-xl px-3 py-2 border border-gray-100">
+                      <span className="flex items-center gap-1 text-[9px] text-gray-400 uppercase font-bold tracking-wider mb-1">
+                        <Clock size={10} /> Time
+                      </span>
+                      <span className="text-xs text-gray-700 font-semibold">{order.pickupTime}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-gray-50 flex justify-between items-center">
-                  <span className="text-xs text-gray-400">Total Amount</span>
-                  <span className="text-amber-600 font-black">Rs. {order.Price}</span>
+                {/* Price row */}
+                <div className="flex justify-between items-center pt-3 border-t border-gray-100">
+                  <span className="flex items-center gap-1.5 text-[10px] text-gray-400 uppercase font-bold tracking-wider">
+                    <BadgeDollarSign size={13} className="text-amber-500" /> Total
+                  </span>
+                  <span className="text-amber-600 font-black text-base">Rs. {order.Price}</span>
                 </div>
-              </div>
 
-              {order.status === "In Progress" && (
-                <div className="flex gap-2 mt-6">
-                  <button
-                    onClick={() => handleEdit(order)}
-                    className="flex-1 bg-gray-50 text-gray-700 hover:bg-amber-100 hover:text-amber-700 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center justify-center"
-                  >
-                    EDIT
-                  </button>
-                  <button
-                    onClick={() => handleDelete(order)}
-                    className="flex-1 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white py-2.5 rounded-2xl text-xs font-black transition-all flex items-center justify-center"
-                  >
-                    DELETE
-                  </button>
-                </div>
-              )}
+                {/* Actions */}
+                {order.status === "In Progress" && (
+                  <div className="flex gap-2 mt-4">
+                    <button
+                      onClick={() => handleEdit(order)}
+                      className="flex-1 flex items-center justify-center gap-1.5 bg-gray-50 hover:bg-amber-50 text-gray-600 hover:text-amber-700 border border-gray-200 hover:border-amber-200 py-2.5 rounded-xl text-xs font-bold transition-all duration-200"
+                    >
+                      <Pencil size={13} /> Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(order)}
+                      className="flex-1 flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white border border-red-200 hover:border-red-500 py-2.5 rounded-xl text-xs font-bold transition-all duration-200"
+                    >
+                      <Trash2 size={13} /> Delete
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -236,4 +292,5 @@ const RestaurantSection = ({ data }) => {
     </div>
   );
 };
+
 export default RestaurantSection;

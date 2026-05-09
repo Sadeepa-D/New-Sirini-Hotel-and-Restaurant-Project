@@ -34,19 +34,22 @@ const FoodCard = ({ item, onClick }) => (
     </div>
 
     {/* Info */}
-    <div className="p-3 flex flex-col gap-1 flex-1 justify-between">
+    <div className="p-3 flex flex-col gap-1 flex-1">
       <div>
         <span className="inline-block bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-full w-fit max-w-full truncate">
           {item.name || item.foodname}
         </span>
-        {item.label && (
-          <p className="text-gray-400 text-xs">Label: {item.label}</p>
-        )}
+        <p className="text-gray-400 text-[10px] mt-1 line-clamp-2 italic">
+          {item.description}
+        </p>
       </div>
-      <div className="mt-2 space-y-1">
-        <p className="text-white text-sm font-semibold">Price: LKR {item.price}</p>
+      <div className="mt-2 space-y-1 flex-1 flex flex-col justify-end">
+        <p className="text-white text-sm font-semibold text-amber-500">Normal: LKR {item.normal_price}</p>
+        {item.has_portions && (
+          <p className="text-white text-sm font-semibold text-amber-500">Full: LKR {item.full_price}</p>
+        )}
         <p
-          className={`text-xs font-bold tracking-wide ${item.availability !== false ? "text-green-400" : "text-red-400"
+          className={`text-xs font-bold tracking-wide mt-1 ${item.availability !== false ? "text-green-400" : "text-red-400"
             }`}
         >
           {item.availability !== false ? "AVAILABLE" : "UNAVAILABLE"}
@@ -74,7 +77,15 @@ const RestaurantManager = () => {
     message: "",
   });
 
-  const CATEGORIES = ["Main Meals", "Soft Drinks", "Fresh Juice"];
+  const CATEGORIES = [
+    "Chopsy Rice",
+    "Rice & Nasi Goreng",
+    "Kottu",
+    "Noodles",
+    "Bites",
+    "Side Dishes",
+    "Snacks"
+  ];
 
   const fetchFoodItems = async () => {
     try {
@@ -83,7 +94,11 @@ const RestaurantManager = () => {
       );
       setFoodItems(data);
     } catch (err) {
-      console.error("Error fetching food items:", err);
+      if (err.response && err.response.status === 404) {
+        setFoodItems([]); // Handle empty state gracefully
+      } else {
+        console.error("Error fetching food items:", err);
+      }
     }
   };
 
@@ -164,7 +179,8 @@ const RestaurantManager = () => {
       setEditingItem(null);
     } catch (err) {
       console.error("Error saving item:", err);
-      toast.error("Error saving item", { id: loadingToast });
+      const errorMessage = err.response?.data?.message || "Error saving item";
+      toast.error(errorMessage, { id: loadingToast });
     }
   };
 

@@ -177,7 +177,7 @@ const RoomandReception = () => {
             </span>
           </div>
           <h4 className="text-gray-900 font-serif italic text-xl mb-6">
-            Service Packages
+            Hotel Packages
           </h4>
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
@@ -253,7 +253,7 @@ const RoomandReception = () => {
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                 <span className="text-xs font-bold text-gray-600 uppercase">
-                  Pending Requests
+                  Pending Appointments
                 </span>
               </div>
               <span className="text-lg font-black">{pendingReq}</span>
@@ -370,7 +370,7 @@ const RoomandReception = () => {
             Room {mostBookedRoom[0]}
           </p>
           <p className="text-xs font-medium text-gray-500">
-            Occupied 
+            Occupied
             <span className="text-amber-600 font-bold">
               {mostBookedRoom[1]} times
             </span>
@@ -386,16 +386,22 @@ const RoomandReception = () => {
             <div className="p-3 bg-amber-500/10 rounded-2xl text-amber-500 border border-amber-500/20">
               <Coins size={22} />
             </div>
-            <p className="text-[9px] font-black text-amber-500/60 uppercase tracking-widest">Revenue Hub</p>
+            <p className="text-[9px] font-black text-amber-500/60 uppercase tracking-widest">
+              Revenue Hub
+            </p>
           </div>
-          <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1">Total Room Income</p>
+          <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1">
+            Total Room Income
+          </p>
           <p className="text-3xl font-black text-white italic tracking-tighter">
             Rs. {monthlyRoomRevenue.toLocaleString()}
           </p>
-        <div className="mt-6 h-1 w-full bg-white/5 rounded-full overflow-hidden">
-        <div className="h-full bg-amber-500 w-[65%]" />
-        </div>
-          <p className="text-[9px] text-gray-500 mt-2 italic">Calculated from confirmed monthly stays</p>
+          <div className="mt-6 h-1 w-full bg-white/5 rounded-full overflow-hidden">
+            <div className="h-full bg-amber-500 w-[65%]" />
+          </div>
+          <p className="text-[9px] text-gray-500 mt-2 italic">
+            Calculated from confirmed monthly stays
+          </p>
         </div>
       </div>
     </div>
