@@ -145,13 +145,16 @@ function Rooms() {
                     alt={room.roomType}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
+                  {/* Dark Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60"></div>
+
                   <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full shadow-sm">
                     <span className="text-[10px] font-black uppercase text-gray-800 tracking-tighter">
                       Room {room.roomNumber}
                     </span>
                   </div>
-                  <div className="absolute bottom-4 left-4 bg-black/80 backdrop-blur-md px-4 py-2 rounded-2xl">
-                    <p className="text-white font-bold text-lg">
+                  <div className="absolute bottom-4 left-4 z-10">
+                    <p className="text-white font-bold text-2xl drop-shadow-lg">
                       Rs.{room.price.toLocaleString()}
                     </p>
                   </div>
