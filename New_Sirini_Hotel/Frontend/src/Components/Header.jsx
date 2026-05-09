@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import logo from "../assets/Logo.png";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Menu, X, User, LogOut, LogIn, UserPlus } from "lucide-react";
+import {
+  Menu,
+  X,
+  User,
+  LogOut,
+  LogIn,
+  UserPlus,
+  ExternalLink,
+} from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import Footer from "./Footer";
@@ -17,6 +25,7 @@ function Header() {
   const [logging, setLogging] = useState(
     localStorage.getItem("token") ? true : false,
   );
+  const [userData, setUserData] = useState([]);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
   const handlelogout = () => {
@@ -45,6 +54,7 @@ function Header() {
       } else {
         setUserImage(null);
       }
+      setUserData(userData);
       return userData.image;
     } catch (error) {
       console.error("Error fetching user image:", error);
@@ -152,6 +162,60 @@ function Header() {
         <div className="hidden md:flex items-center gap-3">
           {isLoggedIn ? (
             <div className="flex items-center gap-3">
+              {userData.Role !== "User" && (
+                <div>
+                  {userData.Role === "Admin" && (
+                    <>
+                      <button
+                        className="flex items-center gap-2 group transition-all"
+                        onClick={() => navigate("/admin")}
+                      >
+                        <ExternalLink
+                          className="text-amber-500 font-bold hover:scale-105"
+                          size={25}
+                        />
+                        <span className="text-amber-500 font-bold hover:scale-105">
+                          Admin Portal
+                        </span>
+                      </button>
+                    </>
+                  )}
+                  {userData.Role ===
+                    "Operation Manager 1 (Restraunt,Liquor)" && (
+                    <>
+                      <button
+                        className="flex items-center gap-2 group transition-all"
+                        onClick={() => navigate("/operationmanager")}
+                      >
+                        <ExternalLink
+                          className="text-amber-500 font-bold hover:scale-105"
+                          size={25}
+                        />
+                        <span className="text-amber-500 font-bold hover:scale-105">
+                          Manager Portal
+                        </span>
+                      </button>
+                    </>
+                  )}
+                  {userData.Role ===
+                    "Operation Manager 2 (Reception, Room)" && (
+                    <>
+                      <button
+                        className="flex items-center gap-2 group transition-all"
+                        onClick={() => navigate("/manager")}
+                      >
+                        <ExternalLink
+                          className="text-amber-500 font-bold hover:scale-105"
+                          size={25}
+                        />
+                        <span className="text-amber-500 font-bold hover:scale-105">
+                          Manager Portal
+                        </span>
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
               <div className="w-14 h-14 bg-amber-500 rounded-full overflow-hidden hover:scale-105 transition-transform cursor-pointer shadow-md ring-2 ring-amber-200 ring-offset-1">
                 {userImage ? (
                   <img
