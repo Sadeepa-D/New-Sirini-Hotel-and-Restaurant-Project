@@ -111,9 +111,11 @@ function Rooms() {
         </div>
 
         {/* Content */}
-        <div className="z-20 flex flex-col items-center gap-4">
-          <h1 className="text-5xl md:text-6xl font-serif italic">Our Rooms</h1>
-          <p className="text-sm md:text-base uppercase tracking-[0.4em] font-light border-b border-white/30 pb-2">
+        <div className="z-20 flex flex-col items-center gap-4 bg-white/10 backdrop-blur-md px-8 md:px-12 py-8 rounded-2xl border border-white/20">
+          <h1 className="text-5xl md:text-6xl font-serif italic text-white">
+            Our Rooms
+          </h1>
+          <p className="text-sm md:text-base uppercase tracking-[0.4em] font-light border-b border-white/30 pb-2 text-white/90">
             Experience Luxury Stay
           </p>
         </div>
