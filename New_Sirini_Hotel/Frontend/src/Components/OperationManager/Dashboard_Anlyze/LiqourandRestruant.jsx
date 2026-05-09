@@ -113,7 +113,7 @@ const LiqourandRestruant = () => {
               </div>
             </div>
             <p className="text-slate-400 text-xs font-bold uppercase tracking-[0.2em] mb-1">
-              Estimated Revenue
+              Estimated Restraunt Revenue
             </p>
             <h2 className="text-3xl font-black text-white italic tracking-tighter">
               Rs. {monthlyrevenue.toLocaleString()}
@@ -135,7 +135,7 @@ const LiqourandRestruant = () => {
           </div>
           <div>
             <h3 className="text-slate-900 font-serif italic text-xl mb-1">
-              Active Spirits
+              Active Liquor Items
             </h3>
             <div className="flex items-baseline gap-2">
               <span className="text-4xl font-black text-slate-800">

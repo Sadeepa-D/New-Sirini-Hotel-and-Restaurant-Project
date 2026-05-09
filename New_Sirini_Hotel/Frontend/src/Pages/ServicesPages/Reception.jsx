@@ -107,13 +107,13 @@ export default function Reception() {
               onClick={() => handleadrequest()}
               className="bg-yellow-500 hover:bg-amber-700 text-black px-8 py-3 rounded-full font-semibold uppercase tracking-widest text-sm transition-all duration-300 shadow-lg mt-4"
             >
-              {showForm ? "Close Booking" : "Book Your Visit"}
+              {showForm ? "Close " : "Book Your Pre-Visit"}
             </button>
             <button
               onClick={() => setShowCalander(!showcalander)}
               className="bg-yellow-500 hover:bg-amber-600 text-black px-8 py-3 rounded-full font-semibold uppercase tracking-widest text-sm transition-all duration-300 shadow-lg mt-4"
             >
-              {showcalander ? "Hide Calendar" : "Show Calendar"}
+              {showcalander ? "Close" : "Sirini's Calender"}
             </button>
           </div>
         </div>

@@ -47,7 +47,9 @@ const AppointmentCard = ({
       <div className="p-5">
         {/* Status + Date row */}
         <div className="flex justify-between items-center mb-4">
-          <span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${cfg.pill}`}>
+          <span
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${cfg.pill}`}
+          >
             {cfg.icon}
             {appointment.status}
           </span>
@@ -58,11 +60,14 @@ const AppointmentCard = ({
         </div>
 
         {/* Name */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-9 h-9 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0">
+        <div className="flex items-start gap-2 mb-4 h-16">
+          <div className="w-9 h-9 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0 mt-0.5">
             <User size={16} className="text-amber-500" />
           </div>
-          <h3 className="text-gray-900 font-bold text-base leading-tight whitespace-nowrap">
+          <h3
+            className="text-gray-900 font-bold text-base leading-tight line-clamp-2 overflow-hidden"
+            title={appointment.name}
+          >
             {appointment.name}
           </h3>
         </div>
@@ -85,38 +90,39 @@ const AppointmentCard = ({
 
         {/* Action Buttons */}
         {isAdmin
-          ? (appointment.status === "Pending" || appointment.status === "Overdue") && (
-            <div className="mt-4 pt-3 border-t border-gray-100 flex gap-2">
-              <button
-                className="flex-1 flex items-center justify-center gap-1.5 bg-green-50 hover:bg-green-500 text-green-600 hover:text-white border border-green-200 hover:border-green-500 text-xs font-bold py-2 rounded-xl transition-all duration-200"
-                onClick={() => onUpdate(appointment._id, "completed")}
-              >
-                <CheckCircle2 size={13} /> Complete
-              </button>
-              <button
-                className="flex-1 flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white border border-red-200 hover:border-red-500 text-xs font-bold py-2 rounded-xl transition-all duration-200"
-                onClick={() => onUpdate(appointment._id, "canceled")}
-              >
-                <XCircle size={13} /> Cancel
-              </button>
-            </div>
-          )
+          ? (appointment.status === "Pending" ||
+              appointment.status === "Overdue") && (
+              <div className="mt-4 pt-3 border-t border-gray-100 flex gap-2">
+                <button
+                  className="flex-1 flex items-center justify-center gap-1.5 bg-green-50 hover:bg-green-500 text-green-600 hover:text-white border border-green-200 hover:border-green-500 text-xs font-bold py-2 rounded-xl transition-all duration-200"
+                  onClick={() => onUpdate(appointment._id, "completed")}
+                >
+                  <CheckCircle2 size={13} /> Complete
+                </button>
+                <button
+                  className="flex-1 flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white border border-red-200 hover:border-red-500 text-xs font-bold py-2 rounded-xl transition-all duration-200"
+                  onClick={() => onUpdate(appointment._id, "canceled")}
+                >
+                  <XCircle size={13} /> Cancel
+                </button>
+              </div>
+            )
           : appointment.status === "Pending" && (
-            <div className="mt-4 pt-3 border-t border-gray-100 flex gap-2">
-              <button
-                className="flex-1 flex items-center justify-center gap-1.5 bg-gray-50 hover:bg-amber-50 text-gray-600 hover:text-amber-700 border border-gray-200 hover:border-amber-200 text-xs font-bold py-2 rounded-xl transition-all duration-200"
-                onClick={() => onEdit(appointment)}
-              >
-                <Edit2 size={13} /> Edit
-              </button>
-              <button
-                className="flex-1 flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white border border-red-200 hover:border-red-500 text-xs font-bold py-2 rounded-xl transition-all duration-200"
-                onClick={() => onCancel(appointment._id)}
-              >
-                <XCircle size={13} /> Cancel
-              </button>
-            </div>
-          )}
+              <div className="mt-4 pt-3 border-t border-gray-100 flex gap-2">
+                <button
+                  className="flex-1 flex items-center justify-center gap-1.5 bg-gray-50 hover:bg-amber-50 text-gray-600 hover:text-amber-700 border border-gray-200 hover:border-amber-200 text-xs font-bold py-2 rounded-xl transition-all duration-200"
+                  onClick={() => onEdit(appointment)}
+                >
+                  <Edit2 size={13} /> Edit
+                </button>
+                <button
+                  className="flex-1 flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white border border-red-200 hover:border-red-500 text-xs font-bold py-2 rounded-xl transition-all duration-200"
+                  onClick={() => onCancel(appointment._id)}
+                >
+                  <XCircle size={13} /> Cancel
+                </button>
+              </div>
+            )}
       </div>
     </div>
   );

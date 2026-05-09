@@ -16,8 +16,8 @@ const AppointmentMng = () => {
         ? 1
         : window.innerWidth < 1024
           ? 2
-          : 3
-      : 3,
+          : 4
+      : 4,
   );
 
   const VITE_URL = import.meta.env.VITE_API_URL;
@@ -44,7 +44,7 @@ const AppointmentMng = () => {
   useEffect(() => {
     const handleResize = () => {
       setItemsPerView(
-        window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : 3,
+        window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : 4,
       );
     };
     handleResize();
