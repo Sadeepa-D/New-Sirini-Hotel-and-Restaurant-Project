@@ -192,8 +192,10 @@ export default function BookingForm({ editData = null, onSuccess }) {
               </label>
               <input
                 type="number"
+                min="40"
+                max="200"
                 className={inputClass}
-                placeholder="100"
+                placeholder="40"
                 value={noOfGuests}
                 onChange={(e) => setNoOfGuests(e.target.value)}
               />
