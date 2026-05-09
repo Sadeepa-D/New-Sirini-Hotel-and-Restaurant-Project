@@ -67,7 +67,7 @@ const RestaurantManager = () => {
   const [editingItem, setEditingItem] = useState(null);
   const [foodItems, setFoodItems] = useState([]);
   const [indexes, setIndexes] = useState({});
-  const [itemsPerView, setItemsPerView] = useState(5);
+  const [itemsPerView, setItemsPerView] = useState(4);
 
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
@@ -107,7 +107,7 @@ const RestaurantManager = () => {
 
     const handleResize = () => {
       const w = window.innerWidth;
-      setItemsPerView(w < 640 ? 1 : w < 768 ? 2 : w < 1024 ? 3 : 5);
+      setItemsPerView(w < 640 ? 1 : w < 768 ? 2 : w < 1024 ? 3 : 4);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -242,39 +242,52 @@ const RestaurantManager = () => {
     if (items.length === 0) return null;
 
     const idx = getIndex(category);
-    const visibleItems = items.slice(idx, idx + itemsPerView);
 
     return (
       <div key={category} className="mb-12">
         <h3 className="text-2xl font-bold text-neutral-900 mb-6">{category}</h3>
-        <div className="relative">
+        <div className="relative px-10">
           {/* Left arrow */}
           {idx > 0 && (
             <button
-              onClick={() => setIndex(category, Math.max(0, idx - itemsPerView))}
+              onClick={() => setIndex(category, Math.max(0, idx - 1))}
               className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
             >
               <ChevronLeft className="w-6 h-6 text-neutral-900" />
             </button>
           )}
 
-          {/* Grid — only current page items rendered, no transform needed */}
-          <div
-            className="grid gap-4"
-            style={{ gridTemplateColumns: `repeat(${itemsPerView}, 1fr)` }}
-          >
-            {visibleItems.map((item) => (
-              <div key={item._id}>
-                {renderCarouselCard(item)}
-              </div>
-            ))}
+          {/* Smooth sliding track */}
+          <div className="overflow-hidden">
+            <div
+              className="flex justify-start gap-4 sm:gap-6 transition-transform duration-500 ease-in-out"
+              style={{
+                transform: `translateX(calc(-${idx * (100 / itemsPerView)}% - ${
+                  idx * ((itemsPerView === 1 ? 16 : 24) / itemsPerView)
+                }px))`,
+              }}
+            >
+              {items.map((item) => (
+                <div
+                  key={item._id}
+                  className="flex-shrink-0"
+                  style={{
+                    width: `calc(${100 / itemsPerView}% - ${
+                      ((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) / itemsPerView
+                    }px)`,
+                  }}
+                >
+                  {renderCarouselCard(item)}
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Right arrow */}
           {idx + itemsPerView < items.length && (
             <button
               onClick={() =>
-                setIndex(category, idx + itemsPerView)
+                setIndex(category, idx + 1)
               }
               className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
             >
@@ -315,7 +328,7 @@ const RestaurantManager = () => {
       </div>
 
       {/* Category Carousels */}
-      <div className="bg-white rounded-xl p-6 shadow-sm">
+      <div className="bg-white rounded-xl p-6 md:p-10 shadow-sm">
         {CATEGORIES.map((cat) => renderCarouselSection(cat))}
 
         {filteredItems.length === 0 && (
