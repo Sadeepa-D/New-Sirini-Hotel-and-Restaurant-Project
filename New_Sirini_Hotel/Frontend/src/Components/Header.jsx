@@ -15,6 +15,9 @@ function Header() {
   const [hoveredLink, setHoveredLink] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userImage, setUserImage] = useState(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const [logging, setLogging] = useState(
     localStorage.getItem("token") ? true : false,
   );
@@ -31,6 +34,29 @@ function Header() {
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
   }, [location]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Shrink header when scrolled past 50px
+      setIsScrolled(currentScrollY > 50);
+      
+      // Show/hide header based on scroll direction
+      if (currentScrollY < lastScrollY || currentScrollY < 50) {
+        // Scrolling up or at the top
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollY + 10) {
+        // Scrolling down significantly
+        setIsVisible(false);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+    
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   const fetchuserimg = async () => {
     try {
@@ -74,10 +100,10 @@ function Header() {
       ? "2px solid #facc15"
       : "2px solid transparent",
     paddingBottom: "2px",
-    transition: "color 0.2s ease, transform 0.2s ease",
+    transition: "color 0.2s ease, transform 0.2s ease, font-size 0.3s ease",
     transform: hoveredLink === id ? "scale(1.1)" : "scale(1)",
     display: "inline-block",
-    fontSize: "1rem",
+    fontSize: isScrolled ? "0.85rem" : "1rem",
   });
 
   const getMobileLinkStyle = (path, id) => ({
@@ -110,17 +136,26 @@ function Header() {
   };
 
   return (
-    <header className="bg-black h-30 relative z-50">
-      <div className="w-full px-4 h-full flex items-center justify-between">
+    <>
+    <header
+      className={`fixed top-0 left-0 w-full bg-black z-50 transition-all duration-300 transform ${
+        isVisible ? "translate-y-0" : "-translate-y-full"
+      } ${isScrolled ? "py-2" : "py-4"}`}
+    >
+      <div
+        className={`w-full px-4 flex items-center justify-between transition-all duration-300`}
+      >
         {/* Logo and Title */}
         <div className="flex items-center gap-2">
           <img
             src={logo}
             alt="New Sirini Hotel Logo"
-            className="h-22 md:h-29 object-contain"
+            className={`object-contain transition-all duration-300 ${isScrolled ? "h-12 md:h-16" : "h-22 md:h-29"}`}
           />
 
-          <div className="text-white font-serif text-[19px] italic">
+          <div
+            className={`text-white font-serif italic transition-all duration-300 ${isScrolled ? "text-[14px]" : "text-[19px]"}`}
+          >
             New Sirini Hotel
           </div>
         </div>
@@ -151,7 +186,7 @@ function Header() {
               {/* Profile Picture / Dashboard Link */}
               <button
                 onClick={() => navigate("/dashboard")}
-                className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center shrink-0 border-2 border-white bg-amber-500 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                className={`rounded-full overflow-hidden flex items-center justify-center shrink-0 border-2 border-white bg-amber-500 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ${isScrolled ? "w-10 h-10" : "w-14 h-14"}`}
                 title="Go to Dashboard"
               >
                 {userImage ? (
@@ -161,14 +196,14 @@ function Header() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <User size={28} className="text-black" />
+                  <User size={isScrolled ? 20 : 28} className="text-black" />
                 )}
               </button>
 
               {/* Log Out Button */}
               <button
                 onClick={handlelogout}
-                className="w-20 py-1 border border-white text-white rounded font-bold text-xs transition-all duration-300 hover:bg-red-600 hover:border-red-600 hover:text-white hover:-translate-y-1 hover:shadow-lg hover:shadow-red-600/50"
+                className={`py-1 border border-white text-white rounded font-bold transition-all duration-300 hover:bg-red-600 hover:border-red-600 hover:text-white hover:-translate-y-1 hover:shadow-lg hover:shadow-red-600/50 ${isScrolled ? "w-16 text-[10px]" : "w-20 text-xs"}`}
               >
                 Log Out
               </button>
@@ -177,9 +212,9 @@ function Header() {
             <>
               <button
                 onClick={() => navigate("/login")} // Adjust to your actual sign in route
-                className="w-28 py-1.5 border border-white text-white rounded
-                         hover:bg-yellow-500 hover:!text-black font-bold hover:border-yellow-500
-                         transition-colors duration-600"
+                className={`py-1.5 border border-white text-white rounded font-bold
+                         hover:bg-yellow-500 hover:!text-black hover:border-yellow-500
+                         transition-all duration-300 ${isScrolled ? "w-20 text-xs" : "w-28 text-sm"}`}
               >
                 Login
               </button>
@@ -188,9 +223,9 @@ function Header() {
                   navigate("/register");
                   closeMenu();
                 }}
-                className="w-28 py-1.5 border border-red-600 bg-red-600 text-white rounded font-bold
+                className={`py-1.5 border border-red-600 bg-red-600 text-white rounded font-bold
                              hover:bg-yellow-500 hover:!text-black hover:border-yellow-500
-                             transition-colors duration-300"
+                             transition-all duration-300 ${isScrolled ? "w-24 text-xs" : "w-28 text-sm"}`}
               >
                 Register
               </button>
@@ -295,6 +330,8 @@ function Header() {
         </div>
       )}
     </header>
+    <div className="h-24 md:h-28"></div>
+    </>
   );
 }
 
