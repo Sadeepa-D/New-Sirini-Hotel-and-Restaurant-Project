@@ -140,7 +140,7 @@ function Rooms() {
                   </div>
                   
                   <h3 className="text-2xl font-serif italic text-gray-900 mb-3 group-hover:text-orange-600 transition-colors">
-                    {room.roomType}
+                    {room.roomType} Room
                   </h3>
 
                   <p className="text-gray-500 text-xs leading-relaxed mb-6 line-clamp-2">
@@ -204,7 +204,7 @@ function Rooms() {
             onClose={() => setIsModalOpen(false)}
             onConfirmed={handleBookingConfirmed}
           />
-          {/* Calendar පෙන්වීම පාරිභෝගිකයාට දින තේරීමට පහසුවක් වේ */}
+          
           <Calander BookedDates={bookedDates} />
         </>
       )}
