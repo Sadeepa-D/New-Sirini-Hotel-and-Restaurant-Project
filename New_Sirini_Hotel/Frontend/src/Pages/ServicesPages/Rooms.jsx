@@ -216,11 +216,15 @@ function Rooms() {
                       disabled={room.status !== "available"}
                       className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
                         room.status === "available"
-                          ? "bg-gray-900 text-white hover:bg-orange-600 shadow-lg"
-                          : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          ? "bg-black text-white hover:bg-yellow-400 shadow-lg hover:shadow-xl hover:shadow-yellow-400/60 hover:scale-105 active:scale-95"
+                          : "bg-gray-100 text-gray-400 cursor-not-allowed opacity-60"
                       }`}
                     >
-                      Book <ArrowRight size={12} />
+                      Book{" "}
+                      <ArrowRight
+                        size={12}
+                        className="transition-transform"
+                      />
                     </button>
                   </div>
                 </div>
