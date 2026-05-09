@@ -1,107 +1,110 @@
 import React from "react";
-import { FaFacebookF, FaInstagram } from "react-icons/fa";
-import { MdLocationOn, MdPhone, MdEmail } from "react-icons/md";
+import { Facebook, Instagram, MapPin, Phone, Mail, ChevronRight, Hotel } from "lucide-react";
 import { Link } from "react-router-dom";
 
 function Footer() {
   return (
-    <footer id="contact" className="bg-black text-white px-8 py-1">
-      <div className="max-w-7xl mx-auto">
-        {/* main footer content */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-4 mt-4">
-          {/* About Section */}
-          <div>
-            <h2 className="text-white font-serif text-4xl mb-4 leading-tight">
-              New Sirini
-              <br />
-              Hotel
-            </h2>
-            <p className="text-gray-300 text-sm leading-relaxed mb-6">
-              New Sirni Hotel in Kamburupitiya, Sri Lanka offers comfortable
-              rooms, quality dining, liquor services, and event spaces for
-              weddings and celebrations
+    <footer id="contact" className="bg-black/95 border-t border-white/10 text-white">
+      {/* Main footer grid */}
+      <div className="w-full px-6 sm:px-10 pt-5 pb-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+
+          {/* ── Brand / About ── */}
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <div className="p-1 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
+                <Hotel size={15} className="text-yellow-500" />
+              </div>
+              <h2 className="text-white font-serif text-base italic tracking-wide leading-tight">
+                New Sirini Hotel
+              </h2>
+            </div>
+            <p className="text-gray-400 text-xs leading-relaxed max-w-xs">
+              Located in Kamburupitiya, Sri Lanka — offering comfortable rooms,
+              quality dining, liquor services, and event spaces for weddings and
+              celebrations.
             </p>
-            <div className="flex gap-3">
+            {/* Social links */}
+            <div className="flex gap-2">
               <a
                 href="https://www.facebook.com/share/1CrEf5Ksbq/"
-                className="bg-transparent border border-white rounded-full p-2 hover:bg-yellow-500 transition-all duration-300 hover:scale-110 group"
+                className="p-2 bg-white/5 border border-white/10 rounded-full hover:bg-yellow-500 hover:border-yellow-500 hover:text-black text-white transition-all duration-300 hover:scale-110"
                 aria-label="Facebook"
               >
-                <FaFacebookF className="w-4 h-4 text-white group-hover:!text-yellow-500" />
+                <Facebook size={14} />
               </a>
               <a
                 href="#"
-                className="bg-transparent border border-white rounded-full p-2 hover:bg-yellow-500 transition-all duration-300 hover:scale-110 group"
+                className="p-2 bg-white/5 border border-white/10 rounded-full hover:bg-yellow-500 hover:border-yellow-500 hover:text-black text-white transition-all duration-300 hover:scale-110"
                 aria-label="Instagram"
               >
-                <FaInstagram className="w-4 h-4 text-white group-hover:!text-yellow-500" />
+                <Instagram size={14} />
               </a>
             </div>
           </div>
 
-          {/* Discover Section */}
-          <div className="md:ml-25">
-            <h3 className="text-white font-bold text-xl mb-6">Discover</h3>
-            <ul className="space-y-3">
-              <li>
-                <Link
-                  to="/reception"
-                  className="!text-gray-300 !no-underline hover:!text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
-                >
-                  Reception
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/rooms"
-                  className="!text-gray-300 !no-underline hover:!text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
-                >
-                  Rooms
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/restaurant"
-                  className="!text-gray-300 !no-underline hover:!text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
-                >
-                  Restaurant
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/liquor"
-                  className="!text-gray-300 !no-underline hover:!text-yellow-500 transition-all duration-300 text-base inline-block hover:scale-110"
-                >
-                  Liquor
-                </Link>
-              </li>
+          {/* ── Discover ── */}
+          <div>
+            <h3 className="text-white font-semibold text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
+              <span className="w-6 h-px bg-yellow-500"></span>
+              Discover
+            </h3>
+            <ul className="space-y-2">
+              {[
+                { label: "Reception", to: "/reception" },
+                { label: "Rooms", to: "/rooms" },
+                { label: "Restaurant", to: "/restaurant" },
+                { label: "Liquor", to: "/liquor" },
+              ].map(({ label, to }) => (
+                <li key={to}>
+                  <Link
+                    to={to}
+                    className="group flex items-center gap-2 !text-gray-400 hover:!text-yellow-500 transition-colors duration-200 text-sm !no-underline"
+                  >
+                    <ChevronRight
+                      size={14}
+                      className="text-yellow-500/50 group-hover:text-yellow-500 group-hover:translate-x-0.5 transition-all duration-200"
+                    />
+                    {label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Contact Section */}
+          {/* ── Contact ── */}
           <div>
-            <h3 className="text-white font-bold text-xl mb-6">Contact Us</h3>
-            <ul className="space-y-4">
+            <h3 className="text-white font-semibold text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
+              <span className="w-6 h-px bg-yellow-500"></span>
+              Contact Us
+            </h3>
+            <ul className="space-y-3">
               <li className="flex items-start gap-3">
-                <MdLocationOn className="w-5 h-5 text-yellow-500 shrink-0 mt-0.5" />
-                <span className="text-gray-300 text-base">
-                  Kirinda road,New Sirini Hotel Kamburupitiya
+                <div className="p-1.5 bg-yellow-500/10 rounded-lg shrink-0 mt-0.5">
+                  <MapPin size={14} className="text-yellow-500" />
+                </div>
+                <span className="text-gray-400 text-sm leading-relaxed">
+                  Kirinda Road, New Sirini Hotel, Kamburupitiya
                 </span>
               </li>
               <li className="flex items-center gap-3">
-                <MdPhone className="w-5 h-5 text-yellow-500 shrink-0" />
+                <div className="p-1.5 bg-yellow-500/10 rounded-lg shrink-0">
+                  <Phone size={14} className="text-yellow-500" />
+                </div>
                 <a
                   href="tel:0770161835"
-                  className="!text-gray-300 !no-underline hover:!text-yellow-500 transition-colors text-base"
+                  className="!text-gray-400 hover:!text-yellow-500 transition-colors text-sm !no-underline"
                 >
                   0770161835
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <MdEmail className="w-5 h-5 text-yellow-500 shrink-0" />
+                <div className="p-1.5 bg-yellow-500/10 rounded-lg shrink-0">
+                  <Mail size={14} className="text-yellow-500" />
+                </div>
                 <a
                   href="mailto:newsirini@gmail.com"
-                  className="!text-gray-300 !no-underline hover:!text-yellow-500 transition-colors text-base"
+                  className="!text-gray-400 hover:!text-yellow-500 transition-colors text-sm !no-underline"
                 >
                   newsirini@gmail.com
                 </a>
@@ -110,13 +113,13 @@ function Footer() {
           </div>
         </div>
 
-        {/* Divider line */}
-        <div className="border-t border-gray-800 my-8"></div>
-
-        {/* Copyright Section */}
-        <div className="text-center">
-          <p className="text-gray-400 text-sm">
+        {/* ── Divider ── */}
+        <div className="border-t border-white/8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-gray-500 text-xs">
             © 2026 New Sirini Hotel. All rights reserved.
+          </p>
+          <p className="text-gray-600 text-xs italic">
+            Kamburupitiya, Sri Lanka
           </p>
         </div>
       </div>

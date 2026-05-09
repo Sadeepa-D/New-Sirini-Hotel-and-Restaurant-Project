@@ -24,7 +24,13 @@ const ReceptionHallBookMng = () => {
   const [editData, setEditData] = useState(null);
   const [index, setIndex] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(
-    typeof window !== "undefined" && window.innerWidth < 640 ? 1 : 3,
+    typeof window !== "undefined"
+      ? window.innerWidth < 640
+        ? 1
+        : window.innerWidth < 1024
+          ? 2
+          : 4
+      : 4,
   );
 
   const [confirmDialog, setConfirmDialog] = useState({
@@ -82,18 +88,15 @@ const ReceptionHallBookMng = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      setItemsPerView(window.innerWidth < 640 ? 1 : 3);
+      if (window.innerWidth < 640) setItemsPerView(1);
+      else if (window.innerWidth < 1024) setItemsPerView(2);
+      else setItemsPerView(4);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  // const filtered = bookings.filter(
-  //   (b) =>
-  //     b.customerName?.toLowerCase().includes(search.toLowerCase()) ||
-  //     b.eventType?.toLowerCase().includes(search.toLowerCase()),
-  // );
+  
   const filtered = bookings.filter((b) => {
     const matchesSearch =
       b.customerName?.toLowerCase().includes(search.toLowerCase()) ||
@@ -253,7 +256,7 @@ const ReceptionHallBookMng = () => {
           {/* Visible cards — slice-based carousel */}
           <div
             key={index}
-            className="flex gap-6"
+            className="flex items-stretch gap-6"
             style={{ animation: "fadeIn 0.25s ease" }}
           >
             {filtered.slice(index, index + itemsPerView).map((booking) => (

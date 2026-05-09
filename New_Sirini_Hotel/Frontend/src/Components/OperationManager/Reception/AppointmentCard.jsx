@@ -7,10 +7,8 @@ import {
   Clock,
   XCircle,
   AlertCircle,
-  Filter,
-  ChevronLeft,
-  ChevronRight,
   Edit2,
+  PartyPopper,
 } from "lucide-react";
 
 const AppointmentCard = ({
@@ -20,106 +18,112 @@ const AppointmentCard = ({
   onCancel,
   isAdmin = false,
 }) => {
-  // Define status styles
-  const statusStyles = {
+  const statusConfig = {
     Completed: {
-      bg: "bg-green-50",
-      text: "text-green-700",
-      icon: <CheckCircle2 size={16} />,
+      pill: "bg-green-50 text-green-600 border-green-200",
+      icon: <CheckCircle2 size={12} />,
     },
     Pending: {
-      bg: "bg-amber-50",
-      text: "text-amber-700",
-      icon: <Clock size={16} />,
+      pill: "bg-amber-50 text-amber-600 border-amber-200",
+      icon: <Clock size={12} />,
     },
     Canceled: {
-      bg: "bg-red-50",
-      text: "text-red-700",
-      icon: <XCircle size={16} />,
+      pill: "bg-red-50 text-red-500 border-red-200",
+      icon: <XCircle size={12} />,
     },
     Overdue: {
-      bg: "bg-purple-50",
-      text: "text-purple-700",
-      icon: <AlertCircle size={16} />,
+      pill: "bg-purple-50 text-purple-600 border-purple-200",
+      icon: <AlertCircle size={12} />,
     },
   };
 
-  const style = statusStyles[appointment.status] || statusStyles.Pending;
+  const cfg = statusConfig[appointment.status] || statusConfig.Pending;
 
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
-      <div className="flex justify-between items-start mb-4">
-        <div
-          className="flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm border border-gray-50"
-          style={{
-            backgroundColor: style.bg.replace("bg-", ""),
-            color: style.text.replace("text-", ""),
-          }}
-        >
-          <span className={style.text}>{style.icon}</span>
-          <span className={style.text}>{appointment.status}</span>
+    <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+      {/* Top accent bar */}
+      <div className="h-1 w-full bg-gradient-to-r from-amber-400 to-amber-300" />
+
+      <div className="p-5">
+        {/* Status + Date row */}
+        <div className="flex justify-between items-center mb-4">
+          <span
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${cfg.pill}`}
+          >
+            {cfg.icon}
+            {appointment.status}
+          </span>
+          <span className="flex items-center gap-1 text-[10px] text-gray-400 font-semibold uppercase tracking-widest">
+            <Calendar size={11} className="text-amber-400" />
+            {new Date(appointment.date).toLocaleDateString()}
+          </span>
         </div>
-        <p className="text-[10px] text-gray-400 font-medium uppercase tracking-widest flex items-center gap-1">
-          <Calendar size={12} />
-          {new Date(appointment.date).toLocaleDateString()}
-        </p>
+
+        {/* Name */}
+        <div className="flex items-start gap-2 mb-4 h-16">
+          <div className="w-9 h-9 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0 mt-0.5">
+            <User size={16} className="text-amber-500" />
+          </div>
+          <h3
+            className="text-gray-900 font-bold text-base leading-tight line-clamp-2 overflow-hidden"
+            title={appointment.name}
+          >
+            {appointment.name}
+          </h3>
+        </div>
+
+        {/* Contact details */}
+        <div className="space-y-2 border-t border-gray-100 pt-3">
+          <div className="flex items-center gap-2.5 text-sm text-gray-600">
+            <Mail size={13} className="text-amber-400 shrink-0" />
+            <span className="truncate text-xs">{appointment.email}</span>
+          </div>
+          <div className="flex items-center gap-2.5 text-sm text-gray-600">
+            <Phone size={13} className="text-amber-400 shrink-0" />
+            <span className="text-xs">{appointment.phone}</span>
+          </div>
+          <div className="flex items-center gap-2.5 text-sm text-gray-600">
+            <PartyPopper size={13} className="text-amber-400 shrink-0" />
+            <span className="text-xs truncate">{appointment.eventType}</span>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        {isAdmin
+          ? (appointment.status === "Pending" ||
+              appointment.status === "Overdue") && (
+              <div className="mt-4 pt-3 border-t border-gray-100 flex gap-2">
+                <button
+                  className="flex-1 flex items-center justify-center gap-1.5 bg-green-50 hover:bg-green-500 text-green-600 hover:text-white border border-green-200 hover:border-green-500 text-xs font-bold py-2 rounded-xl transition-all duration-200"
+                  onClick={() => onUpdate(appointment._id, "completed")}
+                >
+                  <CheckCircle2 size={13} /> Complete
+                </button>
+                <button
+                  className="flex-1 flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white border border-red-200 hover:border-red-500 text-xs font-bold py-2 rounded-xl transition-all duration-200"
+                  onClick={() => onUpdate(appointment._id, "canceled")}
+                >
+                  <XCircle size={13} /> Cancel
+                </button>
+              </div>
+            )
+          : appointment.status === "Pending" && (
+              <div className="mt-4 pt-3 border-t border-gray-100 flex gap-2">
+                <button
+                  className="flex-1 flex items-center justify-center gap-1.5 bg-gray-50 hover:bg-amber-50 text-gray-600 hover:text-amber-700 border border-gray-200 hover:border-amber-200 text-xs font-bold py-2 rounded-xl transition-all duration-200"
+                  onClick={() => onEdit(appointment)}
+                >
+                  <Edit2 size={13} /> Edit
+                </button>
+                <button
+                  className="flex-1 flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white border border-red-200 hover:border-red-500 text-xs font-bold py-2 rounded-xl transition-all duration-200"
+                  onClick={() => onCancel(appointment._id)}
+                >
+                  <XCircle size={13} /> Cancel
+                </button>
+              </div>
+            )}
       </div>
-
-      <h3 className="text-gray-800 font-bold text-lg mb-3 flex items-center gap-2 whitespace-nowrap">
-        <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-600">
-          <User size={16} />
-        </div>
-        {appointment.name}
-      </h3>
-
-      <div className="space-y-2 border-t border-gray-50 pt-3">
-        <div className="flex items-center gap-3 text-sm text-gray-600">
-          <Mail size={14} className="text-amber-400" />
-          <span className="truncate">{appointment.email}</span>
-        </div>
-        <div className="flex items-center gap-3 text-sm text-gray-600">
-          <Phone size={14} className="text-amber-400" />
-          <span>{appointment.phone}</span>
-        </div>
-      </div>
-
-      {/* Conditionally Render Buttons Based on Role */}
-      {isAdmin
-        ? // ================= MANAGER BUTTONS =================
-          (appointment.status === "Pending" ||
-            appointment.status === "Overdue") && (
-            <div className="mt-4 pt-3 flex gap-2">
-              <button
-                className="flex-1 flex items-center justify-center gap-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold py-1.5 rounded-lg transition-colors"
-                onClick={() => onUpdate(appointment._id, "completed")}
-              >
-                Complete
-              </button>
-              <button
-                className="flex-1 flex items-center justify-center gap-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold py-1.5 rounded-lg transition-colors"
-                onClick={() => onUpdate(appointment._id, "cancelled")}
-              >
-                Cancel
-              </button>
-            </div>
-          )
-        : // ================= USER BUTTONS =================
-          appointment.status === "Pending" && (
-            <div className="mt-4 pt-3 flex gap-2">
-              <button
-                className="flex-1 flex items-center justify-center gap-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold py-2 rounded-lg transition-colors"
-                onClick={() => onEdit(appointment)}
-              >
-                <Edit2 size={14} /> Edit
-              </button>
-              <button
-                className="flex-1 flex items-center justify-center gap-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold py-2 rounded-lg transition-colors"
-                onClick={() => onCancel(appointment._id)}
-              >
-                <XCircle size={14} /> Cancel
-              </button>
-            </div>
-          )}
     </div>
   );
 };
