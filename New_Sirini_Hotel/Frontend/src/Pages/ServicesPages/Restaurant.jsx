@@ -183,7 +183,7 @@ export default function Restaurant() {
   return (
     <div className="min-h-screen bg-neutral-50">
       {/* HERO SECTION - Aligned with MainPage */}
-      <header className="relative w-full h-[calc(100vh-80px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
+      <header className="relative w-full h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
         {/* Background */}
         <div
           className="absolute inset-0 z-0"
