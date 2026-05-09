@@ -48,6 +48,26 @@ const NewSiriniHotel = () => {
     }
   };
 
+  // images for the hero section slideshow
+  const backgroundImages = [
+    "https://plus.unsplash.com/premium_photo-1661963123153-5471a95b7042?q=80&w=1074&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1170&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=1100&auto=format&fit=crop",
+  ];
+
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+   
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) =>
+        prevIndex === backgroundImages.length - 1 ? 0 : prevIndex + 1,
+      );
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     fetchgalleryItems();
   }, []);
@@ -59,27 +79,32 @@ const NewSiriniHotel = () => {
   return (
     <div className="font-serif bg-gray-100 text-gray-900">
       {/* --- Hero Section --- */}
-      {/* Hero Section */}
       <header className="relative w-full h-[calc(100vh-120px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
-        {/* Background */}
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage:
-              "url(https://plus.unsplash.com/premium_photo-1661963123153-5471a95b7042?q=80&w=1074&auto=format&fit=crop)",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
-          <div className="absolute inset-0 bg-black/50"></div>
+        {/* Background Slide Show Container */}
+        <div className="absolute inset-0 z-0">
+          {backgroundImages.map((img, index) => (
+            <div
+              key={index}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                index === currentImageIndex ? "opacity-100" : "opacity-0"
+              }`}
+              style={{
+                backgroundImage: `url(${img})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            >
+              {/* black overlay */}
+              <div className="absolute inset-0 bg-black/50"></div>
+            </div>
+          ))}
         </div>
 
-        {/* Content — centered in hero */}
         <div className="z-10 flex flex-col items-center justify-center gap-4">
           <h1 className="text-4xl md:text-6xl font-light">New Sirini Hotel</h1>
           <img
             src={Logo}
-            alt="New Sirini Hotel Logo"
+            alt="Logo"
             className="w-40 h-40 mx-auto object-contain"
           />
           <p className="text-lg md:text-xl italic tracking-widest border-t border-b border-white py-2 px-4">
@@ -87,7 +112,6 @@ const NewSiriniHotel = () => {
           </p>
         </div>
 
-        {/* Explore arrow pinned to bottom */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
           <Exploreindicator />
         </div>
