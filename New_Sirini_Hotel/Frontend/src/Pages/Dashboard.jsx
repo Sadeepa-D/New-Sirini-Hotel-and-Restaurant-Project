@@ -22,46 +22,47 @@ const UserDashboard = () => {
   const [activeTab, setActiveTab] = useState("profile");
 
   const handlelogout = () => {
-    // Clear user session (e.g., remove token, clear local storage)
     localStorage.removeItem("token");
-    // Redirect to login page or homepage
     navigate("/login");
     toast.success("logged out successfully.");
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 font-serif py-10 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Dashboard Header */}
-        <div className="mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 border-b border-gray-200 pb-6">
+    <div className="min-h-screen bg-neutral-950 font-serif">
+      {/* ── Top Header Bar ── */}
+      <div className="w-full px-4 sm:px-8 py-4 border-b border-white/8 flex items-center justify-between gap-4 bg-black/60 backdrop-blur-md sticky top-0 z-30">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate(-1)}
+            className="p-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-gray-400 hover:text-white transition-all duration-200"
+          >
+            <ArrowLeft size={20} />
+          </button>
           <div>
-            <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-2">
-              <ArrowLeft
-                size={28}
-                className="inline-block mr-2 text-gray-400 hover:text-gray-600 cursor-pointer transition-colors duration-300"
-                onClick={() => navigate(-1)}
-              />
+            <h1 className="text-white text-lg font-bold tracking-wide leading-none">
               My Account
             </h1>
-            <p className="text-gray-500 italic tracking-wide text-lg">
+            <p className="text-gray-500 text-xs italic mt-0.5">
               Manage your bookings, orders, and profile details.
             </p>
           </div>
-          <button
-            className="flex items-center gap-2 px-6 py-2.5 bg-red-600 text-white rounded-full hover:bg-red-500 transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-red-500/40 hover:-translate-y-0.5 active:translate-y-0 self-start sm:self-auto"
-            onClick={handlelogout}
-          >
-            <LogOut size={18} />
-            <span className="font-sans font-semibold tracking-wider uppercase text-xs">
-              Sign Out
-            </span>
-          </button>
         </div>
+        <button
+          className="flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-400 rounded-full hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-200 text-sm font-semibold"
+          onClick={handlelogout}
+        >
+          <LogOut size={16} />
+          <span className="hidden sm:inline tracking-wider uppercase text-xs">Sign Out</span>
+        </button>
+      </div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar Navigation */}
-          <div className="w-full lg:w-72 shrink-0">
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-3 flex lg:flex-col overflow-x-auto lg:overflow-visible overflow-y-hidden hide-scrollbar gap-1.5">
+      {/* ── Body ── */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex flex-col lg:flex-row gap-6">
+
+          {/* ── Sidebar Navigation ── */}
+          <div className="w-full lg:w-64 shrink-0">
+            <div className="bg-neutral-900 border border-white/8 rounded-2xl p-2 flex lg:flex-col overflow-x-auto lg:overflow-visible overflow-y-hidden hide-scrollbar gap-1">
               <NavButton
                 icon={User}
                 label="Profile Details"
@@ -95,8 +96,8 @@ const UserDashboard = () => {
             </div>
           </div>
 
-          {/* Main Content Area */}
-          <div className="flex-1 bg-white rounded-2xl shadow-xl border border-gray-100 p-6 sm:p-10 min-h-150">
+          {/* ── Main Content Area ── */}
+          <div className="flex-1 min-w-0 bg-white border border-gray-100 rounded-2xl shadow-sm p-5 sm:p-8 min-h-[600px]">
             {activeTab === "profile" && <ProfileSection />}
             {activeTab === "rooms" && <RoomsSection />}
             {activeTab === "restaurant" && <RestrauntSection />}
@@ -113,18 +114,28 @@ const UserDashboard = () => {
 const NavButton = ({ icon: Icon, label, isActive, onClick }) => (
   <button
     onClick={onClick}
-    className={`shrink-0 flex items-center gap-3.5 px-5 py-3.5 rounded-xl transition-all duration-300 whitespace-nowrap min-w-max lg:min-w-0 font-sans text-left ${
+    className={`shrink-0 flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 whitespace-nowrap min-w-max lg:min-w-0 font-sans text-left w-full ${
       isActive
-        ? "bg-amber-50 text-amber-900 font-semibold shadow-sm ring-1 ring-amber-100"
-        : "text-gray-500 hover:bg-gray-50 hover:text-gray-900 font-medium"
+        ? "bg-amber-500/15 text-amber-400 border border-amber-500/25 font-semibold"
+        : "text-gray-500 hover:bg-white/5 hover:text-gray-300 border border-transparent font-medium"
     }`}
   >
-    <Icon
-      size={24}
-      strokeWidth={isActive ? 2.5 : 2}
-      className={isActive ? "text-amber-500" : "text-gray-400"}
-    />
-    <span className="tracking-wide">{label}</span>
+    <div
+      className={`p-1.5 rounded-lg shrink-0 ${
+        isActive ? "bg-amber-500/20" : "bg-white/5"
+      }`}
+    >
+      <Icon
+        size={18}
+        strokeWidth={isActive ? 2.5 : 2}
+        className={isActive ? "text-amber-400" : "text-gray-500"}
+      />
+    </div>
+    <span className="tracking-wide text-sm">{label}</span>
+    {isActive && (
+      <div className="ml-auto w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
+    )}
   </button>
 );
+
 export default UserDashboard;
