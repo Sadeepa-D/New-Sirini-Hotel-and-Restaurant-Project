@@ -38,10 +38,10 @@ function Header() {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
+
       // Shrink header when scrolled past 50px
       setIsScrolled(currentScrollY > 50);
-      
+
       // Show/hide header based on scroll direction
       if (currentScrollY < lastScrollY || currentScrollY < 50) {
         // Scrolling up or at the top
@@ -50,10 +50,10 @@ function Header() {
         // Scrolling down significantly
         setIsVisible(false);
       }
-      
+
       setLastScrollY(currentScrollY);
     };
-    
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
@@ -137,164 +137,73 @@ function Header() {
 
   return (
     <>
-    <header
-      className={`fixed top-0 left-0 w-full bg-black z-50 transition-all duration-300 transform ${
-        isVisible ? "translate-y-0" : "-translate-y-full"
-      } ${isScrolled ? "py-2" : "py-4"}`}
-    >
-      <div
-        className={`w-full px-4 flex items-center justify-between transition-all duration-300`}
+      <header
+        className={`fixed top-0 left-0 w-full bg-black z-50 transition-all duration-300 transform ${
+          isVisible ? "translate-y-0" : "-translate-y-full"
+        } ${isScrolled ? "py-2" : "py-4"}`}
       >
-        {/* Logo and Title */}
-        <div className="flex items-center gap-2">
-          <img
-            src={logo}
-            alt="New Sirini Hotel Logo"
-            className={`object-contain transition-all duration-300 ${isScrolled ? "h-12 md:h-16" : "h-22 md:h-29"}`}
-          />
+        <div
+          className={`w-full px-4 flex items-center justify-between transition-all duration-300`}
+        >
+          {/* Logo and Title */}
+          <div className="flex items-center gap-2">
+            <img
+              src={logo}
+              alt="New Sirini Hotel Logo"
+              className={`object-contain transition-all duration-300 ${isScrolled ? "h-12 md:h-16" : "h-22 md:h-29"}`}
+            />
 
-          <div
-            className={`text-white font-serif italic transition-all duration-300 ${isScrolled ? "text-[14px]" : "text-[19px]"}`}
-          >
-            New Sirini Hotel
-          </div>
-        </div>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6 lg:gap-10 ml-auto">
-          {navLinks.map((link) => {
-            const id = `desktop-${link.path}`;
-            return (
-              <Link
-                key={id}
-                to={link.path}
-                onClick={(e) => handleNavClick(e, link.path)}
-                style={getLinkStyle(link.path, id)}
-                onMouseEnter={() => setHoveredLink(id)}
-                onMouseLeave={() => setHoveredLink(null)}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Desktop Auth Buttons */}
-        <div className="hidden md:flex items-center gap-2 ml-11">
-          {isLoggedIn ? (
-            <div className="flex flex-col items-center gap-2">
-              {/* Profile Picture / Dashboard Link */}
-              <button
-                onClick={() => navigate("/dashboard")}
-                className={`rounded-full overflow-hidden flex items-center justify-center shrink-0 border-2 border-white bg-amber-500 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ${isScrolled ? "w-10 h-10" : "w-14 h-14"}`}
-                title="Go to Dashboard"
-              >
-                {userImage ? (
-                  <img
-                    src={userImage}
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <User size={isScrolled ? 20 : 28} className="text-black" />
-                )}
-              </button>
-
-              {/* Log Out Button */}
-              <button
-                onClick={handlelogout}
-                className={`py-1 border border-white text-white rounded font-bold transition-all duration-300 hover:bg-red-600 hover:border-red-600 hover:text-white hover:-translate-y-1 hover:shadow-lg hover:shadow-red-600/50 ${isScrolled ? "w-16 text-[10px]" : "w-20 text-xs"}`}
-              >
-                Log Out
-              </button>
+            <div
+              className={`text-white font-serif italic transition-all duration-300 ${isScrolled ? "text-[14px]" : "text-[19px]"}`}
+            >
+              New Sirini Hotel
             </div>
-          ) : (
-            <>
-              <button
-                onClick={() => navigate("/login")} // Adjust to your actual sign in route
-                className={`py-1.5 border border-white text-white rounded font-bold
-                         hover:bg-yellow-500 hover:!text-black hover:border-yellow-500
-                         transition-all duration-300 ${isScrolled ? "w-20 text-xs" : "w-28 text-sm"}`}
-              >
-                Login
-              </button>
-              <button
-                onClick={() => {
-                  navigate("/register");
-                  closeMenu();
-                }}
-                className={`py-1.5 border border-red-600 bg-red-600 text-white rounded font-bold
-                             hover:bg-yellow-500 hover:!text-black hover:border-yellow-500
-                             transition-all duration-300 ${isScrolled ? "w-24 text-xs" : "w-28 text-sm"}`}
-              >
-                Register
-              </button>
-            </>
-          )}
-        </div>
+          </div>
 
-        {/* Mobile Menu Button */}
-        <div className="md:hidden">
-          <button
-            onClick={toggleMenu}
-            className="text-white focus:outline-none"
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? (
-              <FaTimes className="w-7 h-7" />
-            ) : (
-              <FaBars className="w-7 h-7" />
-            )}
-          </button>
-        </div>
-      </div>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-6 lg:gap-10 ml-auto">
+            {navLinks.map((link) => {
+              const id = `desktop-${link.path}`;
+              return (
+                <Link
+                  key={id}
+                  to={link.path}
+                  onClick={(e) => handleNavClick(e, link.path)}
+                  style={getLinkStyle(link.path, id)}
+                  onMouseEnter={() => setHoveredLink(id)}
+                  onMouseLeave={() => setHoveredLink(null)}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+          </nav>
 
-      {/* Mobile Menu Overlay */}
-      {isMenuOpen && (
-        <div className="absolute top-full left-0 w-full bg-black/95 flex flex-col items-center py-8 gap-6 shadow-xl border-t border-gray-800 md:hidden">
-          {/* Mobile Navigation Links */}
-          {navLinks.map((link) => {
-            const id = `mobile-${link.path}`;
-            return (
-              <Link
-                key={id}
-                to={link.path}
-                onClick={(e) => handleNavClick(e, link.path)}
-                style={getMobileLinkStyle(link.path, id)}
-                onMouseEnter={() => setHoveredLink(id)}
-                onMouseLeave={() => setHoveredLink(null)}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
-
-          {/* Mobile Auth Buttons (Same Style as Desktop) */}
-          <div className="flex flex-col items-center gap-3 mt-4 w-full px-8">
+          {/* Desktop Auth Buttons */}
+          <div className="hidden md:flex items-center gap-2 ml-11">
             {isLoggedIn ? (
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col items-center gap-2">
                 {/* Profile Picture / Dashboard Link */}
                 <button
-                  onClick={() => navigate("/dashboard")} // Change "/dashboard" to your actual route!
-                  className="w-10 h-10 rounded-full bg-amber-500 text-black flex items-center justify-center font-bold text-lg border-2 border-white hover:bg-yellow-400 hover:shadow-lg hover:shadow-yellow-500/30 hover:-translate-y-1 transition-all duration-300"
+                  onClick={() => navigate("/dashboard")}
+                  className={`rounded-full overflow-hidden flex items-center justify-center shrink-0 border-2 border-white bg-amber-500 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ${isScrolled ? "w-10 h-10" : "w-14 h-14"}`}
                   title="Go to Dashboard"
                 >
-                  {/* You can replace "U" with an <img> tag if you fetch the user's photo later */}
                   {userImage ? (
                     <img
                       src={userImage}
-                      alt="User"
-                      className="w-full h-full object-cover rounded-full"
+                      alt="Profile"
+                      className="w-full h-full object-cover"
                     />
                   ) : (
-                    <User className="w-full h-full object-cover rounded-full" />
+                    <User size={isScrolled ? 20 : 28} className="text-black" />
                   )}
                 </button>
 
                 {/* Log Out Button */}
                 <button
                   onClick={handlelogout}
-                  className="w-16 py-1 border border-white text-white rounded font-bold text-xs transition-all duration-300 hover:bg-red-600 hover:border-red-600 hover:text-white hover:-translate-y-1 hover:shadow-lg hover:shadow-red-600/50"
+                  className={`py-1 border border-white text-white rounded font-bold transition-all duration-300 hover:bg-red-600 hover:border-red-600 hover:text-white hover:-translate-y-1 hover:shadow-lg hover:shadow-red-600/50 ${isScrolled ? "w-16 text-[10px]" : "w-20 text-xs"}`}
                 >
                   Log Out
                 </button>
@@ -302,35 +211,126 @@ function Header() {
             ) : (
               <>
                 <button
-                  onClick={() => {
-                    navigate("/login"); // Adjust to your actual sign in route
-                    closeMenu();
-                  }}
-                  className="w-40 py-2 border border-white text-white rounded
-                             hover:bg-yellow-500 hover:text-black hover:border-yellow-500
-                             transition-colors duration-300"
+                  onClick={() => navigate("/login")} // Adjust to your actual sign in route
+                  className={`py-1.5 border border-white text-white rounded font-bold
+                         hover:bg-yellow-500 hover:!text-black hover:border-yellow-500
+                         transition-all duration-300 ${isScrolled ? "w-20 text-xs" : "w-28 text-sm"}`}
                 >
-                  Sign in
+                  Login
                 </button>
-
                 <button
                   onClick={() => {
                     navigate("/register");
                     closeMenu();
                   }}
-                  className="w-40 py-2 border border-white text-white rounded
-                             hover:bg-yellow-500 hover:text-black hover:border-yellow-500
-                             transition-colors duration-300"
+                  className={`py-1.5 border border-red-600 bg-red-600 text-white rounded font-bold
+                             hover:bg-yellow-500 hover:!text-black hover:border-yellow-500
+                             transition-all duration-300 ${isScrolled ? "w-24 text-xs" : "w-28 text-sm"}`}
                 >
-                  Sign up
+                  Register
                 </button>
               </>
             )}
           </div>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden">
+            <button
+              onClick={toggleMenu}
+              className="text-white focus:outline-none"
+              aria-label="Toggle menu"
+            >
+              {isMenuOpen ? (
+                <FaTimes className="w-7 h-7" />
+              ) : (
+                <FaBars className="w-7 h-7" />
+              )}
+            </button>
+          </div>
         </div>
-      )}
-    </header>
-    <div className="h-24 md:h-28"></div>
+
+        {/* Mobile Menu Overlay */}
+        {isMenuOpen && (
+          <div className="absolute top-full left-0 w-full bg-black/95 flex flex-col items-center py-8 gap-6 shadow-xl border-t border-gray-800 md:hidden">
+            {/* Mobile Navigation Links */}
+            {navLinks.map((link) => {
+              const id = `mobile-${link.path}`;
+              return (
+                <Link
+                  key={id}
+                  to={link.path}
+                  onClick={(e) => handleNavClick(e, link.path)}
+                  style={getMobileLinkStyle(link.path, id)}
+                  onMouseEnter={() => setHoveredLink(id)}
+                  onMouseLeave={() => setHoveredLink(null)}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+
+            {/* Mobile Auth Buttons (Same Style as Desktop) */}
+            <div className="flex flex-col items-center gap-3 mt-4 w-full px-8">
+              {isLoggedIn ? (
+                <div className="flex items-center gap-4">
+                  {/* Profile Picture / Dashboard Link */}
+                  <button
+                    onClick={() => navigate("/dashboard")} // Change "/dashboard" to your actual route!
+                    className="w-10 h-10 rounded-full bg-amber-500 text-black flex items-center justify-center font-bold text-lg border-2 border-white hover:bg-yellow-400 hover:shadow-lg hover:shadow-yellow-500/30 hover:-translate-y-1 transition-all duration-300"
+                    title="Go to Dashboard"
+                  >
+                    {/* You can replace "U" with an <img> tag if you fetch the user's photo later */}
+                    {userImage ? (
+                      <img
+                        src={userImage}
+                        alt="User"
+                        className="w-full h-full object-cover rounded-full"
+                      />
+                    ) : (
+                      <User className="w-full h-full object-cover rounded-full" />
+                    )}
+                  </button>
+
+                  {/* Log Out Button */}
+                  <button
+                    onClick={handlelogout}
+                    className="w-16 py-1 border border-white text-white rounded font-bold text-xs transition-all duration-300 hover:bg-red-600 hover:border-red-600 hover:text-white hover:-translate-y-1 hover:shadow-lg hover:shadow-red-600/50"
+                  >
+                    Log Out
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <button
+                    onClick={() => {
+                      navigate("/login"); // Adjust to your actual sign in route
+                      closeMenu();
+                    }}
+                    className="w-40 py-2 border border-white text-white rounded
+                             hover:bg-yellow-500 hover:text-black hover:border-yellow-500
+                             transition-colors duration-300"
+                  >
+                    Sign in
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      navigate("/register");
+                      closeMenu();
+                    }}
+                    className="w-40 py-2 border border-white text-white rounded
+                             hover:bg-yellow-500 hover:text-black hover:border-yellow-500
+                             transition-colors duration-300"
+                  >
+                    Sign up
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+      </header>
+      <div className="h-24 md:h-28"></div>
     </>
   );
 }
