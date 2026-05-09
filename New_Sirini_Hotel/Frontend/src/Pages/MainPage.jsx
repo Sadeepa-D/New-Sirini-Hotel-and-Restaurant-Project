@@ -79,7 +79,7 @@ const NewSiriniHotel = () => {
   return (
     <div className="font-serif bg-gray-100 text-gray-900">
       {/* --- Hero Section --- */}
-      <header className="relative w-full h-[calc(100vh-120px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
+      <header className="relative w-full h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
         {/* Background Slide Show Container */}
         <div className="absolute inset-0 z-0">
           {backgroundImages.map((img, index) => (

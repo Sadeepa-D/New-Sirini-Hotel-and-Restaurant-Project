@@ -91,7 +91,7 @@ function Rooms() {
   return (
     <div className="bg-[#fafafa] min-h-screen font-sans">
       {/* --- Hero Section with Slide Show --- */}
-      <header className="relative w-full h-[calc(100vh-120px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4 bg-black">
+      <header className="relative w-full h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4 bg-black">
         <div className="absolute inset-0 z-0">
           {backgroundImages.map((img, index) => (
             <div
