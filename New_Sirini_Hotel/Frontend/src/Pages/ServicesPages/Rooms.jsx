@@ -150,7 +150,7 @@ function Rooms() {
                       Room {room.roomNumber}
                     </span>
                   </div>
-                  <div className="absolute bottom-4 right-4 bg-black/80 backdrop-blur-md px-4 py-2 rounded-2xl">
+                  <div className="absolute bottom-4 left-4 bg-black/80 backdrop-blur-md px-4 py-2 rounded-2xl">
                     <p className="text-white font-bold text-lg">
                       Rs.{room.price.toLocaleString()}
                     </p>
