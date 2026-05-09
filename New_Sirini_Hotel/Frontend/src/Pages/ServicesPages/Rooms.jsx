@@ -91,7 +91,7 @@ function Rooms() {
   return (
     <div className="bg-[#fafafa] min-h-screen font-sans">
       {/* --- Hero Section with Slide Show --- */}
-      <header className="relative w-full h-[60vh] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4 bg-black">
+      <header className="relative w-full h-[calc(100vh-120px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4 bg-black">
         <div className="absolute inset-0 z-0">
           {backgroundImages.map((img, index) => (
             <div
@@ -111,7 +111,7 @@ function Rooms() {
         </div>
 
         {/* Content */}
-        <div className="z-20 flex flex-col items-center gap-4 bg-white/10 backdrop-blur-md px-8 md:px-12 py-8 rounded-2xl border border-white/20">
+        <div className="z-20 flex flex-col items-center gap-4 bg-black/50 backdrop-blur-md px-8 md:px-12 py-8 rounded-2xl border border-white/20">
           <h1 className="text-5xl md:text-6xl font-serif italic text-white">
             Our Rooms
           </h1>
