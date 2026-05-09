@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Logo from "../../assets/Logo.png";
 import {
   LayoutDashboard,
@@ -14,9 +14,12 @@ import {
   DollarSign,
   UserPlus,
   ArrowUpRight,
+  Home,
+  User,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import axios from "axios";
 import UserManagement from "../../Components/Admin/UserManagement";
 
 // --- PLACEHOLDER COMPONENTS FOR TABS ---
@@ -87,9 +90,12 @@ const LiquorAnalysis = () => (
 
 // --- MAIN ADMIN COMPONENT ---
 const Admin = () => {
+  const token = localStorage.getItem("token");
+  const VITE_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [adminData, setAdminData] = useState([]);
+  const [managerpagesselection, setManagerpagesselection] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -97,13 +103,29 @@ const Admin = () => {
     navigate("/login");
   };
 
+  const fetchAdminDetails = async () => {
+    try {
+      const response = await axios.get(`${VITE_URL}/api/users/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setAdminData(response.data);
+    } catch (error) {
+      console.error("Error fetching admin details:", error);
+    }
+  };
+  useEffect(() => {
+    fetchAdminDetails();
+  }, []);
+
   const menuItems = [
-    { id: "dashboard", label: "Admin Overview", icon: LayoutDashboard },
-    { id: "users", label: "User Accounts", icon: Users },
-    { id: "restaurant", label: "Restaurant Analysis", icon: Utensils },
-    { id: "reception", label: "Reception Hall", icon: Palmtree },
-    { id: "rooms", label: "Room Analytics", icon: Hotel },
-    { id: "liquor", label: "Liquor Store", icon: Store },
+    { id: "dashboard", label: "Overview", icon: LayoutDashboard },
+    { id: "users", label: "Users", icon: Users },
+    { id: "restaurant", label: "Restaurant", icon: Utensils },
+    { id: "reception", label: "Reception", icon: Palmtree },
+    { id: "rooms", label: "Rooms", icon: Hotel },
+    { id: "liquor", label: "Liquor", icon: Store },
   ];
 
   const renderContent = () => {
@@ -126,118 +148,216 @@ const Admin = () => {
   };
 
   return (
-    <div className="flex h-screen bg-[#0f0f0f] font-sans overflow-hidden">
-      {/* Mobile Sidebar Overlay */}
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 md:hidden"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <aside
-        className={`
-        fixed md:static inset-y-0 left-0 z-50 
-        w-72 bg-black border-r border-gray-900 
-        transform transition-transform duration-300 ease-in-out
-        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-        flex flex-col
-      `}
-      >
-        {/* Admin Header */}
-        <div className="p-6 flex items-center gap-4 border-b border-gray-900">
-          <div className="relative">
-            <img src={Logo} alt="Logo" className="w-12 h-12 object-contain" />
-            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-yellow-500 border-2 border-black rounded-full"></div>
+    <div className="flex flex-col h-screen bg-black font-sans">
+      {/* Top Header */}
+      <header className="bg-white mx-2 mt-3 mb-2 rounded-xl shadow-sm px-4 py-3 shrink-0">
+        {/* ── MOBILE layout (< lg): two rows ── */}
+        <div className="lg:hidden">
+          {/* Row 1: Logo + Profile */}
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <img
+                src={Logo}
+                alt="Hotel Logo"
+                className="w-12 h-12 object-contain"
+              />
+              <div className="text-left">
+                <h3 className="font-serif italic text-sm text-gray-900 leading-tight">
+                  Sirini Admin
+                </h3>
+                <h4 className="text-[9px] text-gray-500 uppercase font-bold tracking-[0.2em] mt-0.5">
+                  Admin Portal
+                </h4>
+              </div>
+            </div>
+            <div className="flex items-center gap-1 shrink-0">
+              <button
+                onClick={() => navigate("/")}
+                className="p-1.5 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"
+              >
+                <Home size={18} />
+              </button>
+              <button
+                onClick={handleLogout}
+                className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <LogOut size={18} />
+              </button>
+              <div
+                className="w-10 h-10 ml-1 bg-black rounded-full overflow-hidden flex items-center justify-center shadow-sm border-[2px] border-amber-500 cursor-pointer"
+                onClick={() => navigate("/dashboard")}
+              >
+                {adminData?.image ? (
+                  <img
+                    src={adminData.image}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User size={16} className="text-white" />
+                )}
+              </div>
+            </div>
           </div>
-          <div>
-            <h1 className="text-white font-serif italic text-lg leading-tight">
-              Sirini Admin
-            </h1>
-            <p className="text-yellow-500 text-[10px] font-black uppercase tracking-[2px]">
-              Super Control
-            </p>
+          {/* Row 2: Icon-only tabs (scrollable) */}
+          <div className="flex items-center gap-1 bg-gray-100 rounded-xl p-1 shadow-inner overflow-x-auto no-scrollbar">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  title={item.label}
+                  onClick={() => setActiveTab(item.id)}
+                  className={`shrink-0 flex items-center justify-center w-12 h-10 rounded-lg transition-all duration-200 ${
+                    isActive
+                      ? "bg-amber-600 text-white shadow-lg ring-2 ring-amber-400 ring-offset-1"
+                      : "text-gray-500 hover:bg-white hover:shadow-sm"
+                  }`}
+                >
+                  <Icon size={18} />
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
-          {menuItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => {
-                setActiveTab(item.id);
-                setIsSidebarOpen(false);
-              }}
-              className={`
-                w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200
-                ${
-                  activeTab === item.id
-                    ? "bg-yellow-500 text-black shadow-[0_0_20px_rgba(234,179,8,0.2)] font-bold"
-                    : "text-gray-400 hover:bg-gray-900 hover:text-white"
-                }
-              `}
-            >
-              <item.icon size={20} />
-              <span className="text-sm tracking-wide">{item.label}</span>
-              {activeTab === item.id && (
-                <ArrowUpRight size={14} className="ml-auto" />
+        {/* ── DESKTOP layout (≥ lg): single row, flex space-between ── */}
+        <div className="hidden lg:flex lg:items-center lg:justify-between">
+          {/* Left: Logo */}
+          <div className="flex items-center gap-3 w-1/4">
+            <img
+              src={Logo}
+              alt="Hotel Logo"
+              className="w-20 h-20 object-contain"
+            />
+            <div className="text-left">
+              <h3 className="text-[10px] text-gray-500 font-bold tracking-widest">
+                Admin Portal
+              </h3>
+              <h4 className="text-sm font-bold text-gray-800">
+                {adminData.name}
+              </h4>
+            </div>
+          </div>
+
+          {/* Center: Floating pill tabs */}
+          <div className="flex-1 flex justify-center">
+            <div className="flex items-center gap-2 bg-gray-100 rounded-xl p-1.5 shadow-inner">
+              {menuItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveTab(item.id)}
+                    className={`flex items-center gap-2.5 pl-3 pr-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      isActive
+                        ? "bg-amber-600 text-white shadow-lg scale-105 ring-2 ring-amber-400 ring-offset-1"
+                        : "text-gray-500 hover:bg-white hover:text-gray-800 hover:shadow-sm"
+                    }`}
+                  >
+                    <Icon size={16} />
+                    <span className="whitespace-nowrap">{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Right: Logout + Profile */}
+          <div className="flex items-center justify-end gap-3 w-1/4">
+            <div className="relative">
+              <button
+                onClick={() => setManagerpagesselection(!managerpagesselection)}
+                title="Manager Portals"
+                className={`p-2 rounded-lg transition-colors ${managerpagesselection ? 'bg-amber-100 text-amber-600' : 'text-gray-500 hover:bg-gray-100'}`}
+              >
+                <User size={26} />
+              </button>
+
+              {/* Dropdown Menu */}
+              {managerpagesselection && (
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100 p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <button 
+                    onClick={() => {
+                      setManagerpagesselection(false);
+                      navigate("/operationmanager");
+                    }}
+                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors font-medium flex items-center gap-3 group"
+                  >
+                    <Store size={18} className="text-gray-400 group-hover:text-amber-500 transition-colors shrink-0" />
+                    <div>
+                      Operation Manager 1
+                      <span className="block text-[10px] text-gray-400 font-normal mt-0.5 group-hover:text-amber-500/70">Restaurant, Liquor</span>
+                    </div>
+                  </button>
+                  <div className="h-px bg-gray-100 my-1"></div>
+                  <button 
+                    onClick={() => {
+                      setManagerpagesselection(false);
+                      navigate("/manager");
+                    }}
+                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors font-medium flex items-center gap-3 group"
+                  >
+                    <Hotel size={18} className="text-gray-400 group-hover:text-amber-500 transition-colors shrink-0" />
+                    <div>
+                      Operation Manager 2
+                      <span className="block text-[10px] text-gray-400 font-normal mt-0.5 group-hover:text-amber-500/70">Reception, Rooms</span>
+                    </div>
+                  </button>
+                </div>
               )}
-            </button>
-          ))}
-        </nav>
-
-        {/* Footer Actions */}
-        <div className="p-4 mt-auto border-t border-gray-900">
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-500/10 rounded-xl transition-colors font-semibold text-sm"
-          >
-            <LogOut size={20} />
-            Logout System
-          </button>
-        </div>
-      </aside>
-
-      {/* Main Container */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#f8f9fa]">
-        {/* Desktop/Mobile Top Header */}
-        <header className="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-4 md:px-8 flex-shrink-0">
-          <div className="flex items-center gap-4">
+            </div>
             <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="md:hidden p-2 hover:bg-gray-100 rounded-lg text-gray-600"
+              onClick={() => navigate("/")}
+              title="Home"
+              className="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"
             >
-              <Menu size={24} />
+              <Home size={28} />
             </button>
-            <h2 className="text-xl font-black text-gray-800 capitalize tracking-tight">
-              {activeTab.replace(/([A-Z])/g, " $1").trim()}
-            </h2>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:block text-right">
-              <p className="text-sm font-black text-gray-900 uppercase tracking-tighter">
-                System Administrator
-              </p>
-              <p className="text-[10px] text-yellow-600 font-bold">
-                Authenticated Session
-              </p>
+            <button
+              onClick={handleLogout}
+              title="Logout"
+              className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+            >
+              <LogOut size={25} />
+            </button>
+            <div
+              className="w-[72px] h-[72px] bg-black rounded-full overflow-hidden hover:scale-105 transition-transform cursor-pointer flex items-center justify-center shadow-md border-[3px] border-amber-500"
+              onClick={() => navigate("/dashboard")}
+            >
+              {adminData?.image ? (
+                <img
+                  src={adminData.image}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <User size={20} className="text-white" />
+              )}
             </div>
-            <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center text-yellow-500 font-black border-2 border-yellow-500 shadow-sm">
-              AD
-            </div>
           </div>
-        </header>
+        </div>
+      </header>
 
-        {/* Dynamic Content Area */}
-        <main className="flex-1 overflow-y-auto bg-gray-50/50 p-2 sm:p-4">
-          <div className="bg-white/40 backdrop-blur-md rounded-3xl min-h-full border border-gray-100 shadow-inner">
-            {renderContent()}
-          </div>
-        </main>
-      </div>
+      {/* Dynamic Content Area */}
+      <main className="flex-1 overflow-y-auto px-4 pb-4 bg-transparent">
+        <div className="bg-gray-100 rounded-xl min-h-full overflow-hidden">
+          {renderContent()}
+        </div>
+      </main>
+
+      {/* Global Style for hiding scrollbars on mobile horizontal list */}
+      <style>{`
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </div>
   );
 };
