@@ -45,7 +45,7 @@ const AdvertisementCard = ({
   return (
     <div className="relative rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group flex flex-col bg-white">
       {/* ── Image ── */}
-      <div className="relative h-40 overflow-hidden">
+      <div className="relative h-48 overflow-hidden">
         <img
           src={ad.image}
           alt={ad.BuissnesName}

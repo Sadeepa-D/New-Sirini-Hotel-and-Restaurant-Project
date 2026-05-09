@@ -253,7 +253,7 @@ const ReceptionHallBookMng = () => {
           {/* Visible cards — slice-based carousel */}
           <div
             key={index}
-            className="flex gap-6"
+            className="flex items-stretch gap-6"
             style={{ animation: "fadeIn 0.25s ease" }}
           >
             {filtered.slice(index, index + itemsPerView).map((booking) => (
