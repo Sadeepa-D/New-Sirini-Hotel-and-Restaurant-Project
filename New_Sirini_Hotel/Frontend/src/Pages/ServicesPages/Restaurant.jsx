@@ -7,6 +7,8 @@ import OrderForm from "../../Components/RestaurantPage/OrderForm";
 import RestaurantCard from "../../Components/RestaurantPage/RestaurantCard";
 import LoginMessage from "../../Components/LoginMessage";
 import { useLocation, useNavigate } from "react-router-dom";
+import { ShoppingCart } from "lucide-react";
+import CartComp from "../../Components/RestaurantPage/CartComp";
 
 // Initial hardcoded data removed. Data is now fetched from the backend API.
 
@@ -17,7 +19,7 @@ const CATEGORIES = [
   "Noodles",
   "Bites",
   "Side Dishes",
-  "Snacks"
+  "Snacks",
 ];
 
 export default function Restaurant() {
@@ -28,6 +30,7 @@ export default function Restaurant() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [editingOrder, setEditingOrder] = useState(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showCart, setShowCart] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -98,18 +101,18 @@ export default function Restaurant() {
   };
 
   const getCategoryIndex = (cat) => categoryIndices[cat] || 0;
-  
+
   const handlePrev = (cat) => {
-    setCategoryIndices(prev => ({
+    setCategoryIndices((prev) => ({
       ...prev,
-      [cat]: Math.max(0, (prev[cat] || 0) - 1)
+      [cat]: Math.max(0, (prev[cat] || 0) - 1),
     }));
   };
 
   const handleNext = (cat, itemsCount) => {
-    setCategoryIndices(prev => ({
+    setCategoryIndices((prev) => ({
       ...prev,
-      [cat]: Math.min(itemsCount - itemsPerView, (prev[cat] || 0) + 1)
+      [cat]: Math.min(itemsCount - itemsPerView, (prev[cat] || 0) + 1),
     }));
   };
 
@@ -227,9 +230,9 @@ export default function Restaurant() {
       {/* Categories Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {CATEGORIES.map((cat) => {
-          const catItems = mealData.filter(item => item.category === cat);
+          const catItems = mealData.filter((item) => item.category === cat);
           if (catItems.length === 0) return null;
-          
+
           return (
             <MenuSection
               key={cat}
@@ -242,6 +245,23 @@ export default function Restaurant() {
             />
           );
         })}
+      </div>
+
+      {/* Floating Cart Button */}
+      <div className="fixed bottom-8 right-8 z-50">
+        <button
+          className="flex items-center justify-center w-20 h-20 bg-amber-500 text-white shadow-[0_8px_30px_rgb(245,158,11,0.4)] hover:bg-amber-600 hover:scale-110 transition-all duration-300"
+          style={{ borderRadius: "50%" }}
+          onClick={() => {
+            if (!isLoggedIn) {
+              setShowLoginModal(true);
+              return;
+            }
+            setShowCart(true);
+          }}
+        >
+          <ShoppingCart size={38} />
+        </button>
       </div>
 
       {selectedItem && (
@@ -258,6 +278,9 @@ export default function Restaurant() {
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}
       />
+
+      {/* Cart Modal */}
+      {showCart && <CartComp />}
     </div>
   );
 }
