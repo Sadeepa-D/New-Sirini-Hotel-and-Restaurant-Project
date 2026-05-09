@@ -280,7 +280,7 @@ export default function Restaurant() {
       />
 
       {/* Cart Modal */}
-      {showCart && <CartComp />}
+      {showCart && <CartComp onClose={() => setShowCart(false)} />}
     </div>
   );
 }
