@@ -8,6 +8,7 @@ import {
   XCircle,
   AlertCircle,
   Edit2,
+  PartyPopper,
 } from "lucide-react";
 
 const AppointmentCard = ({
@@ -61,7 +62,7 @@ const AppointmentCard = ({
           <div className="w-9 h-9 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0">
             <User size={16} className="text-amber-500" />
           </div>
-          <h3 className="text-gray-900 font-bold text-base leading-tight truncate">
+          <h3 className="text-gray-900 font-bold text-base leading-tight whitespace-nowrap">
             {appointment.name}
           </h3>
         </div>
@@ -75,6 +76,10 @@ const AppointmentCard = ({
           <div className="flex items-center gap-2.5 text-sm text-gray-600">
             <Phone size={13} className="text-amber-400 shrink-0" />
             <span className="text-xs">{appointment.phone}</span>
+          </div>
+          <div className="flex items-center gap-2.5 text-sm text-gray-600">
+            <PartyPopper size={13} className="text-amber-400 shrink-0" />
+            <span className="text-xs truncate">{appointment.eventType}</span>
           </div>
         </div>
 

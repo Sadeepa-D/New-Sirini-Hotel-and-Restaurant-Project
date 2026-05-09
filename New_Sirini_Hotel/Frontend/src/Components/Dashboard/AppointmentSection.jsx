@@ -1,14 +1,43 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { CalendarDays, Edit2, XCircle } from "lucide-react";
+import {
+  CalendarDays,
+  Clock,
+  XCircle,
+  CheckCircle2,
+  AlertCircle,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import AppointmentCard from "../OperationManager/Reception/AppointmentCard";
 import AppointForm from "../Receptionhall/receptionform";
 
-const AppointmentsSection = ({ data }) => {
+const TABS = [
+  { key: "Pending", label: "Pending", icon: Clock, color: "text-amber-500" },
+  { key: "Canceled", label: "Cancelled", icon: XCircle, color: "text-red-500" },
+  {
+    key: "Completed",
+    label: "Completed",
+    icon: CheckCircle2,
+    color: "text-green-500",
+  },
+];
+
+const AppointmentsSection = () => {
+  const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingAppt, setEditingAppt] = useState(null);
+  const [activeTab, setActiveTab] = useState("Pending");
+
+  const [index, setIndex] = useState(0);
+  const [itemsPerView, setItemsPerView] = useState(
+    typeof window !== "undefined" && window.innerWidth < 640
+      ? 1
+      : 2,
+  );
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -21,11 +50,7 @@ const AppointmentsSection = ({ data }) => {
       }
       const response = await axios.get(
         `${VITE_URL}/api/receptionhall/appointment/view/userspecific`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       setAppointments(response.data);
       setLoading(false);
@@ -39,6 +64,34 @@ const AppointmentsSection = ({ data }) => {
   useEffect(() => {
     fetchappointments();
   }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setItemsPerView(
+        window.innerWidth < 640 ? 1 : 2,
+      );
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    setIndex(0);
+  }, [activeTab]);
+
+  useEffect(() => {
+    setIndex((prev) =>
+      Math.min(
+        prev,
+        Math.max(
+          0,
+          appointments.filter((a) => a.status === activeTab).length -
+            itemsPerView,
+        ),
+      ),
+    );
+  }, [appointments, activeTab, itemsPerView]);
 
   const handlecancel = async (id) => {
     const confirmCancel = window.confirm(
@@ -64,37 +117,150 @@ const AppointmentsSection = ({ data }) => {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
         <div className="w-10 h-10 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
-        <p className="text-gray-400 text-sm animate-pulse">Loading appointments…</p>
+        <p className="text-gray-400 text-sm animate-pulse">
+          Loading appointments…
+        </p>
       </div>
     );
   }
 
+  // Count per tab
+  const counts = {
+    Pending: appointments.filter((a) => a.status === "Pending").length,
+    Canceled: appointments.filter((a) => a.status === "Canceled").length,
+    Completed: appointments.filter((a) => a.status === "Completed").length,
+  };
+
+  // Filter to active tab
+  const filtered = appointments.filter((a) => a.status === activeTab);
+
+  const visibleItems = filtered.slice(index, index + itemsPerView);
+  const canGoBack = index > 0;
+  const canGoNext = index + itemsPerView < filtered.length;
+  const GAP = 16;
+  const cardWidth = `calc((100% - ${GAP * (itemsPerView - 1)}px) / ${itemsPerView})`;
+
   return (
     <div className="space-y-6 font-sans relative">
-      {/* ── Header ── */}
-      <div>
-        <h2 className="text-xl font-bold text-gray-900 tracking-tight">My Appointments</h2>
-        <p className="text-gray-400 text-xs mt-0.5">View and manage your reception hall bookings</p>
-      </div>
-
-      {/* ── Cards / Empty ── */}
-      {appointments.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-          <CalendarDays size={36} className="text-gray-200 mb-3" />
-          <p className="text-gray-400 text-sm font-medium">You have no appointments yet.</p>
+      {/* ── Header + Tabs ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-gray-900 tracking-tight">
+            My Appointments
+          </h2>
+          <p className="text-gray-400 text-xs mt-0.5">
+            View and manage your reception hall bookings
+          </p>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {appointments.map((app) => (
-            <AppointmentCard
-              key={app._id}
-              appointment={app}
-              onEdit={(data) => setEditingAppt(data)}
-              onCancel={handlecancel}
-            />
+
+        {/* Tab bar */}
+        <div className="flex bg-gray-100 p-1 rounded-xl border border-gray-200 gap-0.5 shadow-inner overflow-x-auto">
+          {TABS.map(({ key, label, icon: Icon, color }) => (
+            <button
+              key={key}
+              onClick={() => setActiveTab(key)}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-[10px] uppercase tracking-wider transition-all whitespace-nowrap font-semibold ${
+                activeTab === key
+                  ? "bg-white shadow-sm ring-1 ring-black/5 text-gray-800"
+                  : "text-gray-400 hover:text-gray-600 font-normal"
+              }`}
+            >
+              <Icon size={12} className={activeTab === key ? color : ""} />
+              {label}
+              <span
+                className={`text-[9px] font-mono ml-0.5 ${activeTab === key ? "text-amber-400" : "opacity-50"}`}
+              >
+                ({counts[key]})
+              </span>
+            </button>
           ))}
         </div>
+      </div>
+
+      {/* ── Slider row ── */}
+      {filtered.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-16 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+          <CalendarDays size={32} className="text-gray-200 mb-3" />
+          <p className="text-gray-400 text-sm font-medium">
+            No {activeTab.toLowerCase()} appointments found.
+          </p>
+        </div>
+      ) : (
+        <div className="relative mt-4">
+          {/* Left arrow */}
+          {canGoBack && (
+            <button
+              onClick={() => setIndex((i) => Math.max(0, i - itemsPerView))}
+              className="absolute left-0 sm:-left-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-all"
+            >
+              <ChevronLeft size={16} className="text-gray-600" />
+            </button>
+          )}
+
+          {/* Visible cards */}
+          <div
+            key={index + activeTab}
+            className="flex gap-4"
+            style={{ animation: "fadeIn 0.25s ease" }}
+          >
+            {visibleItems.map((app) => (
+              <div
+                key={app._id}
+                className="shrink-0"
+                style={{ width: cardWidth }}
+              >
+                <AppointmentCard
+                  appointment={app}
+                  onEdit={(d) => setEditingAppt(d)}
+                  onCancel={handlecancel}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Right arrow */}
+          {canGoNext && (
+            <button
+              onClick={() =>
+                setIndex((i) =>
+                  Math.min(filtered.length - itemsPerView, i + itemsPerView),
+                )
+              }
+              className="absolute right-0 sm:-right-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-all"
+            >
+              <ChevronRight size={16} className="text-gray-600" />
+            </button>
+          )}
+
+          {/* Page dots */}
+          {filtered.length > itemsPerView && (
+            <div className="flex justify-center gap-1.5 mt-6">
+              {Array.from({
+                length: Math.ceil(filtered.length / itemsPerView),
+              }).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setIndex(i * itemsPerView)}
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    Math.floor(index / itemsPerView) === i
+                      ? "bg-amber-500"
+                      : "bg-gray-200 hover:bg-gray-300"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       )}
+      {/* ── Add Button ── */}
+      <div className="flex justify-end">
+        <button
+          onClick={() => navigate("/reception")}
+          className="flex items-center gap-2 px-6 py-2.5 bg-black text-white rounded-full font-sans text-xs font-semibold uppercase tracking-wider hover:bg-amber-500 hover:text-black transition-all duration-300 shadow-md hover:-translate-y-0.5 active:translate-y-0"
+        >
+          + Add Appointment
+        </button>
+      </div>
 
       {/* ── Edit Modal ── */}
       {editingAppt && (
@@ -118,6 +284,12 @@ const AppointmentsSection = ({ data }) => {
           </div>
         </div>
       )}
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 };

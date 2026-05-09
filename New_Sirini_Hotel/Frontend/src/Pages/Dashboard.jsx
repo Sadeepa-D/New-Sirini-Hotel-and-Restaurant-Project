@@ -22,9 +22,7 @@ const UserDashboard = () => {
   const [activeTab, setActiveTab] = useState("profile");
 
   const handlelogout = () => {
-    // Clear user session (e.g., remove token, clear local storage)
     localStorage.removeItem("token");
-    // Redirect to login page or homepage
     navigate("/login");
     toast.success("logged out successfully.");
   };
@@ -99,7 +97,7 @@ const UserDashboard = () => {
           </div>
 
           {/* ── Main Content Area ── */}
-          <div className="flex-1 bg-white border border-gray-100 rounded-2xl shadow-sm p-5 sm:p-8 min-h-[600px]">
+          <div className="flex-1 min-w-0 bg-white border border-gray-100 rounded-2xl shadow-sm p-5 sm:p-8 min-h-[600px]">
             {activeTab === "profile" && <ProfileSection />}
             {activeTab === "rooms" && <RoomsSection />}
             {activeTab === "restaurant" && <RestrauntSection />}
