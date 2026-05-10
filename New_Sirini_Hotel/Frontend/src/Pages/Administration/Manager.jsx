@@ -10,6 +10,7 @@ import {
   LogOut,
   Menu,
   LayoutDashboard,
+  ExternalLink,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -194,6 +195,20 @@ const Manager = () => {
 
           {/* Right: Home + Avatar + Name */}
           <div className="flex items-center justify-end gap-3">
+            {userdata.Role === "Admin" && (
+              <button
+                className="flex items-center gap-2 group transition-all"
+                onClick={() => usenavigate("/admin")}
+              >
+                <ExternalLink
+                  className="text-amber-500 font-bold hover:scale-105"
+                  size={25}
+                />
+                <span className="text-amber-500 font-bold hover:scale-105">
+                  Admin Portal
+                </span>
+              </button>
+            )}
             <button
               onClick={() => usenavigate("/")}
               className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"

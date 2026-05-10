@@ -32,6 +32,8 @@ export default function Restaurant() {
   const [editingOrder, setEditingOrder] = useState(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showCart, setShowCart] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
+  const [openorderform, setOpenorderform] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -93,13 +95,14 @@ export default function Restaurant() {
     }
   }, [location.state, mealData, navigate, location.pathname]);
 
-  const handleOrder = (item) => {
-    if (!isLoggedIn) {
-      setShowLoginModal(true);
-      return;
-    }
-    setSelectedItem(item);
-  };
+  // const handleOrder = (item) => {
+  //   if (!isLoggedIn) {
+  //     setShowLoginModal(true);
+  //     return;
+  //   }
+  //   setSelectedItem(item);
+  //   setOpenorderform(true);
+  // };
 
   const getCategoryIndex = (cat) => categoryIndices[cat] || 0;
 
@@ -115,6 +118,24 @@ export default function Restaurant() {
       ...prev,
       [cat]: Math.min(itemsCount - itemsPerView, (prev[cat] || 0) + 1),
     }));
+  };
+
+  const handleAddToCart = (item) => {
+    if (!isLoggedIn) {
+      setShowLoginModal(true);
+      return;
+    }
+    setCartItems((prev) => [...prev, item]);
+    toast.success(`${item.name} added to cart!`);
+  };
+
+  const handlecheckout = () => {
+    if (cartItems.length === 0) {
+      toast.error("Your cart is empty!");
+      return;
+    }
+    setShowCart(false);
+    setOpenorderform(true);
   };
 
   const MenuSection = ({ title, items, index, onPrev, onNext, onOrder }) => (
@@ -245,7 +266,7 @@ export default function Restaurant() {
               index={getCategoryIndex(cat)}
               onPrev={() => handlePrev(cat)}
               onNext={() => handleNext(cat, catItems.length)}
-              onOrder={handleOrder}
+              onOrder={handleAddToCart}
             />
           );
         })}
@@ -267,7 +288,7 @@ export default function Restaurant() {
           <ShoppingCart size={38} />
         </button>
       </div>
-
+      {/* 
       {selectedItem && (
         <OrderForm
           item={selectedItem}
@@ -277,6 +298,15 @@ export default function Restaurant() {
             setEditingOrder(null);
           }}
         />
+      )} */}
+      {openorderform && (
+        <OrderForm
+          cartItems={cartItems}
+          onClose={() => {
+            setOpenorderform(false);
+            setCartItems([]);
+          }}
+        />
       )}
       <LoginMessage
         isOpen={showLoginModal}
@@ -284,7 +314,13 @@ export default function Restaurant() {
       />
 
       {/* Cart Modal */}
-      {showCart && <CartComp onClose={() => setShowCart(false)} />}
+      {showCart && (
+        <CartComp
+          onClose={() => setShowCart(false)}
+          cartItems={cartItems}
+          onCheckout={handlecheckout}
+        />
+      )}
     </div>
   );
 }
