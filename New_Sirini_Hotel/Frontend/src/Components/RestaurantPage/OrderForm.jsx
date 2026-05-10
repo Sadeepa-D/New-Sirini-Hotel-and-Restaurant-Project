@@ -93,7 +93,7 @@ export default function OrderForm({ item, cartItems, onClose }) {
           portion: portionValue,
           foodName: cartItem.name,
           userId: userId,
-          Price: itemPrice * (cartItem.quantity || 1),
+          Price: itemPrice * cartItem.quantity,
         };
           return axios.post(
             `${import.meta.env.VITE_API_URL}/api/restraunt/placeorder`,
