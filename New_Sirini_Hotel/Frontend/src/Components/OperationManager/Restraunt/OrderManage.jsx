@@ -7,7 +7,7 @@ import ConfirmDialog from "../../ConfrimDialog";
 const OrderManage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("In Progress");
+  const [activeTab, setActiveTab] = useState("Pending");
   const [searchTerm, setSearchTerm] = useState("");
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
@@ -84,7 +84,7 @@ const OrderManage = () => {
     }
   };
 
-  const pendingOrders = orders.filter((o) => o.status === "In Progress");
+  const pendingOrders = orders.filter((o) => o.status === "Pending");
   const completedOrders = orders.filter((o) => o.status === "Completed");
   const cancelledOrders = orders.filter((o) => o.status === "Cancelled" || o.status === "delete");
 
@@ -166,7 +166,7 @@ const OrderManage = () => {
         <span className="text-amber-600 font-bold">Rs. {order.Price}</span>
       </div>
 
-      {order.status === "In Progress" && (
+      {order.status === "Pending" && (
         <div className="flex gap-2 mt-auto">
           <button
             onClick={() => handleStatusChange(order._id, "Completed")}
@@ -198,7 +198,7 @@ const OrderManage = () => {
 
         {/* Tabs */}
         <div className="flex gap-2 mt-4 flex-wrap">
-          {["In Progress", "Completed", "Cancelled"].map((tab) => (
+          {["Pending", "Completed", "Cancelled"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}

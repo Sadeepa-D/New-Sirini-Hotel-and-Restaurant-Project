@@ -17,7 +17,7 @@ import {
 const RestaurantSection = ({ data }) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("In Progress");
+  const [activeTab, setActiveTab] = useState("Pending");
   const navigate = useNavigate();
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
@@ -132,16 +132,16 @@ const RestaurantSection = ({ data }) => {
   };
 
   const filteredOrders = orders.filter((order) => {
-    if (activeTab === "In Progress") return order.status === "In Progress";
+    if (activeTab === "Pending") return order.status === "Pending";
     if (activeTab === "Completed") return order.status === "Completed";
     if (activeTab === "Cancelled") return order.status === "Cancelled" || order.status === "delete";
     return true;
   });
 
-  const tabs = ["In Progress", "Completed", "Cancelled"];
+  const tabs = ["Pending", "Completed", "Cancelled"];
 
   const tabCounts = {
-    "In Progress": orders.filter(o => o.status === "In Progress").length,
+    "Pending": orders.filter(o => o.status === "Pending").length,
     "Completed": orders.filter(o => o.status === "Completed").length,
     "Cancelled": orders.filter(o => o.status === "Cancelled" || o.status === "delete").length,
   };
@@ -259,7 +259,7 @@ const RestaurantSection = ({ data }) => {
                 </div>
 
                 {/* Actions */}
-                {order.status === "In Progress" && (
+                {order.status === "Pending" && (
                   <div className="flex gap-2 mt-4">
                     <button
                       onClick={() => handleEdit(order)}

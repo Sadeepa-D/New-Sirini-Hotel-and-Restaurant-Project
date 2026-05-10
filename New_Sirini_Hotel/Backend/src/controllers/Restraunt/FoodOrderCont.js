@@ -61,7 +61,7 @@ const createFoodOrder = async (req, res) => {
       pickupDate,
       pickupTime,
       orderCode: await GenarateFoodOrderCode(),
-      status: "In Progress",
+      status: "Pending",
       Price,
       portion,
     });
@@ -244,19 +244,19 @@ const getCancelledFoodOrders = async (req, res) => {
   }
 };
 
-const getInProgressFoodOrders = async (req, res) => {
+const getPendingFoodOrders = async (req, res) => {
   try {
-    const inProgressOrders = await FoodOrder.find({ status: "In Progress" });
-    if (inProgressOrders.length === 0) {
+    const pendingOrders = await FoodOrder.find({ status: "Pending" });
+    if (pendingOrders.length === 0) {
       return res
         .status(404)
-        .json({ message: "No in-progress food orders found" });
+        .json({ message: "No pending food orders found" });
     }
-    res.status(200).json(inProgressOrders);
+    res.status(200).json(pendingOrders);
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Failed to retrieve in-progress food orders", error });
+      .json({ message: "Failed to retrieve pending food orders", error });
   }
 };
 const getOverdueFoodOrders = async (req, res) => {
@@ -295,7 +295,7 @@ module.exports = {
   updateFoodOrderStatusToCancelled,
   getCompletedFoodOrders,
   getCancelledFoodOrders,
-  getInProgressFoodOrders,
+  getPendingFoodOrders,
   getOverdueFoodOrders,
   getUserOrders,
 };

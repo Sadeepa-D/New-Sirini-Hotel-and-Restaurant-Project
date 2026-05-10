@@ -88,7 +88,7 @@ const LiqourandRestruant = () => {
   const orderStats = {
     completed: activeMonthOrders.filter((order) => order.status === "Completed")
       .length,
-    pending: activeMonthOrders.filter((order) => order.status === "In Progress")
+    pending: activeMonthOrders.filter((order) => order.status === "Pending")
       .length,
     cancelled: activeMonthOrders.filter((order) => order.status === "Cancelled")
       .length,
