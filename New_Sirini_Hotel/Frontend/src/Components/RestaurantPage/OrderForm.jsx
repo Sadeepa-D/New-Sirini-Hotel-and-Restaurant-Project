@@ -12,7 +12,6 @@ export default function OrderForm({ item, cartItems, onClose }) {
     pickupTime: "",
     portion: "",
   });
-  const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const items = cartItems && cartItems.length > 0 ? cartItems : [item];
@@ -73,15 +72,13 @@ export default function OrderForm({ item, cartItems, onClose }) {
       // Save all cart items as separate orders
       const orderPromises = items.map((cartItem) => {
         const itemPrice =
-          cartItem.portion === "full" && cartItem.full_price
+          cartItem.portion === "Full" && cartItem.full_price
             ? cartItem.full_price
             : cartItem.normal_price;
 
         const portionValue = cartItem.has_portions
-          ? cartItem.portion === "full"
-            ? "Full"
-            : "Normal"
-          : "Normal";
+          ? cartItem.portion === "Full"
+          : cartItem.portion === "Normal";
 
         const orderData = {
           fullName: form.name,
@@ -95,21 +92,18 @@ export default function OrderForm({ item, cartItems, onClose }) {
           userId: userId,
           Price: itemPrice * cartItem.quantity,
         };
-          return axios.post(
-            `${import.meta.env.VITE_API_URL}/api/restraunt/placeorder`,
-            orderData,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
+        return axios.post(
+          `${import.meta.env.VITE_API_URL}/api/restraunt/placeorder`,
+          orderData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
             },
-          );
-        
+          },
+        );
       });
 
       await Promise.all(orderPromises);
-
-      setSubmitted(true);
       toast.success(`Order placed successfully!`);
       onClose(true);
     } catch (error) {
