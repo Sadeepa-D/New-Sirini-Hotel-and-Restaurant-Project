@@ -5,10 +5,9 @@ import Exploreindicator from "../../Components/Exploreindicator";
 import resturantImg from "../../assets/resturant.png";
 import OrderForm from "../../Components/RestaurantPage/OrderForm";
 import RestaurantCard from "../../Components/RestaurantPage/RestaurantCard";
-import LoginMessage from "../../Components/LoginMessage";
 import ProcessFlow from "../../Components/RestaurantPage/ProcessFlow";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ShoppingCart,ChevronLeft,ChevronRight } from "lucide-react";
+import { ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react";
 import CartComp from "../../Components/RestaurantPage/CartComp";
 
 // Initial hardcoded data removed. Data is now fetched from the backend API.
@@ -28,9 +27,7 @@ export default function Restaurant() {
   const [categoryIndices, setCategoryIndices] = useState({});
   const [selectedItem, setSelectedItem] = useState(null);
   const [mealData, setMealData] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [editingOrder, setEditingOrder] = useState(null);
-  const [showLoginModal, setShowLoginModal] = useState(false);
   const [showCart, setShowCart] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [openorderform, setOpenorderform] = useState(false);
@@ -95,15 +92,6 @@ export default function Restaurant() {
     }
   }, [location.state, mealData, navigate, location.pathname]);
 
-  // const handleOrder = (item) => {
-  //   if (!isLoggedIn) {
-  //     setShowLoginModal(true);
-  //     return;
-  //   }
-  //   setSelectedItem(item);
-  //   setOpenorderform(true);
-  // };
-
   const getCategoryIndex = (cat) => categoryIndices[cat] || 0;
 
   const handlePrev = (cat) => {
@@ -121,15 +109,11 @@ export default function Restaurant() {
   };
 
   const handleAddToCart = (item) => {
-    if (!isLoggedIn) {
-      setShowLoginModal(true);
-      return;
-    }
     setCartItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);
       if (existing) {
         return prev.map((i) =>
-          i.id === item.id ? { ...i, quantity: (i.quantity || 1) + 1 } : i
+          i.id === item.id ? { ...i, quantity: (i.quantity || 1) + 1 } : i,
         );
       }
       return [...prev, { ...item, quantity: 1, portion: "normal" }];
@@ -264,27 +248,13 @@ export default function Restaurant() {
           className="flex items-center justify-center w-20 h-20 bg-amber-500 text-white hover:bg-amber-600 hover:scale-110 transition-all duration-300 rounded-full"
           style={{ boxShadow: "0 8px 30px rgba(245, 158, 11, 0.4)" }}
           onClick={() => {
-            if (!isLoggedIn) {
-              setShowLoginModal(true);
-              return;
-            }
             setShowCart(true);
           }}
         >
           <ShoppingCart size={38} />
         </button>
       </div>
-      {/* 
-      {selectedItem && (
-        <OrderForm
-          item={selectedItem}
-          editingOrder={editingOrder}
-          onClose={() => {
-            setSelectedItem(null);
-            setEditingOrder(null);
-          }}
-        />
-      )} */}
+
       {openorderform && (
         <OrderForm
           cartItems={cartItems}
@@ -294,11 +264,6 @@ export default function Restaurant() {
           }}
         />
       )}
-      <LoginMessage
-        isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-      />
-
       {/* Cart Modal */}
       {showCart && (
         <CartComp

@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { X, Trash2, Plus, Minus } from "lucide-react";
+import LoginMessage from "../LoginMessage";
 
 const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
-  // const handlePortionChange = (id, newPortion) => {
-  //   setCartItems((prev) =>
-  //     prev.map((item) =>
-  //       item.id === id ? { ...item, portion: newPortion } : item
-  //     )
-  //   );
-  // };
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
 
   const handleQuantity = (id, delta) => {
     setCartItems((prev) =>
@@ -328,8 +324,11 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
               >
                 Continue Shopping
               </button>
+
               <button
-                onClick={() => onCheckout(cartItems)}
+                onClick={() =>
+                  !isLoggedIn ? setShowLoginModal(true) : onCheckout(cartItems)
+                }
                 className="flex-1 py-3 bg-linear-to-r from-amber-500 to-amber-600 text-white rounded-xl hover:from-amber-600 hover:to-amber-700 transition-all font-bold text-sm md:text-base shadow-lg hover:shadow-xl"
               >
                 Proceed to Checkout
@@ -349,6 +348,12 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
           </div>
         )}
       </div>
+      {showLoginModal && (
+        <LoginMessage
+          isOpen={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+        />
+      )}
     </div>
   );
 };
