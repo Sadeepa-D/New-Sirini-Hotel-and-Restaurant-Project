@@ -96,7 +96,10 @@ export default function Restaurant() {
           i.id === item.id ? { ...i, quantity: (i.quantity || 1) + 1 } : i,
         );
       }
-      return [...prev, { ...item, quantity: 1, portion: "Normal" }];
+      return [
+        ...prev,
+        { ...item, cartId: item.id, quantity: 1, portion: "Normal" },
+      ];
     });
     toast.success(`${item.name} added to cart!`);
   };
