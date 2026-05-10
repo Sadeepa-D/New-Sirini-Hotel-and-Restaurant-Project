@@ -95,7 +95,7 @@ export default function OrderForm({ item, cartItems, editingOrder, onClose }) {
           portion: portionValue,
           foodName: cartItem.name,
           userId: userId,
-          Price: itemPrice * (cartItem.quantity || 1),
+          Price: itemPrice * cartItem.quantity,
         };
 
         if (editingOrder) {
