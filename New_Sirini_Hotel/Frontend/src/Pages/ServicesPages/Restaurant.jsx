@@ -6,7 +6,6 @@ import resturantImg from "../../assets/resturant.png";
 import OrderForm from "../../Components/RestaurantPage/OrderForm";
 import RestaurantCard from "../../Components/RestaurantPage/RestaurantCard";
 import ProcessFlow from "../../Components/RestaurantPage/ProcessFlow";
-import { useLocation, useNavigate } from "react-router-dom";
 import { ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react";
 import CartComp from "../../Components/RestaurantPage/CartComp";
 
@@ -25,15 +24,10 @@ const CATEGORIES = [
 export default function Restaurant() {
   const [itemsPerView, setItemsPerView] = useState(4);
   const [categoryIndices, setCategoryIndices] = useState({});
-  const [selectedItem, setSelectedItem] = useState(null);
   const [mealData, setMealData] = useState([]);
-  const [editingOrder, setEditingOrder] = useState(null);
   const [showCart, setShowCart] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [openorderform, setOpenorderform] = useState(false);
-
-  const location = useLocation();
-  const navigate = useNavigate();
 
   const fetchFoodItems = async () => {
     try {
@@ -78,20 +72,6 @@ export default function Restaurant() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useEffect(() => {
-    if (location.state?.editOrder && mealData.length > 0) {
-      const order = location.state.editOrder;
-      const matchedItem = mealData.find((m) => m.name === order.foodName);
-      if (matchedItem) {
-        setSelectedItem(matchedItem);
-        setEditingOrder(order);
-        navigate(location.pathname, { replace: true });
-      } else {
-        toast.error("Food item for this order is no longer available.");
-      }
-    }
-  }, [location.state, mealData, navigate, location.pathname]);
-
   const getCategoryIndex = (cat) => categoryIndices[cat] || 0;
 
   const handlePrev = (cat) => {
@@ -116,7 +96,7 @@ export default function Restaurant() {
           i.id === item.id ? { ...i, quantity: (i.quantity || 1) + 1 } : i,
         );
       }
-      return [...prev, { ...item, quantity: 1, portion: "normal" }];
+      return [...prev, { ...item, quantity: 1, portion: "Normal" }];
     });
     toast.success(`${item.name} added to cart!`);
   };

@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { X, Trash2, Plus, Minus } from "lucide-react";
 import LoginMessage from "../LoginMessage";
 
 const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+  const isLoggedIn= !!localStorage.getItem("token");
 
   const handleQuantity = (id, delta) => {
     setCartItems((prev) =>
