@@ -3,16 +3,14 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { X } from "lucide-react";
 
-export default function OrderForm({ item, cartItems, editingOrder, onClose }) {
+export default function OrderForm({ item, cartItems, onClose }) {
   const [form, setForm] = useState({
-    name: editingOrder ? editingOrder.fullName : "",
-    email: editingOrder ? editingOrder.email : "",
-    phone: editingOrder ? editingOrder.phoneNumber : "",
-    pickupDate: editingOrder
-      ? new Date(editingOrder.pickupDate).toISOString().split("T")[0]
-      : "",
-    pickupTime: editingOrder ? editingOrder.pickupTime : "",
-    portion: editingOrder ? editingOrder.portion : "Normal",
+    name: "",
+    email: "",
+    phone: "",
+    pickupDate: "",
+    pickupTime: "",
+    portion: "",
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -97,18 +95,6 @@ export default function OrderForm({ item, cartItems, editingOrder, onClose }) {
           userId: userId,
           Price: itemPrice * cartItem.quantity,
         };
-
-        if (editingOrder) {
-          return axios.put(
-            `${import.meta.env.VITE_API_URL}/api/restraunt/updateorder/${editingOrder._id}`,
-            orderData,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            },
-          );
-        } else {
           return axios.post(
             `${import.meta.env.VITE_API_URL}/api/restraunt/placeorder`,
             orderData,
@@ -118,15 +104,13 @@ export default function OrderForm({ item, cartItems, editingOrder, onClose }) {
               },
             },
           );
-        }
+        
       });
 
       await Promise.all(orderPromises);
 
       setSubmitted(true);
-      toast.success(`Order placed successfully!`, {
-        position: "top-center",
-      });
+      toast.success(`Order placed successfully!`);
       onClose(true);
     } catch (error) {
       console.error("Error placing order:", error);
@@ -178,7 +162,7 @@ export default function OrderForm({ item, cartItems, editingOrder, onClose }) {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [editingOrder]);
+  }, []);
 
   return (
     <div
@@ -197,35 +181,6 @@ export default function OrderForm({ item, cartItems, editingOrder, onClose }) {
           >
             <X size={18} className="text-neutral-600" />
           </button>
-
-          {/* <div className="flex justify-between items-center gap-4"> */}
-          {/* <div className="flex-1">
-              <span className="text-xs font-semibold uppercase tracking-widest text-amber-600">
-                {editingOrder ? "Edit Order" : "ADD TO CART"}
-              </span>
-              <h2 className="text-2xl font-bold text-neutral-900 mt-1">{item.name}</h2>
-              <p className="text-sm text-neutral-500 mt-1 line-clamp-2">{item.description}</p>
-
-              <div className="mt-3">
-                <span
-                  className="px-3 py-1 rounded-full text-xs font-bold text-white inline-block"
-                  style={{ background: "#d97706" }}
-                >
-                  {item.category}
-                </span>
-              </div>
-            </div> */}
-
-          {/* <div className="hidden sm:block flex-shrink-0">
-              <div className="w-28 h-28 rounded-2xl overflow-hidden shadow-xl border-2 border-white ring-4 ring-amber-50">
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-full h-full object-cover transition-transform hover:scale-110 duration-500"
-                />
-              </div>
-            </div> */}
-          {/* </div> */}
         </div>
 
         <div className="p-6 md:p-8">
@@ -280,51 +235,6 @@ export default function OrderForm({ item, cartItems, editingOrder, onClose }) {
               </div>
             </div>
 
-            {/* <div className={`grid grid-cols-1 ${item.has_portions ? "sm:grid-cols-2" : ""} gap-4`}>
-              {item.has_portions && (
-                <div>
-                  <label className="block text-xs font-semibold text-neutral-600 mb-1.5 uppercase tracking-wide">
-                    Portion
-                  </label>
-                  <select
-                    name="portion"
-                    value={form.portion}
-                    onChange={handleChange}
-                    required
-                    className="w-full border border-neutral-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition bg-white"
-                  >
-                    <option value="Normal">Normal</option>
-                    <option value="Full">Full</option>
-                  </select>
-                </div>
-              )}
-
-              <div className={!item.has_portions ? "w-full" : ""}>
-                <label className="block text-xs font-semibold text-neutral-600 mb-1.5 uppercase tracking-wide">
-                  Quantity
-                </label>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setForm((f) => ({ ...f, quantity: Math.max(1, f.quantity - 1) }))}
-                    className="w-10 h-10 rounded-lg border border-neutral-300 flex items-center justify-center text-neutral-700 hover:bg-neutral-100 transition font-bold text-xl"
-                  >
-                    −
-                  </button>
-                  <span className="flex-1 text-center text-base font-bold text-neutral-900 border border-neutral-300 rounded-lg py-2.5">
-                    {form.quantity}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setForm((f) => ({ ...f, quantity: f.quantity + 1 }))}
-                    className="w-10 h-10 rounded-lg border border-neutral-300 flex items-center justify-center text-neutral-700 hover:bg-neutral-100 transition font-bold text-xl"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            </div> */}
-
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-neutral-600 mb-1.5 uppercase tracking-wide">
@@ -362,9 +272,6 @@ export default function OrderForm({ item, cartItems, editingOrder, onClose }) {
 
             <div className="mt-2 p-4 bg-amber-50 border border-amber-200 rounded-xl">
               <div className="flex justify-between items-center">
-                {/* <span className="text-sm text-amber-800">
-                  Rs. {getPrice()} × {form.quantity}
-                </span> */}
                 <span className="text-xl font-bold text-amber-700">
                   Rs. {getTotalPrice()}
                 </span>
