@@ -158,9 +158,29 @@ export default function Restaurant() {
     </div>
   );
 
+  const [isFabVisible, setIsFabVisible] = useState(false);
+  const [isNearFooter, setIsNearFooter] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      
+      // Show FAB after scrolling past hero (approx 100vh - header)
+      setIsFabVisible(scrollY > windowHeight * 0.7);
+      
+      // Detect if near footer (approx 400px from bottom)
+      setIsNearFooter(scrollY + windowHeight > documentHeight - 350);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-neutral-50">
-      {/* HERO SECTION - Aligned with MainPage */}
+    <div className="min-h-screen bg-neutral-50 relative">
+      {/* HERO SECTION */}
       <header className="relative w-full h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
         {/* Background */}
         <div
@@ -174,7 +194,7 @@ export default function Restaurant() {
           <div className="absolute inset-0 bg-black/50"></div>
         </div>
 
-        {/* Content - centered in hero */}
+        {/* Content */}
         <div className="z-10 flex flex-col items-center justify-center gap-4">
           <h1 className="text-4xl md:text-6xl font-light">Our Restaurant</h1>
           <p className="text-lg md:text-xl italic tracking-widest border-t border-b border-white py-2 px-4">
@@ -182,61 +202,75 @@ export default function Restaurant() {
           </p>
         </div>
 
-        {/* Explore arrow pinned to bottom */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
           <Exploreindicator />
         </div>
       </header>
 
-      {/* Menu Header Section */}
-      <div className="px-4 py-8 md:py-12">
-        <div className="mx-auto max-w-6xl border border-gray-300 bg-gray-50 rounded-lg px-6 py-10 md:py-12 text-center shadow-sm">
-          <h1 className="text-5xl sm:text-6xl font-serif font-normal text-gray-800 mb-6">
-            Menu
-          </h1>
-          <p className="text-gray-700 text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto font-light">
-            We believe good food starts with good ingredients. Our menu includes
-            fresh, balanced dishes made using simple cooking methods to keep
-            flavors natural and satisfying.
-          </p>
+      {/* Main Content Area */}
+      <main className="relative">
+        {/* Menu Header Section */}
+        <div className="px-4 py-8 md:py-12">
+          <div className="mx-auto max-w-6xl border border-gray-300 bg-gray-50 rounded-lg px-6 py-10 md:py-12 text-center shadow-sm">
+            <h1 className="text-5xl sm:text-6xl font-serif font-normal text-gray-800 mb-6">
+              Menu
+            </h1>
+            <p className="text-gray-700 text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto font-light">
+              We believe good food starts with good ingredients. Our menu includes
+              fresh, balanced dishes made using simple cooking methods to keep
+              flavors natural and satisfying.
+            </p>
+          </div>
         </div>
-      </div>
 
-      {/* Process Flow Section */}
-      <ProcessFlow />
+        {/* Process Flow Section */}
+        <ProcessFlow />
 
-      {/* Categories Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {CATEGORIES.map((cat) => {
-          const catItems = mealData.filter((item) => item.category === cat);
-          if (catItems.length === 0) return null;
+        {/* Categories Section */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {CATEGORIES.map((cat) => {
+            const catItems = mealData.filter((item) => item.category === cat);
+            if (catItems.length === 0) return null;
 
-          return (
-            <MenuSection
-              key={cat}
-              title={cat}
-              items={catItems}
-              index={getCategoryIndex(cat)}
-              onPrev={() => handlePrev(cat)}
-              onNext={() => handleNext(cat, catItems.length)}
-              onOrder={handleAddToCart}
-            />
-          );
-        })}
-      </div>
+            return (
+              <MenuSection
+                key={cat}
+                title={cat}
+                items={catItems}
+                index={getCategoryIndex(cat)}
+                onPrev={() => handlePrev(cat)}
+                onNext={() => handleNext(cat, catItems.length)}
+                onOrder={handleAddToCart}
+              />
+            );
+          })}
+        </div>
 
-      {/* Floating Cart Button */}
-      <div className="fixed bottom-8 right-8 z-50">
-        <button
-          className="flex items-center justify-center w-20 h-20 bg-amber-500 text-white hover:bg-amber-600 hover:scale-110 transition-all duration-300 rounded-full"
-          style={{ boxShadow: "0 8px 30px rgba(245, 158, 11, 0.4)" }}
-          onClick={() => {
-            setShowCart(true);
-          }}
+        {/* Floating Action Button (FAB) - Smart visibility */}
+        <div 
+          className={`fixed transition-all duration-500 ease-in-out z-[60] 
+            ${isFabVisible ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-10 pointer-events-none'}
+            ${isNearFooter ? 'bottom-[380px] md:bottom-[420px]' : 'bottom-8'}
+            right-8`}
         >
-          <ShoppingCart size={38} />
-        </button>
-      </div>
+          <button
+            className="relative group transition-all duration-300"
+            onClick={() => setShowCart(true)}
+          >
+            <div 
+              className="w-16 h-16 md:w-20 md:h-20 bg-amber-500 text-white flex items-center justify-center rounded-full shadow-2xl group-hover:bg-amber-600 group-hover:scale-110 transition-all duration-300"
+              style={{ boxShadow: "0 10px 25px -5px rgba(245, 158, 11, 0.4)" }}
+            >
+              <ShoppingCart className="w-8 h-8 md:w-10 md:h-10" />
+              {cartItems.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-white text-amber-600 text-[10px] md:text-xs font-bold w-5 h-5 md:w-7 md:h-7 flex items-center justify-center rounded-full shadow-md border-2 border-amber-500 animate-in zoom-in duration-300">
+                  {cartItems.length}
+                </span>
+              )}
+            </div>
+          </button>
+        </div>
+      </main>
 
       {openorderform && (
         <OrderForm
