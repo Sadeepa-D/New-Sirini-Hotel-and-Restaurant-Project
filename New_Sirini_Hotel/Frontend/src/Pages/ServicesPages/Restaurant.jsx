@@ -129,11 +129,13 @@ export default function Restaurant() {
     toast.success(`${item.name} added to cart!`);
   };
 
-  const handlecheckout = () => {
-    if (cartItems.length === 0) {
+  const handlecheckout = (updatedItems) => {
+    if (!updatedItems || updatedItems.length === 0) {
       toast.error("Your cart is empty!");
       return;
     }
+    // Update cartItems with the modified items from CartComp
+    setCartItems(updatedItems);
     setShowCart(false);
     setOpenorderform(true);
   };

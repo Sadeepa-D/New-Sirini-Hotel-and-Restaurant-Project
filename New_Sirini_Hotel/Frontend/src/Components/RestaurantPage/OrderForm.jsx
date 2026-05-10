@@ -70,6 +70,12 @@ export default function OrderForm({ item, cartItems, editingOrder, onClose }) {
 
       // Save all cart items as separate orders
       const orderPromises = items.map((cartItem) => {
+        // Calculate price based on portion selection
+        let itemPrice = cartItem.normal_price;
+        if (cartItem.has_portions && cartItem.portion === "Full") {
+          itemPrice = cartItem.full_price || cartItem.normal_price;
+        }
+
         const orderData = {
           fullName: form.name,
           email: form.email,
@@ -80,7 +86,7 @@ export default function OrderForm({ item, cartItems, editingOrder, onClose }) {
           portion: cartItem.has_portions ? cartItem.portion || "Normal" : null,
           foodName: cartItem.name,
           userId: userId,
-          Price: cartItem.normal_price * cartItem.quantity,
+          Price: itemPrice * cartItem.quantity,
         };
 
         if (editingOrder) {
