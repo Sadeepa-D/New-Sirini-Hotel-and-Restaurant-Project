@@ -1,24 +1,33 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { X } from "lucide-react";
 
-export default function OrderForm({ item, editingOrder, onClose }) {
+export default function OrderForm({ item, cartItems, editingOrder, onClose }) {
   const [form, setForm] = useState({
     name: editingOrder ? editingOrder.fullName : "",
     email: editingOrder ? editingOrder.email : "",
     phone: editingOrder ? editingOrder.phoneNumber : "",
-    pickupDate: editingOrder ? new Date(editingOrder.pickupDate).toISOString().split('T')[0] : "",
+    pickupDate: editingOrder
+      ? new Date(editingOrder.pickupDate).toISOString().split("T")[0]
+      : "",
     pickupTime: editingOrder ? editingOrder.pickupTime : "",
-    quantity: editingOrder ? editingOrder.quantity : 1,
     portion: editingOrder ? editingOrder.portion : "Normal",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const getPrice = () => {
-    if (!item.has_portions || form.portion === "Normal") {
-      return item.normal_price || 0;
-    }
-    return item.full_price || 0;
+  const items = cartItems && cartItems.length > 0 ? cartItems : [item];
+
+  const getTotalPrice = () => {
+    return items.reduce((sum, currentItem) => {
+      if (!currentItem) return sum;
+      const price =
+        currentItem.portion === "full" && currentItem.full_price
+          ? currentItem.full_price
+          : currentItem.normal_price;
+      return sum + price * (currentItem.quantity || 1);
+    }, 0);
   };
 
   const handleChange = (e) => {
@@ -27,25 +36,29 @@ export default function OrderForm({ item, editingOrder, onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const token = localStorage.getItem("token");
 
     const now = new Date();
-    const slDateStr = new Intl.DateTimeFormat('en-CA', {
-      timeZone: 'Asia/Colombo',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
+    const slDateStr = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Colombo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
     }).format(now);
 
-    const slTimeStr = new Intl.DateTimeFormat('en-GB', {
-      timeZone: 'Asia/Colombo',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
+    const slTimeStr = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Colombo",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
     }).format(now);
 
     if (form.pickupDate === slDateStr && form.pickupTime <= slTimeStr) {
-      toast.error("Selected time has already passed for today. Please choose a future time.");
+      toast.error(
+        "Selected time has already passed for today. Please choose a future time.",
+      );
+      setLoading(false);
       return;
     }
 
@@ -56,51 +69,70 @@ export default function OrderForm({ item, editingOrder, onClose }) {
         try {
           const userData = JSON.parse(userDataStr);
           userId = userData._id;
-        } catch (e) { }
+        } catch (e) {}
       }
 
-      const orderData = {
-        fullName: form.name,
-        email: form.email,
-        phoneNumber: form.phone.replace(/\D/g, ""),
-        pickupDate: form.pickupDate,
-        pickupTime: form.pickupTime,
-        quantity: form.quantity,
-        portion: item.has_portions ? form.portion : null,
-        foodName: item.name,
-        userId: userId,
-        Price: getPrice() * form.quantity,
-      };
+      // Save all cart items as separate orders
+      const orderPromises = items.map((cartItem) => {
+        const itemPrice =
+          cartItem.portion === "full" && cartItem.full_price
+            ? cartItem.full_price
+            : cartItem.normal_price;
 
-      if (editingOrder) {
-        await axios.put(
-          `${import.meta.env.VITE_API_URL}/api/restraunt/updateorder/${editingOrder._id}`,
-          orderData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
+        const portionValue = cartItem.has_portions
+          ? cartItem.portion === "full"
+            ? "Full"
+            : "Normal"
+          : "Normal";
+
+        const orderData = {
+          fullName: form.name,
+          email: form.email,
+          phoneNumber: form.phone.replace(/\D/g, ""),
+          pickupDate: form.pickupDate,
+          pickupTime: form.pickupTime,
+          quantity: cartItem.quantity || 1,
+          portion: portionValue,
+          foodName: cartItem.name,
+          userId: userId,
+          Price: itemPrice * (cartItem.quantity || 1),
+        };
+
+        if (editingOrder) {
+          return axios.put(
+            `${import.meta.env.VITE_API_URL}/api/restraunt/updateorder/${editingOrder._id}`,
+            orderData,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
             },
-          }
-        );
-      } else {
-        await axios.post(
-          `${import.meta.env.VITE_API_URL}/api/restraunt/placeorder`,
-          orderData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
+          );
+        } else {
+          return axios.post(
+            `${import.meta.env.VITE_API_URL}/api/restraunt/placeorder`,
+            orderData,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
             },
-          }
-        );
-      }
+          );
+        }
+      });
+
+      await Promise.all(orderPromises);
 
       setSubmitted(true);
-      toast.success(`Added to cart ${item.name} successfully`, {
-        position: "top-center"
+      toast.success(`Order placed successfully!`, {
+        position: "top-center",
       });
-      onClose();
+      onClose(true);
     } catch (error) {
-      alert(`Failed to ${editingOrder ? 'update' : 'place'} order. Please try again.`);
+      console.error("Error placing order:", error);
+      toast.error(`Failed to place order. Please try again.`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -109,9 +141,12 @@ export default function OrderForm({ item, editingOrder, onClose }) {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/profile`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_URL}/api/users/profile`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          );
           const userData = response.data;
           setForm((f) => ({
             ...f,
@@ -131,7 +166,7 @@ export default function OrderForm({ item, editingOrder, onClose }) {
                 name: f.name || userData.name || userData.fullName || "",
                 phone: f.phone || userData.Phone || userData.phone || "",
               }));
-            } catch (e) { }
+            } catch (e) {}
           }
         }
       }
@@ -160,23 +195,11 @@ export default function OrderForm({ item, editingOrder, onClose }) {
             onClick={onClose}
             className="absolute top-4 right-2 w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center transition-colors z-10"
           >
-            <svg
-              className="w-4 h-4 text-neutral-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <X size={18} className="text-neutral-600" />
           </button>
 
-          <div className="flex justify-between items-center gap-4">
-            <div className="flex-1">
+          {/* <div className="flex justify-between items-center gap-4"> */}
+          {/* <div className="flex-1">
               <span className="text-xs font-semibold uppercase tracking-widest text-amber-600">
                 {editingOrder ? "Edit Order" : "ADD TO CART"}
               </span>
@@ -191,9 +214,9 @@ export default function OrderForm({ item, editingOrder, onClose }) {
                   {item.category}
                 </span>
               </div>
-            </div>
+            </div> */}
 
-            <div className="hidden sm:block flex-shrink-0">
+          {/* <div className="hidden sm:block flex-shrink-0">
               <div className="w-28 h-28 rounded-2xl overflow-hidden shadow-xl border-2 border-white ring-4 ring-amber-50">
                 <img
                   src={item.image}
@@ -201,8 +224,8 @@ export default function OrderForm({ item, editingOrder, onClose }) {
                   className="w-full h-full object-cover transition-transform hover:scale-110 duration-500"
                 />
               </div>
-            </div>
-          </div>
+            </div> */}
+          {/* </div> */}
         </div>
 
         <div className="p-6 md:p-8">
@@ -257,7 +280,7 @@ export default function OrderForm({ item, editingOrder, onClose }) {
               </div>
             </div>
 
-            <div className={`grid grid-cols-1 ${item.has_portions ? "sm:grid-cols-2" : ""} gap-4`}>
+            {/* <div className={`grid grid-cols-1 ${item.has_portions ? "sm:grid-cols-2" : ""} gap-4`}>
               {item.has_portions && (
                 <div>
                   <label className="block text-xs font-semibold text-neutral-600 mb-1.5 uppercase tracking-wide">
@@ -300,7 +323,7 @@ export default function OrderForm({ item, editingOrder, onClose }) {
                   </button>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -313,7 +336,12 @@ export default function OrderForm({ item, editingOrder, onClose }) {
                   value={form.pickupDate}
                   onChange={handleChange}
                   required
-                  min={new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Colombo', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date())}
+                  min={new Intl.DateTimeFormat("en-CA", {
+                    timeZone: "Asia/Colombo",
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                  }).format(new Date())}
                   className="w-full border border-neutral-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition"
                 />
               </div>
@@ -334,11 +362,11 @@ export default function OrderForm({ item, editingOrder, onClose }) {
 
             <div className="mt-2 p-4 bg-amber-50 border border-amber-200 rounded-xl">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-amber-800">
+                {/* <span className="text-sm text-amber-800">
                   Rs. {getPrice()} × {form.quantity}
-                </span>
+                </span> */}
                 <span className="text-xl font-bold text-amber-700">
-                  Rs. {getPrice() * form.quantity}
+                  Rs. {getTotalPrice()}
                 </span>
               </div>
             </div>
@@ -346,9 +374,10 @@ export default function OrderForm({ item, editingOrder, onClose }) {
             <div className="mt-6">
               <button
                 type="submit"
-                className="w-full py-3.5 bg-amber-600 text-white font-semibold rounded-xl hover:bg-amber-700 active:scale-[0.98] transition-all shadow-md shadow-amber-200/50 text-base"
+                disabled={loading}
+                className="w-full py-3.5 bg-amber-600 text-white font-semibold rounded-xl hover:bg-amber-700 active:scale-[0.98] transition-all shadow-md shadow-amber-200/50 text-base disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {editingOrder ? "Update Cart Item " : "Add to Cart"}
+                {loading ? "Processing..." : "Confirm Order"}
               </button>
             </div>
           </form>
