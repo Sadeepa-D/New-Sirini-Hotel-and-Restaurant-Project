@@ -7,7 +7,7 @@ import ConfirmDialog from "../../ConfrimDialog";
 const OrderManage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("In Progress");
+  const [activeTab, setActiveTab] = useState("Pending");
   const [searchTerm, setSearchTerm] = useState("");
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
@@ -48,7 +48,12 @@ const OrderManage = () => {
 
   const handleStatusChange = async (id, status) => {
     try {
-      const endpoint = status === "Completed" ? "complete" : "cancelled";
+      const endpointMap = {
+        "Accepted": "accepted",
+        "Preparing": "preparing",
+        "Complete": "complete"
+      };
+      const endpoint = endpointMap[status];
       await axios.put(`${VITE_URL}/api/restraunt/updateorderstatus/${endpoint}/${id}`);
       toast.success(`Order marked as ${status}`);
       fetchOrders();
@@ -73,28 +78,32 @@ const OrderManage = () => {
     setConfirmDialog({ isOpen: false, id: null });
     const loadingtoast = toast.loading("Deleting order...");
     try {
-      await axios.put(`${VITE_URL}/api/restraunt/updateorderstatus/cancelled/${id}`);
+      await axios.delete(`${VITE_URL}/api/restraunt/deleteorder/${id}`);
       toast.dismiss(loadingtoast);
-      toast.success(`Order marked as Cancelled`);
+      toast.success(`Order Deleted Successfully`);
       fetchOrders();
     } catch (error) {
-      console.error("Error updating status:", error);
+      console.error("Error deleting order:", error);
       toast.dismiss(loadingtoast);
-      toast.error("Failed to update status");
+      toast.error("Failed to delete order");
     }
   };
 
-  const pendingOrders = orders.filter((o) => o.status === "In Progress");
-  const completedOrders = orders.filter((o) => o.status === "Completed");
-  const cancelledOrders = orders.filter((o) => o.status === "Cancelled" || o.status === "delete");
+  const pendingOrders = orders.filter((o) => o.status === "Pending");
+  const acceptedOrders = orders.filter((o) => o.status === "Accepted");
+  const preparingOrders = orders.filter((o) => o.status === "Preparing");
+  const completeOrders = orders.filter((o) => o.status === "Complete");
+  const deletedOrders = orders.filter((o) => o.status === "delete");
 
   const getFilteredHistory = () => {
     let list =
-      activeTab === "Completed"
-        ? completedOrders
-        : activeTab === "Cancelled"
-          ? cancelledOrders
-          : pendingOrders;
+      activeTab === "Accepted"
+        ? acceptedOrders
+        : activeTab === "Preparing"
+          ? preparingOrders
+          : activeTab === "Complete"
+            ? completeOrders
+            : pendingOrders;
 
     if (searchTerm) {
       list = list.filter(
@@ -132,11 +141,15 @@ const OrderManage = () => {
           </div>
         </div>
 
-        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${order.status === "Completed"
+        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${order.status === "Complete"
             ? "bg-green-50 text-green-600"
-            : order.status === "Cancelled" || order.status === "delete"
-              ? "bg-red-50 text-red-600"
-              : "bg-amber-50 text-amber-600"
+            : order.status === "Accepted"
+              ? "bg-blue-50 text-blue-600"
+              : order.status === "Preparing"
+                ? "bg-purple-50 text-purple-600"
+                : order.status === "delete"
+                  ? "bg-red-50 text-red-600"
+                  : "bg-amber-50 text-amber-600"
           }`}>
           {order.status === "delete" ? "DELETED" : order.status.toUpperCase()}
         </span>
@@ -166,22 +179,40 @@ const OrderManage = () => {
         <span className="text-amber-600 font-bold">Rs. {order.Price}</span>
       </div>
 
-      {order.status === "In Progress" && (
-        <div className="flex gap-2 mt-auto">
+      <div className="flex gap-2 mt-auto">
+        {order.status === "Pending" && (
           <button
-            onClick={() => handleStatusChange(order._id, "Completed")}
+            onClick={() => handleStatusChange(order._id, "Accepted")}
+            className="flex-1 py-2 bg-blue-600 text-white rounded-xl font-bold text-[10px] hover:bg-blue-700 transition-colors flex items-center justify-center gap-1"
+          >
+            <Check size={12} /> ACCEPT
+          </button>
+        )}
+        {order.status === "Accepted" && (
+          <button
+            onClick={() => handleStatusChange(order._id, "Preparing")}
+            className="flex-1 py-2 bg-purple-600 text-white rounded-xl font-bold text-[10px] hover:bg-purple-700 transition-colors flex items-center justify-center gap-1"
+          >
+            <Clock size={12} /> PREPARE
+          </button>
+        )}
+        {order.status === "Preparing" && (
+          <button
+            onClick={() => handleStatusChange(order._id, "Complete")}
             className="flex-1 py-2 bg-green-600 text-white rounded-xl font-bold text-[10px] hover:bg-green-700 transition-colors flex items-center justify-center gap-1"
           >
-            <Check size={12} /> COMPLETE
+            <CheckCircle size={12} /> COMPLETE
           </button>
+        )}
+        {order.status !== "Complete" && order.status !== "delete" && (
           <button
             onClick={() => confirmDeleteOrder(order._id)}
             className="flex-1 py-2 bg-red-600 text-white rounded-xl font-bold text-[10px] hover:bg-red-700 transition-colors flex items-center justify-center gap-1"
           >
             <X size={12} /> DELETE
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 
@@ -198,7 +229,7 @@ const OrderManage = () => {
 
         {/* Tabs */}
         <div className="flex gap-2 mt-4 flex-wrap">
-          {["In Progress", "Completed", "Cancelled"].map((tab) => (
+          {["Pending", "Accepted", "Preparing", "Complete"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}

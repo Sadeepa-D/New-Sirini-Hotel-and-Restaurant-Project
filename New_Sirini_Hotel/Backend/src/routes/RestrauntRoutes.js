@@ -14,13 +14,17 @@ router.put(
   FoodOrderCont.updateFoodOrderStatusTOComplete,
 );
 router.put(
-  "/updateorderstatus/cancelled/:id",
-  FoodOrderCont.updateFoodOrderStatusToCancelled,
+  "/updateorderstatus/accepted/:id",
+  FoodOrderCont.updateFoodOrderStatusToAccepted,
 );
-router.get("/completedorders", FoodOrderCont.getCompletedFoodOrders);
-router.get("/cancelledorders", FoodOrderCont.getCancelledFoodOrders);
-router.get("/inprogressorders", FoodOrderCont.getInProgressFoodOrders);
-router.get("/overdueorders", FoodOrderCont.getOverdueFoodOrders);
+router.put(
+  "/updateorderstatus/preparing/:id",
+  FoodOrderCont.updateFoodOrderStatusToPreparing,
+);
+router.get("/completeorders", FoodOrderCont.getCompleteFoodOrders);
+router.get("/acceptedorders", FoodOrderCont.getAcceptedFoodOrders);
+router.get("/preparingorders", FoodOrderCont.getPreparingFoodOrders);
+router.get("/pendingorders", FoodOrderCont.getPendingFoodOrders);
 
 router.post(
   "/addfooditem",

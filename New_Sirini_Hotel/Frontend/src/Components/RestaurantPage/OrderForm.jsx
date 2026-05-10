@@ -77,8 +77,8 @@ export default function OrderForm({ item, cartItems, onClose }) {
             : cartItem.normal_price;
 
         const portionValue = cartItem.has_portions
-          ? cartItem.portion === "Full"
-          : cartItem.portion === "Normal";
+          ? cartItem.portion || "Normal"
+          : "Normal";
 
         const orderData = {
           fullName: form.name,
