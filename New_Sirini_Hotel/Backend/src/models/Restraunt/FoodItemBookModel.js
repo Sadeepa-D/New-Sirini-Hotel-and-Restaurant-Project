@@ -45,7 +45,7 @@ const foodItemBookSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Pending", "Completed", "Cancelled", "Overdue"],
+      enum: ["Pending", "Accepted", "Preparing", "Complete", "delete"],
       default: "Pending",
     },
   },

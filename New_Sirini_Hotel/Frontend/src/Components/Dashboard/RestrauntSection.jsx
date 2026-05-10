@@ -131,24 +131,33 @@ const RestaurantSection = ({ data }) => {
     navigate("/restaurant", { state: { editOrder: order } });
   };
 
-  const filteredOrders = orders.filter((order) => {
-    if (activeTab === "Pending") return order.status === "Pending";
-    if (activeTab === "Completed") return order.status === "Completed";
-    if (activeTab === "Cancelled") return order.status === "Cancelled" || order.status === "delete";
-    return true;
-  });
+  const pendingOrders = orders.filter((o) => o.status === "Pending");
+  const acceptedOrders = orders.filter((o) => o.status === "Accepted");
+  const preparingOrders = orders.filter((o) => o.status === "Preparing");
+  const completeOrders = orders.filter((o) => o.status === "Complete");
 
-  const tabs = ["Pending", "Completed", "Cancelled"];
+  const filteredOrders = activeTab === "Accepted"
+    ? acceptedOrders
+    : activeTab === "Preparing"
+      ? preparingOrders
+      : activeTab === "Complete"
+        ? completeOrders
+        : pendingOrders;
+
+  const tabs = ["Pending", "Accepted", "Preparing", "Complete"];
 
   const tabCounts = {
     "Pending": orders.filter(o => o.status === "Pending").length,
-    "Completed": orders.filter(o => o.status === "Completed").length,
-    "Cancelled": orders.filter(o => o.status === "Cancelled" || o.status === "delete").length,
+    "Accepted": orders.filter(o => o.status === "Accepted").length,
+    "Preparing": orders.filter(o => o.status === "Preparing").length,
+    "Complete": orders.filter(o => o.status === "Complete").length,
   };
 
   const statusStyle = (status) => {
-    if (status === "Completed") return "bg-green-50 text-green-600 border-green-200";
-    if (status === "Cancelled" || status === "delete") return "bg-red-50 text-red-500 border-red-200";
+    if (status === "Complete") return "bg-green-50 text-green-600 border-green-200";
+    if (status === "Accepted") return "bg-blue-50 text-blue-600 border-blue-200";
+    if (status === "Preparing") return "bg-purple-50 text-purple-600 border-purple-200";
+    if (status === "delete") return "bg-red-50 text-red-500 border-red-200";
     return "bg-amber-50 text-amber-600 border-amber-200";
   };
 
