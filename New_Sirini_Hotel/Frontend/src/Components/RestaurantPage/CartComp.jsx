@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { X, Trash2, Plus, Minus, Edit2 } from "lucide-react";
+import { X, Trash2, Plus, Minus } from "lucide-react";
 
 const CartComp = ({ onClose, cartItems = [], onCheckout }) => {
   const [items, setItems] = useState([]);
-  const [editingId, setEditingId] = useState(null);
-  const [editingPortion, setEditingPortion] = useState("Normal");
 
   // Initialize items with quantity and portion on mount
   useEffect(() => {
@@ -31,18 +29,12 @@ const CartComp = ({ onClose, cartItems = [], onCheckout }) => {
     setItems((prev) => prev.filter((item) => item.cartId !== cartId));
   };
 
-  const startEdit = (item) => {
-    setEditingId(item.cartId);
-    setEditingPortion(item.portion || "Normal");
-  };
-
-  const savePortion = (cartId) => {
+  const handlePortionChange = (cartId, newPortion) => {
     setItems((prev) =>
       prev.map((item) =>
-        item.cartId === cartId ? { ...item, portion: editingPortion } : item,
+        item.cartId === cartId ? { ...item, portion: newPortion } : item,
       ),
     );
-    setEditingId(null);
   };
 
   const getItemPrice = (item) => {
@@ -63,9 +55,9 @@ const CartComp = ({ onClose, cartItems = [], onCheckout }) => {
       <div className="bg-white w-full max-w-6xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-linear-to-r from-amber-50 to-amber-100">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 tracking-tight items-center justify-center flex gap-2">
-              Shopping Cart
+          <div className="flex-1 text-center">
+            <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
+              Your Cart
             </h2>
             <p className="text-sm text-gray-600 mt-1">
               {items.length} {items.length === 1 ? "item" : "items"}
@@ -156,30 +148,22 @@ const CartComp = ({ onClose, cartItems = [], onCheckout }) => {
 
                         {/* Portion */}
                         <td className="py-4 px-3">
-                          {editingId === item.cartId && item.has_portions ? (
-                            <div className="flex items-center justify-center gap-2">
+                          <div className="flex items-center justify-center">
+                            {item.has_portions ? (
                               <select
-                                value={editingPortion}
+                                value={item.portion || "Normal"}
                                 onChange={(e) =>
-                                  setEditingPortion(e.target.value)
+                                  handlePortionChange(item.cartId, e.target.value)
                                 }
-                                className="text-xs md:text-sm px-2 py-1 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                className="text-sm px-3 py-2 border border-amber-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium cursor-pointer"
                               >
                                 <option value="Normal">Normal</option>
                                 <option value="Full">Full</option>
                               </select>
-                              <button
-                                onClick={() => savePortion(item.cartId)}
-                                className="text-xs px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-                              >
-                                Save
-                              </button>
-                            </div>
-                          ) : (
-                            <p className="text-center text-sm text-gray-700 font-medium">
-                              {item.portion || "—"}
-                            </p>
-                          )}
+                            ) : (
+                              <span className="text-sm text-gray-700 font-medium">Regular</span>
+                            )}
+                          </div>
                         </td>
 
                         {/* Quantity */}
@@ -216,16 +200,7 @@ const CartComp = ({ onClose, cartItems = [], onCheckout }) => {
 
                         {/* Action */}
                         <td className="py-4 px-3">
-                          <div className="flex items-center justify-center gap-2">
-                            {item.has_portions && (
-                              <button
-                                onClick={() => startEdit(item)}
-                                className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
-                                title="Edit portion"
-                              >
-                                <Edit2 size={16} />
-                              </button>
-                            )}
+                          <div className="flex items-center justify-center">
                             <button
                               onClick={() => removeItem(item.cartId)}
                               className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
@@ -272,30 +247,16 @@ const CartComp = ({ onClose, cartItems = [], onCheckout }) => {
                           <label className="text-xs font-semibold text-gray-600 block mb-1">
                             Portion
                           </label>
-                          {editingId === item.cartId ? (
-                            <div className="flex gap-1">
-                              <select
-                                value={editingPortion}
-                                onChange={(e) =>
-                                  setEditingPortion(e.target.value)
-                                }
-                                className="text-xs px-2 py-1 border border-amber-300 rounded flex-1 focus:outline-none focus:ring-2 focus:ring-amber-500"
-                              >
-                                <option value="Normal">Normal</option>
-                                <option value="Full">Full</option>
-                              </select>
-                              <button
-                                onClick={() => savePortion(item.cartId)}
-                                className="text-xs px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-                              >
-                                OK
-                              </button>
-                            </div>
-                          ) : (
-                            <p className="text-sm font-medium text-gray-700">
-                              {item.portion || "—"}
-                            </p>
-                          )}
+                          <select
+                            value={item.portion || "Normal"}
+                            onChange={(e) =>
+                              handlePortionChange(item.cartId, e.target.value)
+                            }
+                            className="w-full text-xs px-2 py-1.5 border border-amber-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium cursor-pointer"
+                          >
+                            <option value="Normal">Normal</option>
+                            <option value="Full">Full</option>
+                          </select>
                         </div>
                       )}
 
@@ -337,14 +298,6 @@ const CartComp = ({ onClose, cartItems = [], onCheckout }) => {
                     </div>
 
                     <div className="flex gap-2">
-                      {item.has_portions && (
-                        <button
-                          onClick={() => startEdit(item)}
-                          className="flex-1 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors flex items-center justify-center gap-2"
-                        >
-                          <Edit2 size={14} /> Edit Portion
-                        </button>
-                      )}
                       <button
                         onClick={() => removeItem(item.cartId)}
                         className="flex-1 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
