@@ -125,7 +125,15 @@ export default function Restaurant() {
       setShowLoginModal(true);
       return;
     }
-    setCartItems((prev) => [...prev, item]);
+    setCartItems((prev) => {
+      const existing = prev.find((i) => i.id === item.id);
+      if (existing) {
+        return prev.map((i) =>
+          i.id === item.id ? { ...i, quantity: (i.quantity || 1) + 1 } : i
+        );
+      }
+      return [...prev, { ...item, quantity: 1, portion: "normal" }];
+    });
     toast.success(`${item.name} added to cart!`);
   };
 
@@ -318,6 +326,7 @@ export default function Restaurant() {
         <CartComp
           onClose={() => setShowCart(false)}
           cartItems={cartItems}
+          setCartItems={setCartItems}
           onCheckout={handlecheckout}
         />
       )}

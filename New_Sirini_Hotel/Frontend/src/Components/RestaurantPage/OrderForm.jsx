@@ -19,11 +19,15 @@ export default function OrderForm({ item, cartItems, editingOrder, onClose }) {
 
   const items = cartItems && cartItems.length > 0 ? cartItems : [item];
 
-  const getPrice = () => {
-    if (!item.has_portions || form.portion === "Normal") {
-      return item.normal_price || 0;
-    }
-    return item.full_price || 0;
+  const getTotalPrice = () => {
+    return items.reduce((sum, currentItem) => {
+      if (!currentItem) return sum;
+      const price =
+        currentItem.portion === "full" && currentItem.full_price
+          ? currentItem.full_price
+          : currentItem.normal_price;
+      return sum + price * (currentItem.quantity || 1);
+    }, 0);
   };
 
   const handleChange = (e) => {
@@ -70,17 +74,28 @@ export default function OrderForm({ item, cartItems, editingOrder, onClose }) {
 
       // Save all cart items as separate orders
       const orderPromises = items.map((cartItem) => {
+        const itemPrice =
+          cartItem.portion === "full" && cartItem.full_price
+            ? cartItem.full_price
+            : cartItem.normal_price;
+
+        const portionValue = cartItem.has_portions
+          ? cartItem.portion === "full"
+            ? "Full"
+            : "Normal"
+          : "Normal";
+
         const orderData = {
           fullName: form.name,
           email: form.email,
           phoneNumber: form.phone.replace(/\D/g, ""),
           pickupDate: form.pickupDate,
           pickupTime: form.pickupTime,
-          quantity: cartItem.quantity,
-          portion: cartItem.has_portions ? cartItem.portion || "Normal" : null,
+          quantity: cartItem.quantity || 1,
+          portion: portionValue,
           foodName: cartItem.name,
           userId: userId,
-          Price: cartItem.normal_price * cartItem.quantity,
+          Price: itemPrice * (cartItem.quantity || 1),
         };
 
         if (editingOrder) {
@@ -112,7 +127,7 @@ export default function OrderForm({ item, cartItems, editingOrder, onClose }) {
       toast.success(`Order placed successfully!`, {
         position: "top-center",
       });
-      onClose();
+      onClose(true);
     } catch (error) {
       console.error("Error placing order:", error);
       toast.error(`Failed to place order. Please try again.`);
@@ -351,7 +366,7 @@ export default function OrderForm({ item, cartItems, editingOrder, onClose }) {
                   Rs. {getPrice()} × {form.quantity}
                 </span> */}
                 <span className="text-xl font-bold text-amber-700">
-                  Rs. {getPrice() * form.quantity}
+                  Rs. {getTotalPrice()}
                 </span>
               </div>
             </div>
