@@ -6,6 +6,7 @@ import {
   Utensils,
   LogOut,
   LayoutDashboard,
+  ExternalLink,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import LiquorManage from "../../Components/OperationManager/Liquor/LiquorMngHome";
@@ -107,6 +108,20 @@ const OperationManager = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              {userdata.Role === "Admin" && (
+                <button
+                  className="flex items-center gap-2 group transition-all"
+                  onClick={() => usenavigate("/admin")}
+                >
+                  <ExternalLink
+                    className="text-amber-500 font-bold hover:scale-105"
+                    size={25}
+                  />
+                  <span className="text-amber-500 font-bold hover:scale-105">
+                    Admin Portal
+                  </span>
+                </button>
+              )}
               <button
                 onClick={() => usenavigate("/")}
                 className="p-1.5 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
@@ -200,6 +215,20 @@ const OperationManager = () => {
 
           {/* Right: Home + Avatar + Name */}
           <div className="flex items-center justify-end gap-3">
+            {userdata.Role === "Admin" && (
+              <button
+                className="flex items-center gap-2 group transition-all"
+                onClick={() => usenavigate("/admin")}
+              >
+                <ExternalLink
+                  className="text-amber-500 font-bold hover:scale-105"
+                  size={25}
+                />
+                <span className="text-amber-500 font-bold hover:scale-105">
+                  Admin Portal
+                </span>
+              </button>
+            )}
             <button
               onClick={() => usenavigate("/")}
               className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"

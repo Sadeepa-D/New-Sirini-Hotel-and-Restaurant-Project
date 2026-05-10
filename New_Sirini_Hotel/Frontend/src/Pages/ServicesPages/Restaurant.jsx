@@ -6,7 +6,10 @@ import resturantImg from "../../assets/resturant.png";
 import OrderForm from "../../Components/RestaurantPage/OrderForm";
 import RestaurantCard from "../../Components/RestaurantPage/RestaurantCard";
 import LoginMessage from "../../Components/LoginMessage";
+import ProcessFlow from "../../Components/RestaurantPage/ProcessFlow";
 import { useLocation, useNavigate } from "react-router-dom";
+import { ShoppingCart,ChevronLeft,ChevronRight } from "lucide-react";
+import CartComp from "../../Components/RestaurantPage/CartComp";
 
 // Initial hardcoded data removed. Data is now fetched from the backend API.
 
@@ -17,7 +20,7 @@ const CATEGORIES = [
   "Noodles",
   "Bites",
   "Side Dishes",
-  "Snacks"
+  "Snacks",
 ];
 
 export default function Restaurant() {
@@ -28,6 +31,9 @@ export default function Restaurant() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [editingOrder, setEditingOrder] = useState(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showCart, setShowCart] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
+  const [openorderform, setOpenorderform] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -89,28 +95,55 @@ export default function Restaurant() {
     }
   }, [location.state, mealData, navigate, location.pathname]);
 
-  const handleOrder = (item) => {
-    if (!isLoggedIn) {
-      setShowLoginModal(true);
-      return;
-    }
-    setSelectedItem(item);
-  };
+  // const handleOrder = (item) => {
+  //   if (!isLoggedIn) {
+  //     setShowLoginModal(true);
+  //     return;
+  //   }
+  //   setSelectedItem(item);
+  //   setOpenorderform(true);
+  // };
 
   const getCategoryIndex = (cat) => categoryIndices[cat] || 0;
-  
+
   const handlePrev = (cat) => {
-    setCategoryIndices(prev => ({
+    setCategoryIndices((prev) => ({
       ...prev,
-      [cat]: Math.max(0, (prev[cat] || 0) - 1)
+      [cat]: Math.max(0, (prev[cat] || 0) - 1),
     }));
   };
 
   const handleNext = (cat, itemsCount) => {
-    setCategoryIndices(prev => ({
+    setCategoryIndices((prev) => ({
       ...prev,
-      [cat]: Math.min(itemsCount - itemsPerView, (prev[cat] || 0) + 1)
+      [cat]: Math.min(itemsCount - itemsPerView, (prev[cat] || 0) + 1),
     }));
+  };
+
+  const handleAddToCart = (item) => {
+    if (!isLoggedIn) {
+      setShowLoginModal(true);
+      return;
+    }
+    setCartItems((prev) => {
+      const existing = prev.find((i) => i.id === item.id);
+      if (existing) {
+        return prev.map((i) =>
+          i.id === item.id ? { ...i, quantity: (i.quantity || 1) + 1 } : i
+        );
+      }
+      return [...prev, { ...item, quantity: 1, portion: "normal" }];
+    });
+    toast.success(`${item.name} added to cart!`);
+  };
+
+  const handlecheckout = () => {
+    if (cartItems.length === 0) {
+      toast.error("Your cart is empty!");
+      return;
+    }
+    setShowCart(false);
+    setOpenorderform(true);
   };
 
   const MenuSection = ({ title, items, index, onPrev, onNext, onOrder }) => (
@@ -122,19 +155,7 @@ export default function Restaurant() {
             onClick={onPrev}
             className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
           >
-            <svg
-              className="w-6 h-6 text-neutral-900"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
+            <ChevronLeft className="w-6 h-6 text-neutral-900" />
           </button>
         )}
 
@@ -161,19 +182,7 @@ export default function Restaurant() {
             onClick={onNext}
             className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
           >
-            <svg
-              className="w-6 h-6 text-neutral-900"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
+            <ChevronRight className="w-6 h-6 text-neutral-900" />
           </button>
         )}
       </div>
@@ -224,12 +233,15 @@ export default function Restaurant() {
         </div>
       </div>
 
+      {/* Process Flow Section */}
+      <ProcessFlow />
+
       {/* Categories Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {CATEGORIES.map((cat) => {
-          const catItems = mealData.filter(item => item.category === cat);
+          const catItems = mealData.filter((item) => item.category === cat);
           if (catItems.length === 0) return null;
-          
+
           return (
             <MenuSection
               key={cat}
@@ -238,12 +250,29 @@ export default function Restaurant() {
               index={getCategoryIndex(cat)}
               onPrev={() => handlePrev(cat)}
               onNext={() => handleNext(cat, catItems.length)}
-              onOrder={handleOrder}
+              onOrder={handleAddToCart}
             />
           );
         })}
       </div>
 
+      {/* Floating Cart Button */}
+      <div className="fixed bottom-8 right-8 z-50">
+        <button
+          className="flex items-center justify-center w-20 h-20 bg-amber-500 text-white hover:bg-amber-600 hover:scale-110 transition-all duration-300 rounded-full"
+          style={{ boxShadow: "0 8px 30px rgba(245, 158, 11, 0.4)" }}
+          onClick={() => {
+            if (!isLoggedIn) {
+              setShowLoginModal(true);
+              return;
+            }
+            setShowCart(true);
+          }}
+        >
+          <ShoppingCart size={38} />
+        </button>
+      </div>
+      {/* 
       {selectedItem && (
         <OrderForm
           item={selectedItem}
@@ -253,11 +282,30 @@ export default function Restaurant() {
             setEditingOrder(null);
           }}
         />
+      )} */}
+      {openorderform && (
+        <OrderForm
+          cartItems={cartItems}
+          onClose={() => {
+            setOpenorderform(false);
+            setCartItems([]);
+          }}
+        />
       )}
       <LoginMessage
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}
       />
+
+      {/* Cart Modal */}
+      {showCart && (
+        <CartComp
+          onClose={() => setShowCart(false)}
+          cartItems={cartItems}
+          setCartItems={setCartItems}
+          onCheckout={handlecheckout}
+        />
+      )}
     </div>
   );
 }

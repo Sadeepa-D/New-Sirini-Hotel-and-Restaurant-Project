@@ -74,7 +74,12 @@ function Header() {
     { label: "Contact Us", path: "/#contact" },
   ];
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => {
+    if (path.includes("#")) {
+      return location.pathname === "/" && location.hash === path.substring(1);
+    }
+    return location.pathname === path && !location.hash;
+  };
 
   const getLinkStyle = (path, id) => ({
     textDecoration: "none",
@@ -98,10 +103,8 @@ function Header() {
 
   const handleNavClick = (e, path) => {
     if (path.includes("#")) {
-      e.preventDefault();
       const sectionId = path.split("#")[1];
       if (location.pathname !== "/") {
-        navigate("/");
         setTimeout(() => {
           document
             .getElementById(sectionId)
@@ -112,6 +115,9 @@ function Header() {
           .getElementById(sectionId)
           ?.scrollIntoView({ behavior: "smooth" });
       }
+      closeMenu();
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
       closeMenu();
     }
   };

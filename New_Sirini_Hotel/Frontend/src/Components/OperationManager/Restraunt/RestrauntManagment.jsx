@@ -67,7 +67,7 @@ const RestaurantManager = () => {
   const [editingItem, setEditingItem] = useState(null);
   const [foodItems, setFoodItems] = useState([]);
   const [indexes, setIndexes] = useState({});
-  const [itemsPerView, setItemsPerView] = useState(4);
+  const [itemsPerView, setItemsPerView] = useState(5);
 
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
@@ -107,7 +107,7 @@ const RestaurantManager = () => {
 
     const handleResize = () => {
       const w = window.innerWidth;
-      setItemsPerView(w < 640 ? 1 : w < 768 ? 2 : w < 1024 ? 3 : 4);
+      setItemsPerView(w < 640 ? 1 : w < 768 ? 2 : w < 1024 ? 3 : w < 1280 ? 4 : 5);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -201,8 +201,8 @@ const RestaurantManager = () => {
         {/* Toggle Availability */}
         <button
           className={`p-2 rounded-full shadow-md transition ${item.availability !== false
-              ? "bg-green-100 text-green-600 hover:bg-green-600 hover:text-white"
-              : "bg-red-100 text-red-600 hover:bg-red-600 hover:text-white"
+            ? "bg-green-100 text-green-600 hover:bg-green-600 hover:text-white"
+            : "bg-red-100 text-red-600 hover:bg-red-600 hover:text-white"
             }`}
           onClick={(e) => {
             e.stopPropagation();
@@ -246,7 +246,7 @@ const RestaurantManager = () => {
     return (
       <div key={category} className="mb-12">
         <h3 className="text-2xl font-bold text-neutral-900 mb-6">{category}</h3>
-        <div className="relative">
+        <div className="relative px-10">
           {/* Left arrow */}
           {idx > 0 && (
             <button
@@ -257,21 +257,24 @@ const RestaurantManager = () => {
             </button>
           )}
 
+          {/* Smooth sliding track */}
           <div className="overflow-hidden">
             <div
-              className="flex gap-4 sm:gap-6 transition-transform duration-300"
+              className="flex justify-start gap-4 sm:gap-6 transition-transform duration-500 ease-in-out"
               style={{
-                transform: `translateX(-${idx * (100 / itemsPerView)}%)`,
+                transform: `translateX(calc(-${idx * (100 / itemsPerView)}% - ${
+                  idx * ((itemsPerView === 1 ? 16 : 24) / itemsPerView)
+                }px))`,
               }}
             >
               {items.map((item) => (
                 <div
                   key={item._id}
-                  className="shrink-0"
+                  className="flex-shrink-0"
                   style={{
-                    width: `calc(${100 / itemsPerView}% - ${((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) /
-                      itemsPerView
-                      }px)`,
+                    width: `calc(${100 / itemsPerView}% - ${
+                      ((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) / itemsPerView
+                    }px)`,
                   }}
                 >
                   {renderCarouselCard(item)}
@@ -281,10 +284,10 @@ const RestaurantManager = () => {
           </div>
 
           {/* Right arrow */}
-          {idx < items.length - itemsPerView && (
+          {idx + itemsPerView < items.length && (
             <button
               onClick={() =>
-                setIndex(category, Math.min(items.length - itemsPerView, idx + 1))
+                setIndex(category, idx + 1)
               }
               className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
             >
@@ -325,7 +328,7 @@ const RestaurantManager = () => {
       </div>
 
       {/* Category Carousels */}
-      <div className="bg-white rounded-xl p-6 shadow-sm">
+      <div className="bg-white rounded-xl p-6 md:p-10 shadow-sm">
         {CATEGORIES.map((cat) => renderCarouselSection(cat))}
 
         {filteredItems.length === 0 && (
