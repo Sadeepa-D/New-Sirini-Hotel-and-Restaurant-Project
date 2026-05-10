@@ -8,7 +8,7 @@ import RestaurantCard from "../../Components/RestaurantPage/RestaurantCard";
 import LoginMessage from "../../Components/LoginMessage";
 import ProcessFlow from "../../Components/RestaurantPage/ProcessFlow";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart,ChevronLeft,ChevronRight } from "lucide-react";
 import CartComp from "../../Components/RestaurantPage/CartComp";
 
 // Initial hardcoded data removed. Data is now fetched from the backend API.
@@ -125,7 +125,15 @@ export default function Restaurant() {
       setShowLoginModal(true);
       return;
     }
-    setCartItems((prev) => [...prev, item]);
+    setCartItems((prev) => {
+      const existing = prev.find((i) => i.id === item.id);
+      if (existing) {
+        return prev.map((i) =>
+          i.id === item.id ? { ...i, quantity: (i.quantity || 1) + 1 } : i
+        );
+      }
+      return [...prev, { ...item, quantity: 1, portion: "normal" }];
+    });
     toast.success(`${item.name} added to cart!`);
   };
 
@@ -149,19 +157,7 @@ export default function Restaurant() {
             onClick={onPrev}
             className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
           >
-            <svg
-              className="w-6 h-6 text-neutral-900"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
+            <ChevronLeft className="w-6 h-6 text-neutral-900" />
           </button>
         )}
 
@@ -188,19 +184,7 @@ export default function Restaurant() {
             onClick={onNext}
             className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
           >
-            <svg
-              className="w-6 h-6 text-neutral-900"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
+            <ChevronRight className="w-6 h-6 text-neutral-900" />
           </button>
         )}
       </div>
@@ -320,6 +304,7 @@ export default function Restaurant() {
         <CartComp
           onClose={() => setShowCart(false)}
           cartItems={cartItems}
+          setCartItems={setCartItems}
           onCheckout={handlecheckout}
         />
       )}

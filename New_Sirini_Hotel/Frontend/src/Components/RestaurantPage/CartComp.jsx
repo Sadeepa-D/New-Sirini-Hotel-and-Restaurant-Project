@@ -1,25 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { X, Trash2, Plus, Minus } from "lucide-react";
 
-const CartComp = ({ onClose, cartItems = [], onCheckout }) => {
-  const [items, setItems] = useState([]);
-
-  // Initialize items with quantity and portion on mount
-  useEffect(() => {
-    const initializedItems = cartItems.map((item) => ({
-      ...item,
-      quantity: item.quantity || 1,
-      portion: item.portion || (item.has_portions ? "Normal" : null),
-      cartId: item.id + Math.random(), // Unique identifier for cart instance
-    }));
-    setItems(initializedItems);
-  }, [cartItems]);
-
-  const handleQuantity = (cartId, delta) => {
-    setItems((prev) =>
+const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
+  const handlePortionChange = (id, newPortion) => {
+    setCartItems((prev) =>
       prev.map((item) =>
-        item.cartId === cartId
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
+        item.id === id ? { ...item, portion: newPortion } : item
+      )
+    );
+  };
+
+  const handleQuantity = (id, delta) => {
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              quantity: Math.max(1, Math.min(999, (item.quantity || 1) + delta)),
+            }
           : item,
       ),
     );
