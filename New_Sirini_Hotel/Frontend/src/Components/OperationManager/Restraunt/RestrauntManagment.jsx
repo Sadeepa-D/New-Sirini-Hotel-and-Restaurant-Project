@@ -34,19 +34,22 @@ const FoodCard = ({ item, onClick }) => (
     </div>
 
     {/* Info */}
-    <div className="p-3 flex flex-col gap-1 flex-1 justify-between">
+    <div className="p-3 flex flex-col gap-1 flex-1">
       <div>
         <span className="inline-block bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-full w-fit max-w-full truncate">
           {item.name || item.foodname}
         </span>
-        {item.label && (
-          <p className="text-gray-400 text-xs">Label: {item.label}</p>
-        )}
+        <p className="text-gray-400 text-[10px] mt-1 line-clamp-2 italic">
+          {item.description}
+        </p>
       </div>
-      <div className="mt-2 space-y-1">
-        <p className="text-white text-sm font-semibold">Price: LKR {item.price}</p>
+      <div className="mt-2 space-y-1 flex-1 flex flex-col justify-end">
+        <p className="text-white text-sm font-semibold text-amber-500">Normal: LKR {item.normal_price}</p>
+        {item.has_portions && (
+          <p className="text-white text-sm font-semibold text-amber-500">Full: LKR {item.full_price}</p>
+        )}
         <p
-          className={`text-xs font-bold tracking-wide ${item.availability !== false ? "text-green-400" : "text-red-400"
+          className={`text-xs font-bold tracking-wide mt-1 ${item.availability !== false ? "text-green-400" : "text-red-400"
             }`}
         >
           {item.availability !== false ? "AVAILABLE" : "UNAVAILABLE"}
@@ -64,7 +67,7 @@ const RestaurantManager = () => {
   const [editingItem, setEditingItem] = useState(null);
   const [foodItems, setFoodItems] = useState([]);
   const [indexes, setIndexes] = useState({});
-  const [itemsPerView, setItemsPerView] = useState(4);
+  const [itemsPerView, setItemsPerView] = useState(5);
 
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
@@ -74,7 +77,15 @@ const RestaurantManager = () => {
     message: "",
   });
 
-  const CATEGORIES = ["Main Meals", "Soft Drinks", "Fresh Juice"];
+  const CATEGORIES = [
+    "Chopsy Rice",
+    "Rice & Nasi Goreng",
+    "Kottu",
+    "Noodles",
+    "Bites",
+    "Side Dishes",
+    "Snacks"
+  ];
 
   const fetchFoodItems = async () => {
     try {
@@ -83,7 +94,11 @@ const RestaurantManager = () => {
       );
       setFoodItems(data);
     } catch (err) {
-      console.error("Error fetching food items:", err);
+      if (err.response && err.response.status === 404) {
+        setFoodItems([]); // Handle empty state gracefully
+      } else {
+        console.error("Error fetching food items:", err);
+      }
     }
   };
 
@@ -92,7 +107,7 @@ const RestaurantManager = () => {
 
     const handleResize = () => {
       const w = window.innerWidth;
-      setItemsPerView(w < 640 ? 1 : w < 768 ? 2 : w < 1024 ? 3 : 4);
+      setItemsPerView(w < 640 ? 1 : w < 768 ? 2 : w < 1024 ? 3 : w < 1280 ? 4 : 5);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -164,7 +179,8 @@ const RestaurantManager = () => {
       setEditingItem(null);
     } catch (err) {
       console.error("Error saving item:", err);
-      toast.error("Error saving item", { id: loadingToast });
+      const errorMessage = err.response?.data?.message || "Error saving item";
+      toast.error(errorMessage, { id: loadingToast });
     }
   };
 
@@ -185,8 +201,8 @@ const RestaurantManager = () => {
         {/* Toggle Availability */}
         <button
           className={`p-2 rounded-full shadow-md transition ${item.availability !== false
-              ? "bg-green-100 text-green-600 hover:bg-green-600 hover:text-white"
-              : "bg-red-100 text-red-600 hover:bg-red-600 hover:text-white"
+            ? "bg-green-100 text-green-600 hover:bg-green-600 hover:text-white"
+            : "bg-red-100 text-red-600 hover:bg-red-600 hover:text-white"
             }`}
           onClick={(e) => {
             e.stopPropagation();
@@ -230,7 +246,7 @@ const RestaurantManager = () => {
     return (
       <div key={category} className="mb-12">
         <h3 className="text-2xl font-bold text-neutral-900 mb-6">{category}</h3>
-        <div className="relative">
+        <div className="relative px-10">
           {/* Left arrow */}
           {idx > 0 && (
             <button
@@ -241,21 +257,24 @@ const RestaurantManager = () => {
             </button>
           )}
 
+          {/* Smooth sliding track */}
           <div className="overflow-hidden">
             <div
-              className="flex gap-4 sm:gap-6 transition-transform duration-300"
+              className="flex justify-start gap-4 sm:gap-6 transition-transform duration-500 ease-in-out"
               style={{
-                transform: `translateX(-${idx * (100 / itemsPerView)}%)`,
+                transform: `translateX(calc(-${idx * (100 / itemsPerView)}% - ${
+                  idx * ((itemsPerView === 1 ? 16 : 24) / itemsPerView)
+                }px))`,
               }}
             >
               {items.map((item) => (
                 <div
                   key={item._id}
-                  className="shrink-0"
+                  className="flex-shrink-0"
                   style={{
-                    width: `calc(${100 / itemsPerView}% - ${((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) /
-                      itemsPerView
-                      }px)`,
+                    width: `calc(${100 / itemsPerView}% - ${
+                      ((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) / itemsPerView
+                    }px)`,
                   }}
                 >
                   {renderCarouselCard(item)}
@@ -265,10 +284,10 @@ const RestaurantManager = () => {
           </div>
 
           {/* Right arrow */}
-          {idx < items.length - itemsPerView && (
+          {idx + itemsPerView < items.length && (
             <button
               onClick={() =>
-                setIndex(category, Math.min(items.length - itemsPerView, idx + 1))
+                setIndex(category, idx + 1)
               }
               className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
             >
@@ -309,7 +328,7 @@ const RestaurantManager = () => {
       </div>
 
       {/* Category Carousels */}
-      <div className="bg-white rounded-xl p-6 shadow-sm">
+      <div className="bg-white rounded-xl p-6 md:p-10 shadow-sm">
         {CATEGORIES.map((cat) => renderCarouselSection(cat))}
 
         {filteredItems.length === 0 && (

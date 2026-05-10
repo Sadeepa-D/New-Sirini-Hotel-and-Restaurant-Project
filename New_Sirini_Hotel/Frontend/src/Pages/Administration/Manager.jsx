@@ -10,6 +10,7 @@ import {
   LogOut,
   Menu,
   LayoutDashboard,
+  ExternalLink,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -71,121 +72,150 @@ const Manager = () => {
     }
   };
 
-  const getPageTitle = () => {
-    switch (activeTab) {
-      case "dashboard":
-        return "Dashboard Overview";
-      case "rooms":
-        return "Rooms Management";
-      case "reception":
-        return "Reception Management";
-      default:
-        return "Dashboard Overview";
-    }
-  };
-
   return (
-    <div className="flex h-screen bg-black font-sans overflow-hidden">
-      {/* Mobile Overlay */}
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-20 md:hidden"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
+    <div className="flex flex-col h-screen bg-black font-sans">
+      {/* Top Header */}
+      <header className="bg-white mx-2 mt-3 mb-2 rounded-xl shadow-sm px-4 py-3">
+        {/* MOBILE layout */}
+        <div className="md:hidden">
+          {/* Row 1: Logo + Profile */}
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <img
+                src={Logo}
+                alt="Hotel Logo"
+                className="w-20 h-20 object-contain"
+              />
+              <div>
+                <h2 className="font-serif italic text-sm text-gray-900 leading-tight">
+                  New Sirini Hotel
+                </h2>
+                <p className="text-[8px] font-bold text-gray-400 tracking-widest uppercase">
+                  Operation Manager 2
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => usenavigate("/")}
+                className="p-1.5 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Home size={20} />
+              </button>
+              <div className="w-13 h-13 bg-amber-500 rounded-full overflow-hidden hover:scale-105 transition-transform cursor-pointer shadow-md ring-2 ring-amber-200 ring-offset-1">
+                <img
+                  src={userdata.image || Logo}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                  onClick={() => usenavigate("/dashboard")}
+                />
+              </div>
+            </div>
+          </div>
 
-      {/* Sidebar */}
-      <aside
-        className={`fixed md:static inset-y-0 left-0 z-30 w-80 bg-[#000000] text-white transform transition-transform duration-300 ease-in-out ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-        } flex flex-col`}
-      >
-        {/* Logo Area */}
-        <div className="p-6 border-b border-gray-800 flex items-center gap-3">
-          <img
-            src={Logo}
-            alt="Hotel Logo"
-            className="w-24 h-24 object-contain"
-          />
-          <div>
-            <h2 className="font-serif italic text-xl text-white">
-              New Sirini Hotel
-            </h2>
-            <p className="text-[10px] font-bold text-gray-400 -mt-1 tracking-wide uppercase">
-              Operation Manager 2
-            </p>
+          <div className="flex items-center gap-1 bg-gray-100 rounded-xl p-1 shadow-inner">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.id;
+              const isLogout = item.id === "logout";
+              return (
+                <button
+                  key={item.id}
+                  title={item.label}
+                  onClick={() => {
+                    if (item.id === "logout") handleLogout();
+                    else {
+                      setActiveTab(item.id);
+                      setIsSidebarOpen(false);
+                    }
+                  }}
+                  className={`flex-1 flex items-center justify-center py-2.5 rounded-lg transition-all duration-200 ${
+                    isActive
+                      ? "bg-amber-600 text-white shadow-lg ring-2 ring-amber-400 ring-offset-1"
+                      : isLogout
+                        ? "text-red-400 hover:bg-red-50"
+                        : "text-gray-500 hover:bg-white hover:shadow-sm"
+                  }`}
+                >
+                  <Icon size={18} />
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeTab === item.id;
-            const isLogout = item.id === "logout";
-            return (
-              <button
-                key={item.id}
-                onClick={() => {
-                  if (item.id === "logout") {
-                    handleLogout();
-                  } else {
-                    setActiveTab(item.id);
-                    setIsSidebarOpen(false);
-                  }
-                }}
-                className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-colors ${
-                  isActive
-                    ? "bg-yellow-500 text-white font-bold"
-                    : isLogout
-                      ? "text-red-400 hover:bg-red-500/10 hover:text-red-300"
-                      : "text-gray-400 hover:bg-gray-900 hover:text-white"
-                }`}
-              >
-                <Icon
-                  size={20}
-                  className={
-                    isActive
-                      ? "text-white"
-                      : isLogout
-                        ? "text-red-400"
-                        : "text-white"
-                  }
-                />
-                <span className="text-sm tracking-wide">{item.label}</span>
-              </button>
-            );
-          })}
-        </nav>
-      </aside>
-
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Header */}
-        <header className="bg-white m-4 mb-2 rounded-xl p-4 flex justify-between items-center shadow-sm">
-          <div className="flex items-center gap-4">
-            {/* Mobile Menu Toggle */}
-            <button
-              className="md:hidden p-2 text-gray-600 hover:bg-gray-200 rounded-lg"
-              onClick={() => setIsSidebarOpen(true)}
-            >
-              <Menu size={24} />
-            </button>
-            <h2 className="text-xl font-bold text-gray-900">
-              {getPageTitle()}
-            </h2>
+        {/* DESKTOP layout */}
+        <div className="hidden md:grid md:grid-cols-3 md:items-center">
+          {/* Left: Logo */}
+          <div className="flex items-center gap-3">
+            <img
+              src={Logo}
+              alt="Hotel Logo"
+              className="w-20 h-20 object-contain"
+            />
+            <div>
+              <h2 className="font-serif italic text-base text-gray-900 leading-tight">
+                New Sirini Hotel
+              </h2>
+            </div>
           </div>
 
-          {/* User Profile */}
-          <div className="flex items-center gap-3">
+          {/* Center: Floating pill tabs */}
+          <div className="flex justify-center">
+            <div className="flex items-center gap-1 bg-gray-100 rounded-xl p-1 shadow-inner">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeTab === item.id;
+                const isLogout = item.id === "logout";
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      if (item.id === "logout") handleLogout();
+                      else {
+                        setActiveTab(item.id);
+                        setIsSidebarOpen(false);
+                      }
+                    }}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      isActive
+                        ? "bg-amber-600 text-white shadow-lg scale-105 ring-2 ring-amber-400 ring-offset-1"
+                        : isLogout
+                          ? "text-red-400 hover:bg-red-50 hover:text-red-500"
+                          : "text-gray-500 hover:bg-white hover:text-gray-800 hover:shadow-sm"
+                    }`}
+                  >
+                    <Icon size={16} />
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Right: Home + Avatar + Name */}
+          <div className="flex items-center justify-end gap-3">
+            {userdata.Role === "Admin" && (
+              <button
+                className="flex items-center gap-2 group transition-all"
+                onClick={() => usenavigate("/admin")}
+              >
+                <ExternalLink
+                  className="text-amber-500 font-bold hover:scale-105"
+                  size={25}
+                />
+                <span className="text-amber-500 font-bold hover:scale-105">
+                  Admin Portal
+                </span>
+              </button>
+            )}
             <button
-              onClick={() => {
-                usenavigate("/");
-              }}
+              onClick={() => usenavigate("/")}
+              className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
             >
-              <Home size={30} />
+              <Home size={22} />
             </button>
-            <div className="w-14 h-14 bg-amber-500 rounded-2xl flex items-center justify-center text-white shadow-md overflow-hidden hover:scale-105 transition-transform cursor-pointer border-2 border-amber-500/20">
+            <div className="w-15 h-15 bg-amber-500 rounded-full overflow-hidden hover:scale-105 transition-transform cursor-pointer shadow-md ring-2 ring-amber-200 ring-offset-1">
               <img
                 src={userdata.image || Logo}
                 alt="Profile"
@@ -193,22 +223,22 @@ const Manager = () => {
                 onClick={() => usenavigate("/dashboard")}
               />
             </div>
-            <div className="hidden sm:block text-right">
+            <div className="text-right">
               <p className="text-sm font-bold text-gray-800">
                 {userdata.name || "User Name"}
               </p>
               <p className="text-xs text-gray-500">Operation Manager 2</p>
             </div>
           </div>
-        </header>
+        </div>
+      </header>
 
-        {/* Dynamic Middle Area */}
-        <main className="flex-1 overflow-y-auto p-4 pt-2 bg-transparent">
-          <div className="bg-gray-100 rounded-xl min-h-full">
-            {renderContent()}
-          </div>
-        </main>
-      </div>
+      {/* Dynamic Content Area */}
+      <main className="flex-1 overflow-y-auto px-4 pb-4 bg-transparent">
+        <div className="bg-gray-100 rounded-xl min-h-full">
+          {renderContent()}
+        </div>
+      </main>
     </div>
   );
 };

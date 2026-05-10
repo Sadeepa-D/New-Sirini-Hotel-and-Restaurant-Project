@@ -1,16 +1,31 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-export default function OrderForm({ item, editingOrder, onClose }) {
+import { X } from "lucide-react";
+
+export default function OrderForm({ item, cartItems, onClose }) {
   const [form, setForm] = useState({
-    name: editingOrder ? editingOrder.fullName : "",
-    email: editingOrder ? editingOrder.email : "",
-    phone: editingOrder ? editingOrder.phoneNumber : "",
-    pickupDate: editingOrder ? new Date(editingOrder.pickupDate).toISOString().split('T')[0] : "",
-    pickupTime: editingOrder ? editingOrder.pickupTime : "",
-    quantity: editingOrder ? editingOrder.quantity : 1,
+    name: "",
+    email: "",
+    phone: "",
+    pickupDate: "",
+    pickupTime: "",
+    portion: "",
   });
-  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const items = cartItems && cartItems.length > 0 ? cartItems : [item];
+
+  const getTotalPrice = () => {
+    return items.reduce((sum, currentItem) => {
+      if (!currentItem) return sum;
+      const price =
+        currentItem.portion === "full" && currentItem.full_price
+          ? currentItem.full_price
+          : currentItem.normal_price;
+      return sum + price * (currentItem.quantity || 1);
+    }, 0);
+  };
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -18,32 +33,29 @@ export default function OrderForm({ item, editingOrder, onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const token = localStorage.getItem("token");
 
-    // Get current Sri Lankan date and time
     const now = new Date();
-    const slDateStr = new Intl.DateTimeFormat('en-CA', { 
-      timeZone: 'Asia/Colombo', 
-      year: 'numeric', 
-      month: '2-digit', 
-      day: '2-digit' 
-    }).format(now);
-    
-    const slTimeStr = new Intl.DateTimeFormat('en-GB', { 
-      timeZone: 'Asia/Colombo', 
-      hour: '2-digit', 
-      minute: '2-digit', 
-      hour12: false 
+    const slDateStr = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Colombo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
     }).format(now);
 
-    // Validation
-    // if (form.pickupDate < slDateStr) {
-    //   toast.error("Selected date is in the past. Please choose today or a future date.");
-    //   return;
-    // }
+    const slTimeStr = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Colombo",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    }).format(now);
 
     if (form.pickupDate === slDateStr && form.pickupTime <= slTimeStr) {
-      toast.error("Selected time has already passed for today. Please choose a future time.");
+      toast.error(
+        "Selected time has already passed for today. Please choose a future time.",
+      );
+      setLoading(false);
       return;
     }
 
@@ -57,74 +69,94 @@ export default function OrderForm({ item, editingOrder, onClose }) {
         } catch (e) {}
       }
 
-      const orderData = {
-        fullName: form.name,
-        email: form.email,
-        // Strip non-numeric characters to match backend regex /^[0-9]{10}$/
-        phoneNumber: form.phone.replace(/\D/g, ""),
-        pickupDate: form.pickupDate,
-        pickupTime: form.pickupTime,
-        quantity: form.quantity,
-        foodName: item.name, 
-        userId: userId,
-        Price: item.price * form.quantity,
-      };
+      // Save all cart items as separate orders
+      const orderPromises = items.map((cartItem) => {
+        const itemPrice =
+          cartItem.portion === "Full" && cartItem.full_price
+            ? cartItem.full_price
+            : cartItem.normal_price;
 
-      if (editingOrder) {
-        await axios.put(
-          `${import.meta.env.VITE_API_URL}/api/restraunt/updateorder/${editingOrder._id}`,
-          orderData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-      } else {
-        await axios.post(
+        const portionValue = cartItem.has_portions
+          ? cartItem.portion === "Full"
+          : cartItem.portion === "Normal";
+
+        const orderData = {
+          fullName: form.name,
+          email: form.email,
+          phoneNumber: form.phone.replace(/\D/g, ""),
+          pickupDate: form.pickupDate,
+          pickupTime: form.pickupTime,
+          quantity: cartItem.quantity || 1,
+          portion: portionValue,
+          foodName: cartItem.name,
+          userId: userId,
+          Price: itemPrice * cartItem.quantity,
+        };
+        return axios.post(
           `${import.meta.env.VITE_API_URL}/api/restraunt/placeorder`,
           orderData,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
-      }
+      });
 
-      setSubmitted(true);
-      setTimeout(() => {
-        onClose();
-      }, 2000);
+      await Promise.all(orderPromises);
+      toast.success(`Order placed successfully!`);
+      onClose(true);
     } catch (error) {
-     // console.error("Error placing order:", error);
-      alert(`Failed to ${editingOrder ? 'update' : 'place'} order. Please try again.`);
+      console.error("Error placing order:", error);
+      toast.error(`Failed to place order. Please try again.`);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Prefill email and prevent background scroll
   useEffect(() => {
-    const userDataStr = localStorage.getItem("user");
-    if (userDataStr) {
-      try {
-        const userData = JSON.parse(userDataStr);
-        setForm((f) => ({
-          ...f,
-          // Only auto-fill if the field is currently empty
-          email: f.email || userData.email || "",
-          name: f.name || userData.name || userData.fullName || "",
-          phone: f.phone || userData.Phone || userData.phone || "",
-        }));
-      } catch (e) {
-        console.error("Error parsing user data for auto-fill:", e);
+    const fetchUserProfile = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_URL}/api/users/profile`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          );
+          const userData = response.data;
+          setForm((f) => ({
+            ...f,
+            email: f.email || userData.email || "",
+            name: f.name || userData.name || "",
+            phone: f.phone || userData.Phone || "",
+          }));
+        } catch (error) {
+          console.error("Error fetching user profile for auto-fill:", error);
+          const userDataStr = localStorage.getItem("user");
+          if (userDataStr) {
+            try {
+              const userData = JSON.parse(userDataStr);
+              setForm((f) => ({
+                ...f,
+                email: f.email || userData.email || "",
+                name: f.name || userData.name || userData.fullName || "",
+                phone: f.phone || userData.Phone || userData.phone || "",
+              }));
+            } catch (e) {}
+          }
+        }
       }
-    }
+    };
+
+    fetchUserProfile();
 
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [editingOrder]);
+  }, []);
 
   return (
     <div
@@ -136,48 +168,32 @@ export default function OrderForm({ item, editingOrder, onClose }) {
         className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header with close button */}
         <div className="relative px-6 pt-6 pb-4 border-b border-neutral-100">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center transition-colors"
+            className="absolute top-4 right-2 w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center transition-colors z-10"
           >
-            <svg
-              className="w-4 h-4 text-neutral-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <X size={18} className="text-neutral-600" />
           </button>
-
-          <span className="text-xs font-semibold uppercase tracking-widest text-amber-600">
-            {editingOrder ? "Edit Order" : "Order Now"}
-          </span>
-          <h2 className="text-2xl font-bold text-neutral-900 mt-1">{item.name}</h2>
-          <p className="text-sm text-neutral-500 mt-1">{item.description}</p>
-
-          {/* Small label pill - optional, looks nice */}
-          <div className="mt-3 inline-block">
-            <span
-              className="px-3 py-1 rounded-full text-xs font-bold text-white"
-              style={{ background: "#d97706" }}
-            >
-              {item.label}
-            </span>
-          </div>
         </div>
 
-        {/* Form / Success content */}
         <div className="p-6 md:p-8">
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            {/* Row 1 */}
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-neutral-600 mb-1.5 uppercase tracking-wide">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={form.email}
+                  readOnly
+                  className="w-full border border-neutral-200 bg-neutral-50 rounded-lg px-4 py-2.5 text-sm text-neutral-500 cursor-not-allowed outline-none"
+                />
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-neutral-600 mb-1.5 uppercase tracking-wide">
@@ -196,22 +212,6 @@ export default function OrderForm({ item, editingOrder, onClose }) {
 
               <div>
                 <label className="block text-xs font-semibold text-neutral-600 mb-1.5 uppercase tracking-wide">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={form.email}
-                  readOnly
-                  className="w-full border border-neutral-200 bg-neutral-50 rounded-lg px-4 py-2.5 text-sm text-neutral-500 cursor-not-allowed outline-none"
-                />
-              </div>
-            </div>
-
-            {/* Row 2 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-neutral-600 mb-1.5 uppercase tracking-wide">
                   Phone Number
                 </label>
                 <input
@@ -227,34 +227,8 @@ export default function OrderForm({ item, editingOrder, onClose }) {
                   className="w-full border border-neutral-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition"
                 />
               </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-neutral-600 mb-1.5 uppercase tracking-wide">
-                  Quantity
-                </label>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setForm((f) => ({ ...f, quantity: Math.max(1, f.quantity - 1) }))}
-                    className="w-10 h-10 rounded-lg border border-neutral-300 flex items-center justify-center text-neutral-700 hover:bg-neutral-100 transition font-bold text-xl"
-                  >
-                    −
-                  </button>
-                  <span className="flex-1 text-center text-base font-bold text-neutral-900 border border-neutral-300 rounded-lg py-2.5">
-                    {form.quantity}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setForm((f) => ({ ...f, quantity: f.quantity + 1 }))}
-                    className="w-10 h-10 rounded-lg border border-neutral-300 flex items-center justify-center text-neutral-700 hover:bg-neutral-100 transition font-bold text-xl"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
             </div>
 
-            {/* Row 3 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-neutral-600 mb-1.5 uppercase tracking-wide">
@@ -266,7 +240,12 @@ export default function OrderForm({ item, editingOrder, onClose }) {
                   value={form.pickupDate}
                   onChange={handleChange}
                   required
-                  min={new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Colombo', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date())}
+                  min={new Intl.DateTimeFormat("en-CA", {
+                    timeZone: "Asia/Colombo",
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                  }).format(new Date())}
                   className="w-full border border-neutral-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition"
                 />
               </div>
@@ -285,38 +264,23 @@ export default function OrderForm({ item, editingOrder, onClose }) {
               </div>
             </div>
 
-            {/* Total Price */}
             <div className="mt-2 p-4 bg-amber-50 border border-amber-200 rounded-xl">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-amber-800">
-                  Rs. {item.price} × {form.quantity}
-                </span>
                 <span className="text-xl font-bold text-amber-700">
-                  Rs. {item.price * form.quantity}
+                  Rs. {getTotalPrice()}
                 </span>
               </div>
             </div>
 
-            {/* Submit Button */}
             <div className="mt-6">
               <button
                 type="submit"
-                className="w-full py-3.5 bg-amber-600 text-white font-semibold rounded-xl hover:bg-amber-700 active:scale-[0.98] transition-all shadow-md shadow-amber-200/50 text-base"
+                disabled={loading}
+                className="w-full py-3.5 bg-amber-600 text-white font-semibold rounded-xl hover:bg-amber-700 active:scale-[0.98] transition-all shadow-md shadow-amber-200/50 text-base disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {editingOrder ? "Update Order" : "Confirm Order"}
+                {loading ? "Processing..." : "Confirm Order"}
               </button>
             </div>
-
-            {/* Success Message */}
-            {submitted && (
-              <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg text-center">
-                <p className="text-orange-800 font-medium">
-                  {editingOrder ? "Order updated successfully." : `Order placed.. we'll have your `}
-                  {!editingOrder && <span className="font-bold">{item.name}</span>}
-                  {!editingOrder && `, ready for pick up`}
-                </p>
-              </div>
-            )}
           </form>
         </div>
       </div>

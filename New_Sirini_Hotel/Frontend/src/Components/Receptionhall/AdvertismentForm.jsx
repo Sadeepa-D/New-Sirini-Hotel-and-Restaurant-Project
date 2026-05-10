@@ -30,6 +30,8 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
     TPNumber: "",
     image: null,
   });
+  const [preview, setPreview] = useState(null);
+
   useEffect(() => {
     if (editData) {
       setFormData({
@@ -42,6 +44,7 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
         TPNumber: editData.TPNumber || "",
         image: null,
       });
+      setPreview(editData.image || null);
     }
   }, [editData]);
 
@@ -51,7 +54,11 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
   };
 
   const handleImageChange = (e) => {
-    setFormData((prev) => ({ ...prev, image: e.target.files[0] }));
+    const file = e.target.files[0];
+    setFormData((prev) => ({ ...prev, image: file }));
+    if (file) {
+      setPreview(URL.createObjectURL(file));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -288,26 +295,54 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
             </div>
           </div>
 
-          {/* Image Upload */}
-          <div>
-            <label className="block text-xs text-gray-400 uppercase tracking-widest mb-1.5 font-medium">
+          {/* Modern Image Upload & Preview Container */}
+          <div className="space-y-3">
+            <label className="block text-xs text-gray-400 uppercase tracking-widest font-medium">
               Business Image
             </label>
-            <label className="relative w-full flex flex-col items-center justify-center text-center gap-2 border-2 border-dashed border-amber-200 hover:border-amber-400 bg-amber-50/40 hover:bg-amber-50 rounded-2xl px-4 py-10 cursor-pointer transition-all duration-300 group overflow-hidden">
-              <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center group-hover:bg-amber-100 transition-colors mx-auto">
-                <Camera size={18} className="text-amber-500" />
+            <div className="flex flex-col sm:flex-row gap-4">
+              {/* Box 1: Visual Preview */}
+              <div className="w-full sm:w-44 h-44 rounded-3xl overflow-hidden border border-amber-100 bg-gray-50 flex items-center justify-center relative group">
+                {preview ? (
+                  <>
+                    <img
+                      src={preview}
+                      alt="Preview"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-black/20 flex items-end p-2">
+                      <span className="bg-white/90 backdrop-blur text-[9px] font-bold px-2 py-1 rounded-lg uppercase text-amber-600 shadow-sm">
+                        {formData.image ? "New Selection" : "Current View"}
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <Camera size={30} className="text-gray-200" />
+                )}
               </div>
-              <p className="text-sm text-gray-400 group-hover:text-amber-500 transition-colors">
-                {formData.image ? formData.image.name : "Click to upload image"}
-              </p>
-              <p className="text-xs text-gray-300">JPG, PNG or WEBP</p>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-              />
-            </label>
+
+              {/* Box 2: Action Area */}
+              <label className="flex-1 border-2 border-dashed border-amber-200 hover:border-amber-400 bg-amber-50/20 hover:bg-amber-50 rounded-3xl p-6 transition-all cursor-pointer flex flex-col items-center justify-center text-center group">
+                <Upload
+                  size={20}
+                  className="text-amber-500 group-hover:-translate-y-1 transition-transform mb-2"
+                />
+                <span className="text-sm font-bold text-gray-700">
+                  {formData.image
+                    ? formData.image.name
+                    : "Select Business Photo"}
+                </span>
+                <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-tighter">
+                  JPG, PNG or WEBP (Max 2MB)
+                </p>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+            </div>
           </div>
 
           {/* Divider */}

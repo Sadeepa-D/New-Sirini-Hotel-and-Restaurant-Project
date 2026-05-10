@@ -5,53 +5,56 @@ import Exploreindicator from "../../Components/Exploreindicator";
 import resturantImg from "../../assets/resturant.png";
 import OrderForm from "../../Components/RestaurantPage/OrderForm";
 import RestaurantCard from "../../Components/RestaurantPage/RestaurantCard";
-import LoginMessage from "../../Components/LoginMessage";
-import { useLocation, useNavigate } from "react-router-dom";
+import ProcessFlow from "../../Components/RestaurantPage/ProcessFlow";
+import { ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react";
+import CartComp from "../../Components/RestaurantPage/CartComp";
 
 // Initial hardcoded data removed. Data is now fetched from the backend API.
 
+const CATEGORIES = [
+  "Chopsy Rice",
+  "Rice & Nasi Goreng",
+  "Kottu",
+  "Noodles",
+  "Bites",
+  "Side Dishes",
+  "Snacks",
+];
+
 export default function Restaurant() {
   const [itemsPerView, setItemsPerView] = useState(4);
-  const [mealsIndex, setMealsIndex] = useState(0);
-  const [softdrinkIndex, setSoftdrinkIndex] = useState(0);
-  const [freshJuiceIndex, setFreshJuiceIndex] = useState(0);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [categoryIndices, setCategoryIndices] = useState({});
   const [mealData, setMealData] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
-  const [editingOrder, setEditingOrder] = useState(null);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const mainmeals = mealData.filter((meal) => meal.category === "Main Meals");
-  const softdrinks = mealData.filter((meal) => meal.category === "Soft Drinks");
-  const freshJuice = mealData.filter((meal) => meal.category === "Fresh Juice");
+  const [showCart, setShowCart] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
+  const [openorderform, setOpenorderform] = useState(false);
 
   const fetchFoodItems = async () => {
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/restraunt/viewfooditems`,
       );
-      console.log("Restaurant API Response:", response.data);
-
       const data = Array.isArray(response.data) ? response.data : [];
 
-      // Map backend data to frontend field names if they differ
       const mappedData = data.map((item) => ({
         id: item._id,
         name: item.name,
-        price: item.price,
+        normal_price: item.normal_price,
+        full_price: item.full_price,
+        has_portions: item.has_portions,
         description: item.description,
         image: item.image,
-
         category: item.category,
         availability: item.availability,
         label: item.availability ? "Available" : "Unavailable",
       }));
       setMealData(mappedData);
     } catch (error) {
-      console.error("Error fetching food items:", error);
+      if (error.response && error.response.status === 404) {
+        setMealData([]);
+      } else {
+        console.error("Error fetching food items:", error);
+      }
     }
   };
 
@@ -61,62 +64,53 @@ export default function Restaurant() {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 640) {
-        setItemsPerView(1);
-      } else if (window.innerWidth < 1024) {
-        setItemsPerView(2);
-      } else if (window.innerWidth < 1280) {
-        setItemsPerView(3);
-      } else {
-        setItemsPerView(4);
-      }
+      const w = window.innerWidth;
+      setItemsPerView(w < 640 ? 1 : w < 1024 ? 2 : w < 1280 ? 3 : 4);
     };
-
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useEffect(() => {
-    if (location.state?.editOrder && mealData.length > 0) {
-      const order = location.state.editOrder;
-      const matchedItem = mealData.find((m) => m.name === order.foodName);
-      if (matchedItem) {
-        setSelectedItem(matchedItem);
-        setEditingOrder(order);
-        // Clear the state so it doesn't re-trigger on refresh
-        navigate(location.pathname, { replace: true });
-      } else {
-        toast.error("Food item for this order is no longer available.");
-      }
-    }
-  }, [location.state, mealData, navigate, location.pathname]);
+  const getCategoryIndex = (cat) => categoryIndices[cat] || 0;
 
-  const handleOrder = (item) => {
-    if (!isLoggedIn) {
-      setShowLoginModal(true);
-      return;
-    }
-    setSelectedItem(item);
+  const handlePrev = (cat) => {
+    setCategoryIndices((prev) => ({
+      ...prev,
+      [cat]: Math.max(0, (prev[cat] || 0) - 1),
+    }));
   };
 
-  const handlePrevMeals = () => setMealsIndex(Math.max(0, mealsIndex - 1));
-  const handleNextMeals = () =>
-    setMealsIndex(Math.min(mainmeals.length - itemsPerView, mealsIndex + 1));
+  const handleNext = (cat, itemsCount) => {
+    setCategoryIndices((prev) => ({
+      ...prev,
+      [cat]: Math.min(itemsCount - itemsPerView, (prev[cat] || 0) + 1),
+    }));
+  };
 
-  const handlePrevSoftdrinks = () =>
-    setSoftdrinkIndex(Math.max(0, softdrinkIndex - 1));
-  const handleNextSoftdrinks = () =>
-    setSoftdrinkIndex(
-      Math.min(softdrinks.length - itemsPerView, softdrinkIndex + 1),
-    );
+  const handleAddToCart = (item) => {
+    setCartItems((prev) => {
+      const existing = prev.find((i) => i.id === item.id);
+      if (existing) {
+        return prev.map((i) =>
+          i.id === item.id ? { ...i, quantity: (i.quantity || 1) + 1 } : i,
+        );
+      }
+      return [...prev, { ...item, quantity: 1, portion: "Normal" }];
+    });
+    toast.success(`${item.name} added to cart!`);
+  };
 
-  const handlePrevFreshJuice = () =>
-    setFreshJuiceIndex(Math.max(0, freshJuiceIndex - 1));
-  const handleNextFreshJuice = () =>
-    setFreshJuiceIndex(
-      Math.min(freshJuice.length - itemsPerView, freshJuiceIndex + 1),
-    );
+  const handlecheckout = (updatedItems) => {
+    if (!updatedItems || updatedItems.length === 0) {
+      toast.error("Your cart is empty!");
+      return;
+    }
+    // Update cartItems with the modified items from CartComp
+    setCartItems(updatedItems);
+    setShowCart(false);
+    setOpenorderform(true);
+  };
 
   const MenuSection = ({ title, items, index, onPrev, onNext, onOrder }) => (
     <div className="mb-16">
@@ -127,19 +121,7 @@ export default function Restaurant() {
             onClick={onPrev}
             className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
           >
-            <svg
-              className="w-6 h-6 text-neutral-900"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
+            <ChevronLeft className="w-6 h-6 text-neutral-900" />
           </button>
         )}
 
@@ -166,19 +148,7 @@ export default function Restaurant() {
             onClick={onNext}
             className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
           >
-            <svg
-              className="w-6 h-6 text-neutral-900"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
+            <ChevronRight className="w-6 h-6 text-neutral-900" />
           </button>
         )}
       </div>
@@ -188,7 +158,7 @@ export default function Restaurant() {
   return (
     <div className="min-h-screen bg-neutral-50">
       {/* HERO SECTION - Aligned with MainPage */}
-      <header className="relative w-full h-[calc(100vh-120px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
+      <header className="relative w-full h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
         {/* Background */}
         <div
           className="absolute inset-0 z-0"
@@ -229,54 +199,60 @@ export default function Restaurant() {
         </div>
       </div>
 
+      {/* Process Flow Section */}
+      <ProcessFlow />
+
       {/* Categories Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {mainmeals.length > 0 && (
-          <MenuSection
-            title="Main Meals"
-            items={mainmeals}
-            index={mealsIndex}
-            onPrev={handlePrevMeals}
-            onNext={handleNextMeals}
-            onOrder={handleOrder}
-          />
-        )}
-        {softdrinks.length > 0 && (
-          <MenuSection
-            title="Soft Drinks"
-            items={softdrinks}
-            index={softdrinkIndex}
-            onPrev={handlePrevSoftdrinks}
-            onNext={handleNextSoftdrinks}
-            onOrder={handleOrder}
-          />
-        )}
-        {freshJuice.length > 0 && (
-          <MenuSection
-            title="Fresh Juice"
-            items={freshJuice}
-            index={freshJuiceIndex}
-            onPrev={handlePrevFreshJuice}
-            onNext={handleNextFreshJuice}
-            onOrder={handleOrder}
-          />
-        )}
+        {CATEGORIES.map((cat) => {
+          const catItems = mealData.filter((item) => item.category === cat);
+          if (catItems.length === 0) return null;
+
+          return (
+            <MenuSection
+              key={cat}
+              title={cat}
+              items={catItems}
+              index={getCategoryIndex(cat)}
+              onPrev={() => handlePrev(cat)}
+              onNext={() => handleNext(cat, catItems.length)}
+              onOrder={handleAddToCart}
+            />
+          );
+        })}
       </div>
 
-      {selectedItem && (
+      {/* Floating Cart Button */}
+      <div className="fixed bottom-8 right-8 z-50">
+        <button
+          className="flex items-center justify-center w-20 h-20 bg-amber-500 text-white hover:bg-amber-600 hover:scale-110 transition-all duration-300 rounded-full"
+          style={{ boxShadow: "0 8px 30px rgba(245, 158, 11, 0.4)" }}
+          onClick={() => {
+            setShowCart(true);
+          }}
+        >
+          <ShoppingCart size={38} />
+        </button>
+      </div>
+
+      {openorderform && (
         <OrderForm
-          item={selectedItem}
-          editingOrder={editingOrder}
+          cartItems={cartItems}
           onClose={() => {
-            setSelectedItem(null);
-            setEditingOrder(null);
+            setOpenorderform(false);
+            setCartItems([]);
           }}
         />
       )}
-      <LoginMessage
-        isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-      />
+      {/* Cart Modal */}
+      {showCart && (
+        <CartComp
+          onClose={() => setShowCart(false)}
+          cartItems={cartItems}
+          setCartItems={setCartItems}
+          onCheckout={handlecheckout}
+        />
+      )}
     </div>
   );
 }
