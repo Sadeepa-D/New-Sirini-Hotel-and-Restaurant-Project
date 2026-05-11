@@ -19,6 +19,7 @@ const RoomCalender = ({ bookedDates, checkIn, checkOut, onDateSelect, onNext, on
     const dateStr = toLocalDateString(year, month, day);
     const d = new Date(year, month, day);
     d.setHours(0, 0, 0, 0);
+
     if (bookedDates.includes(dateStr)) return "booked";
     if (d < today) return "past";
     if (dateStr === checkIn || dateStr === checkOut) return "selected";
@@ -28,21 +29,23 @@ const RoomCalender = ({ bookedDates, checkIn, checkOut, onDateSelect, onNext, on
 
   return (
     <div className="relative w-full max-w-[380px] bg-white rounded-[2.5rem] shadow-2xl p-8 border border-gray-100 animate-in fade-in zoom-in duration-300">
-      <button onClick={onClose} className="absolute top-6 right-6 text-gray-300 hover:text-gray-900"><X size={20} /></button>
+      <button onClick={onClose} className="absolute top-6 right-6 text-gray-300 hover:text-gray-900 transition-colors"><X size={20} /></button>
       
       <div className="mb-6">
-        <h2 className="text-gray-900 text-xl font-serif italic">Select Dates</h2>
-        <p className="text-gray-400 text-[8px] font-black uppercase tracking-widest">Suite #{roomNumber}</p>
+        <h2 className="text-gray-900 text-xl font-serif italic tracking-tight">Select Dates</h2>
+        <p className="text-gray-400 text-[8px] font-black uppercase tracking-[0.2em]">New Sirini Hotel Room Number {roomNumber}</p>
       </div>
 
+      {/* Month Navigation */}
       <div className="flex gap-4 items-center bg-gray-50 p-1 px-4 rounded-full border border-gray-100 mb-6">
-        <button onClick={() => setCurrentDate(new Date(year, month - 1, 1))} className="text-gray-400 hover:text-orange-500"><ChevronLeft size={18}/></button>
-        <span className="text-gray-900 text-xs font-black uppercase tracking-widest flex-1 text-center">{monthName} {year}</span>
-        <button onClick={() => setCurrentDate(new Date(year, month + 1, 1))} className="text-gray-400 hover:text-orange-500"><ChevronRight size={18}/></button>
+        <button onClick={() => setCurrentDate(new Date(year, month - 1, 1))} className="text-gray-400 hover:text-orange-500 transition-colors"><ChevronLeft size={18}/></button>
+        <span className="text-gray-900 text-[10px] font-black uppercase tracking-widest flex-1 text-center">{monthName} {year}</span>
+        <button onClick={() => setCurrentDate(new Date(year, month + 1, 1))} className="text-gray-400 hover:text-orange-500 transition-colors"><ChevronRight size={18}/></button>
       </div>
 
-      <div className="grid grid-cols-7 gap-1 mb-6">
-        {weekDays.map(d => <div key={d} className="text-center text-[10px] font-black text-gray-300">{d}</div>)}
+      {/* Calendar Grid */}
+      <div className="grid grid-cols-7 gap-1.5 mb-6">
+        {weekDays.map(d => <div key={d} className="text-center text-[9px] font-black text-gray-300 uppercase">{d}</div>)}
         {Array.from({ length: firstDayOfMonth }).map((_, i) => <div key={`e-${i}`} />)}
         {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(day => {
           const status = getDayStatus(day);
@@ -51,11 +54,16 @@ const RoomCalender = ({ bookedDates, checkIn, checkOut, onDateSelect, onNext, on
               key={day}
               disabled={status === "booked" || status === "past"}
               onClick={() => onDateSelect(toLocalDateString(year, month, day))}
-              className={`aspect-square rounded-xl text-[11px] font-bold transition-all flex items-center justify-center ${
-                status === "booked" ? "text-red-200 cursor-not-allowed line-through" :
-                status === "selected" ? "bg-orange-500 text-white shadow-lg" :
-                status === "range" ? "bg-orange-50 text-orange-600" :
-                status === "past" ? "text-gray-200 opacity-40 cursor-not-allowed" : "text-gray-600 hover:bg-orange-50"
+              className={`aspect-square rounded-xl text-[10px] font-bold transition-all flex items-center justify-center border ${
+                status === "booked" 
+                  ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50" // Not Available (Grey)
+                  : status === "past" 
+                  ? "text-gray-200 border-transparent opacity-30 cursor-not-allowed"
+                  : status === "selected" 
+                  ? "bg-orange-500 text-white border-orange-600 shadow-lg scale-105 z-10" 
+                  : status === "range" 
+                  ? "bg-orange-50 text-orange-600 border-orange-100" 
+                  : "bg-green-50 text-green-700 border-green-100 hover:border-green-400" // Available (Green)
               }`}
             >
               {day}
@@ -64,9 +72,21 @@ const RoomCalender = ({ bookedDates, checkIn, checkOut, onDateSelect, onNext, on
         })}
       </div>
 
+      {/* Legend */}
+      <div className="flex justify-center gap-4 mb-6 pt-2 border-t border-gray-50">
+        <div className="flex items-center gap-1.5">
+          <div className="w-2 h-2 rounded-full bg-green-500"></div>
+          <span className="text-[8px] font-black text-gray-400 uppercase">Available</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-2 h-2 rounded-full bg-gray-300"></div>
+          <span className="text-[8px] font-black text-gray-400 uppercase">Booked</span>
+        </div>
+      </div>
+
       <button 
         onClick={onNext} disabled={!checkOut}
-        className="w-full py-4 rounded-[2rem] bg-gray-900 text-white font-black uppercase text-[10px] tracking-widest hover:bg-orange-500 disabled:opacity-20 transition-all"
+        className="w-full py-4 rounded-[2rem] bg-gray-900 text-white font-black uppercase text-[10px] tracking-[0.2em] shadow-xl shadow-gray-200 hover:bg-orange-500 disabled:opacity-20 transition-all flex items-center justify-center gap-2"
       >
         Confirm Dates
       </button>
