@@ -193,6 +193,9 @@ const ReceptionHallBookForm = ({ fetchBookings, onClose, editData = null }) => {
                   required
                   className={`${inputClass} appearance-none`}
                 >
+                  <option value="" disabled>
+                    Select Time
+                  </option>
                   {eventTimes.map((t) => (
                     <option key={t} value={t}>
                       {t}
@@ -218,6 +221,9 @@ const ReceptionHallBookForm = ({ fetchBookings, onClose, editData = null }) => {
                   required
                   className={`${inputClass} appearance-none`}
                 >
+                  <option value="" disabled>
+                    Select type
+                  </option>
                   {eventTypes.map((t) => (
                     <option key={t} value={t}>
                       {t}
