@@ -17,7 +17,7 @@ import axios from "axios";
 const eventTypes = ["Wedding", "Birthday", "Corporate", "Anniversary", "Other"];
 const eventTimes = ["Day (9am - 4pm)", "Night (7pm - 1pm)"];
 
-const ReceptionHallBookForm = ({ fetchBookings, onClose, editData = null }) => {
+const ReceptionHallBookForm = ({ fetchBookings, onClose, editData = null, AllBookings = [] }) => {
   const VITE_URL = import.meta.env.VITE_API_URL;
   const [formData, setFormData] = useState({
     customerName: "",
@@ -32,6 +32,17 @@ const ReceptionHallBookForm = ({ fetchBookings, onClose, editData = null }) => {
 
   const handlesubmit = async (e) => {
     e.preventDefault();
+    const isconflict = AllBookings.some((booking) => {
+      if (editData && booking._id === editData._id) return false;
+      const bookingdate = new Date(booking.eventDate).toISOString().split("T")[0];
+      const selectedDate = formData.eventDate;
+      return bookingdate === selectedDate && booking.eventTime === formData.eventTime;
+    });
+
+    if (isconflict) {
+      toast.error("Selected date and time slot is already booked");
+      return;
+    }
     onClose();
     const loadingToast = toast.loading(
       `${editData ? "Updating" : "Creating"} booking...`,

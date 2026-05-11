@@ -25,6 +25,16 @@ const createReceptionHallBooking = async (req, res) => {
         .status(400)
         .json({ message: "All required fields must be filled" });
     }
+    const existingBooking = await receptionandHallBook.findOne({
+      eventDate: eventDate,
+      eventTime: eventTime,
+      status: "Confirmed",
+    });
+    if (existingBooking) {
+      return res
+        .status(400)
+        .json({ message: "Selected date and time slot is already booked" });
+    }
     const newBooking = new receptionandHallBook({
       customerName,
       customerEmail,
