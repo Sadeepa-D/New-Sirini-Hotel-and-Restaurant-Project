@@ -100,6 +100,7 @@ const OrderManage = () => {
   const preparingOrders = orders.filter((o) => o.status === "Preparing");
   const completeOrders = orders.filter((o) => o.status === "Complete");
   const deletedOrders = orders.filter((o) => o.status === "delete");
+  const overdueOrders = orders.filter((o) => o.status === "Overdue");
 
   const getFilteredHistory = () => {
     let list =
@@ -111,7 +112,9 @@ const OrderManage = () => {
             ? completeOrders
             : activeTab === "Deleted"
               ? deletedOrders
-              : pendingOrders;
+              : activeTab === "Overdue"
+                ? overdueOrders
+                : pendingOrders;
 
     if (searchTerm) {
       list = list.filter(
@@ -152,8 +155,18 @@ const OrderManage = () => {
   const HistoryCard = ({ order }) => (
     <div className={`p-5 rounded-[1.75rem] shadow-sm border transition-all duration-300 flex flex-col h-full group ${order.status === "delete"
       ? "bg-red-50/30 border-red-100 hover:border-red-200"
-      : "bg-white border-gray-100 hover:shadow-xl hover:border-amber-200/50"
+      : order.status === "Overdue"
+        ? "bg-orange-50/30 border-orange-100 hover:border-orange-200"
+        : "bg-white border-gray-100 hover:shadow-xl hover:border-amber-200/50"
       }`}>
+      {/* Overdue Alert */}
+      {order.status === "Overdue" && (
+        <div className="absolute top-4 right-4 z-10">
+          <span className="bg-orange-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-lg shadow-orange-500/20 uppercase tracking-widest animate-pulse">
+            Overdue
+          </span>
+        </div>
+      )}
       {/* Customer Header */}
       <div className="flex justify-between items-start mb-4">
         <div className="flex items-center gap-3">
@@ -174,7 +187,9 @@ const OrderManage = () => {
               ? "bg-purple-50 text-purple-600"
               : order.status === "delete"
                 ? "bg-red-50 text-red-600"
-                : "bg-amber-50 text-amber-600"
+                : order.status === "Overdue"
+                  ? "bg-orange-100 text-orange-700"
+                  : "bg-amber-50 text-amber-600"
           }`}>
           {order.status === "delete" ? "DELETED" : order.status.toUpperCase()}
         </span>
@@ -237,7 +252,7 @@ const OrderManage = () => {
             <CheckCircle size={14} strokeWidth={2.5} /> Complete
           </button>
         )}
-        {order.status !== "Complete" && order.status !== "delete" && (
+        {order.status !== "Complete" && order.status !== "delete" && order.status !== "Overdue" && (
           <button
             onClick={() => confirmDeleteOrder(order._id)}
             className="flex-1 py-2.5 bg-white text-red-700 border border-red-100 rounded-full font-bold text-[10px] tracking-widest hover:bg-red-50 hover:shadow-lg hover:shadow-red-500/10 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 uppercase"
@@ -263,14 +278,16 @@ const OrderManage = () => {
 
         {/* Tabs */}
         <div className="flex gap-2 mt-4 flex-wrap">
-          {["Pending", "Accepted", "Preparing", "Complete", "Deleted"].map((tab) => (
+          {["Pending", "Accepted", "Preparing", "Complete", "Deleted", "Overdue"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeTab === tab
                 ? tab === "Deleted"
                   ? "bg-red-100 text-red-600"
-                  : "bg-amber-100 text-amber-600"
+                  : tab === "Overdue"
+                    ? "bg-orange-100 text-orange-600 shadow-sm ring-1 ring-orange-200"
+                    : "bg-amber-100 text-amber-600"
                 : "bg-gray-100 text-gray-500 hover:bg-gray-200"
                 }`}
             >

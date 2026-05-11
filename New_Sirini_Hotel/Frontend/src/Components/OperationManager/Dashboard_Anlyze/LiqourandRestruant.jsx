@@ -90,6 +90,7 @@ const LiqourandRestruant = () => {
     accepted: activeMonthOrders.filter((order) => order.status === "Accepted").length,
     preparing: activeMonthOrders.filter((order) => order.status === "Preparing").length,
     complete: activeMonthOrders.filter((order) => order.status === "Complete").length,
+    overdue: activeMonthOrders.filter((order) => order.status === "Overdue").length,
     total: activeMonthOrders.length
   };
   const completionRate =
@@ -184,7 +185,7 @@ const LiqourandRestruant = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           {/* Pending Card */}
           <div className="group bg-gradient-to-br from-amber-50 to-white rounded-[2rem] p-5 border border-amber-100/50 hover:shadow-lg transition-all">
             <div className="flex items-center justify-between mb-3">
@@ -254,6 +255,24 @@ const LiqourandRestruant = () => {
             </p>
             <p className="text-[10px] font-medium text-slate-500 uppercase tracking-widest">
               Fulfilled
+            </p>
+          </div>
+
+          {/* Overdue Card */}
+          <div className="group bg-gradient-to-br from-red-50 to-white rounded-[2rem] p-5 border border-red-100/50 hover:shadow-lg transition-all">
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-red-500">
+                <XCircle size={20} />
+              </div>
+              <span className="text-[9px] font-black text-red-600 bg-red-100 px-2.5 py-1 rounded-full uppercase tracking-tighter">
+                Overdue
+              </span>
+            </div>
+            <p className="text-3xl font-black text-slate-800 mb-1">
+              {orderStats.overdue}
+            </p>
+            <p className="text-[10px] font-medium text-slate-500 uppercase tracking-widest">
+              Action Required
             </p>
           </div>
         </div>
