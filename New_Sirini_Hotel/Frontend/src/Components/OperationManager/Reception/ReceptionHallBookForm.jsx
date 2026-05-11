@@ -9,11 +9,13 @@ import {
   UtensilsCrossed,
   MessageSquare,
   Tag,
+  Clock,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 
 const eventTypes = ["Wedding", "Birthday", "Corporate", "Anniversary", "Other"];
+const eventTimes = ["Day (9am - 4pm)", "Night (7pm - 1pm)"];
 
 const ReceptionHallBookForm = ({ fetchBookings, onClose, editData = null }) => {
   const VITE_URL = import.meta.env.VITE_API_URL;
@@ -22,6 +24,7 @@ const ReceptionHallBookForm = ({ fetchBookings, onClose, editData = null }) => {
     customerEmail: "",
     customerPhone: "",
     eventDate: "",
+    eventTime: "",
     eventType: "",
     numberOfGuests: "",
     specialRequests: "",
@@ -59,6 +62,7 @@ const ReceptionHallBookForm = ({ fetchBookings, onClose, editData = null }) => {
         customerEmail: editData.customerEmail,
         customerPhone: editData.customerPhone,
         eventDate: editData.eventDate ? editData.eventDate.split("T")[0] : "",
+        eventTime: editData.eventTime,
         eventType: editData.eventType,
         numberOfGuests: editData.numberOfGuests,
         specialRequests: editData.specialRequests,
@@ -158,7 +162,7 @@ const ReceptionHallBookForm = ({ fetchBookings, onClose, editData = null }) => {
             </div>
           </div>
 
-          {/* Event Date + Type */}
+          {/* Event Date + Time */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs text-gray-400 uppercase tracking-widest mb-1.5 font-medium">
@@ -178,6 +182,31 @@ const ReceptionHallBookForm = ({ fetchBookings, onClose, editData = null }) => {
             </div>
             <div>
               <label className="block text-xs text-gray-400 uppercase tracking-widest mb-1.5 font-medium">
+                Event Time
+              </label>
+              <div className={wrapClass}>
+                <Clock size={18} className="text-amber-400 shrink-0" />
+                <select
+                  name="eventTime"
+                  value={formData.eventTime}
+                  onChange={handleChange}
+                  required
+                  className={`${inputClass} appearance-none`}
+                >
+                  {eventTimes.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Event Type + Number of Guests */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs text-gray-400 uppercase tracking-widest mb-1.5 font-medium">
                 Event Type
               </label>
               <div className={wrapClass}>
@@ -189,9 +218,6 @@ const ReceptionHallBookForm = ({ fetchBookings, onClose, editData = null }) => {
                   required
                   className={`${inputClass} appearance-none`}
                 >
-                  <option value="" disabled>
-                    Select type
-                  </option>
                   {eventTypes.map((t) => (
                     <option key={t} value={t}>
                       {t}
@@ -200,10 +226,6 @@ const ReceptionHallBookForm = ({ fetchBookings, onClose, editData = null }) => {
                 </select>
               </div>
             </div>
-          </div>
-
-          {/* Guests + Status */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs text-gray-400 uppercase tracking-widest mb-1.5 font-medium">
                 Number of Guests
