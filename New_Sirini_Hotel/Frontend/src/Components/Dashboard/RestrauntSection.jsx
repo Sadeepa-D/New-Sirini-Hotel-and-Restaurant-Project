@@ -221,11 +221,11 @@ const RestaurantSection = ({ data }) => {
               {/* Card Header */}
               <div className="flex items-start mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300">
-                    <UtensilsCrossed size={18} />
-                  </div>
+                  {/* <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300"> */}
+                    {/* <UtensilsCrossed size={18} /> */}
+                  {/* </div> */}
                   <div className="flex flex-col">
-                    <h5 className="font-bold text-gray-900 text-[13px] leading-tight line-clamp-1">{order.foodName}</h5>
+                    <h5 className="font-bold text-gray-900 text-[12px] leading-snug">{order.foodName}</h5>
                     <span className="text-[10px] font-mono font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded-md w-fit mt-1">
                       #{order.orderCode}
                     </span>
