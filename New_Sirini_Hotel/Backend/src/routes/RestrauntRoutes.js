@@ -8,7 +8,7 @@ const authMiddleware = require("../middleware/AuthMiddleware");
 router.post("/placeorder", authMiddleware,FoodOrderCont.createFoodOrder);
 router.get("/vieworders", FoodOrderCont.getFoodOrders);
 router.put("/updateorder/:id", FoodOrderCont.editfoodOrder);
-router.delete("/deleteorder/:id", FoodOrderCont.deleteFoodOrder);
+router.delete("/deleteorder/:id", authMiddleware, FoodOrderCont.deleteFoodOrder);
 router.put(
   "/updateorderstatus/complete/:id",
   FoodOrderCont.updateFoodOrderStatusTOComplete,
