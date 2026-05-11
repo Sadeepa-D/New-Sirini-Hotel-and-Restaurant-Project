@@ -104,7 +104,9 @@ const OrderManage = () => {
           ? preparingOrders
           : activeTab === "Complete"
             ? completeOrders
-            : pendingOrders;
+            : activeTab === "Deleted"
+              ? deletedOrders
+              : pendingOrders;
 
     if (searchTerm) {
       list = list.filter(
@@ -143,7 +145,10 @@ const OrderManage = () => {
 
 
   const HistoryCard = ({ order }) => (
-    <div className="bg-white p-5 rounded-[1.75rem] shadow-sm border border-gray-100 hover:shadow-xl hover:border-amber-200/50 transition-all duration-300 flex flex-col h-full group">
+    <div className={`p-5 rounded-[1.75rem] shadow-sm border transition-all duration-300 flex flex-col h-full group ${order.status === "delete"
+      ? "bg-red-50/30 border-red-100 hover:border-red-200"
+      : "bg-white border-gray-100 hover:shadow-xl hover:border-amber-200/50"
+      }`}>
       {/* Customer Header */}
       <div className="flex justify-between items-start mb-4">
         <div className="flex items-center gap-3">
@@ -253,11 +258,15 @@ const OrderManage = () => {
 
         {/* Tabs */}
         <div className="flex gap-2 mt-4 flex-wrap">
-          {["Pending", "Accepted", "Preparing", "Complete"].map((tab) => (
+          {["Pending", "Accepted", "Preparing", "Complete", "Deleted"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-lg text-sm font-bold ${activeTab === tab ? "bg-amber-100 text-amber-600" : "bg-gray-100"
+              className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeTab === tab
+                ? tab === "Deleted"
+                  ? "bg-red-100 text-red-600"
+                  : "bg-amber-100 text-amber-600"
+                : "bg-gray-100 text-gray-500 hover:bg-gray-200"
                 }`}
             >
               {tab}

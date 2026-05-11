@@ -135,6 +135,7 @@ const RestaurantSection = ({ data }) => {
   const acceptedOrders = orders.filter((o) => o.status === "Accepted");
   const preparingOrders = orders.filter((o) => o.status === "Preparing");
   const completeOrders = orders.filter((o) => o.status === "Complete");
+  const deletedOrders = orders.filter((o) => o.status === "delete");
 
   const filteredOrders = activeTab === "Accepted"
     ? acceptedOrders
@@ -142,15 +143,18 @@ const RestaurantSection = ({ data }) => {
       ? preparingOrders
       : activeTab === "Complete"
         ? completeOrders
-        : pendingOrders;
+        : activeTab === "Deleted"
+          ? deletedOrders
+          : pendingOrders;
 
-  const tabs = ["Pending", "Accepted", "Preparing", "Complete"];
+  const tabs = ["Pending", "Accepted", "Preparing", "Complete", "Deleted"];
 
   const tabCounts = {
     "Pending": orders.filter(o => o.status === "Pending").length,
     "Accepted": orders.filter(o => o.status === "Accepted").length,
     "Preparing": orders.filter(o => o.status === "Preparing").length,
     "Complete": orders.filter(o => o.status === "Complete").length,
+    "Deleted": orders.filter(o => o.status === "delete").length,
   };
 
   const statusStyle = (status) => {
@@ -207,10 +211,18 @@ const RestaurantSection = ({ data }) => {
           {filteredOrders.map((order) => (
             <div
               key={order._id}
-              className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex flex-col"
+              className={`border rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex flex-col ${
+                order.status === "delete" 
+                  ? "bg-red-50/30 border-red-100" 
+                  : "bg-white border-gray-100"
+              }`}
             >
               {/* Top accent bar */}
-              <div className="h-1 w-full bg-gradient-to-r from-amber-400 to-amber-300" />
+              <div className={`h-1 w-full ${
+                order.status === "delete" 
+                  ? "bg-gradient-to-r from-red-400 to-red-300" 
+                  : "bg-gradient-to-r from-amber-400 to-amber-300"
+              }`} />
 
               <div className="p-5 flex flex-col flex-1">
                 {/* Food name + status */}
