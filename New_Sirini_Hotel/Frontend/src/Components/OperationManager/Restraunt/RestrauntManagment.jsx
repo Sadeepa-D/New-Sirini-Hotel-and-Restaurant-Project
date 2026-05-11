@@ -262,9 +262,8 @@ const RestaurantManager = () => {
             <div
               className="flex justify-start gap-4 sm:gap-6 transition-transform duration-500 ease-in-out"
               style={{
-                transform: `translateX(calc(-${idx * (100 / itemsPerView)}% - ${
-                  idx * ((itemsPerView === 1 ? 16 : 24) / itemsPerView)
-                }px))`,
+                transform: `translateX(calc(-${idx * (100 / itemsPerView)}% - ${idx * ((itemsPerView === 1 ? 16 : 24) / itemsPerView)
+                  }px))`,
               }}
             >
               {items.map((item) => (
@@ -272,9 +271,8 @@ const RestaurantManager = () => {
                   key={item._id}
                   className="flex-shrink-0"
                   style={{
-                    width: `calc(${100 / itemsPerView}% - ${
-                      ((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) / itemsPerView
-                    }px)`,
+                    width: `calc(${100 / itemsPerView}% - ${((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) / itemsPerView
+                      }px)`,
                   }}
                 >
                   {renderCarouselCard(item)}

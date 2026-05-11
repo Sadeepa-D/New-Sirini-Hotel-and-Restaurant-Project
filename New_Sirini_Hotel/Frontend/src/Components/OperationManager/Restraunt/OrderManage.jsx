@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { CheckCircle, XCircle, Search, User, Clock, Check, X } from "lucide-react";
+import { CheckCircle, XCircle, Search, User, Clock, Check, X, ArrowUpDown } from "lucide-react";
 import ConfirmDialog from "../../ConfrimDialog";
 
 const OrderManage = () => {
@@ -9,6 +9,7 @@ const OrderManage = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("Pending");
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortOrder, setSortOrder] = useState("desc");
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
     id: null,
@@ -44,7 +45,7 @@ const OrderManage = () => {
   // Reset page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [activeTab, searchTerm]);
+  }, [activeTab, searchTerm, sortOrder]);
 
   const handleStatusChange = async (id, status) => {
     try {
@@ -114,6 +115,20 @@ const OrderManage = () => {
           o.foodName?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
+
+    // Sort by Date and Time
+    list.sort((a, b) => {
+      const dateA = new Date(a.pickupDate);
+      const dateB = new Date(b.pickupDate);
+
+      if (dateA - dateB !== 0) {
+        return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+      }
+
+      const timeA = a.pickupTime || "";
+      const timeB = b.pickupTime || "";
+      return sortOrder === "asc" ? timeA.localeCompare(timeB) : timeB.localeCompare(timeA);
+    });
 
     return list;
   };
@@ -250,16 +265,30 @@ const OrderManage = () => {
           ))}
         </div>
 
-        {/* Search */}
-        <div className="mt-4 relative w-full sm:w-72">
-          <Search className="absolute left-3 top-3 text-gray-400" size={16} />
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-full pl-10 py-2 border rounded-lg"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+        {/* Search & Sort */}
+        <div className="flex flex-wrap items-center gap-4 mt-4">
+          <div className="relative w-full sm:w-72">
+            <Search className="absolute left-3 top-3 text-gray-400" size={16} />
+            <input
+              type="text"
+              placeholder="Search..."
+              className="w-full pl-10 py-2 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none transition-all"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          <div className="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 hover:border-amber-300 transition-all cursor-pointer group">
+            <ArrowUpDown size={16} className="text-gray-400 group-hover:text-amber-500" />
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+              className="bg-transparent text-sm font-bold text-gray-700 outline-none cursor-pointer"
+            >
+              <option value="desc">Latest First</option>
+              <option value="asc">Oldest First</option>
+            </select>
+          </div>
         </div>
 
         {/* Cards */}
