@@ -6,10 +6,10 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const isLoggedIn= !!localStorage.getItem("token");
 
-  const handleQuantity = (id, delta) => {
+  const handleQuantity = (cartId, delta) => {
     setCartItems((prev) =>
       prev.map((item) =>
-        item.id === id
+        item.cartId === cartId
           ? {
               ...item,
               quantity: Math.max(

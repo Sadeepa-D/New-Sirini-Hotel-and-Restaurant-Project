@@ -61,7 +61,7 @@ const createFoodOrder = async (req, res) => {
       pickupDate,
       pickupTime,
       orderCode: await GenarateFoodOrderCode(),
-      status: "In Progress",
+      status: "Pending",
       Price,
       portion,
     });
@@ -138,24 +138,7 @@ const deleteFoodOrder = async (req, res) => {
       return res.status(404).json({ message: "Food order not found" });
     }
 
-    // Check if user is NOT an Operation Manager or Admin
-    const isStaff = userRole && (userRole.includes("Operation Manager") || userRole === "Admin");
-
-    if (!isStaff) {
-      const { slDate, slTime } = getCurrentSLTime();
-      const pickupDateStr = new Date(order.pickupDate).toISOString().split('T')[0];
-      const pickupDateTime = new Date(`${pickupDateStr}T${order.pickupTime}`);
-      const currentSLDateTime = new Date(`${slDate}T${slTime}`);
-
-      const diffInMs = pickupDateTime - currentSLDateTime;
-      const diffInHours = diffInMs / (1000 * 60 * 60);
-
-      if (diffInHours < 1) {
-        return res.status(400).json({ 
-          message: "Cannot cancel now. Less than 1 hour left. Please contact hotel for cancellation." 
-        });
-      }
-    }
+    // Simplified deletion logic: allow for all active orders
 
     order.status = "delete";
     await order.save();
@@ -174,7 +157,7 @@ const updateFoodOrderStatusTOComplete = async (req, res) => {
     }
     const updatedOrder = await FoodOrder.findByIdAndUpdate(
       id,
-      { status: "Completed" },
+      { status: "Complete" },
       { new: true },
     );
     if (!updatedOrder) {
@@ -188,7 +171,7 @@ const updateFoodOrderStatusTOComplete = async (req, res) => {
   }
 };
 
-const updateFoodOrderStatusToCancelled = async (req, res) => {
+const updateFoodOrderStatusToAccepted = async (req, res) => {
   try {
     const { id } = req.params;
     if (!id) {
@@ -196,7 +179,7 @@ const updateFoodOrderStatusToCancelled = async (req, res) => {
     }
     const updatedOrder = await FoodOrder.findByIdAndUpdate(
       id,
-      { status: "Cancelled" },
+      { status: "Accepted" },
       { new: true },
     );
     if (!updatedOrder) {
@@ -204,72 +187,77 @@ const updateFoodOrderStatusToCancelled = async (req, res) => {
     }
     res.status(200).json(updatedOrder);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to update food order status", error });
+    res.status(500).json({ message: "Failed to update food order status", error });
   }
 };
 
-const getCompletedFoodOrders = async (req, res) => {
+const updateFoodOrderStatusToPreparing = async (req, res) => {
   try {
-    const completedOrders = await FoodOrder.find({ status: "Completed" });
-    if (completedOrders.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No completed food orders found" });
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: "Food order ID is required" });
     }
-    res.status(200).json(completedOrders);
+    const updatedOrder = await FoodOrder.findByIdAndUpdate(
+      id,
+      { status: "Preparing" },
+      { new: true },
+    );
+    if (!updatedOrder) {
+      return res.status(404).json({ message: "Food order not found" });
+    }
+    res.status(200).json(updatedOrder);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to retrieve completed food orders", error });
+    res.status(500).json({ message: "Failed to update food order status", error });
   }
 };
 
-const getCancelledFoodOrders = async (req, res) => {
+const getCompleteFoodOrders = async (req, res) => {
   try {
-    const cancelledOrders = await FoodOrder.find({
-      status: { $in: ["Cancelled", "delete"] },
-    });
-    if (cancelledOrders.length === 0) {
+    const completeOrders = await FoodOrder.find({ status: "Complete" });
+    if (completeOrders.length === 0) {
       return res
         .status(404)
-        .json({ message: "No cancelled or deleted food orders found" });
+        .json({ message: "No complete food orders found" });
     }
-    res.status(200).json(cancelledOrders);
+    res.status(200).json(completeOrders);
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Failed to retrieve cancelled food orders", error });
+      .json({ message: "Failed to retrieve complete food orders", error });
   }
 };
 
-const getInProgressFoodOrders = async (req, res) => {
+const getAcceptedFoodOrders = async (req, res) => {
   try {
-    const inProgressOrders = await FoodOrder.find({ status: "In Progress" });
-    if (inProgressOrders.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No in-progress food orders found" });
-    }
-    res.status(200).json(inProgressOrders);
+    const acceptedOrders = await FoodOrder.find({ status: "Accepted" });
+    res.status(200).json(acceptedOrders);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to retrieve in-progress food orders", error });
+    res.status(500).json({ message: "Failed to retrieve accepted orders", error });
   }
 };
-const getOverdueFoodOrders = async (req, res) => {
+
+const getPreparingFoodOrders = async (req, res) => {
   try {
-    const overdueOrders = await FoodOrder.find({ status: "Overdue" });
-    if (overdueOrders.length === 0) {
-      return res.status(404).json({ message: "No overdue food orders found" });
+    const preparingOrders = await FoodOrder.find({ status: "Preparing" });
+    res.status(200).json(preparingOrders);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to retrieve preparing orders", error });
+  }
+};
+
+const getPendingFoodOrders = async (req, res) => {
+  try {
+    const pendingOrders = await FoodOrder.find({ status: "Pending" });
+    if (pendingOrders.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No pending food orders found" });
     }
-    res.status(200).json(overdueOrders);
+    res.status(200).json(pendingOrders);
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Failed to retrieve overdue food orders", error });
+      .json({ message: "Failed to retrieve pending food orders", error });
   }
 };
 // GET /api/restaurant/orders/userspecific
@@ -292,10 +280,11 @@ module.exports = {
   editfoodOrder,
   deleteFoodOrder,
   updateFoodOrderStatusTOComplete,
-  updateFoodOrderStatusToCancelled,
-  getCompletedFoodOrders,
-  getCancelledFoodOrders,
-  getInProgressFoodOrders,
-  getOverdueFoodOrders,
+  updateFoodOrderStatusToAccepted,
+  updateFoodOrderStatusToPreparing,
+  getCompleteFoodOrders,
+  getAcceptedFoodOrders,
+  getPreparingFoodOrders,
+  getPendingFoodOrders,
   getUserOrders,
 };
