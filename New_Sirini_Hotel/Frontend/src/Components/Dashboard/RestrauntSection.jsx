@@ -58,45 +58,7 @@ const RestaurantSection = ({ data }) => {
   }, []);
 
   const handleDelete = (order) => {
-    const userDataStr = localStorage.getItem("user");
-    let userRole = "";
-    if (userDataStr) {
-      try {
-        const userData = JSON.parse(userDataStr);
-        userRole = userData.role || "";
-      } catch (e) { }
-    }
-
-    const isStaff = userRole.includes("Operation Manager") || userRole === "Admin";
-
-    if (!isStaff) {
-      const now = new Date();
-      const slDateStr = new Intl.DateTimeFormat('en-CA', {
-        timeZone: 'Asia/Colombo',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-      }).format(now);
-
-      const slTimeStr = new Intl.DateTimeFormat('en-GB', {
-        timeZone: 'Asia/Colombo',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      }).format(now);
-
-      const pickupDateStr = new Date(order.pickupDate).toISOString().split('T')[0];
-      const pickupDateTime = new Date(`${pickupDateStr}T${order.pickupTime}`);
-      const currentSLDateTime = new Date(`${slDateStr}T${slTimeStr}`);
-
-      const diffInMs = pickupDateTime - currentSLDateTime;
-      const diffInHours = diffInMs / (1000 * 60 * 60);
-
-      if (diffInHours < 1) {
-        toast.error("Cannot cancel now. Less than 1 hour left. Please contact hotel for cancellation.");
-        return;
-      }
-    }
+    // Simplified deletion logic: allow for all active orders
 
     setConfirmDialog({
       isOpen: true,
@@ -112,8 +74,14 @@ const RestaurantSection = ({ data }) => {
     setConfirmDialog({ isOpen: false, id: null });
     const loadingtoast = toast.loading("Deleting order...");
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.delete(
         `${VITE_URL}/api/restraunt/deleteorder/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       if (response.status === 200) {
         toast.dismiss(loadingtoast);
@@ -221,9 +189,6 @@ const RestaurantSection = ({ data }) => {
               {/* Card Header */}
               <div className="flex items-start mb-4">
                 <div className="flex items-center gap-3">
-                  {/* <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300"> */}
-                    {/* <UtensilsCrossed size={18} /> */}
-                  {/* </div> */}
                   <div className="flex flex-col">
                     <h5 className="font-bold text-gray-900 text-[12px] leading-snug">{order.foodName}</h5>
                     <span className="text-[10px] font-mono font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded-md w-fit mt-1">
@@ -258,15 +223,15 @@ const RestaurantSection = ({ data }) => {
               {/* Actions */}
               {order.status === "Pending" && (
                 <div className="flex gap-3 mt-6">
-                  <button
-                    onClick={() => handleEdit(order)}
-                    className="flex-1 py-2.5 bg-white text-amber-700 border border-amber-100 rounded-full font-bold text-[10px] tracking-widest hover:bg-amber-50 hover:shadow-lg hover:shadow-amber-500/10 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 uppercase"
-                  >
-                    <Pencil size={14} strokeWidth={2.5} /> Edit
-                  </button>
+                    <button
+                      onClick={() => handleEdit(order)}
+                      className="flex-1 py-1.5 bg-gradient-to-r from-blue-900 to-blue-500 text-white rounded-full font-bold text-[10px] tracking-widest hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 uppercase"
+                    >
+                      <Pencil size={14} strokeWidth={2.5} /> Edit
+                    </button>
                   <button
                     onClick={() => handleDelete(order)}
-                    className="flex-1 py-2.5 bg-white text-red-700 border border-red-100 rounded-full font-bold text-[10px] tracking-widest hover:bg-red-50 hover:shadow-lg hover:shadow-red-500/10 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 uppercase"
+                    className="flex-1 py-1.5 bg-white text-red-700 border border-red-100 rounded-full font-bold text-[10px] tracking-widest hover:bg-red-50 hover:shadow-lg hover:shadow-red-500/10 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 uppercase"
                   >
                     <Trash2 size={14} strokeWidth={2.5} /> Delete
                   </button>

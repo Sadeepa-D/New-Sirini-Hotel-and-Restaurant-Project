@@ -79,7 +79,12 @@ const OrderManage = () => {
     setConfirmDialog({ isOpen: false, id: null });
     const loadingtoast = toast.loading("Deleting order...");
     try {
-      await axios.delete(`${VITE_URL}/api/restraunt/deleteorder/${id}`);
+      const token = localStorage.getItem("token");
+      await axios.delete(`${VITE_URL}/api/restraunt/deleteorder/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       toast.dismiss(loadingtoast);
       toast.success(`Order Deleted Successfully`);
       fetchOrders();

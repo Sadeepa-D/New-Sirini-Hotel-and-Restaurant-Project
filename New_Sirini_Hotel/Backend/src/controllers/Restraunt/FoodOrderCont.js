@@ -138,24 +138,7 @@ const deleteFoodOrder = async (req, res) => {
       return res.status(404).json({ message: "Food order not found" });
     }
 
-    // Check if user is NOT an Operation Manager or Admin
-    const isStaff = userRole && (userRole.includes("Operation Manager") || userRole === "Admin");
-
-    if (!isStaff) {
-      const { slDate, slTime } = getCurrentSLTime();
-      const pickupDateStr = new Date(order.pickupDate).toISOString().split('T')[0];
-      const pickupDateTime = new Date(`${pickupDateStr}T${order.pickupTime}`);
-      const currentSLDateTime = new Date(`${slDate}T${slTime}`);
-
-      const diffInMs = pickupDateTime - currentSLDateTime;
-      const diffInHours = diffInMs / (1000 * 60 * 60);
-
-      if (diffInHours < 1) {
-        return res.status(400).json({ 
-          message: "Cannot cancel now. Less than 1 hour left. Please contact hotel for cancellation." 
-        });
-      }
-    }
+    // Simplified deletion logic: allow for all active orders
 
     order.status = "delete";
     await order.save();
