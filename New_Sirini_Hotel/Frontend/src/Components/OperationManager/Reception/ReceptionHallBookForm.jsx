@@ -17,7 +17,12 @@ import axios from "axios";
 const eventTypes = ["Wedding", "Birthday", "Corporate", "Anniversary", "Other"];
 const eventTimes = ["Day (9am - 4pm)", "Night (7pm - 1pm)"];
 
-const ReceptionHallBookForm = ({ fetchBookings, onClose, editData = null, AllBookings = [] }) => {
+const ReceptionHallBookForm = ({
+  fetchBookings,
+  onClose,
+  editData = null,
+  AllBookings = [],
+}) => {
   const VITE_URL = import.meta.env.VITE_API_URL;
   const [formData, setFormData] = useState({
     customerName: "",
@@ -34,9 +39,13 @@ const ReceptionHallBookForm = ({ fetchBookings, onClose, editData = null, AllBoo
     e.preventDefault();
     const isconflict = AllBookings.some((booking) => {
       if (editData && booking._id === editData._id) return false;
-      const bookingdate = new Date(booking.eventDate).toISOString().split("T")[0];
+      const bookingdate = new Date(booking.eventDate)
+        .toISOString()
+        .split("T")[0];
       const selectedDate = formData.eventDate;
-      return bookingdate === selectedDate && booking.eventTime === formData.eventTime;
+      return (
+        bookingdate === selectedDate && booking.eventTime === formData.eventTime
+      );
     });
 
     if (isconflict) {
@@ -85,6 +94,21 @@ const ReceptionHallBookForm = ({ fetchBookings, onClose, editData = null, AllBoo
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+  const checkavailability = () => {
+    if (!formData.eventDate || !formData.eventTime) return true;
+    return !AllBookings.some((booking) => {
+      if (editData && booking._id === editData._id) return false;
+      const bookingdate = new Date(booking.eventDate)
+        .toISOString()
+        .split("T")[0];
+      const selectedDate = formData.eventDate;
+      return (
+        bookingdate === selectedDate && booking.eventTime === formData.eventTime
+      );
+    });
+  };
+  const isAvailable = checkavailability();
 
   const inputClass =
     "w-full text-sm text-gray-700 outline-none placeholder-gray-300 bg-transparent";
@@ -215,6 +239,11 @@ const ReceptionHallBookForm = ({ fetchBookings, onClose, editData = null, AllBoo
                 </select>
               </div>
             </div>
+            {!isAvailable && (
+              <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold animate-pulse">
+                This slot is already reserved!
+              </p>
+            )}
           </div>
 
           {/* Event Type + Number of Guests */}
