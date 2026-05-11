@@ -202,9 +202,12 @@ const RestaurantSection = ({ data }) => {
           <p className="text-gray-400 text-sm animate-pulse">Loading orders…</p>
         </div>
       ) : filteredOrders.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-          <UtensilsCrossed size={36} className="text-gray-200 mb-3" />
-          <p className="text-gray-400 text-sm font-medium">No {activeTab.toLowerCase()} orders found.</p>
+        <div className="flex flex-col items-center justify-center py-20 bg-gray-50/50 rounded-3xl border border-dashed border-gray-200">
+          <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-6 border border-gray-100">
+            <UtensilsCrossed size={40} className="text-gray-200" />
+          </div>
+          <h3 className="text-xl font-bold text-gray-700">No orders available</h3>
+          <p className="text-gray-400 text-sm font-medium mt-1">No items found in the {activeTab.toLowerCase()} section</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">

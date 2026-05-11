@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { CheckCircle, XCircle, Search, User, Clock, Check, X, ArrowUpDown } from "lucide-react";
+import { CheckCircle, XCircle, Search, User, Clock, Check, X, ArrowUpDown, ClipboardList } from "lucide-react";
 import ConfirmDialog from "../../ConfrimDialog";
 
 const OrderManage = () => {
@@ -302,9 +302,19 @@ const OrderManage = () => {
 
         {/* Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mt-6">
-          {currentOrders.map((order) => (
-            <HistoryCard key={order._id} order={order} />
-          ))}
+          {currentOrders.length > 0 ? (
+            currentOrders.map((order) => (
+              <HistoryCard key={order._id} order={order} />
+            ))
+          ) : (
+            <div className="col-span-full flex flex-col items-center justify-center py-20 bg-gray-50/50 rounded-[2rem] border border-dashed border-gray-200">
+              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-4 border border-gray-100">
+                <ClipboardList size={32} className="text-gray-300" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-700 uppercase tracking-tight">No orders available</h3>
+              <p className="text-sm text-gray-400 font-medium mt-1">No items found in this section</p>
+            </div>
+          )}
         </div>
 
         {/* Pagination */}
