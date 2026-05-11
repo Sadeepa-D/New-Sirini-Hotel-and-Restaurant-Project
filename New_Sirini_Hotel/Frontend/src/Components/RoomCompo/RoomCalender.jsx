@@ -33,7 +33,7 @@ const RoomCalender = ({ bookedDates, checkIn, checkOut, onDateSelect, onNext, on
       
       <div className="mb-6">
         <h2 className="text-gray-900 text-xl font-serif italic tracking-tight">Select Dates</h2>
-        <p className="text-gray-400 text-[8px] font-black uppercase tracking-[0.2em]">New Sirini • Suite #{roomNumber}</p>
+        <p className="text-gray-400 text-[8px] font-black uppercase tracking-[0.2em]">New Sirini Hotel Room Number {roomNumber}</p>
       </div>
 
       {/* Month Navigation */}
