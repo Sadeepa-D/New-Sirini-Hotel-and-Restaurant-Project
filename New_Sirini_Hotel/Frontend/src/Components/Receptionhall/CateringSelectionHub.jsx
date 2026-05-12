@@ -1,22 +1,12 @@
 import React, { useState, useEffect } from "react";
-import {
-  Users,
-  X,
-  Trash2,
-  Utensils,
-  Plus,
-  Calculator,
-  Receipt,
-  Search,
-  CheckCircle2,
-} from "lucide-react";
+import { X, Trash2, Utensils, Plus } from "lucide-react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
-const CateringSelectionHub = ({ onClose }) => {
-  const [selectedList, setSelectedList] = useState([]);
-  const [participants, setParticipants] = useState(100); // Default to 100 for your business logic
+const CateringSelectionHub = ({ onClose, selectedPackage, isAdd = true }) => {
+  const [packageItems, setPackageItems] = useState([]);
   const [cateringitems, setCateringItems] = useState([]);
-  const [searchQuery, setSearch] = useState("");
+  const [selectedItemId, setSelectedItemId] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const VITE_URL = import.meta.env.VITE_API_URL;
@@ -29,6 +19,19 @@ const CateringSelectionHub = ({ onClose }) => {
       setCateringItems(response.data);
     } catch (error) {
       console.error("Error fetching catering items:", error);
+    }
+  };
+
+  const fetchPackageItems = async () => {
+    try {
+      if (selectedPackage?._id) {
+        const response = await axios.get(
+          `${VITE_URL}/api/receptionhall/package/${selectedPackage._id}/items`,
+        );
+        setPackageItems(response.data || []);
+      }
+    } catch (error) {
+      console.error("Error fetching package items:", error);
     } finally {
       setLoading(false);
     }
@@ -36,30 +39,48 @@ const CateringSelectionHub = ({ onClose }) => {
 
   useEffect(() => {
     fetchCateringItems();
-  }, []);
+    fetchPackageItems();
+  }, [selectedPackage]);
 
-  const toggleItem = (item) => {
-    const isSelected = selectedList.find((s) => s._id === item._id);
-    if (isSelected) {
-      setSelectedList(selectedList.filter((s) => s._id !== item._id));
-    } else {
-      setSelectedList([...selectedList, item]);
+  const handleAddItem = async () => {
+    try {
+      const response = await axios.post(
+        `${VITE_URL}/api/receptionhall/package/${selectedPackage._id}/add-catering`,
+        {
+          cateringItemId: selectedItemId,
+        },
+      );
+      toast.success("Item added to package");
+      setSelectedItemId(null);
+      fetchPackageItems();
+    } catch (error) {
+      console.error(
+        "Error adding item:",
+        error.response?.data || error.message,
+      );
+      toast.error(error.response?.data?.message || "Failed to add item");
     }
   };
 
-  // --- Business Logic Calculations ---
-  const subtotalPerPerson = selectedList.reduce(
-    (sum, item) => sum + item.price,
-    0,
-  );
-  const hallChargePerPerson = participants < 100 ? 2000 : 0;
-  const finalPricePerPlate = subtotalPerPerson + hallChargePerPerson;
-  const grandTotal = finalPricePerPlate * participants;
-
-  const filteredItems = cateringitems.filter((item) =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
-
+  const handleRemoveItem = async (itemId) => {
+    if (!selectedPackage?._id) {
+      toast.error("Package not found");
+      return;
+    }
+    try {
+      await axios.delete(
+        `${VITE_URL}/api/receptionhall/package/${selectedPackage._id}/remove-catering/${itemId}`,
+      );
+      toast.success("Item removed from package");
+      fetchPackageItems();
+    } catch (error) {
+      console.error(
+        "Error removing item:",
+        error.response?.data || error.message,
+      );
+    }
+  };
+  const selectedItem = cateringitems.find((i) => i._id === selectedItemId);
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-2 sm:p-4 animate-in fade-in duration-200">
       <div className="bg-white w-full max-w-6xl max-h-[95vh] overflow-hidden rounded-[2.5rem] shadow-2xl flex flex-col animate-in zoom-in-95 duration-300">
@@ -86,58 +107,113 @@ const CateringSelectionHub = ({ onClose }) => {
         </div>
 
         <div className="flex-1 overflow-hidden flex flex-col lg:flex-row">
-          {/* LEFT: Food Item Grid */}
+          {/* LEFT: Package Items (Already Added) */}
           <div className="flex-1 overflow-y-auto p-6 bg-gray-50/50">
+            <h3 className="text-sm font-bold text-gray-800 mb-4">
+              Items in This Package
+            </h3>
             {loading ? (
-              <div className="flex items-center justify-center h-full text-gray-400 animate-pulse">
-                Loading Menu...
+              <div className="text-center text-gray-400 text-sm py-4 animate-pulse">
+                Loading...
+              </div>
+            ) : packageItems.length === 0 ? (
+              <div className="text-center text-gray-400 text-sm py-8">
+                No items added yet
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                {filteredItems.map((item) => {
-                  const isSelected = selectedList.find(
-                    (s) => s._id === item._id,
-                  );
-                  return (
-                    <div
-                      key={item._id}
-                      onClick={() => toggleItem(item)}
-                      className={`group cursor-pointer bg-white rounded-2xl overflow-hidden border-2 transition-all duration-300 ${isSelected ? "border-orange-500 shadow-md scale-[0.98]" : "border-transparent hover:border-orange-200 shadow-sm"}`}
-                    >
-                      <div className="relative h-32 overflow-hidden">
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="w-full h-full object-cover transition-transform group-hover:scale-110"
-                        />
-                        {isSelected && (
-                          <div className="absolute inset-0 bg-orange-500/20 flex items-center justify-center backdrop-blur-[1px]">
-                            <CheckCircle2
-                              className="text-white fill-orange-500"
-                              size={32}
-                            />
-                          </div>
-                        )}
-                        <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg text-[10px] font-bold text-orange-600">
-                          Rs. {item.price}
-                        </div>
-                      </div>
-                      <div className="p-3">
-                        <h4 className="font-bold text-gray-800 text-sm truncate">
+              <div className="space-y-2">
+                {packageItems.map((item) => (
+                  <div
+                    key={item._id}
+                    className="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-200 hover:shadow-sm transition-all"
+                  >
+                    <div className="flex items-center gap-3 flex-1">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-12 h-12 rounded-lg object-cover"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-gray-800 truncate">
                           {item.name}
-                        </h4>
-                        <p className="text-[10px] text-gray-400 line-clamp-1 mt-1">
-                          {Array.isArray(item.ingredients)
-                            ? item.ingredients[0]
-                            : "Fresh ingredients"}
                         </p>
+                        {isAdd && (
+                          <p className="text-[10px] text-gray-500">
+                            Rs. {item.price}
+                          </p>
+                        )}
                       </div>
                     </div>
-                  );
-                })}
+                    <button
+                      onClick={() => handleRemoveItem(item._id)}
+                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
           </div>
+          {isAdd && (
+            <>
+              {/* RIGHT: Available Items to Add */}
+              <div className="w-full lg:w-96 bg-white p-6 border-l border-gray-100 flex flex-col">
+                <h3 className="text-lg font-bold text-gray-800 mb-4">
+                  Add Items to Package
+                </h3>
+
+                {/* Available Items Dropdown */}
+                <div className="mb-4">
+                  <label className="text-xs text-gray-500 font-medium mb-2 block">
+                    Select Item
+                  </label>
+                  <select
+                    value={selectedItemId || ""}
+                    onChange={(e) => setSelectedItemId(e.target.value)}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500"
+                  >
+                    <option value="">Choose an item...</option>
+                    {cateringitems.map((item) => (
+                      <option key={item._id} value={item._id}>
+                        {item.name} - Rs. {item.price}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Add Button */}
+                <button
+                  onClick={handleAddItem}
+                  disabled={!selectedItemId}
+                  className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm mb-6"
+                >
+                  <Plus size={16} className="inline mr-2" />
+                  Add Item
+                </button>
+
+                {/* Item Preview */}
+                {selectedItem && (
+                  <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
+                    <img
+                      src={selectedItem.image}
+                      alt={selectedItem.name}
+                      className="w-full h-32 rounded-lg object-cover mb-2"
+                    />
+                    <h4 className="font-semibold text-gray-800 text-sm">
+                      {selectedItem.name}
+                    </h4>
+                    <p className="text-xs text-gray-600 mt-1">
+                      {selectedItem.description || "No description"}
+                    </p>
+                    <p className="text-sm font-bold text-orange-600 mt-2">
+                      Rs. {selectedItem.price}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

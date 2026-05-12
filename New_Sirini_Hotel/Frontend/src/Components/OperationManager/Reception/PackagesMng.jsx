@@ -67,6 +67,7 @@ const PackagesMng = () => {
     message: "",
   });
   const [showCateringHub, setShowCateringHub] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState(null);
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -249,8 +250,12 @@ const PackagesMng = () => {
             {visibleItems.map((item) => (
               <div
                 key={item._id}
-                className="relative shrink-0 rounded-xl overflow-hidden border border-gray-100 shadow-sm group"
+                className="relative shrink-0 rounded-xl overflow-hidden border border-gray-100 shadow-sm group cursor-pointer hover:shadow-md transition-shadow"
                 style={{ width: cardWidth }}
+                onClick={() => {
+                  setSelectedPackage(item);
+                  setShowCateringHub(true);
+                }}
               >
                 {/* Image */}
                 <div className="h-48 overflow-hidden">
@@ -395,7 +400,14 @@ const PackagesMng = () => {
         onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
       />
       {showCateringHub && (
-        <CateringSelectionHub onClose={() => setShowCateringHub(false)} />
+        <CateringSelectionHub 
+          selectedPackage={selectedPackage}
+          onClose={() => {
+            setShowCateringHub(false);
+            setSelectedPackage(null);
+          }} 
+          isAdd={true}
+        />
       )}
     </div>
   );
