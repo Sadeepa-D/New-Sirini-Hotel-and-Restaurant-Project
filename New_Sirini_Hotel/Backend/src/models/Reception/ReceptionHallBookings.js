@@ -18,6 +18,10 @@ const receptionHallBookingSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    eventTime: {
+      type: String,
+      required: true,
+    },
     eventType: {
       type: String,
       required: true,

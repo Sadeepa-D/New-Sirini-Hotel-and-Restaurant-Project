@@ -7,6 +7,7 @@ const createReceptionHallBooking = async (req, res) => {
       customerEmail,
       customerPhone,
       eventDate,
+      eventTime,
       eventType,
       numberOfGuests,
       specialRequests,
@@ -16,6 +17,7 @@ const createReceptionHallBooking = async (req, res) => {
       !customerEmail ||
       !customerPhone ||
       !eventDate ||
+      !eventTime ||
       !eventType ||
       !numberOfGuests
     ) {
@@ -23,11 +25,22 @@ const createReceptionHallBooking = async (req, res) => {
         .status(400)
         .json({ message: "All required fields must be filled" });
     }
+    const existingBooking = await receptionandHallBook.findOne({
+      eventDate: eventDate,
+      eventTime: eventTime,
+      status: "Confirmed",
+    });
+    if (existingBooking) {
+      return res
+        .status(400)
+        .json({ message: "Selected date and time slot is already booked" });
+    }
     const newBooking = new receptionandHallBook({
       customerName,
       customerEmail,
       customerPhone,
       eventDate,
+      eventTime,
       eventType,
       numberOfGuests,
       specialRequests,
@@ -70,6 +83,7 @@ const editReceptionHallBooking = async (req, res) => {
       customerEmail,
       customerPhone,
       eventDate,
+      eventTime,
       eventType,
       numberOfGuests,
       specialRequests,
@@ -81,6 +95,7 @@ const editReceptionHallBooking = async (req, res) => {
         customerEmail,
         customerPhone,
         eventDate,
+        eventTime,
         eventType,
         numberOfGuests,
         specialRequests,
@@ -123,7 +138,7 @@ const updateBookingStatus = async (req, res) => {
 
 const GetBookingDates = async (req, res) => {
   try {
-    const bookings = await receptionandHallBook.find({}, "eventDate");
+    const bookings = await receptionandHallBook.find({}, "eventDate eventTime");
     res.status(200).json(bookings);
   } catch (error) {
     res.status(400).json({ message: error.message });

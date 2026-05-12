@@ -9,8 +9,10 @@ const UserRoutes = require("./routes/UserRoute");
 const RestrauntRoutes = require("./routes/RestrauntRoutes");
 const ReceptionHallRoutes = require("./routes/ReceptionHallRoutes");
 const GalleryRoutes = require("./routes/GalleryRoutes");
+const { initCronJobs } = require("./services/cronService");
 
 connectDB();
+initCronJobs();
 
 const app = express();
 
