@@ -26,7 +26,19 @@ export default function Restaurant() {
   const [categoryIndices, setCategoryIndices] = useState({});
   const [mealData, setMealData] = useState([]);
   const [showCart, setShowCart] = useState(false);
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(() => {
+    try {
+      const userData = localStorage.getItem("user");
+      if (userData) {
+        const user = JSON.parse(userData);
+        const savedCart = localStorage.getItem(`cart_items_${user._id}`);
+        return savedCart ? JSON.parse(savedCart) : [];
+      }
+    } catch (error) {
+      console.error("Error loading cart from localStorage:", error);
+    }
+    return [];
+  });
   const [openorderform, setOpenorderform] = useState(false);
 
   const fetchFoodItems = async () => {
@@ -62,6 +74,19 @@ export default function Restaurant() {
     fetchFoodItems();
   }, []);
 
+  // Sync cart to localStorage
+  useEffect(() => {
+    try {
+      const userData = localStorage.getItem("user");
+      if (userData) {
+        const user = JSON.parse(userData);
+        localStorage.setItem(`cart_items_${user._id}`, JSON.stringify(cartItems));
+      }
+    } catch (error) {
+      console.error("Error saving cart to localStorage:", error);
+    }
+  }, [cartItems]);
+
   useEffect(() => {
     const handleResize = () => {
       const w = window.innerWidth;
@@ -96,12 +121,22 @@ export default function Restaurant() {
     }
 
     setCartItems((prev) => {
-      const existing = prev.find((i) => i.id === item.id);
-      if (existing) {
-        return prev.map((i) =>
-          i.id === item.id ? { ...i, quantity: (i.quantity || 1) + 1 } : i,
-        );
+      // For items with portions, we check both id and portion
+      // Items added from main menu default to "Normal"
+      const existingIndex = prev.findIndex(
+        (i) => i.id === item.id && i.portion === "Normal"
+      );
+
+      if (existingIndex !== -1) {
+        const newCart = [...prev];
+        newCart[existingIndex] = {
+          ...newCart[existingIndex],
+          quantity: (newCart[existingIndex].quantity || 1) + 1,
+        };
+        return newCart;
       }
+
+      const cartId = item.has_portions ? `${item.id}_Normal` : item.id;
       return [
         ...prev,
         { ...item, cartId: item.id, quantity: 1, portion: "Normal" },
@@ -281,9 +316,11 @@ export default function Restaurant() {
       {openorderform && (
         <OrderForm
           cartItems={cartItems}
-          onClose={() => {
+          onClose={(success) => {
             setOpenorderform(false);
-            setCartItems([]);
+            if (success) {
+              setCartItems([]);
+            }
           }}
         />
       )}

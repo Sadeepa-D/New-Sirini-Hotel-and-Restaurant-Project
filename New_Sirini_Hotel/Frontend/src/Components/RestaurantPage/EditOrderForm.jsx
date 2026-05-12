@@ -11,6 +11,7 @@ export default function EditOrderForm({ item = {}, editingOrder, onClose }) {
         pickupDate: editingOrder ? new Date(editingOrder.pickupDate).toISOString().split('T')[0] : "",
         pickupTime: editingOrder ? editingOrder.pickupTime : "",
         quantity: editingOrder ? editingOrder.quantity : 1,
+        portion: editingOrder ? editingOrder.portion : "Normal",
     });
     const [submitted, setSubmitted] = useState(false);
 
@@ -70,6 +71,7 @@ export default function EditOrderForm({ item = {}, editingOrder, onClose }) {
                 foodName: item.name || (editingOrder ? editingOrder.foodName : ""),
                 userId: userId,
                 Price: (item.price || (editingOrder ? editingOrder.Price / editingOrder.quantity : 0)) * form.quantity,
+                portion: form.portion,
             };
 
             if (editingOrder) {
@@ -101,7 +103,8 @@ export default function EditOrderForm({ item = {}, editingOrder, onClose }) {
             }, 2000);
         } catch (error) {
             console.error("Error saving order:", error);
-            toast.error(`Failed to ${editingOrder ? 'update' : 'place'} order. Please try again.`);
+            const errorMessage = error.response?.data?.message || `Failed to ${editingOrder ? 'update' : 'place'} order. Please try again.`;
+            toast.error(errorMessage);
         }
     };
 
@@ -151,7 +154,6 @@ export default function EditOrderForm({ item = {}, editingOrder, onClose }) {
                     <span className="text-s font-semibold tracking-widest text-amber-600">
                         {editingOrder ? "Edit Order" : "Order Now"}
                     </span>
-                    <br />
 
                     <h3 className="text-2xl font-bold text-neutral-900 mt-1">{item.name || editingOrder?.foodName}</h3>
                     {item.description && <p className="text-sm text-neutral-500 mt-1">{item.description}</p>}
