@@ -148,23 +148,13 @@ export default function EditOrderForm({ item = {}, editingOrder, onClose }) {
                         <X size={18} className="text-neutral-600" />
                     </button>
 
-                    <span className="text-xs font-semibold uppercase tracking-widest text-amber-600">
+                    <span className="text-s font-semibold tracking-widest text-amber-600">
                         {editingOrder ? "Edit Order" : "Order Now"}
                     </span>
-                    <h2 className="text-2xl font-bold text-neutral-900 mt-1">{item.name || editingOrder?.foodName}</h2>
-                    {item.description && <p className="text-sm text-neutral-500 mt-1">{item.description}</p>}
+                    <br />
 
-                    {/* Small label pill - optional, looks nice */}
-                    {item.label && (
-                        <div className="mt-3 inline-block">
-                            <span
-                                className="px-3 py-1 rounded-full text-xs font-bold text-white"
-                                style={{ background: "#d97706" }}
-                            >
-                                {item.label}
-                            </span>
-                        </div>
-                    )}
+                    <h3 className="text-2xl font-bold text-neutral-900 mt-1">{item.name || editingOrder?.foodName}</h3>
+                    {item.description && <p className="text-sm text-neutral-500 mt-1">{item.description}</p>}
                 </div>
 
                 {/* Form / Success content */}
