@@ -72,9 +72,9 @@ const CateringItemCard = () => {
   const canGoNext = index + itemsPerView < cateringItems.length;
 
   return (
-    <section className="bg-white py-16 px-4 sm:px-6 lg:px-8">
+    <section className="bg-white py-5 px-4 sm:px-6 lg:px-8">
       {/* Section Header */}
-      <div className="text-center mb-12">
+      <div className="text-center mb-12 h-20">
         <p className="text-amber-500 text-xs uppercase tracking-[0.3em] mb-2 font-medium">
           Freshly Prepared
         </p>
@@ -113,7 +113,8 @@ const CateringItemCard = () => {
               {visibleItems.map((item) => (
                 <div
                   key={item._id}
-className="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 group flex flex-col relative"                >
+                  className="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 group flex flex-col relative"
+                >
                   {/* Image */}
                   <div className="relative h-52 sm:h-60 w-full overflow-hidden">
                     <img

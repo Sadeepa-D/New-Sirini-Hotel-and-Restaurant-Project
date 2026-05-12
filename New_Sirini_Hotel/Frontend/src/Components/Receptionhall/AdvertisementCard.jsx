@@ -3,10 +3,9 @@ import { Phone, User, MapPin, Tag, Globe } from "lucide-react";
 
 const AdvertisementCard = ({ ad }) => {
   return (
-    <div className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group flex flex-col relative h-full">
-      {" "}
+    <div className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group flex flex-col relative">
       {/* Image */}
-      <div className="relative h-52 sm:h-60 w-full overflow-hidden">
+      <div className="relative h- sm:h-60 w-full overflow-hidden">
         <img
           src={ad.image}
           alt={ad.BuissnesName}

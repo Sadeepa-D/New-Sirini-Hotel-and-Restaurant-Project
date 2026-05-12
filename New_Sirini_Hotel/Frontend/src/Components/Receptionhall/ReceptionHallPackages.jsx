@@ -72,9 +72,9 @@ export default function ReceptionHallPackages() {
   const visiblePackages = packages.slice(index, index + itemsPerView);
 
   return (
-    <section className="bg-gray-50 py-20 px-4 sm:px-6 lg:px-8">
+    <section className="bg-gray-50 py-5 px-4 sm:px-6 lg:px-8">
       {/* Section Header */}
-      <div className="text-center mb-16">
+      <div className="text-center mb-16 h-17">
         <p className="text-amber-600 text-xs uppercase tracking-[0.4em] mb-3 font-bold">
           Tailored For You
         </p>
