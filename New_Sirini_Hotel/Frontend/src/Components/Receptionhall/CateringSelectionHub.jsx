@@ -44,6 +44,13 @@ const CateringSelectionHub = ({ onClose, selectedPackage, isAdd = true }) => {
 
   const handleAddItem = async () => {
     try {
+      const alreadyadded = packageItems.some(
+        (item) => item._id === selectedItemId,
+      );
+      if (alreadyadded) {
+        toast.error("Item is already in the package");
+        return;
+      }
       const response = await axios.post(
         `${VITE_URL}/api/receptionhall/package/${selectedPackage._id}/add-catering`,
         {
