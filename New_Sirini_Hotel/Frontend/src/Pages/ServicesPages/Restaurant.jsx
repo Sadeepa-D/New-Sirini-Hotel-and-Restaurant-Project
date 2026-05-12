@@ -120,31 +120,66 @@ export default function Restaurant() {
       return;
     }
 
-    // Determine the target cartId for this addition (menu additions default to "Normal")
-    const targetCartId = item.has_portions ? `${item.id}_Normal` : item.id;
-
-    // Check if this specific portion variant already exists in the cart
-    const existingItem = cartItems.find((i) => i.cartId === targetCartId);
-
-    if (existingItem) {
-      // Exact matching portion item exists: Increase its quantity
-      setCartItems((prev) =>
-        prev.map((i) =>
-          i.cartId === targetCartId
-            ? { ...i, quantity: (i.quantity || 1) + 1 }
-            : i
-        )
-      );
-      toast.success(`${item.name} quantity updated!`);
+    if (!item.has_portions) {
+      // Case 1: Food item has NO portion
+      const existing = cartItems.find((i) => i.id === item.id);
+      if (existing) {
+        setCartItems((prev) =>
+          prev.map((i) =>
+            i.id === item.id ? { ...i, quantity: (i.quantity || 1) + 1 } : i,
+          ),
+        );
+        toast.success(`${item.name} quantity updated!`);
+      } else {
+        setCartItems((prev) => [
+          ...prev,
+          { ...item, cartId: item.id, quantity: 1, portion: "Normal" },
+        ]);
+        toast.success(`${item.name} added to cart!`);
+      }
       return;
     }
 
-    // New item or different portion: Add as a new separate cart row
-    setCartItems((prev) => [
-      ...prev,
-      { ...item, cartId: targetCartId, quantity: 1, portion: "Normal" },
-    ]);
-    toast.success(`${item.name} added to cart!`);
+    // Case 2: Food item HAS portion options
+    const existingNormal = cartItems.find(
+      (i) => i.id === item.id && i.portion === "Normal",
+    );
+    const existingFull = cartItems.find(
+      (i) => i.id === item.id && i.portion === "Full",
+    );
+
+    if (existingNormal && existingFull) {
+      // If both exist, increment Normal portion
+      setCartItems((prev) =>
+        prev.map((i) =>
+          i.id === item.id && i.portion === "Normal"
+            ? { ...i, quantity: (i.quantity || 1) + 1 }
+            : i,
+        ),
+      );
+      toast.success(`${item.name} (Normal) quantity updated!`);
+    } else if (existingNormal) {
+      // If Normal exists, add Full portion
+      setCartItems((prev) => [
+        ...prev,
+        { ...item, cartId: `${item.id}_Full`, quantity: 1, portion: "Full" },
+      ]);
+      toast.success(`${item.name} (Full) added to cart!`);
+    } else if (existingFull) {
+      // If Full exists, add Normal portion
+      setCartItems((prev) => [
+        ...prev,
+        { ...item, cartId: `${item.id}_Normal`, quantity: 1, portion: "Normal" },
+      ]);
+      toast.success(`${item.name} (Normal) added to cart!`);
+    } else {
+      // If none exist, add Normal portion as default
+      setCartItems((prev) => [
+        ...prev,
+        { ...item, cartId: `${item.id}_Normal`, quantity: 1, portion: "Normal" },
+      ]);
+      toast.success(`${item.name} added to cart!`);
+    }
   };
 
   const handlecheckout = (updatedItems) => {
