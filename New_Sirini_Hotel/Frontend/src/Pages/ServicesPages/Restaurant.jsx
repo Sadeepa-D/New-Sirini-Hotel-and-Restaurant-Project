@@ -120,28 +120,30 @@ export default function Restaurant() {
       return;
     }
 
-    setCartItems((prev) => {
-      // For items with portions, we check both id and portion
-      // Items added from main menu default to "Normal"
-      const existingIndex = prev.findIndex(
-        (i) => i.id === item.id && i.portion === "Normal"
+    // Determine the target cartId for this addition (menu additions default to "Normal")
+    const targetCartId = item.has_portions ? `${item.id}_Normal` : item.id;
+
+    // Check if this specific portion variant already exists in the cart
+    const existingItem = cartItems.find((i) => i.cartId === targetCartId);
+
+    if (existingItem) {
+      // Exact matching portion item exists: Increase its quantity
+      setCartItems((prev) =>
+        prev.map((i) =>
+          i.cartId === targetCartId
+            ? { ...i, quantity: (i.quantity || 1) + 1 }
+            : i
+        )
       );
+      toast.success(`${item.name} quantity updated!`);
+      return;
+    }
 
-      if (existingIndex !== -1) {
-        const newCart = [...prev];
-        newCart[existingIndex] = {
-          ...newCart[existingIndex],
-          quantity: (newCart[existingIndex].quantity || 1) + 1,
-        };
-        return newCart;
-      }
-
-      const cartId = item.has_portions ? `${item.id}_Normal` : item.id;
-      return [
-        ...prev,
-        { ...item, cartId: item.id, quantity: 1, portion: "Normal" },
-      ];
-    });
+    // New item or different portion: Add as a new separate cart row
+    setCartItems((prev) => [
+      ...prev,
+      { ...item, cartId: targetCartId, quantity: 1, portion: "Normal" },
+    ]);
     toast.success(`${item.name} added to cart!`);
   };
 
