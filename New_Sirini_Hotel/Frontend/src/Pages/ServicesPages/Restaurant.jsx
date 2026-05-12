@@ -12,6 +12,7 @@ import CartComp from "../../Components/RestaurantPage/CartComp";
 // Initial hardcoded data removed. Data is now fetched from the backend API.
 
 const CATEGORIES = [
+  
   "Chopsy Rice",
   "Rice & Nasi Goreng",
   "Kottu",
@@ -23,7 +24,6 @@ const CATEGORIES = [
 
 export default function Restaurant() {
   const [itemsPerView, setItemsPerView] = useState(4);
-  const [categoryIndices, setCategoryIndices] = useState({});
   const [mealData, setMealData] = useState([]);
   const [showCart, setShowCart] = useState(false);
   const [cartItems, setCartItems] = useState(() => {
@@ -97,16 +97,53 @@ export default function Restaurant() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const [categoryIndices, setCategoryIndices] = useState(() => {
+    const defaultIndices = CATEGORIES.reduce((acc, cat) => {
+      acc[cat] = 0;
+      return acc;
+    }, {});
+    try {
+      const saved = sessionStorage.getItem("restaurant_category_indices");
+      return saved
+        ? { ...defaultIndices, ...JSON.parse(saved) }
+        : defaultIndices;
+    } catch (e) {
+      return defaultIndices;
+    }
+  });
+
+  // Persist category indices to sessionStorage
+  useEffect(() => {
+    sessionStorage.setItem(
+      "restaurant_category_indices",
+      JSON.stringify(categoryIndices),
+    );
+  }, [categoryIndices]);
+
   const getCategoryIndex = (cat) => categoryIndices[cat] || 0;
 
-  const handlePrev = (cat) => {
+  const handlePrev = (e, cat) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.nativeEvent && e.nativeEvent.stopImmediatePropagation) {
+        e.nativeEvent.stopImmediatePropagation();
+      }
+    }
     setCategoryIndices((prev) => ({
       ...prev,
       [cat]: Math.max(0, (prev[cat] || 0) - 1),
     }));
   };
 
-  const handleNext = (cat, itemsCount) => {
+  const handleNext = (e, cat, itemsCount) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.nativeEvent && e.nativeEvent.stopImmediatePropagation) {
+        e.nativeEvent.stopImmediatePropagation();
+      }
+    }
     setCategoryIndices((prev) => ({
       ...prev,
       [cat]: Math.min(itemsCount - itemsPerView, (prev[cat] || 0) + 1),
@@ -149,15 +186,9 @@ export default function Restaurant() {
     );
 
     if (existingNormal && existingFull) {
-      // If both exist, increment Normal portion
-      setCartItems((prev) =>
-        prev.map((i) =>
-          i.id === item.id && i.portion === "Normal"
-            ? { ...i, quantity: (i.quantity || 1) + 1 }
-            : i,
-        ),
-      );
-      toast.success(`${item.name} (Normal) quantity updated!`);
+      // If both portion variants exist, block further adding and show message
+      toast.error("Already added. You can change quantity in the cart");
+      return;
     } else if (existingNormal) {
       // If Normal exists, add Full portion
       setCartItems((prev) => [
@@ -193,48 +224,60 @@ export default function Restaurant() {
     setOpenorderform(true);
   };
 
-  const MenuSection = ({ title, items, index, onPrev, onNext, onOrder }) => (
-    <div className="mb-16">
-      <h3 className="text-2xl font-bold text-neutral-900 mb-6">{title}</h3>
-      <div className="relative">
-        {index > 0 && (
-          <button
-            onClick={onPrev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
-          >
-            <ChevronLeft className="w-6 h-6 text-neutral-900" />
-          </button>
-        )}
+const MenuSection = ({
+  title,
+  items,
+  index,
+  onPrev,
+  onNext,
+  onOrder,
+  itemsPerView,
+}) => (
+  <div className="mb-16">
+    <h3 className="text-2xl font-bold text-neutral-900 mb-6">{title}</h3>
+    <div className="relative">
+      {index > 0 && (
+        <button
+          type="button"
+          onClick={onPrev}
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
+        >
+          <ChevronLeft className="w-6 h-6 text-neutral-900" />
+        </button>
+      )}
 
-        <div className="overflow-hidden">
-          <div
-            className="flex gap-4 sm:gap-6 transition-transform duration-300"
-            style={{
-              transform: `translateX(-${index * (100 / itemsPerView)}%)`,
-            }}
-          >
-            {items.map((item) => (
-              <RestaurantCard
-                key={item.id}
-                item={item}
-                itemsPerView={itemsPerView}
-                onOrder={onOrder}
-              />
-            ))}
-          </div>
+      <div className="overflow-hidden">
+        <div
+          className="flex justify-start gap-4 sm:gap-6 transition-transform duration-[1200ms] ease-in-out"
+          style={{
+            transform: `translateX(calc(-${index * (100 / itemsPerView)}% - ${
+              index * ((itemsPerView === 1 ? 16 : 24) / itemsPerView)
+            }px))`,
+          }}
+        >
+          {items.map((item) => (
+            <RestaurantCard
+              key={item.id}
+              item={item}
+              itemsPerView={itemsPerView}
+              onOrder={onOrder}
+            />
+          ))}
         </div>
-
-        {index < items.length - itemsPerView && (
-          <button
-            onClick={onNext}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
-          >
-            <ChevronRight className="w-6 h-6 text-neutral-900" />
-          </button>
-        )}
       </div>
+
+      {index < items.length - itemsPerView && (
+        <button
+          type="button"
+          onClick={onNext}
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
+        >
+          <ChevronRight className="w-6 h-6 text-neutral-900" />
+        </button>
+      )}
     </div>
-  );
+  </div>
+);
 
   const [isFabVisible, setIsFabVisible] = useState(false);
   const [isNearFooter, setIsNearFooter] = useState(false);
@@ -316,9 +359,10 @@ export default function Restaurant() {
                 title={cat}
                 items={catItems}
                 index={getCategoryIndex(cat)}
-                onPrev={() => handlePrev(cat)}
-                onNext={() => handleNext(cat, catItems.length)}
+                onPrev={(e) => handlePrev(e, cat)}
+                onNext={(e) => handleNext(e, cat, catItems.length)}
                 onOrder={handleAddToCart}
+                itemsPerView={itemsPerView}
               />
             );
           })}
@@ -357,6 +401,8 @@ export default function Restaurant() {
             setOpenorderform(false);
             if (success) {
               setCartItems([]);
+            } else if (cartItems.length > 0) {
+              
             }
           }}
         />
@@ -364,7 +410,18 @@ export default function Restaurant() {
       {/* Cart Modal */}
       {showCart && (
         <CartComp
-          onClose={() => setShowCart(false)}
+          onClose={() => {
+            setShowCart(false);
+            if (cartItems.length > 0) {
+              toast(
+                "Cart saved for this session. It will be cleared if you log out before checkout.",
+                {
+                  icon: "⚠️",
+                  duration: 6000,
+                },
+              );
+            }
+          }}
           cartItems={cartItems}
           setCartItems={setCartItems}
           onCheckout={handlecheckout}
