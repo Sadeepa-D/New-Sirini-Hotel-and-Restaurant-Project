@@ -112,12 +112,34 @@ function Rooms() {
 
         {/* Content */}
         <div className="z-20 flex flex-col items-center gap-4 bg-black/50 backdrop-blur-md px-8 md:px-12 py-8 rounded-2xl border border-white/20">
-          <h1 className="text-5xl md:text-6xl font-serif italic text-white">
+          <h1 
+            className="text-5xl md:text-6xl font-serif italic text-white"
+            style={{
+              animation: "slideUpFadeIn 0.7s ease-out forwards"
+            }}
+          >
             Our Rooms
           </h1>
-          <p className="text-sm md:text-base uppercase tracking-[0.4em] font-light border-b border-white/30 pb-2 text-white/90">
+          <p 
+            className="text-sm md:text-base uppercase tracking-[0.4em] font-light border-b border-white/30 pb-2 text-white/90"
+            style={{
+              animation: "slideUpFadeIn 0.7s ease-out 0.15s forwards"
+            }}
+          >
             Experience Luxury Stay
           </p>
+          <style>{`
+            @keyframes slideUpFadeIn {
+              from {
+                opacity: 0;
+                transform: translateY(30px);
+              }
+              to {
+                opacity: 1;
+                transform: translateY(0);
+              }
+            }
+          `}</style>
         </div>
 
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20">
