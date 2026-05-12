@@ -76,9 +76,9 @@ const RoomCalender = ({
 
       {/* Calendar Grid */}
       <div className="grid grid-cols-7 gap-1.5 mb-6">
-        {weekDays.map((d) => (
+        {weekDays.map((d, i) => (
           <div
-            key={d}
+            key={`day-${i}`}
             className="text-center text-[9px] font-black text-black uppercase"
           >
             {d}
