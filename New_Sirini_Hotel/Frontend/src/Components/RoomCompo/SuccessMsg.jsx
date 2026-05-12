@@ -71,7 +71,7 @@ function BookingSuccess({ selectedRoom, onClose, totalPrice }) {
               </div>
               <div className="min-w-0 flex-1">
                 <h4 className="text-white text-xs font-semibold truncate leading-none mb-1.5">
-                  {selectedRoom.roomType} Suite
+                  {selectedRoom.roomType} Room
                 </h4>
                 <div className="flex flex-wrap gap-x-3 gap-y-1">
                   <div className="flex items-center gap-1 text-gray-500 text-[9px] font-bold uppercase tracking-wider">
@@ -115,14 +115,14 @@ function BookingSuccess({ selectedRoom, onClose, totalPrice }) {
           {/* Final Button */}
           <button
             onClick={onClose}
-            className="group relative w-full bg-orange-500 hover:bg-orange-400 text-black py-2.5 rounded-lg font-black text-[9px] uppercase tracking-[0.2em] transition-all active:scale-95 shadow-lg shadow-orange-500/20 flex items-center justify-center gap-1.5 overflow-hidden"
+            className="group relative w-auto mx-auto bg-orange-500 hover:bg-orange-400 text-black py-2 px-6 rounded-xl font-black text-[8px] uppercase tracking-[0.2em] transition-all active:scale-95 shadow-lg shadow-orange-500/20 flex items-center justify-center gap-1"
           >
-            <span className="relative z-10">Return to Portal</span>
+            <span className="relative z-10">OK</span>
             <ArrowRight
-              size={12}
+              size={10}
               className="relative z-10 transition-transform group-hover:translate-x-1"
             />
-            <div className="absolute inset-0 bg-white/20 translate-y-12 group-hover:translate-y-0 transition-transform duration-300" />
+            <div className="absolute inset-0 bg-white/20 translate-y-12 group-hover:translate-y-0 transition-transform duration-300 rounded-xl" />
           </button>
         </div>
       </div>

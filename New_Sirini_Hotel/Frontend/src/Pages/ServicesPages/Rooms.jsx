@@ -126,7 +126,7 @@ function Rooms() {
               animation: "slideUpFadeIn 0.7s ease-out 0.15s forwards",
             }}
           >
-            Experience Luxury Stay
+            The perfect end to your day.
           </p>
           <style>{`
             @keyframes slideUpFadeIn {
