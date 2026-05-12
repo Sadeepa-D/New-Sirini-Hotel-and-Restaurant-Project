@@ -1,6 +1,7 @@
-import React from "react";
+import React, { use, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
+import { Toaster, toast } from "react-hot-toast";
 import ScrollToTop from "./Components/ScrollToTop";
 import Login from "./Pages/Login";
 import Registration from "./Pages/Registration";
@@ -19,6 +20,24 @@ import NotFound from "./Pages/NotFound";
 import Unauthorized from "./Pages/Unauthorized";
 import ProtectedRoutes from "./Components/ProtectedRoutes";
 
+const autoLogout = (token) => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!token) return;
+    const logouttimer = setTimeout(() => {
+      handlelogout();
+    }, 3600 * 1000);
+
+    const handlelogout = () => {
+      localStorage.removeItem("token");
+      toast.error("Session expired. Please log in again.");
+      navigate("/login");
+      window.location.reload();
+    };
+    return () => clearTimeout(logouttimer);
+  }, [token, navigate]);
+};
+
 const PublicLayout = ({ children }) => (
   <>
     <Header />
@@ -28,6 +47,8 @@ const PublicLayout = ({ children }) => (
 );
 
 export const App = () => {
+  const token = localStorage.getItem("token");
+  autoLogout(token);
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
@@ -85,7 +106,7 @@ export const App = () => {
         <Route
           element={
             <ProtectedRoutes
-              allowedRoles={["Admin","Operation Manager 2 (Reception, Room)"]}
+              allowedRoles={["Admin", "Operation Manager 2 (Reception, Room)"]}
             />
           }
         >
@@ -95,7 +116,7 @@ export const App = () => {
         <Route
           element={
             <ProtectedRoutes
-              allowedRoles={["Admin","Operation Manager 1 (Restraunt,Liquor)"]}
+              allowedRoles={["Admin", "Operation Manager 1 (Restraunt,Liquor)"]}
             />
           }
         >
