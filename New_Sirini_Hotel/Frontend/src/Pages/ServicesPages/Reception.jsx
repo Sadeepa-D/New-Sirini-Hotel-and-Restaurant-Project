@@ -10,6 +10,7 @@ import Calander from "../../Components/Calander";
 import CateringSelectionHub from "../../Components/Receptionhall/CateringSelectionHub";
 import LoginMessage from "../../Components/LoginMessage";
 import toast from "react-hot-toast";
+import { Calendar } from "lucide-react";
 
 export default function Reception() {
   const VITE_URL = import.meta.env.VITE_API_URL;
@@ -20,6 +21,8 @@ export default function Reception() {
   const [bookedDates, setBookedDates] = useState([]);
   const [loadingDates, setLoadingDates] = useState(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [isFabVisible, setIsFabVisible] = useState(false);
+  const [isNearFooter, setIsNearFooter] = useState(false);
   const formSectionRef = useRef(null);
 
   const fetchBookedDates = async () => {
@@ -67,6 +70,23 @@ export default function Reception() {
       });
     }
   }, [showForm]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      
+      // Show FAB after scrolling past hero (approx 100vh - header)
+      setIsFabVisible(scrollY > windowHeight * 0.7);
+      
+      // Detect if near footer (approx 400px from bottom)
+      setIsNearFooter(scrollY + windowHeight > documentHeight - 350);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <div className="min-h-screen bg-neutral-50">
@@ -152,6 +172,27 @@ export default function Reception() {
           <Calander BookedDates={bookedDates} loading={loadingDates} />
         </div>
       )}
+
+      {/* Floating Action Button (FAB) - Smart visibility */}
+      <div 
+        className={`fixed transition-all duration-500 ease-in-out z-[60] 
+          ${isFabVisible ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-10 pointer-events-none'}
+          ${isNearFooter ? 'bottom-[380px] md:bottom-[420px]' : 'bottom-8'}
+          right-8`}
+      >
+        <button
+          className="relative group transition-all duration-300"
+          onClick={() => setShowCalander(true)}
+        >
+          <div 
+            className="w-16 h-16 md:w-20 md:h-20 bg-amber-500 text-white flex items-center justify-center rounded-full shadow-2xl group-hover:bg-amber-600 group-hover:scale-110 transition-all duration-300"
+            style={{ boxShadow: "0 10px 25px -5px rgba(245, 158, 11, 0.4)" }}
+          >
+            <Calendar className="w-8 h-8 md:w-10 md:h-10" />
+          </div>
+        </button>
+      </div>
+
       <LoginMessage
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}

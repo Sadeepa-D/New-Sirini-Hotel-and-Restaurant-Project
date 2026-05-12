@@ -29,7 +29,9 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
   const handlePortionChange = (cartId, newPortion) => {
     setCartItems((prev) =>
       prev.map((item) =>
-        item.cartId === cartId ? { ...item, portion: newPortion } : item,
+        item.cartId === cartId
+          ? { ...item, portion: newPortion, cartId: `${item.id}_${newPortion}` }
+          : item,
       ),
     );
   };
@@ -115,7 +117,7 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
                   <tbody>
                     {cartItems.map((item) => (
                       <tr
-                        key={item.id}
+                        key={item.cartId}
                         className="border-b border-gray-100 hover:bg-amber-50 transition-colors duration-200"
                       >
                         {/* Image */}
@@ -218,7 +220,7 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
               <div className="md:hidden space-y-4">
                 {cartItems.map((item) => (
                   <div
-                    key={item.id}
+                    key={item.cartId}
                     className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow"
                   >
                     <div className="flex gap-4 mb-4">

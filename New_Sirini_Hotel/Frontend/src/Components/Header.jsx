@@ -29,7 +29,17 @@ function Header() {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
   const handlelogout = () => {
+    const userDataStr = localStorage.getItem("user");
+    if (userDataStr) {
+      try {
+        const user = JSON.parse(userDataStr);
+        localStorage.removeItem(`cart_items_${user._id}`);
+      } catch (e) {
+        console.error("Error clearing cart on logout:", e);
+      }
+    }
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setIsLoggedIn(false);
     navigate("/login");
     toast.success("logged out successfully.");

@@ -13,6 +13,7 @@ import {
   Pencil,
   Trash2,
 } from "lucide-react";
+import EditOrderForm from "../RestaurantPage/EditOrderForm";
 
 const RestaurantSection = ({ data }) => {
   const [orders, setOrders] = useState([]);
@@ -26,6 +27,8 @@ const RestaurantSection = ({ data }) => {
     title: "",
     message: "",
   });
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -96,7 +99,8 @@ const RestaurantSection = ({ data }) => {
   };
 
   const handleEdit = (order) => {
-    navigate("/restaurant", { state: { editOrder: order } });
+    setSelectedOrder(order);
+    setIsEditModalOpen(true);
   };
 
   const pendingOrders = orders.filter((o) => o.status === "Pending");
@@ -265,6 +269,21 @@ const RestaurantSection = ({ data }) => {
         onConfirm={handleConfirmDelete}
         onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
       />
+
+      {isEditModalOpen && selectedOrder && (
+        <EditOrderForm
+          item={{
+            name: selectedOrder.foodName,
+            price: selectedOrder.Price / selectedOrder.quantity,
+          }}
+          editingOrder={selectedOrder}
+          onClose={() => {
+            setIsEditModalOpen(false);
+            setSelectedOrder(null);
+            fetchOrders();
+          }}
+        />
+      )}
     </div>
   );
 };

@@ -26,7 +26,19 @@ export default function Restaurant() {
   const [categoryIndices, setCategoryIndices] = useState({});
   const [mealData, setMealData] = useState([]);
   const [showCart, setShowCart] = useState(false);
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(() => {
+    try {
+      const userData = localStorage.getItem("user");
+      if (userData) {
+        const user = JSON.parse(userData);
+        const savedCart = localStorage.getItem(`cart_items_${user._id}`);
+        return savedCart ? JSON.parse(savedCart) : [];
+      }
+    } catch (error) {
+      console.error("Error loading cart from localStorage:", error);
+    }
+    return [];
+  });
   const [openorderform, setOpenorderform] = useState(false);
 
   const fetchFoodItems = async () => {
@@ -62,6 +74,19 @@ export default function Restaurant() {
     fetchFoodItems();
   }, []);
 
+  // Sync cart to localStorage
+  useEffect(() => {
+    try {
+      const userData = localStorage.getItem("user");
+      if (userData) {
+        const user = JSON.parse(userData);
+        localStorage.setItem(`cart_items_${user._id}`, JSON.stringify(cartItems));
+      }
+    } catch (error) {
+      console.error("Error saving cart to localStorage:", error);
+    }
+  }, [cartItems]);
+
   useEffect(() => {
     const handleResize = () => {
       const w = window.innerWidth;
@@ -95,18 +120,30 @@ export default function Restaurant() {
       return;
     }
 
-    setCartItems((prev) => {
-      const existing = prev.find((i) => i.id === item.id);
-      if (existing) {
-        return prev.map((i) =>
-          i.id === item.id ? { ...i, quantity: (i.quantity || 1) + 1 } : i,
-        );
-      }
-      return [
-        ...prev,
-        { ...item, cartId: item.id, quantity: 1, portion: "Normal" },
-      ];
-    });
+    // Determine the target cartId for this addition (menu additions default to "Normal")
+    const targetCartId = item.has_portions ? `${item.id}_Normal` : item.id;
+
+    // Check if this specific portion variant already exists in the cart
+    const existingItem = cartItems.find((i) => i.cartId === targetCartId);
+
+    if (existingItem) {
+      // Exact matching portion item exists: Increase its quantity
+      setCartItems((prev) =>
+        prev.map((i) =>
+          i.cartId === targetCartId
+            ? { ...i, quantity: (i.quantity || 1) + 1 }
+            : i
+        )
+      );
+      toast.success(`${item.name} quantity updated!`);
+      return;
+    }
+
+    // New item or different portion: Add as a new separate cart row
+    setCartItems((prev) => [
+      ...prev,
+      { ...item, cartId: targetCartId, quantity: 1, portion: "Normal" },
+    ]);
     toast.success(`${item.name} added to cart!`);
   };
 
@@ -281,9 +318,11 @@ export default function Restaurant() {
       {openorderform && (
         <OrderForm
           cartItems={cartItems}
-          onClose={() => {
+          onClose={(success) => {
             setOpenorderform(false);
-            setCartItems([]);
+            if (success) {
+              setCartItems([]);
+            }
           }}
         />
       )}
