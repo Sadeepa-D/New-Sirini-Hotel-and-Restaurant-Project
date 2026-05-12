@@ -96,7 +96,7 @@ const ReceptionHallBookMng = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-  
+
   const filtered = bookings.filter((b) => {
     const matchesSearch =
       b.customerName?.toLowerCase().includes(search.toLowerCase()) ||
@@ -321,6 +321,7 @@ const ReceptionHallBookMng = () => {
           }}
           editData={editData}
           fetchBookings={fetchBookings}
+          AllBookings={bookings}
         />
       )}
 

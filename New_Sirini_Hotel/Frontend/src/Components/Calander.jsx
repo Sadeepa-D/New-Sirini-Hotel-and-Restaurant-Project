@@ -18,14 +18,8 @@ const Calander = ({ BookedDates = [], loading = false }) => {
   const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
 
-  // ✅ Local date string — no UTC shift for calendar display
   const toLocalDateString = (y, m, d) => {
     return `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-  };
-
-  const isBooked = (day) => {
-    const dateStr = toLocalDateString(year, month, day);
-    return BookedDates.includes(dateStr);
   };
 
   const isToday = (day) => {
@@ -55,32 +49,61 @@ const Calander = ({ BookedDates = [], loading = false }) => {
     return dateStr === selectedStr;
   };
 
-  const handleDayClick = (day) => {
-    if (isPast(day) || isBooked(day)) return;
-    setSelectedDate(new Date(year, month, day));
+  const getBookingStatus = (day) => {
+    const dateStr = toLocalDateString(year, month, day);
+
+    const dayBookings = BookedDates.filter((b) => b.dateStr === dateStr);
+
+    if (dayBookings.length === 0) return null;
+
+    const hasDaySlot = dayBookings.some((b) => b.time === "Day (9am - 4pm)");
+    const hasNightSlot = dayBookings.some(
+      (b) => b.time === "Night (7pm - 1pm)",
+    );
+
+    if (hasDaySlot && hasNightSlot) return "Full";
+    if (hasDaySlot) return "DayOnly";
+    if (hasNightSlot) return "NightOnly";
+
+    return null;
   };
 
   const getDayClass = (day) => {
-    if (isBooked(day))
-      return "bg-red-100 text-red-500 border-2 border-red-300 cursor-not-allowed font-bold";
+    const status = getBookingStatus(day);
+
     if (isPast(day)) return "text-gray-300 cursor-not-allowed";
+
+    if (isToday(day))
+      return "bg-green-100 text-green-700 border-2 border-green-500 font-bold cursor-pointer";
+
+    if (status === "Full")
+      return "bg-red-500 text-white font-bold cursor-not-allowed shadow-inner";
+    if (status === "DayOnly")
+      return "bg-blue-500 text-white font-bold cursor-pointer hover:opacity-80";
+    if (status === "NightOnly")
+      return "bg-purple-500 text-white font-bold cursor-pointer hover:opacity-80";
+
     if (isSelected(day))
       return "bg-amber-500 text-white font-bold shadow-md cursor-pointer";
-    if (isToday(day))
-      return "bg-amber-50 text-amber-600 border-2 border-amber-400 font-bold cursor-pointer";
+
     return "text-gray-700 hover:bg-amber-50 hover:text-amber-700 cursor-pointer";
   };
 
+  const handleDayClick = (day) => {
+    const status = getBookingStatus(day);
+
+    if (isPast(day) || status === "Full") return;
+
+    setSelectedDate(new Date(year, month, day));
+  };
+
   return (
-    <div className="fixed bottom-4 right-4 z-60 bg-white rounded-2xl shadow-md border border-gray-200 p-2.5 max-w-xs w-full">
-      {/* Header */}
+    <div className="fixed bottom-4 right-4 z-60 bg-white rounded-2xl shadow-xl border border-gray-200 p-2.5 max-w-xs w-full">
       <div className="flex items-center gap-2 mb-2">
         <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
           <CalendarDays size={16} className="text-amber-600" />
         </div>
-        <div>
-          <h2 className="text-xs font-bold text-gray-900">Select Date</h2>
-        </div>
+        <h2 className="text-xs font-bold text-gray-900">Select Date</h2>
       </div>
 
       {loading ? (
@@ -91,38 +114,35 @@ const Calander = ({ BookedDates = [], loading = false }) => {
         </div>
       ) : (
         <>
-          {/* Month Navigation */}
           <div className="flex items-center justify-between mb-2">
             <button
               onClick={prevMonth}
-              className="w-6 h-6 rounded-md flex items-center justify-center hover:bg-amber-100 text-gray-600 hover:text-amber-600 transition-colors"
+              className="p-1 hover:bg-amber-100 rounded-md"
             >
               <ChevronLeft size={14} />
             </button>
-            <span className="text-xs font-bold text-gray-900 tracking-tight">
+            <span className="text-xs font-bold text-gray-900">
               {monthName} {year}
             </span>
             <button
               onClick={nextMonth}
-              className="w-6 h-6 rounded-md flex items-center justify-center hover:bg-amber-100 text-gray-600 hover:text-amber-600 transition-colors"
+              className="p-1 hover:bg-amber-100 rounded-md"
             >
               <ChevronRight size={14} />
             </button>
           </div>
 
-          {/* Weekday Headers */}
           <div className="grid grid-cols-7 gap-0.5 mb-1">
             {weekDays.map((d) => (
               <div
                 key={d}
-                className="text-center text-[9px] font-bold text-gray-500 uppercase tracking-tight py-0.5"
+                className="text-center text-[9px] font-bold text-gray-500 uppercase py-0.5"
               >
                 {d}
               </div>
             ))}
           </div>
 
-          {/* Days Grid */}
           <div className="grid grid-cols-7 gap-0.5">
             {Array.from({ length: firstDayOfMonth }).map((_, i) => (
               <div key={`empty-${i}`} />
@@ -131,7 +151,6 @@ const Calander = ({ BookedDates = [], loading = false }) => {
               <button
                 key={day}
                 onClick={() => handleDayClick(day)}
-                disabled={isPast(day) || isBooked(day)}
                 className={`aspect-square rounded-md text-[10px] font-bold flex items-center justify-center transition-all duration-150 ${getDayClass(day)}`}
               >
                 {day}
@@ -142,14 +161,22 @@ const Calander = ({ BookedDates = [], loading = false }) => {
       )}
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center gap-1.5 mt-2 pt-2 border-t border-gray-200 text-[9px]">
-        <div className="flex items-center gap-1">
-          <div className="w-2 h-2 rounded-sm bg-amber-500" />
-          <span className="text-gray-600 font-medium">Selected</span>
+      <div className="grid grid-cols-2 gap-2 mt-3 pt-2 border-t border-gray-100 text-[9px]">
+        <div className="flex items-center gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-sm bg-green-500" />
+          <span className="text-gray-600">Today</span>
         </div>
-        <div className="flex items-center gap-1">
-          <div className="w-2 h-2 rounded-sm bg-red-100 border border-red-300" />
-          <span className="text-gray-600 font-medium">Booked</span>
+        <div className="flex items-center gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-sm bg-blue-500" />
+          <span className="text-gray-600">Day Booked</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-sm bg-purple-500" />
+          <span className="text-gray-600">Night Booked</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-sm bg-red-500" />
+          <span className="text-gray-600">Fully Booked</span>
         </div>
       </div>
     </div>

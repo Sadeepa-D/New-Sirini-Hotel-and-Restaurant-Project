@@ -95,6 +95,10 @@ const ReceptionHallBookingCard = ({ booking, onEdit, onCancel, onConfirm }) => {
               {booking.numberOfGuests} Guests
             </span>
           </div>
+          <div className="flex items-center gap-2">
+            <Clock size={13} className="text-gray-400 shrink-0" />
+            <span className="text-xs text-gray-500">{booking.eventTime}</span>
+          </div>
         </div>
 
         {/* Special requests - Now with a min-height and consistent spacing */}

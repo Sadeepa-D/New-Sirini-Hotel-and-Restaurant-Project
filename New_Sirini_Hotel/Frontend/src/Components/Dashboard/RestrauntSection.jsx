@@ -17,7 +17,7 @@ import {
 const RestaurantSection = ({ data }) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("In Progress");
+  const [activeTab, setActiveTab] = useState("Pending");
   const navigate = useNavigate();
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
@@ -58,45 +58,7 @@ const RestaurantSection = ({ data }) => {
   }, []);
 
   const handleDelete = (order) => {
-    const userDataStr = localStorage.getItem("user");
-    let userRole = "";
-    if (userDataStr) {
-      try {
-        const userData = JSON.parse(userDataStr);
-        userRole = userData.role || "";
-      } catch (e) { }
-    }
-
-    const isStaff = userRole.includes("Operation Manager") || userRole === "Admin";
-
-    if (!isStaff) {
-      const now = new Date();
-      const slDateStr = new Intl.DateTimeFormat('en-CA', {
-        timeZone: 'Asia/Colombo',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-      }).format(now);
-
-      const slTimeStr = new Intl.DateTimeFormat('en-GB', {
-        timeZone: 'Asia/Colombo',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      }).format(now);
-
-      const pickupDateStr = new Date(order.pickupDate).toISOString().split('T')[0];
-      const pickupDateTime = new Date(`${pickupDateStr}T${order.pickupTime}`);
-      const currentSLDateTime = new Date(`${slDateStr}T${slTimeStr}`);
-
-      const diffInMs = pickupDateTime - currentSLDateTime;
-      const diffInHours = diffInMs / (1000 * 60 * 60);
-
-      if (diffInHours < 1) {
-        toast.error("Cannot cancel now. Less than 1 hour left. Please contact hotel for cancellation.");
-        return;
-      }
-    }
+    // Simplified deletion logic: allow for all active orders
 
     setConfirmDialog({
       isOpen: true,
@@ -112,8 +74,14 @@ const RestaurantSection = ({ data }) => {
     setConfirmDialog({ isOpen: false, id: null });
     const loadingtoast = toast.loading("Deleting order...");
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.delete(
         `${VITE_URL}/api/restraunt/deleteorder/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       if (response.status === 200) {
         toast.dismiss(loadingtoast);
@@ -131,24 +99,42 @@ const RestaurantSection = ({ data }) => {
     navigate("/restaurant", { state: { editOrder: order } });
   };
 
-  const filteredOrders = orders.filter((order) => {
-    if (activeTab === "In Progress") return order.status === "In Progress";
-    if (activeTab === "Completed") return order.status === "Completed";
-    if (activeTab === "Cancelled") return order.status === "Cancelled" || order.status === "delete";
-    return true;
-  });
+  const pendingOrders = orders.filter((o) => o.status === "Pending");
+  const acceptedOrders = orders.filter((o) => o.status === "Accepted");
+  const preparingOrders = orders.filter((o) => o.status === "Preparing");
+  const completeOrders = orders.filter((o) => o.status === "Complete");
+  const deletedOrders = orders.filter((o) => o.status === "delete");
+  const overdueOrders = orders.filter((o) => o.status === "Overdue");
 
-  const tabs = ["In Progress", "Completed", "Cancelled"];
+  const filteredOrders = activeTab === "Accepted"
+    ? acceptedOrders
+    : activeTab === "Preparing"
+      ? preparingOrders
+      : activeTab === "Complete"
+        ? completeOrders
+        : activeTab === "Deleted"
+          ? deletedOrders
+          : activeTab === "Overdue"
+            ? overdueOrders
+            : pendingOrders;
+
+  const tabs = ["Pending", "Accepted", "Preparing", "Complete", "Deleted", "Overdue"];
 
   const tabCounts = {
-    "In Progress": orders.filter(o => o.status === "In Progress").length,
-    "Completed": orders.filter(o => o.status === "Completed").length,
-    "Cancelled": orders.filter(o => o.status === "Cancelled" || o.status === "delete").length,
+    "Pending": orders.filter(o => o.status === "Pending").length,
+    "Accepted": orders.filter(o => o.status === "Accepted").length,
+    "Preparing": orders.filter(o => o.status === "Preparing").length,
+    "Complete": orders.filter(o => o.status === "Complete").length,
+    "Deleted": orders.filter(o => o.status === "delete").length,
+    "Overdue": orders.filter(o => o.status === "Overdue").length,
   };
 
   const statusStyle = (status) => {
-    if (status === "Completed") return "bg-green-50 text-green-600 border-green-200";
-    if (status === "Cancelled" || status === "delete") return "bg-red-50 text-red-500 border-red-200";
+    if (status === "Complete") return "bg-green-50 text-green-600 border-green-200";
+    if (status === "Accepted") return "bg-blue-50 text-blue-600 border-blue-200";
+    if (status === "Preparing") return "bg-purple-50 text-purple-600 border-purple-200";
+    if (status === "delete") return "bg-red-50 text-red-500 border-red-200";
+    if (status === "Overdue") return "bg-orange-50 text-orange-600 border-orange-200";
     return "bg-amber-50 text-amber-600 border-amber-200";
   };
 
@@ -167,11 +153,10 @@ const RestaurantSection = ({ data }) => {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-[10px] uppercase tracking-wider transition-all whitespace-nowrap font-semibold ${
-                activeTab === tab
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-[10px] uppercase tracking-wider transition-all whitespace-nowrap font-semibold ${activeTab === tab
                   ? "bg-white text-amber-600 shadow-sm ring-1 ring-black/5"
                   : "text-gray-400 hover:text-gray-600 font-normal"
-              }`}
+                }`}
             >
               {tab}
               <span className={`text-[9px] font-mono ${activeTab === tab ? "text-amber-400" : "opacity-50"}`}>
@@ -189,93 +174,84 @@ const RestaurantSection = ({ data }) => {
           <p className="text-gray-400 text-sm animate-pulse">Loading orders…</p>
         </div>
       ) : filteredOrders.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-          <UtensilsCrossed size={36} className="text-gray-200 mb-3" />
-          <p className="text-gray-400 text-sm font-medium">No {activeTab.toLowerCase()} orders found.</p>
+        <div className="flex flex-col items-center justify-center py-20 bg-gray-50/50 rounded-3xl border border-dashed border-gray-200">
+          <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-6 border border-gray-100">
+            <UtensilsCrossed size={40} className="text-gray-200" />
+          </div>
+          <h3 className="text-xl font-bold text-gray-700">No orders available</h3>
+          <p className="text-gray-400 text-sm font-medium mt-1">No items found in the {activeTab.toLowerCase()} section</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredOrders.map((order) => (
             <div
               key={order._id}
-              className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex flex-col"
+              className={`p-5 rounded-[1.75rem] shadow-sm border transition-all duration-300 flex flex-col h-full group ${order.status === "delete"
+                ? "bg-red-50/30 border-red-100 hover:border-red-200"
+                : order.status === "Overdue"
+                  ? "bg-orange-50/30 border-orange-100 hover:border-orange-200"
+                  : "bg-white border-gray-100 hover:shadow-xl hover:border-amber-200/50"
+                }`}
             >
-              {/* Top accent bar */}
-              <div className="h-1 w-full bg-gradient-to-r from-amber-400 to-amber-300" />
-
-              <div className="p-5 flex flex-col flex-1">
-                {/* Food name + status */}
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex items-center gap-2">
-                    <div className="p-2 bg-amber-50 border border-amber-100 rounded-xl">
-                      <UtensilsCrossed size={16} className="text-amber-500" />
-                    </div>
-                    <span className="font-bold text-sm text-gray-900 leading-tight">{order.foodName}</span>
-                  </div>
-                  <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase border ${statusStyle(order.status)}`}>
-                    {order.status === "delete" ? "Deleted" : order.status}
+              {/* Overdue Badge */}
+              {order.status === "Overdue" && (
+                <div className="absolute top-4 right-4 z-10">
+                  <span className="bg-orange-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg shadow-orange-500/20 uppercase tracking-wider animate-pulse">
+                    Overdue
                   </span>
                 </div>
-
-                {/* Details */}
-                <div className="space-y-2.5 mb-4 flex-1">
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="flex items-center gap-1.5 text-gray-400">
-                      <Hash size={12} className="text-gray-300" /> Order ID
+              )}
+              {/* Card Header */}
+              <div className="flex items-start mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex flex-col">
+                    <h5 className="font-bold text-gray-900 text-[12px] leading-snug">{order.foodName}</h5>
+                    <span className="text-[10px] font-mono font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded-md w-fit mt-1">
+                      #{order.orderCode}
                     </span>
-                    <span className="font-mono text-gray-600 font-semibold">{order.orderCode}</span>
-                  </div>
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="flex items-center gap-1.5 text-gray-400">
-                      <ShoppingBag size={12} className="text-gray-300" /> Quantity
-                    </span>
-                    <span className="text-gray-700 font-bold">{order.quantity} Items</span>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3 pt-1">
-                    <div className="bg-gray-50 rounded-xl px-3 py-2 border border-gray-100">
-                      <span className="flex items-center gap-1 text-[9px] text-gray-400 uppercase font-bold tracking-wider mb-1">
-                        <CalendarDays size={10} /> Date
-                      </span>
-                      <span className="text-xs text-gray-700 font-semibold">
-                        {new Date(order.pickupDate).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <div className="bg-gray-50 rounded-xl px-3 py-2 border border-gray-100">
-                      <span className="flex items-center gap-1 text-[9px] text-gray-400 uppercase font-bold tracking-wider mb-1">
-                        <Clock size={10} /> Time
-                      </span>
-                      <span className="text-xs text-gray-700 font-semibold">{order.pickupTime}</span>
-                    </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Price row */}
-                <div className="flex justify-between items-center pt-3 border-t border-gray-100">
-                  <span className="flex items-center gap-1.5 text-[10px] text-gray-400 uppercase font-bold tracking-wider">
-                    <BadgeDollarSign size={13} className="text-amber-500" /> Total
+              {/* Order Details */}
+              <div className="flex-1 space-y-2.5 px-1">
+                <div className="flex justify-between items-center pb-2 border-b border-gray-50">
+                  <span className="text-[13px] text-gray-500 font-medium">Pickup Date</span>
+                  <span className="text-[13px] font-semibold text-gray-800">
+                    {new Date(order.pickupDate).toLocaleDateString("en-GB", { day: '2-digit', month: 'short', year: 'numeric' })}
                   </span>
-                  <span className="text-amber-600 font-black text-base">Rs. {order.Price}</span>
                 </div>
+                <div className="flex justify-between items-center pb-2 border-b border-gray-50">
+                  <span className="text-[13px] text-gray-500 font-medium">Pickup Time</span>
+                  <span className="text-[13px] font-semibold text-gray-800">{order.pickupTime}</span>
+                </div>
+                <div className="flex justify-between items-center pb-2 border-b border-gray-50">
+                  <span className="text-[13px] text-gray-500 font-medium">Quantity</span>
+                  <span className="text-[13px] font-bold text-gray-900">{order.quantity} <span className="text-gray-400 font-medium text-[11px]">items</span></span>
+                </div>
+                <div className="flex justify-between items-center pt-1">
+                  <span className="text-[13px] text-gray-500 font-medium">Total Price</span>
+                  <span className="text-[15px] font-bold text-amber-600 font-sans">Rs. {order.Price?.toLocaleString()}</span>
+                </div>
+              </div>
 
-                {/* Actions */}
-                {order.status === "In Progress" && (
-                  <div className="flex gap-2 mt-4">
+              {/* Actions */}
+              {order.status === "Pending" && (
+                <div className="flex gap-3 mt-6">
                     <button
                       onClick={() => handleEdit(order)}
-                      className="flex-1 flex items-center justify-center gap-1.5 bg-gray-50 hover:bg-amber-50 text-gray-600 hover:text-amber-700 border border-gray-200 hover:border-amber-200 py-2.5 rounded-xl text-xs font-bold transition-all duration-200"
+                      className="flex-1 py-1.5 bg-gradient-to-r from-blue-900 to-blue-500 text-white rounded-full font-bold text-[10px] tracking-widest hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 uppercase"
                     >
-                      <Pencil size={13} /> Edit
+                      <Pencil size={14} strokeWidth={2.5} /> Edit
                     </button>
-                    <button
-                      onClick={() => handleDelete(order)}
-                      className="flex-1 flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white border border-red-200 hover:border-red-500 py-2.5 rounded-xl text-xs font-bold transition-all duration-200"
-                    >
-                      <Trash2 size={13} /> Delete
-                    </button>
-                  </div>
-                )}
-              </div>
+                  <button
+                    onClick={() => handleDelete(order)}
+                    className="flex-1 py-1.5 bg-white text-red-700 border border-red-100 rounded-full font-bold text-[10px] tracking-widest hover:bg-red-50 hover:shadow-lg hover:shadow-red-500/10 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 uppercase"
+                  >
+                    <Trash2 size={14} strokeWidth={2.5} /> Delete
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>

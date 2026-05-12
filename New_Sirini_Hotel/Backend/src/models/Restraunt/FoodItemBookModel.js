@@ -2,7 +2,9 @@ const mongoose = require("mongoose");
 
 const foodItemBookSchema = new mongoose.Schema(
   {
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId, ref: "User"
+    },
     foodName: {
       type: String,
       required: true,
@@ -39,14 +41,14 @@ const foodItemBookSchema = new mongoose.Schema(
     orderCode: { type: String, unique: true },
     portion: {
       type: String,
-    //  required: true,
+      //  required: true,
       enum: ["Normal", "Full"],
       default: "Normal",
     },
     status: {
       type: String,
-      enum: ["In Progress", "Completed", "Cancelled", "Overdue"],
-      default: "In Progress",
+      enum: ["Pending", "Accepted", "Preparing", "Complete", "delete", "Overdue"],
+      default: "Pending",
     },
   },
   {
