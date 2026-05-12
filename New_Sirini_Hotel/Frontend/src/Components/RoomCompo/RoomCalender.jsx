@@ -79,7 +79,7 @@ const RoomCalender = ({
         {weekDays.map((d) => (
           <div
             key={d}
-            className="text-center text-[9px] font-black text-gray-300 uppercase"
+            className="text-center text-[9px] font-black text-black uppercase"
           >
             {d}
           </div>
