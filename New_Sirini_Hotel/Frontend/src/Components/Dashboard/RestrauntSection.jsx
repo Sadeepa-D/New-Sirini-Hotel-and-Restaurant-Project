@@ -104,6 +104,7 @@ const RestaurantSection = ({ data }) => {
   const preparingOrders = orders.filter((o) => o.status === "Preparing");
   const completeOrders = orders.filter((o) => o.status === "Complete");
   const deletedOrders = orders.filter((o) => o.status === "delete");
+  const overdueOrders = orders.filter((o) => o.status === "Overdue");
 
   const filteredOrders = activeTab === "Accepted"
     ? acceptedOrders
@@ -113,9 +114,11 @@ const RestaurantSection = ({ data }) => {
         ? completeOrders
         : activeTab === "Deleted"
           ? deletedOrders
-          : pendingOrders;
+          : activeTab === "Overdue"
+            ? overdueOrders
+            : pendingOrders;
 
-  const tabs = ["Pending", "Accepted", "Preparing", "Complete", "Deleted"];
+  const tabs = ["Pending", "Accepted", "Preparing", "Complete", "Deleted", "Overdue"];
 
   const tabCounts = {
     "Pending": orders.filter(o => o.status === "Pending").length,
@@ -123,6 +126,7 @@ const RestaurantSection = ({ data }) => {
     "Preparing": orders.filter(o => o.status === "Preparing").length,
     "Complete": orders.filter(o => o.status === "Complete").length,
     "Deleted": orders.filter(o => o.status === "delete").length,
+    "Overdue": orders.filter(o => o.status === "Overdue").length,
   };
 
   const statusStyle = (status) => {
@@ -130,6 +134,7 @@ const RestaurantSection = ({ data }) => {
     if (status === "Accepted") return "bg-blue-50 text-blue-600 border-blue-200";
     if (status === "Preparing") return "bg-purple-50 text-purple-600 border-purple-200";
     if (status === "delete") return "bg-red-50 text-red-500 border-red-200";
+    if (status === "Overdue") return "bg-orange-50 text-orange-600 border-orange-200";
     return "bg-amber-50 text-amber-600 border-amber-200";
   };
 
@@ -183,9 +188,19 @@ const RestaurantSection = ({ data }) => {
               key={order._id}
               className={`p-5 rounded-[1.75rem] shadow-sm border transition-all duration-300 flex flex-col h-full group ${order.status === "delete"
                 ? "bg-red-50/30 border-red-100 hover:border-red-200"
-                : "bg-white border-gray-100 hover:shadow-xl hover:border-amber-200/50"
+                : order.status === "Overdue"
+                  ? "bg-orange-50/30 border-orange-100 hover:border-orange-200"
+                  : "bg-white border-gray-100 hover:shadow-xl hover:border-amber-200/50"
                 }`}
             >
+              {/* Overdue Badge */}
+              {order.status === "Overdue" && (
+                <div className="absolute top-4 right-4 z-10">
+                  <span className="bg-orange-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg shadow-orange-500/20 uppercase tracking-wider animate-pulse">
+                    Overdue
+                  </span>
+                </div>
+              )}
               {/* Card Header */}
               <div className="flex items-start mb-4">
                 <div className="flex items-center gap-3">

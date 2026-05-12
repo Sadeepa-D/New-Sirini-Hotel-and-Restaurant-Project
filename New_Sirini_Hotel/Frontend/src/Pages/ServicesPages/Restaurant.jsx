@@ -89,6 +89,12 @@ export default function Restaurant() {
   };
 
   const handleAddToCart = (item) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("You should log in first");
+      return;
+    }
+
     setCartItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);
       if (existing) {

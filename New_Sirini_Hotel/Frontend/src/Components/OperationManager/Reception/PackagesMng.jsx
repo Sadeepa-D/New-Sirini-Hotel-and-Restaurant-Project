@@ -13,6 +13,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import PackageAddForm from "./PackageAddForm";
 import ConfirmDialog from "../../ConfrimDialog";
+import CateringSelectionHub from "../../Receptionhall/CateringSelectionHub";
 
 const ActionRibbon = ({ item, onToggle, onEdit, onDelete }) => (
   <div className="absolute right-2 top-2 flex flex-col gap-1.5 z-10">
@@ -65,6 +66,7 @@ const PackagesMng = () => {
     title: "",
     message: "",
   });
+  const [showCateringHub, setShowCateringHub] = useState(false);
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -306,9 +308,12 @@ const PackagesMng = () => {
                     <span className="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
                       Rs. {Number(item.price).toLocaleString()}
                     </span>
-                    <span className="text-xs text-gray-400">
-                      Seats: {item.seatings}
-                    </span>
+                    <button
+                      className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors shadow-sm"
+                      onClick={() => setShowCateringHub(true)}
+                    >
+                      Show Food Menu
+                    </button>
                   </div>
                 </div>
               </div>
@@ -389,6 +394,9 @@ const PackagesMng = () => {
         onConfirm={handleDelete}
         onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
       />
+      {showCateringHub && (
+        <CateringSelectionHub onClose={() => setShowCateringHub(false)} />
+      )}
     </div>
   );
 };
