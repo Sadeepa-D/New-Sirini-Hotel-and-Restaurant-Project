@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { CheckCircle2, ChevronRight, ChevronLeft } from "lucide-react";
 import axios from "axios";
+import CateringSelectionHub from "./CateringSelectionHub";
 
 export default function ReceptionHallPackages() {
   const [packages, setPackages] = useState([]);
@@ -8,6 +9,8 @@ export default function ReceptionHallPackages() {
   const [error, setError] = useState(null);
   const [index, setIndex] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(3);
+  const [selectedPackage, setSelectedPackage] = useState(null);
+  const [showCateringHub, setShowCateringHub] = useState(false);
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -179,6 +182,15 @@ export default function ReceptionHallPackages() {
                       </div>
                     )}
                   </div>
+                  <button
+                    onClick={() => {
+                      setSelectedPackage(pkg);
+                      setShowCateringHub(true);
+                    }}
+                    className="mt-4 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-lg transition-colors"
+                  >
+                    Show Menu
+                  </button>
                 </div>
               ))}
             </div>
@@ -210,6 +222,13 @@ export default function ReceptionHallPackages() {
           to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
+      {showCateringHub && (
+        <CateringSelectionHub
+          onClose={() => setShowCateringHub(false)}
+          selectedPackage={selectedPackage}
+          isAdd={false}
+        />
+      )}
     </section>
   );
 }

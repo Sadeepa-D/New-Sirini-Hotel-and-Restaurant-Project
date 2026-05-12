@@ -1,21 +1,16 @@
 import React, { useState, useEffect } from "react";
-import {
-  Users,
-  ChevronDown,
-  Trash2,
-  Utensils,
-  Plus,
-  Calculator,
-  Receipt,
-} from "lucide-react";
+import { X, Trash2, Utensils, Plus } from "lucide-react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
-const CateringSelectionHub = () => {
-  const [selectedList, setSelectedList] = useState([]);
-  const [participants, setParticipants] = useState(1);
+const CateringSelectionHub = ({ onClose, selectedPackage, isAdd = true }) => {
+  const [packageItems, setPackageItems] = useState([]);
   const [cateringitems, setCateringItems] = useState([]);
+  const [selectedItemId, setSelectedItemId] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const VITE_URL = import.meta.env.VITE_API_URL;
+
   const fetchCateringItems = async () => {
     try {
       const response = await axios.get(
@@ -26,158 +21,199 @@ const CateringSelectionHub = () => {
       console.error("Error fetching catering items:", error);
     }
   };
-  useEffect(() => {
-    fetchCateringItems();
-  }, []);
-  // Add item to selection list
-  const addItem = (itemId) => {
-    const item = cateringitems.find((i) => i._id === itemId);
-    if (item && !selectedList.find((s) => s._id === itemId)) {
-      setSelectedList([...selectedList, item]);
+
+  const fetchPackageItems = async () => {
+    try {
+      if (selectedPackage?._id) {
+        const response = await axios.get(
+          `${VITE_URL}/api/receptionhall/package/${selectedPackage._id}/items`,
+        );
+        setPackageItems(response.data || []);
+      }
+    } catch (error) {
+      console.error("Error fetching package items:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Remove item from selection list
-  const removeItem = (itemId) => {
-    setSelectedList(selectedList.filter((item) => item._id !== itemId));
+  useEffect(() => {
+    fetchCateringItems();
+    fetchPackageItems();
+  }, [selectedPackage]);
+
+  const handleAddItem = async () => {
+    try {
+      const response = await axios.post(
+        `${VITE_URL}/api/receptionhall/package/${selectedPackage._id}/add-catering`,
+        {
+          cateringItemId: selectedItemId,
+        },
+      );
+      toast.success("Item added to package");
+      setSelectedItemId(null);
+      fetchPackageItems();
+    } catch (error) {
+      console.error(
+        "Error adding item:",
+        error.response?.data || error.message,
+      );
+      toast.error(error.response?.data?.message || "Failed to add item");
+    }
   };
 
-  // Calculations
-  const subtotalPerPerson = selectedList.reduce(
-    (sum, item) => sum + item.price,
-    0,
-  );
-  const grandTotal = subtotalPerPerson * participants;
-
+  const handleRemoveItem = async (itemId) => {
+    if (!selectedPackage?._id) {
+      toast.error("Package not found");
+      return;
+    }
+    try {
+      await axios.delete(
+        `${VITE_URL}/api/receptionhall/package/${selectedPackage._id}/remove-catering/${itemId}`,
+      );
+      toast.success("Item removed from package");
+      fetchPackageItems();
+    } catch (error) {
+      console.error(
+        "Error removing item:",
+        error.response?.data || error.message,
+      );
+    }
+  };
+  const selectedItem = cateringitems.find((i) => i._id === selectedItemId);
   return (
-    <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-6">
-      {/* --- STEP 1: Main Controls --- */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Item Dropdown */}
-        <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase text-orange-500 tracking-widest ml-1">
-            Select Menu Items
-          </label>
-          <div className="relative group">
-            <Utensils
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-orange-500 transition-colors"
-              size={18}
-            />
-            <select
-              onChange={(e) => addItem(e.target.value)}
-              value=""
-              className="w-full pl-12 pr-4 py-4 bg-white border border-gray-200 rounded-2xl appearance-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 outline-none transition-all cursor-pointer font-medium text-gray-700 shadow-sm"
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-2 sm:p-4 animate-in fade-in duration-200">
+      <div className="bg-white w-full max-w-6xl max-h-[95vh] overflow-hidden rounded-[2.5rem] shadow-2xl flex flex-col animate-in zoom-in-95 duration-300">
+        {/* Header */}
+        <div className="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+              <Utensils className="text-orange-500" />
+              Foods Include in Plate
+            </h2>
+            <p className="text-xs text-gray-400 font-medium">
+              This menu is based on the selected package. For Your Selected
+              Package This items Will serve.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-gray-100 rounded-full text-gray-400"
             >
-              <option value="" disabled>
-                Choose a dish to add...
-              </option>
-              {cateringitems.map((item) => (
-                <option
-                  key={item._id}
-                  value={item._id}
-                  disabled={selectedList.find((s) => s._id === item._id)}
-                >
-                  {item.name} - (Rs. {item.price})
-                </option>
-              ))}
-            </select>
-            <ChevronDown
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-              size={18}
-            />
+              <X size={24} />
+            </button>
           </div>
         </div>
 
-        {/* Participant Input */}
-        <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase text-orange-500 tracking-widest ml-1">
-            Total Participants
-          </label>
-          <div className="relative group">
-            <Users
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-orange-500 transition-colors"
-              size={18}
-            />
-            <input
-              type="number"
-              min="1"
-              max="200"
-              value={participants}
-              onChange={(e) =>
-                setParticipants(Math.min(200, Math.max(1, parseInt(e.target.value) || 0)))
-              }
-              className="w-full pl-12 pr-4 py-4 bg-white border border-gray-200 rounded-2xl focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 outline-none transition-all font-bold text-gray-700 shadow-sm"
-              placeholder="E.g. 150"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* --- STEP 2: Selection List --- */}
-      <div className="bg-gray-50/50 rounded-[2.5rem] border border-gray-100 p-2 sm:p-6 min-h-[200px]">
-        <h3 className="flex items-center gap-2 text-sm font-bold text-gray-800 px-4 mb-4">
-          <Receipt size={18} className="text-orange-500" />
-          Selected Menu ({selectedList.length})
-        </h3>
-
-        <div className="space-y-3">
-          {selectedList.length > 0 ? (
-            selectedList.map((item) => (
-              <div
-                key={item._id}
-                className="flex items-center justify-between bg-white p-4 rounded-2xl border border-gray-100 shadow-sm animate-in fade-in slide-in-from-left-2 duration-300"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600">
-                    <Utensils size={20} />
+        <div className="flex-1 overflow-hidden flex flex-col lg:flex-row">
+          {/* LEFT: Package Items (Already Added) */}
+          <div className="flex-1 overflow-y-auto p-6 bg-gray-50/50">
+            <h3 className="text-sm font-bold text-gray-800 mb-4">
+              Items in This Package
+            </h3>
+            {loading ? (
+              <div className="text-center text-gray-400 text-sm py-4 animate-pulse">
+                Loading...
+              </div>
+            ) : packageItems.length === 0 ? (
+              <div className="text-center text-gray-400 text-sm py-8">
+                No items added yet
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {packageItems.map((item) => (
+                  <div
+                    key={item._id}
+                    className="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-200 hover:shadow-sm transition-all"
+                  >
+                    <div className="flex items-center gap-3 flex-1">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-12 h-12 rounded-lg object-cover"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-gray-800 truncate">
+                          {item.name}
+                        </p>
+                        {isAdd && (
+                          <p className="text-[10px] text-gray-500">
+                            Rs. {item.price}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleRemoveItem(item._id)}
+                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
-                  <div>
-                    <h4 className="font-bold text-gray-800 text-sm">
-                      {item.name}
+                ))}
+              </div>
+            )}
+          </div>
+          {isAdd && (
+            <>
+              {/* RIGHT: Available Items to Add */}
+              <div className="w-full lg:w-96 bg-white p-6 border-l border-gray-100 flex flex-col">
+                <h3 className="text-lg font-bold text-gray-800 mb-4">
+                  Add Items to Package
+                </h3>
+
+                {/* Available Items Dropdown */}
+                <div className="mb-4">
+                  <label className="text-xs text-gray-500 font-medium mb-2 block">
+                    Select Item
+                  </label>
+                  <select
+                    value={selectedItemId || ""}
+                    onChange={(e) => setSelectedItemId(e.target.value)}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500"
+                  >
+                    <option value="">Choose an item...</option>
+                    {cateringitems.map((item) => (
+                      <option key={item._id} value={item._id}>
+                        {item.name} - Rs. {item.price}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Add Button */}
+                <button
+                  onClick={handleAddItem}
+                  disabled={!selectedItemId}
+                  className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm mb-6"
+                >
+                  <Plus size={16} className="inline mr-2" />
+                  Add Item
+                </button>
+
+                {/* Item Preview */}
+                {selectedItem && (
+                  <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
+                    <img
+                      src={selectedItem.image}
+                      alt={selectedItem.name}
+                      className="w-full h-32 rounded-lg object-cover mb-2"
+                    />
+                    <h4 className="font-semibold text-gray-800 text-sm">
+                      {selectedItem.name}
                     </h4>
-                    <p className="text-[10px] text-gray-400 uppercase font-black tracking-tighter">
-                      Rs. {item.price} per head
+                    <p className="text-xs text-gray-600 mt-1">
+                      {selectedItem.description || "No description"}
+                    </p>
+                    <p className="text-sm font-bold text-orange-600 mt-2">
+                      Rs. {selectedItem.price}
                     </p>
                   </div>
-                </div>
-                <button
-                  onClick={() => removeItem(item._id)}
-                  className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
-                >
-                  <Trash2 size={18} />
-                </button>
+                )}
               </div>
-            ))
-          ) : (
-            <div className="flex flex-col items-center justify-center py-10 text-gray-400 space-y-2">
-              <Calculator size={40} className="opacity-20" />
-              <p className="text-xs uppercase tracking-widest font-medium">
-                No items selected yet
-              </p>
-            </div>
+            </>
           )}
-        </div>
-      </div>
-
-      {/* --- STEP 3: Summary Sticky Bar --- */}
-      <div className="sticky bottom-6 bg-slate-900 rounded-3xl p-6 shadow-2xl shadow-orange-900/20 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-6 text-white">
-        <div className="flex items-center gap-6">
-          <div className="hidden sm:block p-3 bg-white/5 rounded-2xl border border-white/10">
-            <Calculator size={24} className="text-orange-500" />
-          </div>
-          <div className="text-center sm:text-left">
-            <p className="text-[10px] text-slate-400 uppercase font-black tracking-[0.2em] mb-1">
-              Estimated Cost
-            </p>
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-black text-orange-400">
-                Rs. {grandTotal.toLocaleString()}
-              </span>
-              <span className="text-xs text-slate-500 font-medium">
-                for {participants} guests
-              </span>
-            </div>
-          </div>
         </div>
       </div>
     </div>

@@ -15,21 +15,13 @@ export default function Reception() {
   const VITE_URL = import.meta.env.VITE_API_URL;
 
   const [showcalander, setShowCalander] = useState(false);
-
-  // 1. State to handle form visibility
   const [showForm, setShowForm] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
-
-  // 2. State for calendar data
   const [bookedDates, setBookedDates] = useState([]);
   const [loadingDates, setLoadingDates] = useState(true);
-
   const [showLoginModal, setShowLoginModal] = useState(false);
-
-  // 3. Create the reference
   const formSectionRef = useRef(null);
 
-  // 4. Fetch booked dates from API
   const fetchBookedDates = async () => {
     try {
       const response = await axios.get(
@@ -43,7 +35,7 @@ export default function Reception() {
         const y = date.getUTCFullYear();
         const m = String(date.getUTCMonth() + 1).padStart(2, "0");
         const d = String(date.getUTCDate()).padStart(2, "0");
-        return `${y}-${m}-${d}`;
+        return { dateStr: `${y}-${m}-${d}`, time: item.eventTime };
       });
       setBookedDates(normalized);
     } catch (error) {
@@ -67,7 +59,6 @@ export default function Reception() {
     }
   };
 
-  // 5. Effect to scroll when showForm becomes true
   useEffect(() => {
     if (showForm && formSectionRef.current) {
       formSectionRef.current.scrollIntoView({
@@ -154,7 +145,6 @@ export default function Reception() {
       </section> */}
       <ReceptionHallPackages />
       <CateringItemCard />
-      <CateringSelectionHub />
       <AdvertismentSection />
       {/* Calendar */}
       {showcalander && (
