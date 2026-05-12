@@ -8,6 +8,7 @@ import {
   X,
   ChevronRight,
   ChevronLeft,
+  CheckCircle2,
 } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -299,24 +300,38 @@ const PackagesMng = () => {
 
                   {/* Features */}
                   {item.features && item.features.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-1.5">
-                      {item.features[0]
-                        .split(",")
-                        .slice(0, 4)
-                        .map((f, i) => (
-                          <span
-                            key={i}
-                            className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full border border-amber-100"
-                          >
-                            {f.trim()}
-                          </span>
-                        ))}
-                      <p className="text-[10px] font-bold text-amber-600 uppercase tracking-[0.2em] mt-3 cursor-pointer hover:text-amber-700 hover:underline underline-offset-4 transition-all decoration-amber-200">
-                        + More
+                    <div className="mb-2 sm:mb-4">
+                      <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                        What's Included
                       </p>
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                        {item.features[0]
+                          .split(",")
+                          .slice(0, 5)
+                          .map((feature, i) => (
+                            <span
+                              key={i}
+                              className="flex items-center gap-1 text-[10px] sm:text-xs font-medium text-gray-700 bg-amber-50/50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-amber-100/50"
+                            >
+                              <CheckCircle2
+                                size={12}
+                                className="text-amber-500"
+                              />
+                              <span className="hidden sm:inline">
+                                {feature.trim()}
+                              </span>
+                              <span className="sm:hidden">
+                                {feature.trim().split(" ")[0]}
+                              </span>
+                            </span>
+                          ))}
+                        <p className="text-[10px] font-bold text-amber-600 uppercase tracking-[0.2em] mt-3 cursor-pointer hover:text-amber-700 hover:underline underline-offset-4 transition-all decoration-amber-200">
+                          + More
+                        </p>
+                      </div>
                     </div>
                   )}
-
+                  {/* item */}
                   <div className="flex items-center justify-between mt-2">
                     <span className="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
                       Rs. {Number(item.price).toLocaleString()}
