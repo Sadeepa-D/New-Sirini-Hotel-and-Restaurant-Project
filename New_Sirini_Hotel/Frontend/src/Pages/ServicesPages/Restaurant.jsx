@@ -401,6 +401,8 @@ const MenuSection = ({
             setOpenorderform(false);
             if (success) {
               setCartItems([]);
+            } else if (cartItems.length > 0) {
+              
             }
           }}
         />
@@ -408,7 +410,18 @@ const MenuSection = ({
       {/* Cart Modal */}
       {showCart && (
         <CartComp
-          onClose={() => setShowCart(false)}
+          onClose={() => {
+            setShowCart(false);
+            if (cartItems.length > 0) {
+              toast(
+                "Cart saved for this session. It will be cleared if you log out before checkout.",
+                {
+                  icon: "⚠️",
+                  duration: 6000,
+                },
+              );
+            }
+          }}
           cartItems={cartItems}
           setCartItems={setCartItems}
           onCheckout={handlecheckout}
