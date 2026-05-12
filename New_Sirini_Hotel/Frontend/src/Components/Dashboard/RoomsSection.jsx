@@ -247,9 +247,8 @@ const RoomsSection = () => {
                     </p>
                   </div>
 
-                  {/* Cancel Button for Pending Bookings */}
-                  {(room.status?.toLowerCase() === "pending" ||
-                    room.status?.toLowerCase() === "confirmed") && (
+                  {/* Cancel Button for Pending Bookings Only */}
+                  {room.status?.toLowerCase() === "pending" && (
                     <button
                       onClick={() =>
                         handleCancelBooking(room._id, room.roomNumber)
