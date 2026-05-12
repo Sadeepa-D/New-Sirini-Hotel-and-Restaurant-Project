@@ -292,7 +292,7 @@ const PackagesMng = () => {
                     {item.name}
                   </h3>
                   <p
-                    className="text-xs text-gray-400 truncate mt-0.5"
+                    className="text-gray-500 text-xs sm:text-sm leading-relaxed mb-2 sm:mb-3 line-clamp-1 sm:line-clamp-2"
                     title={item.description}
                   >
                     {item.description}
