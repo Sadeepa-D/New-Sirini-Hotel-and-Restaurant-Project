@@ -80,140 +80,249 @@ const CateringSelectionHub = ({ onClose, selectedPackage, isAdd = true }) => {
       );
     }
   };
-  const selectedItem = cateringitems.find((i) => i._id === selectedItemId);
+
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-2 sm:p-4 animate-in fade-in duration-200">
-      <div className="bg-white w-full max-w-6xl max-h-[95vh] overflow-hidden rounded-[2.5rem] shadow-2xl flex flex-col animate-in zoom-in-95 duration-300">
+      <div className="bg-white w-full max-w-7xl max-h-[95vh] overflow-hidden rounded-[2.5rem] shadow-2xl flex flex-col animate-in zoom-in-95 duration-300">
         {/* Header */}
-        <div className="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white z-10">
           <div>
             <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
               <Utensils className="text-orange-500" />
               Foods Include in Plate
             </h2>
-            <p className="text-xs text-gray-400 font-medium">
-              This menu is based on the selected package. For Your Selected
-              Package This items Will serve.
+            <p className="text-xs text-gray-500 font-medium mt-1">
+              Customize the menu for your selected package. Items shown here
+              will be served to guests.
             </p>
           </div>
           <div className="flex items-center gap-3">
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-full text-gray-400"
+              className="p-2 hover:bg-gray-100 rounded-full text-gray-400 transition-colors"
             >
               <X size={24} />
             </button>
           </div>
         </div>
 
-        <div className="flex-1 overflow-hidden flex flex-col lg:flex-row">
-          {/* LEFT: Package Items (Already Added) */}
-          <div className="flex-1 overflow-y-auto p-6 bg-gray-50/50">
-            <h3 className="text-sm font-bold text-gray-800 mb-4">
-              Items in This Package
-            </h3>
-            {loading ? (
-              <div className="text-center text-gray-400 text-sm py-4 animate-pulse">
-                Loading...
+        <div className="flex-1 overflow-hidden flex flex-col lg:flex-row bg-gray-50/50">
+          {/* LEFT: Available Items Grid (Cardcoise items showing place) */}
+          {isAdd && (
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="mb-6 flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-800">
+                    Available Catering Items
+                  </h3>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Select items to add them to your package
+                  </p>
+                </div>
               </div>
-            ) : packageItems.length === 0 ? (
-              <div className="text-center text-gray-400 text-sm py-8">
-                No items added yet
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {packageItems.map((item) => (
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                {cateringitems.map((item) => (
                   <div
                     key={item._id}
-                    className="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-200 hover:shadow-sm transition-all"
+                    onClick={() => setSelectedItemId(item._id)}
+                    className={`cursor-pointer transition-all border-2 rounded-xl p-3 flex flex-col group ${
+                      selectedItemId === item._id
+                        ? "border-orange-500 bg-orange-50 shadow-md ring-2 ring-orange-200/50"
+                        : "border-transparent bg-white shadow-sm hover:shadow-md hover:border-orange-200"
+                    }`}
                   >
-                    <div className="flex items-center gap-3 flex-1">
+                    <div className="relative overflow-hidden rounded-lg mb-3">
                       <img
                         src={item.image}
                         alt={item.name}
-                        className="w-12 h-12 rounded-lg object-cover"
+                        className="w-full h-32 object-cover transform group-hover:scale-105 transition-transform duration-300"
                       />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-gray-800 truncate">
-                          {item.name}
-                        </p>
-                        {isAdd && (
-                          <p className="text-[10px] text-gray-500">
-                            Rs. {item.price}
-                          </p>
-                        )}
+                      {selectedItemId === item._id && (
+                        <div className="absolute inset-0 bg-orange-500/10 rounded-lg"></div>
+                      )}
+                    </div>
+                    <h4 className="font-semibold text-gray-800 text-sm mb-1 line-clamp-1">
+                      {item.name}
+                    </h4>
+                    <div className="mt-auto pt-3 border-t border-gray-100">
+                      <p className="text-xs text-gray-400 uppercase tracking-widest mb-3 font-medium">
+                        Ingredients
+                      </p>
+                      <div className="flex flex-wrap gap-1 mt-1.5">
+                        {(Array.isArray(item.ingredients)
+                          ? item.ingredients[0].split(",")
+                          : []
+                        )
+                          .slice(0, 2)
+                          .map((ing, i) => (
+                            <span
+                              key={i}
+                              className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full border border-amber-100"
+                            >
+                              {ing.trim()}
+                            </span>
+                          ))}
                       </div>
                     </div>
-                    <button
-                      onClick={() => handleRemoveItem(item._id)}
-                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                    <div className="flex items-center justify-between mt-auto pt-2 border-t border-gray-100">
+                      <p className="text-sm font-bold text-orange-600">
+                        Rs. {item.price}
+                      </p>
+                      {selectedItemId === item._id ? (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleAddItem();
+                          }}
+                          className="bg-orange-500 hover:bg-orange-600 text-white p-1.5 rounded-lg shadow-sm transition-colors flex items-center justify-center animate-in zoom-in"
+                          title="Add to package"
+                        >
+                          <Plus size={16} />
+                        </button>
+                      ) : (
+                        <div className="w-7 h-7 flex items-center justify-center rounded-lg bg-gray-50 text-gray-400 group-hover:bg-orange-50 group-hover:text-orange-400 transition-colors">
+                          <Plus size={14} />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* RIGHT: Added Items (items adding place) */}
+          <div
+            className={`w-full ${isAdd ? "lg:w-[400px] border-l border-gray-200 shadow-[-4px_0_15px_-3px_rgba(0,0,0,0.05)]" : "lg:w-full"} bg-white flex flex-col z-10`}
+          >
+            <div className="p-6 border-b border-gray-100 bg-white">
+              <h3 className="text-lg font-bold text-gray-800 flex items-center justify-between">
+                Added to Package
+                <span className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-sm font-semibold">
+                  {packageItems.length}
+                  {packageItems.length === 1 ? "Item" : "Items"}
+                </span>
+              </h3>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-4 bg-gray-50/30">
+              {loading ? (
+                <div className="text-center text-gray-400 text-sm py-8 flex flex-col items-center gap-2">
+                  <div className="w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+                  Loading items...
+                </div>
+              ) : packageItems.length === 0 ? (
+                <div className="text-center text-gray-400 text-sm py-12 flex flex-col items-center justify-center h-full">
+                  <div className="bg-gray-100 p-4 rounded-full mb-4">
+                    <Utensils className="text-gray-300 w-8 h-8" />
+                  </div>
+                  <p className="font-medium text-gray-500">
+                    Your package is empty
+                  </p>
+                  {isAdd && (
+                    <p className="text-xs mt-1">
+                      Select an item from the left to add.
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div
+                  className={
+                    isAdd
+                      ? "space-y-3"
+                      : "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
+                  }
+                >
+                  {packageItems.map((item) =>
+                    isAdd ? (
+                      <div
+                        key={item._id}
+                        className="flex items-center gap-4 bg-white p-3 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group"
+                      >
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-16 h-16 rounded-xl object-cover border border-gray-50 shadow-sm"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-gray-800 truncate">
+                            {item.name}
+                          </p>
+                          <p className="text-xs font-bold text-orange-600 mt-1">
+                            Rs. {item.price}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => handleRemoveItem(item._id)}
+                          className="p-2.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all opacity-100 lg:opacity-0 lg:group-hover:opacity-100"
+                          title="Remove item"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div
+                        key={item._id}
+                        className="transition-all border-2 border-transparent bg-white shadow-sm hover:shadow-md rounded-xl p-3 flex flex-col group"
+                      >
+                        <div className="relative overflow-hidden rounded-lg mb-3">
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="w-full h-32 object-cover transform group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                        <h4 className="font-semibold text-gray-800 text-sm mb-1 line-clamp-1">
+                          {item.name}
+                        </h4>
+                        <div className="mt-auto pt-3 border-t border-gray-100">
+                          <p className="text-xs text-gray-400 uppercase tracking-widest mb-3 font-medium">
+                            Ingredients
+                          </p>
+                          <div className="flex flex-wrap gap-1 mt-1.5">
+                            {(Array.isArray(item.ingredients)
+                              ? item.ingredients[0].split(",")
+                              : []
+                            )
+                              .slice(0, 2)
+                              .map((ing, i) => (
+                                <span
+                                  key={i}
+                                  className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full border border-amber-100"
+                                >
+                                  {ing.trim()}
+                                </span>
+                              ))}
+                          </div>
+                        </div>
+                      </div>
+                    ),
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Package Summary Footer */}
+            {isAdd && packageItems.length > 0 && (
+              <div className="p-6 border-t border-gray-100 bg-white">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-sm font-medium text-gray-500">
+                    Total Items
+                  </span>
+                  <span className="text-sm font-bold text-gray-800">
+                    {packageItems.length}
+                  </span>
+                </div>
+                <button
+                  onClick={onClose}
+                  className="w-full bg-gray-900 hover:bg-gray-800 text-white py-3 rounded-xl font-semibold transition-colors shadow-md"
+                >
+                  Done
+                </button>
+              </div>
             )}
           </div>
-          {isAdd && (
-            <>
-              {/* RIGHT: Available Items to Add */}
-              <div className="w-full lg:w-96 bg-white p-6 border-l border-gray-100 flex flex-col">
-                <h3 className="text-lg font-bold text-gray-800 mb-4">
-                  Add Items to Package
-                </h3>
-
-                {/* Available Items Dropdown */}
-                <div className="mb-4">
-                  <label className="text-xs text-gray-500 font-medium mb-2 block">
-                    Select Item
-                  </label>
-                  <select
-                    value={selectedItemId || ""}
-                    onChange={(e) => setSelectedItemId(e.target.value)}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500"
-                  >
-                    <option value="">Choose an item...</option>
-                    {cateringitems.map((item) => (
-                      <option key={item._id} value={item._id}>
-                        {item.name} - Rs. {item.price}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Add Button */}
-                <button
-                  onClick={handleAddItem}
-                  disabled={!selectedItemId}
-                  className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm mb-6"
-                >
-                  <Plus size={16} className="inline mr-2" />
-                  Add Item
-                </button>
-
-                {/* Item Preview */}
-                {selectedItem && (
-                  <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
-                    <img
-                      src={selectedItem.image}
-                      alt={selectedItem.name}
-                      className="w-full h-32 rounded-lg object-cover mb-2"
-                    />
-                    <h4 className="font-semibold text-gray-800 text-sm">
-                      {selectedItem.name}
-                    </h4>
-                    <p className="text-xs text-gray-600 mt-1">
-                      {selectedItem.description || "No description"}
-                    </p>
-                    <p className="text-sm font-bold text-orange-600 mt-2">
-                      Rs. {selectedItem.price}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </>
-          )}
         </div>
       </div>
     </div>

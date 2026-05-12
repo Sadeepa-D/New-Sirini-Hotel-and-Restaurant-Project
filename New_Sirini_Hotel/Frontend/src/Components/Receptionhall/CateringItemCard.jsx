@@ -34,19 +34,6 @@ const CateringItemCard = () => {
   }, []);
 
   useEffect(() => {
-    // Add fade animation styles
-    const style = document.createElement("style");
-    style.textContent = `
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(6px); }
-        to   { opacity: 1; transform: translateY(0); }
-      }
-    `;
-    document.head.appendChild(style);
-    return () => document.head.removeChild(style);
-  }, []);
-
-  useEffect(() => {
     const handleResize = () => {
       setItemsPerView(window.innerWidth < 640 ? 1 : 3);
     };
@@ -83,8 +70,6 @@ const CateringItemCard = () => {
   const visibleItems = cateringItems.slice(index, index + itemsPerView);
   const canGoBack = index > 0;
   const canGoNext = index + itemsPerView < cateringItems.length;
-  const GAP = 32;
-  const cardWidth = `calc((100% - ${GAP * (itemsPerView - 1)}px) / ${itemsPerView})`;
 
   return (
     <section className="bg-white py-16 px-4 sm:px-6 lg:px-8">
@@ -124,13 +109,11 @@ const CateringItemCard = () => {
             <div
               key={index}
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-              style={{ animation: "fadeIn 0.25s ease" }}
             >
               {visibleItems.map((item) => (
                 <div
                   key={item._id}
-                  className="group bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-500 flex flex-col"
-                >
+className="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 group flex flex-col relative"                >
                   {/* Image */}
                   <div className="relative h-52 sm:h-60 w-full overflow-hidden">
                     <img
@@ -148,9 +131,9 @@ const CateringItemCard = () => {
                     {/* Availability badge */}
                     {!item.status && (
                       <div
-                         className={`absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm ${
+                        className={`absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm ${
                           item.availability
-                             ? "bg-emerald-500 text-white"
+                            ? "bg-emerald-500 text-white"
                             : "bg-rose-500 text-white"
                         }`}
                       >
@@ -162,7 +145,7 @@ const CateringItemCard = () => {
                   {/* Content */}
                   <div className="p-4 sm:p-6 flex flex-col flex-1">
                     {/* Name */}
-                    <h3 className="font-cinzel text-lg sm:text-xl font-semibold text-gray-800 mb-2">
+                    <h3 className="font-cinzel text-lg sm:text-xl font-semibold text-gray-800 mb-2 group-hover:text-amber-600 transition-colors">
                       {item.name}
                     </h3>
 

@@ -3,7 +3,8 @@ import { Phone, User, MapPin, Tag, Globe } from "lucide-react";
 
 const AdvertisementCard = ({ ad }) => {
   return (
-    <div className="group bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-500 flex flex-col">
+    <div className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group flex flex-col relative h-full">
+      {" "}
       {/* Image */}
       <div className="relative h-52 sm:h-60 w-full overflow-hidden">
         <img
@@ -24,13 +25,12 @@ const AdvertisementCard = ({ ad }) => {
           {ad.category}
         </div>
       </div>
-
       {/* Content */}
       <div className="px-4 py-3 sm:px-5 sm:py-4 flex flex-col flex-1">
         {/* Business Name */}
         <div className="flex items-start gap-2 mb-2">
           <User size={15} className="text-amber-500 mt-0.5 shrink-0" />
-          <h3 className="font-cinzel text-base sm:text-lg font-semibold text-gray-800 leading-snug">
+          <h3 className="font-cinzel text-base sm:text-lg font-semibold text-gray-800 leading-snug group-hover:text-amber-600 transition-colors">
             {ad.BuissnesName}
           </h3>
         </div>
