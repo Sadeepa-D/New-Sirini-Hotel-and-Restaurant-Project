@@ -26,7 +26,7 @@ const autoLogout = (token) => {
     if (!token) return;
     const logouttimer = setTimeout(() => {
       handlelogout();
-    }, 30*60*1000); // 30 minutes in milliseconds
+    }, 30*60*1000);
 
     const handlelogout = () => {
       localStorage.removeItem("token");
