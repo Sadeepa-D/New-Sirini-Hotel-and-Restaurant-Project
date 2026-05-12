@@ -144,13 +144,16 @@ const PackagesMng = () => {
   };
 
   const handleDelete = async () => {
+    const loadingToast = toast.loading("Deleting package...");
     const { id } = confirmDialog;
     setConfirmDialog({ isOpen: false, id: null });
     try {
       await axios.delete(`${VITE_URL}/api/receptionhall/package/delete/${id}`);
       setPackages((prev) => prev.filter((p) => p._id !== id));
+      toast.dismiss(loadingToast);
       toast.success("Package deleted successfully");
     } catch (err) {
+      toast.dismiss(loadingToast);
       setError("Failed to delete package");
       toast.error("Failed to delete package");
     }
@@ -254,7 +257,6 @@ const PackagesMng = () => {
                 style={{ width: cardWidth }}
                 onClick={() => {
                   setSelectedPackage(item);
-                  setShowCateringHub(true);
                 }}
               >
                 {/* Image */}
@@ -288,7 +290,10 @@ const PackagesMng = () => {
                   <h3 className="font-semibold text-gray-800 text-sm truncate">
                     {item.name}
                   </h3>
-                  <p className="text-xs text-gray-400 truncate mt-0.5">
+                  <p
+                    className="text-xs text-gray-400 truncate mt-0.5"
+                    title={item.description}
+                  >
                     {item.description}
                   </p>
 
@@ -297,7 +302,7 @@ const PackagesMng = () => {
                     <div className="flex flex-wrap gap-1 mt-1.5">
                       {item.features[0]
                         .split(",")
-                        .slice(0, 2)
+                        .slice(0, 4)
                         .map((f, i) => (
                           <span
                             key={i}
@@ -306,6 +311,9 @@ const PackagesMng = () => {
                             {f.trim()}
                           </span>
                         ))}
+                      <p className="text-[10px] font-bold text-amber-600 uppercase tracking-[0.2em] mt-3 cursor-pointer hover:text-amber-700 hover:underline underline-offset-4 transition-all decoration-amber-200">
+                        + More
+                      </p>
                     </div>
                   )}
 
@@ -400,12 +408,12 @@ const PackagesMng = () => {
         onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
       />
       {showCateringHub && (
-        <CateringSelectionHub 
+        <CateringSelectionHub
           selectedPackage={selectedPackage}
           onClose={() => {
             setShowCateringHub(false);
             setSelectedPackage(null);
-          }} 
+          }}
           isAdd={true}
         />
       )}

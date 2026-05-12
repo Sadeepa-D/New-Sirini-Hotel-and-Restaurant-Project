@@ -178,7 +178,10 @@ export default function ReceptionHallPackages() {
                     <h3 className="font-cinzel text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-1 sm:mb-2 group-hover:text-amber-600 transition-colors">
                       {pkg.name}
                     </h3>
-                    <p className="text-gray-500 text-xs sm:text-sm leading-relaxed mb-2 sm:mb-3 line-clamp-1 sm:line-clamp-2">
+                    <p
+                      className="text-gray-500 text-xs sm:text-sm leading-relaxed mb-2 sm:mb-3 line-clamp-1 sm:line-clamp-2"
+                      title={pkg.description}
+                    >
                       {pkg.description}
                     </p>
 
@@ -191,7 +194,7 @@ export default function ReceptionHallPackages() {
                         <div className="flex flex-wrap gap-1.5 sm:gap-2">
                           {pkg.features[0]
                             .split(",")
-                            .slice(0, 2)
+                            .slice(0, 5)
                             .map((feature, i) => (
                               <span
                                 key={i}
@@ -209,6 +212,9 @@ export default function ReceptionHallPackages() {
                                 </span>
                               </span>
                             ))}
+                          <p className="text-[10px] font-bold text-amber-600 uppercase tracking-[0.2em] mt-3 cursor-pointer hover:text-amber-700 hover:underline underline-offset-4 transition-all decoration-amber-200">
+                            + More
+                          </p>
                         </div>
                       </div>
                     )}
