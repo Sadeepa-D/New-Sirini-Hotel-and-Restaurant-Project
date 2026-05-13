@@ -5,7 +5,7 @@ import Exploreindicator from "../../Components/Exploreindicator";
 import resturantImg from "../../assets/resturant.png";
 import OrderForm from "../../Components/RestaurantPage/OrderForm";
 import RestaurantCard from "../../Components/RestaurantPage/RestaurantCard";
-import ProcessFlow from "../../Components/RestaurantPage/ProcessFlow";
+import ProcessFlow from "../../Components/RestaurantPage/processflow";
 import { ShoppingCart } from "lucide-react";
 import CartComp from "../../Components/RestaurantPage/CartComp";
 
