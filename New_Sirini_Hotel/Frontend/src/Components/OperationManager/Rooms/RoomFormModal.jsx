@@ -107,30 +107,32 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
         <div className="px-4 sm:px-6 py-4 sm:py-5 space-y-3 sm:space-y-4">
           {/* Image Upload with Preview */}
           <div>
-            <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
+            <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 block">
               Room Image *
             </label>
-            {imagePreview && (
-              <div className="mb-3 relative rounded-xl overflow-hidden border border-gray-200">
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="w-full h-40 object-cover"
+            <div className="flex flex-row gap-4 items-center">
+              {imagePreview && (
+                <div className="w-32 h-32 shrink-0 relative rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <div className="flex-1 h-32 relative border-2 border-dashed border-gray-200 rounded-xl p-4 flex items-center justify-center text-center hover:border-yellow-400 hover:bg-yellow-50/50 transition cursor-pointer">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="absolute inset-0 opacity-0 cursor-pointer z-10"
                 />
-              </div>
-            )}
-            <div className="relative border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-yellow-400 transition cursor-pointer">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="absolute inset-0 opacity-0 cursor-pointer"
-              />
-              <div className="flex flex-col items-center gap-1">
-                <Upload size={20} className="text-gray-400" />
-                <p className="text-[10px] sm:text-xs text-gray-500">
-                  {imageFile ? imageFile.name : "Click to upload room image"}
-                </p>
+                <div className="flex flex-col items-center gap-2">
+                  <Upload size={24} className="text-gray-400" />
+                  <p className="text-[10px] sm:text-xs text-gray-500 max-w-[150px] truncate px-2">
+                    {imageFile ? imageFile.name : "Click to upload room image"}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
