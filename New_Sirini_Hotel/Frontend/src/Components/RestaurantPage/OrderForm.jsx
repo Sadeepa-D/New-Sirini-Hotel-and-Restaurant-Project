@@ -20,7 +20,7 @@ export default function OrderForm({ item, cartItems, onClose }) {
     return items.reduce((sum, currentItem) => {
       if (!currentItem) return sum;
       const price =
-        currentItem.portion === "full" && currentItem.full_price
+        currentItem.portion === "Full" && currentItem.full_price
           ? currentItem.full_price
           : currentItem.normal_price;
       return sum + price * (currentItem.quantity || 1);

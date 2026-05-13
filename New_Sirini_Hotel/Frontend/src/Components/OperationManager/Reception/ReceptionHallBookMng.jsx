@@ -58,7 +58,7 @@ const ReceptionHallBookMng = () => {
         const y = date.getUTCFullYear();
         const m = String(date.getUTCMonth() + 1).padStart(2, "0");
         const d = String(date.getUTCDate()).padStart(2, "0");
-        return `${y}-${m}-${d}`;
+        return { dateStr: `${y}-${m}-${d}`, time: item.eventTime };
       });
       setBookedDates(normalized);
     } catch (error) {
@@ -67,6 +67,9 @@ const ReceptionHallBookMng = () => {
       setLoadingDates(false);
     }
   };
+  useEffect(() => {
+    fetchBookedDates();
+  }, []);
 
   const fetchBookings = async () => {
     try {
@@ -340,7 +343,18 @@ const ReceptionHallBookMng = () => {
         onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
       />
       {showcalander && (
-        <Calander BookedDates={bookedDates} loading={loadingDates} />
+        <div className="fixed inset-0 z-[100] flex items-center justify-center">
+          {/* Dark Background */}
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowCalander(false)}
+          />
+
+          {/* Popup Calendar */}
+          <div className="relative z-[101] animate-in fade-in zoom-in-95 duration-300">
+            <Calander BookedDates={bookedDates} loading={loadingDates} />
+          </div>
+        </div>
       )}
     </div>
   );
