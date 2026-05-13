@@ -12,7 +12,6 @@ import CartComp from "../../Components/RestaurantPage/CartComp";
 // Initial hardcoded data removed. Data is now fetched from the backend API.
 
 const CATEGORIES = [
-  "All",
   "Chopsy Rice",
   "Rice & Nasi Goreng",
   "Kottu",
@@ -43,7 +42,7 @@ export default function Restaurant() {
     return [];
   });
   const [openorderform, setOpenorderform] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0]);
 
   const fetchFoodItems = async () => {
     try {
@@ -195,10 +194,10 @@ export default function Restaurant() {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
       const documentHeight = document.documentElement.scrollHeight;
-      
+
       // Show FAB after scrolling past hero (approx 100vh - header)
       setIsFabVisible(scrollY > windowHeight * 0.7);
-      
+
       // Detect if near footer (approx 400px from bottom)
       setIsNearFooter(scrollY + windowHeight > documentHeight - 350);
     };
@@ -264,10 +263,9 @@ export default function Restaurant() {
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 whitespace-nowrap shadow-sm border
-                    ${
-                      selectedCategory === cat
-                        ? "bg-amber-600 text-white border-amber-600 shadow-md shadow-amber-200 scale-105"
-                        : "bg-white text-neutral-600 hover:bg-neutral-100 border-neutral-200 hover:border-amber-200"
+                    ${selectedCategory === cat
+                      ? "bg-amber-600 text-white border-amber-600 shadow-md shadow-amber-200 scale-105"
+                      : "bg-white text-neutral-600 hover:bg-neutral-100 border-neutral-200 hover:border-amber-200"
                     }`}
                 >
                   {cat}
@@ -297,18 +295,12 @@ export default function Restaurant() {
               </div>
               <h3 className="text-xl font-semibold text-neutral-800 mb-2">No items found</h3>
               <p className="text-neutral-500 max-w-xs">We couldn't find any dishes in the "{selectedCategory}" category at the moment.</p>
-              <button 
-                onClick={() => setSelectedCategory("All")}
-                className="mt-6 text-amber-600 font-bold hover:underline"
-              >
-                View all items
-              </button>
             </div>
           )}
         </div>
 
         {/* Floating Action Button (FAB) - Smart visibility */}
-        <div 
+        <div
           className={`fixed transition-all duration-500 ease-in-out z-[60] 
             ${isFabVisible ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-10 pointer-events-none'}
             ${isNearFooter ? 'bottom-[380px] md:bottom-[420px]' : 'bottom-8'}
@@ -318,7 +310,7 @@ export default function Restaurant() {
             className="relative group transition-all duration-300"
             onClick={() => setShowCart(true)}
           >
-            <div 
+            <div
               className="w-16 h-16 md:w-20 md:h-20 bg-amber-500 text-white flex items-center justify-center rounded-full shadow-2xl group-hover:bg-amber-600 group-hover:scale-110 transition-all duration-300"
               style={{ boxShadow: "0 10px 25px -5px rgba(245, 158, 11, 0.4)" }}
             >
@@ -341,7 +333,7 @@ export default function Restaurant() {
             if (success) {
               setCartItems([]);
             } else if (cartItems.length > 0) {
-              
+
             }
           }}
         />
