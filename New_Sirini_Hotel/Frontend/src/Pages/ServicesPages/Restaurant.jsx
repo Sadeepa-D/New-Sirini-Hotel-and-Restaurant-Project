@@ -307,15 +307,6 @@ export default function Restaurant() {
         <CartComp
           onClose={() => {
             setShowCart(false);
-            if (cartItems.length > 0) {
-              toast(
-                "Cart saved for this session. It will be cleared if you log out before checkout.",
-                {
-                  icon: "⚠️",
-                  duration: 6000,
-                },
-              );
-            }
           }}
           cartItems={cartItems}
           setCartItems={setCartItems}
