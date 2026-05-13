@@ -76,10 +76,6 @@ function Rooms() {
   }, [VITE_URL]);
 
   const handleBookNow = (room) => {
-    if (!isLoggedIn) {
-      setShowLoginModal(true);
-      return;
-    }
     setSelectedRoom(room);
     setIsModalOpen(true);
     fetchBookedDates(room.roomNumber);
@@ -279,6 +275,8 @@ function Rooms() {
             selectedRoom={selectedRoom}
             onClose={() => setIsModalOpen(false)}
             onConfirmed={handleBookingConfirmed}
+            isLoggedIn={isLoggedIn}
+            onRequireLogin={() => setShowLoginModal(true)}
           />
           <Calander BookedDates={bookedDates} />
         </>

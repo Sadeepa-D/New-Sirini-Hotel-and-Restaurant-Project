@@ -29,7 +29,7 @@ const addDays = (dateStr, n) => {
   return `${next.getUTCFullYear()}-${String(next.getUTCMonth() + 1).padStart(2, "0")}-${String(next.getUTCDate()).padStart(2, "0")}`;
 };
 
-function BookingForm({ selectedRoom, onClose, onConfirmed }) {
+function BookingForm({ selectedRoom, onClose, onConfirmed, isLoggedIn, onRequireLogin }) {
   const VITE_URL = import.meta.env.VITE_API_URL;
 
   const [step, setStep] = useState(0);
@@ -239,7 +239,13 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
           selectedDate={formData.checkInDate}
           selectedCheckOut={formData.checkOutDate}
           onDateSelect={handleDateSelect}
-          onNext={() => setStep(2)}
+          onNext={() => {
+            if (!isLoggedIn) {
+              onRequireLogin();
+            } else {
+              setStep(2);
+            }
+          }}
           onClose={onClose}
           onBack={() => setStep(0)}
           roomNumber={selectedRoom.roomNumber}
