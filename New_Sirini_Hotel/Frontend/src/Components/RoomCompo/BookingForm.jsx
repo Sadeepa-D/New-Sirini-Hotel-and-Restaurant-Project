@@ -7,7 +7,7 @@ import DayUseCalender from "./DayUseCalender";
 const PACKAGES = [
   {
     id: "day",
-    label: "Day Package",
+    label: "Short Stay",
     timeRange: "12:00 PM – 3:00 PM",
     icon: "☀️",
     description: "3-hour daytime access. Cannot be booked on Full Day dates.",
@@ -15,7 +15,7 @@ const PACKAGES = [
   },
   {
     id: "fullday",
-    label: "Full Day",
+    label: "Overnight Stay",
     timeRange: "4:00 PM – 10:00 AM",
     icon: "🏨",
     description:
