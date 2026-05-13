@@ -11,7 +11,6 @@ const PACKAGES = [
     timeRange: "12:00 PM – 3:00 PM",
     icon: "☀️",
     description: "3-hour daytime access. Cannot be booked on Full Day dates.",
-    basePrice: 1500,
   },
   {
     id: "fullday",
@@ -20,7 +19,6 @@ const PACKAGES = [
     icon: "🏨",
     description:
       "Check in at 4 PM, check out at 10 AM. Select your date range.",
-    basePrice: 3000,
   },
 ];
 
@@ -53,7 +51,10 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
     if (!bookingMode) return;
     const pkg = PACKAGES.find((p) => p.id === bookingMode);
     if (!pkg) return;
-    const basePrice = pkg.basePrice;
+    const basePrice =
+      bookingMode === "day"
+        ? selectedRoom.shortStayPrice || 1500
+        : selectedRoom.price;
     if (
       bookingMode === "fullday" &&
       formData.checkInDate &&
@@ -69,7 +70,13 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
     } else {
       setTotalPrice(basePrice);
     }
-  }, [bookingMode, formData.checkInDate, formData.checkOutDate]);
+  }, [
+    bookingMode,
+    formData.checkInDate,
+    formData.checkOutDate,
+    selectedRoom.price,
+    selectedRoom.shortStayPrice,
+  ]);
 
   // ----- Handlers -----
   const handleSelectMode = (mode) => {
@@ -151,7 +158,11 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
     );
 
   const selectedPkg = PACKAGES.find((p) => p.id === bookingMode);
-  const nightBasePrice = selectedPkg?.basePrice || 0;
+  const nightBasePrice = selectedPkg
+    ? selectedPkg.id === "day"
+      ? selectedRoom.shortStayPrice || 1500
+      : selectedRoom.price
+    : 0;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -206,7 +217,10 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
                   </p>
                   <p className="text-[10px] font-black text-gray-800 mt-1.5">
                     Rs.
-                    {pkg.basePrice.toLocaleString()}
+                    {(pkg.id === "day"
+                      ? selectedRoom.shortStayPrice || 1500
+                      : selectedRoom.price
+                    ).toLocaleString()}
                     {pkg.id === "fullday" && " / day"}
                   </p>
                 </div>
