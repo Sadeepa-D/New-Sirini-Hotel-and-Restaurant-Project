@@ -156,7 +156,7 @@ function Rooms() {
             {roomList.map((room) => (
               <div
                 key={room._id}
-                className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col h-full"
+                className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:scale-[1.02] transition-all duration-500 border border-gray-100 flex flex-col h-full"
               >
                 {/* Image Section */}
                 <div className="relative h-64 overflow-hidden">
