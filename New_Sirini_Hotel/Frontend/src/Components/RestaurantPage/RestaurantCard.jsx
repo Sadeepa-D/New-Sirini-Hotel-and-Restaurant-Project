@@ -2,17 +2,13 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 
 export default function RestaurantCard({ item, itemsPerView, onOrder }) {
-  const [selectedPortion, setSelectedPortion] = useState(item.has_portions ? "" : "Normal");
+  const [selectedPortion, setSelectedPortion] = useState("Normal");
 
   const widthPercentage = 100 / itemsPerView;
   const gap = itemsPerView === 1 ? 16 : 24;
   const width = `calc(${widthPercentage}% - ${(gap * (itemsPerView - 1)) / itemsPerView}px)`;
 
   const handleAddClick = () => {
-    if (item.has_portions && !selectedPortion) {
-      toast.error("Please select a portion (Normal or Full) first.");
-      return;
-    }
     onOrder(item, selectedPortion);
   };
 
@@ -56,7 +52,6 @@ export default function RestaurantCard({ item, itemsPerView, onOrder }) {
                 className="w-full bg-neutral-50 border border-neutral-200 text-neutral-800 text-sm rounded-xl px-3 py-2.5 outline-none focus:ring-1 focus:ring-amber-500 transition-all font-semibold appearance-none cursor-pointer"
                 style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234b5563'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.75rem center', backgroundSize: '1rem' }}
               >
-                <option value="" disabled>Select Portion</option>
                 <option value="Normal">Normal - LKR {item.normal_price}</option>
                 <option value="Full">Full - LKR {item.full_price}</option>
               </select>
@@ -88,4 +83,5 @@ export default function RestaurantCard({ item, itemsPerView, onOrder }) {
       </div>
     </div>
   );
-}
+}
+
