@@ -1,7 +1,14 @@
 import React from "react";
 import { User, Mail, Phone, Users, ShieldCheck, ChevronLeftCircle, X, CreditCard, Sparkles } from "lucide-react";
 
-const GuestDetail = ({ formData, setFormData, maxCapacity, totalPrice, onBack, onSubmit, loading, onClose }) => {
+const GuestDetail = ({ formData, setFormData, maxCapacity, totalPrice, onBack, onSubmit, loading, onClose, bookingMode, selectedPkg }) => {
+  let calculatedDays = 1;
+  if (bookingMode === "fullday" && formData.checkInDate && formData.checkOutDate) {
+    const [y1, m1, d1] = formData.checkInDate.split("-").map(Number);
+    const [y2, m2, d2] = formData.checkOutDate.split("-").map(Number);
+    calculatedDays = Math.round((Date.UTC(y2, m2 - 1, d2) - Date.UTC(y1, m1 - 1, d1)) / (1000 * 60 * 60 * 24));
+  }
+
   return (
     <div className="relative w-full max-w-[380px] bg-white rounded-[3rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] p-8 border border-gray-100 animate-in slide-in-from-right-8 duration-700 ease-out overflow-hidden">
       
@@ -94,13 +101,32 @@ const GuestDetail = ({ formData, setFormData, maxCapacity, totalPrice, onBack, o
           </div>
         </div>
 
-        {/* Total Price Card */}
+        {/* Package Summary Card */}
         <div className="relative overflow-hidden bg-gray-900 rounded-[2rem] p-6 text-center shadow-2xl shadow-gray-200 group transition-all duration-500">
-
-          <p className="text-gray-400 text-[9px] font-black uppercase tracking-[0.2em] mb-1">Your Total Stay Value</p>
+          {selectedPkg && (
+            <div className="mb-3">
+              <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-3 py-1 mb-1">
+                <span className="text-base">{selectedPkg.icon}</span>
+                <span className="text-white/70 text-[8px] font-black uppercase tracking-widest">{selectedPkg.label}</span>
+              </div>
+              <p className="text-orange-400 text-[9px] font-black uppercase tracking-widest">{selectedPkg.timeRange}</p>
+              {bookingMode === "fullday" && formData.checkInDate && formData.checkOutDate && (
+                <>
+                  <p className="text-white/60 text-[9px] mt-1">
+                    {formData.checkInDate} → {formData.checkOutDate}
+                  </p>
+                  <p className="text-orange-400/80 text-[9px] font-bold mt-0.5">
+                    {calculatedDays} {calculatedDays === 1 ? "day" : "days"}
+                  </p>
+                </>
+              )}
+              {bookingMode === "day" && formData.checkInDate && (
+                <p className="text-white/60 text-[9px] mt-1">{formData.checkInDate}</p>
+              )}
+            </div>
+          )}
+          <p className="text-gray-400 text-[9px] font-black uppercase tracking-[0.2em] mb-1">Your Total</p>
           <p className="text-3xl font-bold font-mono text-white tracking-tighter leading-none">Rs.{totalPrice.toLocaleString()}</p>
-          
-         
         </div>
 
         {/* Submit Button */}
