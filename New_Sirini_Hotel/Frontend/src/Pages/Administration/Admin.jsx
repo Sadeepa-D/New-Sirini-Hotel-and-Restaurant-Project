@@ -173,13 +173,67 @@ const Admin = () => {
                 </h4>
               </div>
             </div>
-            <div className="flex items-center gap-1 shrink-0">
+            <div className="flex items-center gap-1 shrink-0 relative">
               <button
                 onClick={() => navigate("/")}
                 className="p-1.5 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"
               >
                 <Home size={18} />
               </button>
+              <button
+                onClick={() => setGalleryselection(!galleryselection)}
+                className="p-1.5 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Camera size={18} />
+              </button>
+              <button
+                onClick={() => setManagerpagesselection(!managerpagesselection)}
+                title="Manager Portals"
+                className={`p-1.5 rounded-lg transition-colors ${managerpagesselection ? "bg-amber-100 text-amber-600" : "text-gray-500 hover:bg-gray-100"}`}
+              >
+                <User size={18} />
+              </button>
+              {managerpagesselection && (
+                <div className="absolute right-12 top-12 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-100 p-2 z-50 animate-in fade-in duration-200">
+                  <button
+                    onClick={() => {
+                      setManagerpagesselection(false);
+                      navigate("/operationmanager");
+                    }}
+                    className="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors font-medium flex items-center gap-2 group"
+                  >
+                    <Store
+                      size={14}
+                      className="text-gray-400 group-hover:text-amber-500 shrink-0"
+                    />
+                    <div>
+                      <div>Manager 1</div>
+                      <span className="text-[9px] text-gray-400 group-hover:text-amber-500/70">
+                        Restaurant, Liquor
+                      </span>
+                    </div>
+                  </button>
+                  <div className="h-px bg-gray-100 my-1"></div>
+                  <button
+                    onClick={() => {
+                      setManagerpagesselection(false);
+                      navigate("/manager");
+                    }}
+                    className="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors font-medium flex items-center gap-2 group"
+                  >
+                    <Hotel
+                      size={14}
+                      className="text-gray-400 group-hover:text-amber-500 shrink-0"
+                    />
+                    <div>
+                      <div>Manager 2</div>
+                      <span className="text-[9px] text-gray-400 group-hover:text-amber-500/70">
+                        Reception, Rooms
+                      </span>
+                    </div>
+                  </button>
+                </div>
+              )}
               <button
                 onClick={handleLogout}
                 className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
