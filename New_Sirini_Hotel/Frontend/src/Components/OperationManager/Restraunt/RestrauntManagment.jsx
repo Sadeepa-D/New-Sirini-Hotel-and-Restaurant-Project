@@ -5,10 +5,6 @@ import {
   Edit2,
   Trash2,
   Power,
-  ChevronLeft,
-  ChevronRight,
-  X,
-  Upload,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
@@ -34,19 +30,22 @@ const FoodCard = ({ item, onClick }) => (
     </div>
 
     {/* Info */}
-    <div className="p-3 flex flex-col gap-1 flex-1 justify-between">
+    <div className="p-3 flex flex-col gap-1 flex-1">
       <div>
         <span className="inline-block bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-full w-fit max-w-full truncate">
           {item.name || item.foodname}
         </span>
-        {item.label && (
-          <p className="text-gray-400 text-xs">Label: {item.label}</p>
-        )}
+        <p className="text-gray-400 text-[10px] mt-1 line-clamp-2 italic">
+          {item.description}
+        </p>
       </div>
-      <div className="mt-2 space-y-1">
-        <p className="text-white text-sm font-semibold">Price: LKR {item.price}</p>
+      <div className="mt-2 space-y-1 flex-1 flex flex-col justify-end">
+        <p className="text-white text-sm font-semibold text-amber-500">Normal: LKR {item.normal_price}</p>
+        {item.has_portions && (
+          <p className="text-white text-sm font-semibold text-amber-500">Full: LKR {item.full_price}</p>
+        )}
         <p
-          className={`text-xs font-bold tracking-wide ${item.availability !== false ? "text-green-400" : "text-red-400"
+          className={`text-xs font-bold tracking-wide mt-1 ${item.availability !== false ? "text-green-400" : "text-red-400"
             }`}
         >
           {item.availability !== false ? "AVAILABLE" : "UNAVAILABLE"}
@@ -63,8 +62,6 @@ const RestaurantManager = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [editingItem, setEditingItem] = useState(null);
   const [foodItems, setFoodItems] = useState([]);
-  const [indexes, setIndexes] = useState({});
-  const [itemsPerView, setItemsPerView] = useState(4);
 
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
@@ -74,7 +71,16 @@ const RestaurantManager = () => {
     message: "",
   });
 
-  const CATEGORIES = ["Main Meals", "Soft Drinks", "Fresh Juice"];
+  const CATEGORIES = [
+    "Chopsy Rice",
+    "Rice & Nasi Goreng",
+    "Kottu",
+    "Noodles",
+    "Bites",
+    "Side Dishes",
+    "Snacks"
+  ];
+  const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0]);
 
   const fetchFoodItems = async () => {
     try {
@@ -83,20 +89,16 @@ const RestaurantManager = () => {
       );
       setFoodItems(data);
     } catch (err) {
-      console.error("Error fetching food items:", err);
+      if (err.response && err.response.status === 404) {
+        setFoodItems([]); // Handle empty state gracefully
+      } else {
+        console.error("Error fetching food items:", err);
+      }
     }
   };
 
   useEffect(() => {
     fetchFoodItems();
-
-    const handleResize = () => {
-      const w = window.innerWidth;
-      setItemsPerView(w < 640 ? 1 : w < 768 ? 2 : w < 1024 ? 3 : 4);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const handleEdit = (item) => {
@@ -164,121 +166,19 @@ const RestaurantManager = () => {
       setEditingItem(null);
     } catch (err) {
       console.error("Error saving item:", err);
-      toast.error("Error saving item", { id: loadingToast });
+      const errorMessage = err.response?.data?.message || "Error saving item";
+      toast.error(errorMessage, { id: loadingToast });
     }
   };
 
   const filteredItems = foodItems.filter((item) => {
     const itemName = item.name || item.foodname || "";
-    return itemName.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = itemName.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === "All" || item.category === selectedCategory;
+    return matchesSearch && matchesCategory;
   });
 
-  const getIndex = (cat) => indexes[cat] || 0;
-  const setIndex = (cat, val) =>
-    setIndexes((prev) => ({ ...prev, [cat]: val }));
 
-  // ── Carousel card with action buttons ──
-  const renderCarouselCard = (item) => (
-    <div key={item._id} className="relative group h-full">
-      <FoodCard item={item} onClick={() => { }} />
-      <div className="absolute top-4 right-4 flex flex-col gap-2 z-50">
-        {/* Toggle Availability */}
-        <button
-          className={`p-2 rounded-full shadow-md transition ${item.availability !== false
-              ? "bg-green-100 text-green-600 hover:bg-green-600 hover:text-white"
-              : "bg-red-100 text-red-600 hover:bg-red-600 hover:text-white"
-            }`}
-          onClick={(e) => {
-            e.stopPropagation();
-            handleToggleAvailability(item._id);
-          }}
-          title={item.availability !== false ? "Mark as Unavailable" : "Mark as Available"}
-        >
-          <Power size={16} />
-        </button>
-        {/* Edit */}
-        <button
-          className="p-2 bg-white/90 rounded-full text-blue-600 shadow-md hover:bg-blue-600 hover:text-white transition"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleEdit(item);
-          }}
-        >
-          <Edit2 size={16} />
-        </button>
-        {/* Delete */}
-        <button
-          className="p-2 bg-white/90 rounded-full text-red-600 shadow-md hover:bg-red-600 hover:text-white transition"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleDelete(item._id);
-          }}
-        >
-          <Trash2 size={16} />
-        </button>
-      </div>
-    </div>
-  );
-
-  // ── Carousel section ──
-  const renderCarouselSection = (category) => {
-    const items = filteredItems.filter((i) => i.category === category);
-    if (items.length === 0) return null;
-
-    const idx = getIndex(category);
-
-    return (
-      <div key={category} className="mb-12">
-        <h3 className="text-2xl font-bold text-neutral-900 mb-6">{category}</h3>
-        <div className="relative">
-          {/* Left arrow */}
-          {idx > 0 && (
-            <button
-              onClick={() => setIndex(category, Math.max(0, idx - 1))}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
-            >
-              <ChevronLeft className="w-6 h-6 text-neutral-900" />
-            </button>
-          )}
-
-          <div className="overflow-hidden">
-            <div
-              className="flex gap-4 sm:gap-6 transition-transform duration-300"
-              style={{
-                transform: `translateX(-${idx * (100 / itemsPerView)}%)`,
-              }}
-            >
-              {items.map((item) => (
-                <div
-                  key={item._id}
-                  className="shrink-0"
-                  style={{
-                    width: `calc(${100 / itemsPerView}% - ${((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) /
-                      itemsPerView
-                      }px)`,
-                  }}
-                >
-                  {renderCarouselCard(item)}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Right arrow */}
-          {idx < items.length - itemsPerView && (
-            <button
-              onClick={() =>
-                setIndex(category, Math.min(items.length - itemsPerView, idx + 1))
-              }
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
-            >
-              <ChevronRight className="w-6 h-6 text-neutral-900" />
-            </button>
-          )}
-        </div>
-      </div>
-    );
-  };
 
   return (
     <div className="p-4 md:p-6 min-h-screen">
@@ -308,14 +208,80 @@ const RestaurantManager = () => {
         </div>
       </div>
 
-      {/* Category Carousels */}
-      <div className="bg-white rounded-xl p-6 shadow-sm">
-        {CATEGORIES.map((cat) => renderCarouselSection(cat))}
+      {/* Category Navigation Bar */}
+      <div className="bg-white rounded-xl p-4 shadow-sm mb-8 border border-gray-100">
+        <div className="flex overflow-x-auto gap-3 pb-2 hide-scrollbar scroll-smooth">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 whitespace-nowrap shadow-sm border
+                ${selectedCategory === cat
+                  ? "bg-amber-500 text-black border-amber-500 shadow-md scale-105"
+                  : "bg-gray-50 text-neutral-600 hover:bg-gray-100 border-neutral-200"
+                }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      </div>
 
-        {filteredItems.length === 0 && (
+      {/* Food Items Grid Section */}
+      <div className="bg-white rounded-xl p-6 md:p-10 shadow-sm min-h-[400px]">
+        {filteredItems.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+            {filteredItems.map((item) => (
+              <div key={item._id} className="relative group h-full">
+                <FoodCard item={item} onClick={() => { }} />
+                <div className="absolute top-4 right-4 flex flex-col gap-2 z-50">
+                  {/* Toggle Availability */}
+                  <button
+                    className={`p-2 rounded-full shadow-lg transition transform hover:scale-110 ${item.availability !== false
+                      ? "bg-green-100 text-green-600 hover:bg-green-600 hover:text-white"
+                      : "bg-red-100 text-red-600 hover:bg-red-600 hover:text-white"
+                      }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleToggleAvailability(item._id);
+                    }}
+                    title={item.availability !== false ? "Mark as Unavailable" : "Mark as Available"}
+                  >
+                    <Power size={16} />
+                  </button>
+                  {/* Edit */}
+                  <button
+                    className="p-2 bg-white rounded-full text-blue-600 shadow-lg hover:bg-blue-600 hover:text-white transition transform hover:scale-110"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEdit(item);
+                    }}
+                    title="Edit Item"
+                  >
+                    <Edit2 size={16} />
+                  </button>
+                  {/* Delete */}
+                  <button
+                    className="p-2 bg-white rounded-full text-red-600 shadow-lg hover:bg-red-600 hover:text-white transition transform hover:scale-110"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(item._id);
+                    }}
+                    title="Delete Item"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
           <div className="text-center py-16 text-gray-400">
+            <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Search className="w-10 h-10 text-gray-200" />
+            </div>
             <p className="text-lg font-semibold">No food items found.</p>
-            <p className="text-sm">Add a new item or try a different search.</p>
+            <p className="text-sm">Try a different search or category.</p>
           </div>
         )}
       </div>

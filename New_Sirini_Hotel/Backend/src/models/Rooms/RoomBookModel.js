@@ -38,6 +38,16 @@ const roomBookSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    bookingType: {
+      type: String,
+      enum: ["day-use"],
+      default: "day-use",
+    },
+    timeSlot: {
+      type: String,
+      enum: ["day", "fullday"],
+      required: [true, "Time slot is required"],
+    },
     status: {
       type: String,
       enum: ["Pending", "Confirmed", "Cancelled", "Overdue"],

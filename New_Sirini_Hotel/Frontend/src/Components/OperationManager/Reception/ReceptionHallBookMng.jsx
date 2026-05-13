@@ -24,7 +24,13 @@ const ReceptionHallBookMng = () => {
   const [editData, setEditData] = useState(null);
   const [index, setIndex] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(
-    typeof window !== "undefined" && window.innerWidth < 640 ? 1 : 3,
+    typeof window !== "undefined"
+      ? window.innerWidth < 640
+        ? 1
+        : window.innerWidth < 1024
+          ? 2
+          : 4
+      : 4,
   );
 
   const [confirmDialog, setConfirmDialog] = useState({
@@ -52,7 +58,7 @@ const ReceptionHallBookMng = () => {
         const y = date.getUTCFullYear();
         const m = String(date.getUTCMonth() + 1).padStart(2, "0");
         const d = String(date.getUTCDate()).padStart(2, "0");
-        return `${y}-${m}-${d}`;
+        return { dateStr: `${y}-${m}-${d}`, time: item.eventTime };
       });
       setBookedDates(normalized);
     } catch (error) {
@@ -61,6 +67,9 @@ const ReceptionHallBookMng = () => {
       setLoadingDates(false);
     }
   };
+  useEffect(() => {
+    fetchBookedDates();
+  }, []);
 
   const fetchBookings = async () => {
     try {
@@ -82,18 +91,15 @@ const ReceptionHallBookMng = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      setItemsPerView(window.innerWidth < 640 ? 1 : 3);
+      if (window.innerWidth < 640) setItemsPerView(1);
+      else if (window.innerWidth < 1024) setItemsPerView(2);
+      else setItemsPerView(4);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // const filtered = bookings.filter(
-  //   (b) =>
-  //     b.customerName?.toLowerCase().includes(search.toLowerCase()) ||
-  //     b.eventType?.toLowerCase().includes(search.toLowerCase()),
-  // );
   const filtered = bookings.filter((b) => {
     const matchesSearch =
       b.customerName?.toLowerCase().includes(search.toLowerCase()) ||
@@ -253,7 +259,7 @@ const ReceptionHallBookMng = () => {
           {/* Visible cards — slice-based carousel */}
           <div
             key={index}
-            className="flex gap-6"
+            className="flex items-stretch gap-6"
             style={{ animation: "fadeIn 0.25s ease" }}
           >
             {filtered.slice(index, index + itemsPerView).map((booking) => (
@@ -318,6 +324,7 @@ const ReceptionHallBookMng = () => {
           }}
           editData={editData}
           fetchBookings={fetchBookings}
+          AllBookings={bookings}
         />
       )}
 
@@ -336,7 +343,18 @@ const ReceptionHallBookMng = () => {
         onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
       />
       {showcalander && (
-        <Calander BookedDates={bookedDates} loading={loadingDates} />
+        <div className="fixed inset-0 z-[100] flex items-center justify-center">
+          {/* Dark Background */}
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowCalander(false)}
+          />
+
+          {/* Popup Calendar */}
+          <div className="relative z-[101] animate-in fade-in zoom-in-95 duration-300">
+            <Calander BookedDates={bookedDates} loading={loadingDates} />
+          </div>
+        </div>
       )}
     </div>
   );

@@ -4,16 +4,16 @@ const cloudinary = require("cloudinary");
 const createGalleryItem = async (req, res) => {
   try {
     const { category } = req.body;
-    const image = req.file.secure_url;
-    const imagePublicId = req.file.public_id;
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ message: "Image files are required" });
+    }
+    const galleryimage = req.files.map((file) => ({
+      image: file.secure_url,
+      imagePublicId: file.public_id,
+      category: category,
+    }));
 
-    const newGalleryItem = new Gallery({
-      image,
-      imagePublicId,
-      category,
-    });
-
-    await newGalleryItem.save();
+    const newGalleryItem = await Gallery.insertMany(galleryimage);
     res.status(201).json(newGalleryItem);
   } catch (error) {
     res.status(500).json({ message: error.message });

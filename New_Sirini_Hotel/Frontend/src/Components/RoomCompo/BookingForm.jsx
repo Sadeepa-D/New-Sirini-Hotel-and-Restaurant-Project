@@ -1,22 +1,42 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import GuestDetail from "./GuestDetail";
 import BookingSuccess from "../RoomCompo/SuccessMsg";
-import {
-  Clock,
-  CheckCircle2,
-  XCircle,
-  Archive,
-  Check,
-  AlertTriangle,
-} from "lucide-react";
+import DayUseCalender from "./DayUseCalender";
 
-function BookingForm({ selectedRoom, onClose, onConfirmed }) {
+const PACKAGES = [
+  {
+    id: "day",
+    label: "Mid Day Stay",
+    timeRange: "12:00 PM – 3:00 PM",
+    icon: "☀️",
+    description: "3-hour daytime access. Cannot be booked on Full Day dates.",
+  },
+  {
+    id: "fullday",
+    label: "Overnight Stay",
+    timeRange: "4:00 PM – 10:00 AM",
+    icon: "🏨",
+    description:
+      "Check in at 4 PM, check out at 10 AM. Select your date range.",
+  },
+];
+
+// Add N calendar days using pure UTC math (no timezone issues)
+const addDays = (dateStr, n) => {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const next = new Date(Date.UTC(y, m - 1, d + n));
+  return `${next.getUTCFullYear()}-${String(next.getUTCMonth() + 1).padStart(2, "0")}-${String(next.getUTCDate()).padStart(2, "0")}`;
+};
+
+function BookingForm({ selectedRoom, onClose, onConfirmed, isLoggedIn, onRequireLogin }) {
   const VITE_URL = import.meta.env.VITE_API_URL;
+
+  const [step, setStep] = useState(0);
   const [showSuccess, setShowSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [totalPrice, setTotalPrice] = useState(selectedRoom.price);
-  const today = new Date().toISOString().split("T")[0];
-
+  const [bookingMode, setBookingMode] = useState(null);
+  const [totalPrice, setTotalPrice] = useState(0);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -26,290 +46,230 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
     checkOutDate: "",
   });
 
-  // Parse date string (YYYY-MM-DD) and create UTC date, not local timezone
-  const parseUTCDate = (dateStr) => {
-    const [year, month, day] = dateStr.split("-").map(Number);
-    return new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+  // Recalculate price whenever mode or dates change
+  useEffect(() => {
+    if (!bookingMode) return;
+    const pkg = PACKAGES.find((p) => p.id === bookingMode);
+    if (!pkg) return;
+    const basePrice =
+      bookingMode === "day"
+        ? selectedRoom.shortStayPrice || 1500
+        : selectedRoom.price;
+    if (
+      bookingMode === "fullday" &&
+      formData.checkInDate &&
+      formData.checkOutDate
+    ) {
+      const [y1, m1, d1] = formData.checkInDate.split("-").map(Number);
+      const [y2, m2, d2] = formData.checkOutDate.split("-").map(Number);
+      const days = Math.round(
+        (Date.UTC(y2, m2 - 1, d2) - Date.UTC(y1, m1 - 1, d1)) /
+          (1000 * 60 * 60 * 24),
+      );
+      setTotalPrice(days > 0 ? basePrice * days : 0);
+    } else {
+      setTotalPrice(basePrice);
+    }
+  }, [
+    bookingMode,
+    formData.checkInDate,
+    formData.checkOutDate,
+    selectedRoom.price,
+    selectedRoom.shortStayPrice,
+  ]);
+
+  // ----- Handlers -----
+  const handleSelectMode = (mode) => {
+    setBookingMode(mode);
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      guests: 1,
+      checkInDate: "",
+      checkOutDate: "",
+    });
+    setStep(1);
   };
 
-  // change the price according to num of dates selected
-  useEffect(() => {
-    if (formData.checkInDate && formData.checkOutDate) {
-      const checkIn = parseUTCDate(formData.checkInDate);
-      const checkOut = parseUTCDate(formData.checkOutDate);
-      const timeDiff = checkOut.getTime() - checkIn.getTime();
-      const nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
-
-      if (nights > 0) {
-        setTotalPrice(nights * selectedRoom.price);
+  const handleDateSelect = (dateStr) => {
+    if (bookingMode === "fullday") {
+      // Range picker: 1st click = check-in, 2nd click = check-out
+      if (
+        !formData.checkInDate ||
+        (formData.checkInDate && formData.checkOutDate)
+      ) {
+        setFormData({ ...formData, checkInDate: dateStr, checkOutDate: "" });
       } else {
-        setTotalPrice(selectedRoom.price);
+        if (dateStr > formData.checkInDate) {
+          setFormData({ ...formData, checkOutDate: dateStr });
+        } else {
+          // Clicked before check-in — restart
+          setFormData({ ...formData, checkInDate: dateStr, checkOutDate: "" });
+        }
       }
+    } else {
+      // Day Package: checkout = checkin + 1 day
+      setFormData({
+        ...formData,
+        checkInDate: dateStr,
+        checkOutDate: addDays(dateStr, 1),
+      });
     }
-  }, [formData.checkInDate, formData.checkOutDate, selectedRoom.price]);
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const token = localStorage.getItem("token");
-    const checkIn = parseUTCDate(formData.checkInDate);
-    const checkOut = parseUTCDate(formData.checkOutDate);
-
-    if (checkOut <= checkIn) {
-      alert("Check-out date must be after check-in date.");
-      return;
-    }
-
     setLoading(true);
     try {
-      const res = await axios.post(
+      await axios.post(
         `${VITE_URL}/api/rooms/book`,
         {
           ...formData,
           room: selectedRoom._id,
           roomNumber: selectedRoom.roomNumber,
-          numberOfGuests: formData.guests,
           totalAmount: totalPrice,
+          numberOfGuests: formData.guests,
+          bookingType: "day-use",
+          timeSlot: bookingMode,
         },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         },
       );
-
       onConfirmed(selectedRoom._id);
       setShowSuccess(true);
     } catch (error) {
-      const errorMsg =
-        error.response?.data?.error || "Booking failed. Please try again.";
-      alert(errorMsg);
+      alert(error.response?.data?.error || "Booking failed.");
     } finally {
       setLoading(false);
     }
   };
 
-  if (showSuccess) {
+  // ----- Render -----
+  if (showSuccess)
     return (
       <BookingSuccess
         selectedRoom={selectedRoom}
         onClose={onClose}
         totalPrice={totalPrice}
+        bookingMode={bookingMode}
       />
     );
-  }
+
+  const selectedPkg = PACKAGES.find((p) => p.id === bookingMode);
+  const nightBasePrice = selectedPkg
+    ? selectedPkg.id === "day"
+      ? selectedRoom.shortStayPrice || 1500
+      : selectedRoom.price
+    : 0;
 
   return (
-    <div
-      className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-end sm:items-center justify-center z-50 px-0 sm:px-4 transition-all duration-500"
-      onClick={(e) => e.target === e.currentTarget && onClose()}
-    >
-      {/* Custom style for date input to invert calendar icon color */}
-      <style>
-        {`
-    input[type="date"]::-webkit-calendar-picker-indicator {
-      filter: invert(1);
-      cursor: pointer;
-    }
-  `}
-      </style>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <div
+        className="absolute inset-0 bg-white/60 backdrop-blur-xl"
+        onClick={onClose}
+      />
 
-      <div className="bg-[#0c0c0c] border border-white/10 rounded-t-3xl sm:rounded-2xl w-full sm:max-w-lg shadow-[0_0_50px_rgba(249,115,22,0.1)] overflow-hidden max-h-[95vh] flex flex-col animate-in fade-in zoom-in duration-300">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-orange-600 to-orange-400 px-6 py-5 flex justify-between items-center">
-          <div>
-            <h2 className="text-black text-xl sm:text-2xl font-serif font-black uppercase italic tracking-tighter">
-              Reserve Your Stay
-            </h2>
-            <p className="text-black/70 text-[10px] font-bold uppercase tracking-widest">
-              {selectedRoom.roomType} Room
-            </p>
-          </div>
+      {/* ─── Step 0: Package Selector ─── */}
+      {step === 0 && (
+        <div className="relative w-full max-w-[380px] bg-white/95 backdrop-blur-2xl rounded-[2rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] shadow-orange-500/5 p-6 border border-white/50 animate-in fade-in zoom-in duration-300">
           <button
             onClick={onClose}
-            className="text-black/60 hover:text-black text-4xl font-thin transition-transform hover:rotate-90"
+            className="absolute top-5 right-5 text-gray-300 hover:text-gray-900 transition-colors text-xl leading-none"
           >
-            ×
+            ✕
           </button>
-        </div>
 
-        <div className="overflow-y-auto px-6 py-4 space-y-6">
-          {/* Pricing Card - Interactive Summary */}
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex justify-between items-center group hover:border-orange-500/50 transition-all">
-            <div className="flex items-center gap-4">
-              <img
-                src={selectedRoom.image}
-                className="w-16 h-16 rounded-xl object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-                alt="Room"
-              />
-              <div>
-                <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">
-                  Room No
-                </p>
-                <p className="text-white font-mono text-lg font-bold">
-                  {selectedRoom.roomNumber}
-                </p>
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">
-                Room Price
-              </p>
-              <p className="text-orange-500 text-2xl font-black font-mono">
-                Rs.{totalPrice.toLocaleString()}
-              </p>
-            </div>
+          <div className="mb-5 text-center">
+
+            <h2 className="text-gray-900 text-2xl font-serif italic font-medium tracking-tight">
+              Choose a Package
+            </h2>
+            <p className="text-gray-400 text-[9px] font-bold uppercase tracking-[0.2em] mt-1.5">
+              Room {selectedRoom.roomNumber} · {selectedRoom.roomType} Room
+            </p>
           </div>
 
-          <form
-            className="grid grid-cols-1 sm:grid-cols-2 gap-4"
-            onSubmit={handleSubmit}
-          >
-            {/* Full Name */}
-            <div className="sm:col-span-2">
-              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">
-                Full Name
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                placeholder="Enter your name"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all"
-              />
-            </div>
-
-            {/* Email */}
-            <div className="sm:col-span-1">
-              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                placeholder="email@example.com"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all"
-              />
-            </div>
-
-            {/* Phone */}
-            <div className="sm:col-span-1">
-              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">
-                Phone
-              </label>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                required
-                placeholder="07xxxxxxxx"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all"
-              />
-            </div>
-
-            {/* Guests */}
-            <div className="sm:col-span-2">
-              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">
-                Guests (Max: {selectedRoom.capacity})
-              </label>
-              <select
-                name="guests"
-                value={formData.guests}
-                onChange={handleChange}
-                required
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 appearance-none transition-all"
+          <div className="space-y-3">
+            {PACKAGES.map((pkg) => (
+              <button
+                key={pkg.id}
+                onClick={() => handleSelectMode(pkg.id)}
+                className="w-full flex items-center gap-4 p-4 rounded-[1.25rem] border border-gray-100/80 bg-gray-50/50 hover:border-orange-200 hover:bg-white hover:shadow-lg hover:shadow-orange-500/10 hover:-translate-y-0.5 transition-all duration-300 text-left group"
               >
-                {[...Array(selectedRoom.capacity)].map((_, i) => (
-                  <option
-                    key={i + 1}
-                    value={i + 1}
-                    className="bg-neutral-900 text-white"
-                  >
-                    {i + 1} Guest{i > 0 ? "s" : ""}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Check In */}
-            <div>
-              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">
-                Check In
-              </label>
-              <input
-                type="date"
-                name="checkInDate"
-                min={today}
-                value={formData.checkInDate}
-                onChange={handleChange}
-                required
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all"
-              />
-            </div>
-
-            {/* Check Out */}
-            <div>
-              <label className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-2 block">
-                Check Out
-              </label>
-              <input
-                type="date"
-                name="checkOutDate"
-                min={formData.checkInDate || today}
-                value={formData.checkOutDate}
-                onChange={handleChange}
-                required
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all"
-              />
-            </div>
-
-            {/* add a note for show user after booking cannot change the room number */}
-            <div className="sm:col-span-2">
-              <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl px-4 py-3.5 mt-2 flex items-start gap-3 group hover:border-orange-500/40 transition-all">
-                <AlertTriangle
-                  className="text-orange-500 mt-0.5"
-                  size={18}
-                  strokeWidth={2.5}
-                />
-                <p className="text-orange-100/70 text-[11px] leading-relaxed font-sans flex-1">
-                  <span className="text-orange-400 font-bold uppercase tracking-wider mr-1">
-                    Warning:
+                <div className="w-12 h-12 flex items-center justify-center bg-white border border-gray-100 group-hover:bg-gradient-to-br group-hover:from-orange-50 group-hover:to-orange-100 group-hover:border-orange-200 rounded-xl transition-all duration-300 shrink-0 shadow-sm shadow-gray-200/50">
+                  <span className="text-2xl drop-shadow-sm group-hover:scale-110 transition-transform duration-300">
+                    {pkg.icon}
                   </span>
-                  After you book the room, you cannot change the room number.
-                </p>
-              </div>
-            </div>
-
-            {/* Footer Buttons */}
-            <div className="sm:col-span-2 flex gap-4 pt-4">
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex-1 py-4 rounded-xl border border-white/10 text-gray-400 font-bold uppercase text-[10px] tracking-[0.2em] hover:bg-white/5 transition-all"
-              >
-                Discard
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[13px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors">
+                    {pkg.label}
+                  </p>
+                  <p className="text-[9px] text-orange-500 font-bold uppercase tracking-widest mt-0.5">
+                    {pkg.timeRange}
+                  </p>
+                  <p className="text-[9px] text-gray-400 mt-1 line-clamp-1">
+                    {pkg.description}
+                  </p>
+                  <p className="text-[10px] font-black text-gray-800 mt-1.5">
+                    Rs.
+                    {(pkg.id === "day"
+                      ? selectedRoom.shortStayPrice || 1500
+                      : selectedRoom.price
+                    ).toLocaleString()}
+                    {pkg.id === "fullday" && " / Per Night"}
+                  </p>
+                </div>
+                <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-orange-500 transition-colors shrink-0">
+                  <span className="text-gray-400 group-hover:text-white text-xs font-bold transition-colors">
+                    ›
+                  </span>
+                </div>
               </button>
-              <button
-                type="submit"
-                disabled={loading}
-                className="flex-[2] py-4 rounded-xl bg-orange-500 text-black font-black uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-orange-500/20 hover:bg-orange-400 hover:shadow-orange-500/40 active:scale-95 disabled:opacity-50 transition-all"
-              >
-                {loading ? "Processing..." : "Confirm Reservation"}
-              </button>
-            </div>
-          </form>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* ─── Step 1: Date Picker ─── */}
+      {step === 1 && selectedPkg && (
+        <DayUseCalender
+          selectedDate={formData.checkInDate}
+          selectedCheckOut={formData.checkOutDate}
+          onDateSelect={handleDateSelect}
+          onNext={() => {
+            if (!isLoggedIn) {
+              onRequireLogin();
+            } else {
+              setStep(2);
+            }
+          }}
+          onClose={onClose}
+          onBack={() => setStep(0)}
+          roomNumber={selectedRoom.roomNumber}
+          pkg={selectedPkg}
+          timeSlot={bookingMode}
+          totalPrice={totalPrice}
+        />
+      )}
+
+      {/* ─── Step 2: Guest Details ─── */}
+      {step === 2 && (
+        <GuestDetail
+          formData={formData}
+          setFormData={setFormData}
+          maxCapacity={selectedRoom.capacity}
+          totalPrice={totalPrice}
+          onBack={() => setStep(1)}
+          onSubmit={handleSubmit}
+          loading={loading}
+          onClose={onClose}
+          bookingMode={bookingMode}
+          selectedPkg={selectedPkg}
+        />
+      )}
     </div>
   );
 }

@@ -23,8 +23,28 @@ export default function BookingForm({ editData = null, onSuccess }) {
       setDate(editData.date ? editData.date.split("T")[0] : ""); // Format date for input
       setNoOfGuests(editData.noOfGuests || "");
       setEventType(editData.eventType || "");
+    } else {
+      // Auto-fill logged-in user details for new appointments
+      const fetchUserProfile = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          if (!token) return;
+          const response = await axios.get(`${VITE_URL}/api/users/profile`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const user = response.data;
+          if (user) {
+            setName((prev) => prev || user.username || user.name || "");
+            setEmail((prev) => prev || user.email || "");
+            setPhone((prev) => prev || user.Phone || "");
+          }
+        } catch (error) {
+          console.error("Error fetching user profile for auto-fill:", error);
+        }
+      };
+      fetchUserProfile();
     }
-  }, [editData]);
+  }, [editData, VITE_URL]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -172,8 +192,10 @@ export default function BookingForm({ editData = null, onSuccess }) {
               </label>
               <input
                 type="number"
+                min="40"
+                max="200"
                 className={inputClass}
-                placeholder="100"
+                placeholder="40"
                 value={noOfGuests}
                 onChange={(e) => setNoOfGuests(e.target.value)}
               />

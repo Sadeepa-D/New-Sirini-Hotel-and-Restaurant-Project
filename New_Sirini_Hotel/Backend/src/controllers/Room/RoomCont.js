@@ -4,13 +4,25 @@ const cloudinary = require("cloudinary");
 // ── 1. Create New Room ──
 const createRoom = async (req, res) => {
   try {
-    const { roomNumber, roomType, price, bedType, capacity, status, description } = req.body;
+    const {
+      roomNumber,
+      roomType,
+      price,
+      shortStayPrice,
+      bedType,
+      capacity,
+      status,
+      description,
+      condition,
+    } = req.body;
 
     //check if all required fields are provided
     if (!roomNumber || !roomType || !price || !bedType || !capacity) {
-      return res.status(400).json({ message: "Please provide all required fields" });
+      return res
+        .status(400)
+        .json({ message: "Please provide all required fields" });
     }
-    
+
     const image = req.file ? req.file.url : null;
     const imagePublicId = req.file ? req.file.public_id : null;
     if (!image) {
@@ -21,11 +33,13 @@ const createRoom = async (req, res) => {
       roomNumber,
       roomType,
       price,
+      shortStayPrice: shortStayPrice || 1500,
       bedType,
       capacity,
       image,
-      status: status || "available", 
-      description, 
+      status: status || "available",
+      description,
+      condition: condition || "Fan",
       imagePublicId,
       availability: true,
     });
@@ -33,7 +47,9 @@ const createRoom = async (req, res) => {
     await newRoom.save();
     res.status(201).json(newRoom);
   } catch (error) {
-    res.status(500).json({ message: "Error creating room", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error creating room", error: error.message });
   }
 };
 
@@ -46,7 +62,9 @@ const getAllRooms = async (req, res) => {
     }
     res.status(200).json(rooms);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching rooms", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching rooms", error: error.message });
   }
 };
 
@@ -76,7 +94,7 @@ const updateRoom = async (req, res) => {
     const updatedRoom = await RoomModel.findByIdAndUpdate(
       id,
       { $set: updates },
-      { returnDocument: 'after' } 
+      { returnDocument: "after" },
     );
 
     if (!updatedRoom) {
@@ -84,7 +102,9 @@ const updateRoom = async (req, res) => {
     }
     res.status(200).json(updatedRoom);
   } catch (error) {
-    res.status(500).json({ message: "Error updating room", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error updating room", error: error.message });
   }
 };
 
@@ -110,10 +130,11 @@ const deleteRoom = async (req, res) => {
     await RoomModel.findByIdAndDelete(id);
     res.status(200).json({ message: "Room deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Error deleting room", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error deleting room", error: error.message });
   }
 };
-
 
 const toggleRoomAvailability = async (req, res) => {
   try {
@@ -122,13 +143,14 @@ const toggleRoomAvailability = async (req, res) => {
     if (!room) {
       return res.status(404).json({ message: "Room not found" });
     }
-    
 
     room.status = room.status === "available" ? "reserved" : "available";
     await room.save();
     res.status(200).json(room);
   } catch (error) {
-    res.status(500).json({ message: "Error toggling status", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error toggling status", error: error.message });
   }
 };
 

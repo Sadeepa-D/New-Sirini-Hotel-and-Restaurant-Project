@@ -47,7 +47,13 @@ const AdvertismentMng = () => {
   const [error, setError] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [itemsPerView, setItemsPerView] = useState(
-    typeof window !== "undefined" && window.innerWidth < 640 ? 1 : 3,
+    typeof window !== "undefined"
+      ? window.innerWidth < 640
+        ? 1
+        : window.innerWidth < 1024
+          ? 2
+          : 4
+      : 4,
   );
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
@@ -108,7 +114,9 @@ const AdvertismentMng = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      setItemsPerView(window.innerWidth < 640 ? 1 : 3);
+      if (window.innerWidth < 640) setItemsPerView(1);
+      else if (window.innerWidth < 1024) setItemsPerView(2);
+      else setItemsPerView(4);
     };
 
     handleResize();

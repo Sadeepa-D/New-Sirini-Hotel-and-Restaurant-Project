@@ -12,32 +12,56 @@ const createRoomBooking = async (req, res) => {
       roomNumber,
       numberOfGuests,
       totalAmount,
+      timeSlot,
     } = req.body;
 
+    if (!timeSlot || !["day", "fullday"].includes(timeSlot)) {
+      return res
+        .status(400)
+        .json({ error: "A valid time slot (day or fullday) is required." });
+    }
+
     // Parse date string (YYYY-MM-DD) as UTC midnight, not local timezone
-    const parseUTCDate = (dateStr) => {
-      const [year, month, day] = dateStr.split("-").map(Number);
-      return new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+    const parseUTC = (dateStr) => {
+      const [y, m, d] = dateStr.split("-").map(Number);
+      return new Date(Date.UTC(y, m - 1, d));
     };
 
-    const newIn = parseUTCDate(checkInDate);
-    const newOut = parseUTCDate(checkOutDate);
+    const newIn = parseUTC(checkInDate);
+    const newOut = parseUTC(checkOutDate);
 
-    const existingBooking = await RoomBooking.findOne({
-      roomNumber: roomNumber,
+    // Calculate precise start and end times in milliseconds based on time slot
+    const newStart =
+      timeSlot === "day"
+        ? newIn.getTime() + 12 * 3600000
+        : newIn.getTime() + 16 * 3600000;
+    const newEnd =
+      timeSlot === "day"
+        ? newIn.getTime() + 15 * 3600000
+        : newOut.getTime() + 10 * 3600000;
+
+    const activeBookings = await RoomBooking.find({
+      roomNumber,
       status: { $in: ["Confirmed", "Pending"] },
-      $or: [
-        {
-          checkInDate: { $lt: newOut },
-          checkOutDate: { $gt: newIn },
-        },
-      ],
     });
 
-    if (existingBooking) {
+    const hasConflict = activeBookings.some((b) => {
+      const bIn = b.checkInDate.getTime();
+      const bOut = b.checkOutDate.getTime();
+      const bStart =
+        b.timeSlot === "day" ? bIn + 12 * 3600000 : bIn + 16 * 3600000;
+      const bEnd =
+        b.timeSlot === "day" ? bIn + 15 * 3600000 : bOut + 10 * 3600000;
+
+      return newStart < bEnd && newEnd > bStart;
+    });
+
+    if (hasConflict) {
+      const slotLabel = timeSlot === "day"
+        ? "Day Package (12:00 PM – 3:00 PM)"
+        : "Full Day";
       return res.status(400).json({
-        error:
-          "Sorry! This room is already reserved for the dates you selected. Please try different dates.",
+         error: `Sorry! The ${slotLabel} is not available for one or more of those dates. Please choose different dates.`,
       });
     }
 
@@ -52,6 +76,8 @@ const createRoomBooking = async (req, res) => {
       numberOfGuests,
       status: "Pending",
       totalAmount,
+      bookingType:"day-use",
+      timeSlot,
     });
 
     await newRoomBooking.save();
@@ -253,7 +279,7 @@ const getUnavilableDatesForRoom = async (req, res) => {
     }
     const unavialbleDates = await RoomBooking.find(
       { roomNumber, status: { $in: ["Confirmed", "Pending"] } },
-      "checkInDate checkOutDate",
+      "checkInDate checkOutDate timeSlot",
     );
     res.status(200).json(unavialbleDates);
   } catch (error) {

@@ -5,7 +5,7 @@ const galleryController = require("../controllers/GalleryController");
 
 router.post(
   "/add",
-  upload.single("image"),
+  upload.array("images", 10),
   galleryController.createGalleryItem,
 );
 router.get("/view", galleryController.getGalleryItems);

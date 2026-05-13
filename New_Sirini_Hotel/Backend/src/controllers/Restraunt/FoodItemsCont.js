@@ -4,62 +4,82 @@ const cloudinary = require("cloudinary");
 const createFoodItem = async (req, res) => {
   try {
     console.log("Creating food item, body:", req.body);
-    console.log("File:", req.file);
-    const { name, price, description, category, ingredients } = req.body;
-    if (!name || !price || !description || !category) {
-      console.log("Missing fields");
-      return res.status(400).json({ message: "Required fields are missing" });
+    let { name, normal_price, full_price, description, category, has_portions } = req.body;
+
+    // Convert strings from FormData
+    has_portions = has_portions === "true" || has_portions === true;
+    
+    // Comprehensive Validation
+    if (!name) return res.status(400).json({ message: "Food name is required" });
+    if (!description) return res.status(400).json({ message: "Description is required" });
+    if (!category) return res.status(400).json({ message: "Category is required" });
+
+    // Validate Prices
+    if (normal_price === undefined || normal_price === null || normal_price === "") {
+      return res.status(400).json({ message: "Normal price is required" });
     }
-    const image = req.file ? req.file.secure_url : req.file ? req.file.path : null;
-    const imagePublicId = req.file ? req.file.public_id : req.file ? req.file.filename : null;
-    console.log("Image URL:", image);
+    normal_price = isNaN(Number(normal_price)) ? 0 : Number(normal_price);
+
+    if (has_portions) {
+      if (full_price === undefined || full_price === null || full_price === "") {
+        return res.status(400).json({ message: "Full price is required when portions are enabled" });
+      }
+      full_price = isNaN(Number(full_price)) ? 0 : Number(full_price);
+    } else {
+      full_price = null;
+    }
+
+    const image = req.file ? (req.file.secure_url || req.file.path) : null;
+    const imagePublicId = req.file ? (req.file.public_id || req.file.filename) : null;
+    
     if (!image) {
-      console.log("Missing image");
-      return res.status(400).json({ message: "Image is required" });
+      return res.status(400).json({ message: "Product image is required" });
     }
+
     const newFoodItem = new FoodItems({
       name,
-      price,
       description,
       category,
-      ingredients: ingredients ? (Array.isArray(ingredients) ? ingredients : ingredients.split(",")) : [],
       image,
       imagePublicId,
+      has_portions,
+      normal_price,
+      full_price,
+      status: "available",
       availability: true,
     });
+    
     await newFoodItem.save();
-    console.log("Saved successfully");
     res.status(201).json(newFoodItem);
   } catch (error) {
-    console.error("Error in createFoodItem:", error);
-    res
-      .status(500)
-      .json({ message: "Error creating food item", error: error.message });
+    console.error("CRITICAL: Error in createFoodItem:", error);
+    res.status(500).json({ message: "Internal Server Error during creation", error: error.message });
   }
 };
+
 const getFoodItems = async (req, res) => {
   try {
     const foodItems = await FoodItems.find();
-    if (foodItems.length === 0) {
-      return res.status(404).json({ message: "No food items found" });
-    }
-    res.status(200).json(foodItems);
+    res.status(200).json(foodItems || []);
   } catch (error) {
     res
       .status(500)
       .json({ message: "Error fetching food items", error: error.message });
   }
 };
+
 const updateFoodItem = async (req, res) => {
   try {
     const { id } = req.params;
     if (!id) {
       return res.status(400).json({ message: "Food item ID is required" });
     }
+
     const updates = { ...req.body };
-    
-    if (updates.ingredients && typeof updates.ingredients === "string") {
-      updates.ingredients = updates.ingredients.split(",");
+
+    // Convert strings from FormData
+    if (updates.has_portions !== undefined) {
+      updates.has_portions = updates.has_portions === "true" || updates.has_portions === true;
     }
 
     const existingFoodItem = await FoodItems.findById(id);
@@ -67,31 +87,51 @@ const updateFoodItem = async (req, res) => {
       return res.status(404).json({ message: "Food item not found" });
     }
 
+    // Handle Image Update
     if (req.file) {
       if (existingFoodItem.imagePublicId) {
-        await cloudinary.v2.uploader.destroy(existingFoodItem.imagePublicId);
+        try {
+          // Use v2 explicitly to avoid undefined errors
+          await cloudinary.v2.uploader.destroy(existingFoodItem.imagePublicId);
+        } catch (err) {
+          console.error("Cloudinary delete error:", err);
+        }
       }
-      updates.image = req.file.secure_url;
-      updates.imagePublicId = req.file.public_id;
+      updates.image = req.file.secure_url || req.file.path;
+      updates.imagePublicId = req.file.public_id || req.file.filename;
+    }
+
+    // Logic for normal vs full price
+    const hasPortionsFlag = updates.has_portions !== undefined ? updates.has_portions : existingFoodItem.has_portions;
+
+    if (updates.normal_price !== undefined) {
+      updates.normal_price = isNaN(Number(updates.normal_price)) ? 0 : Number(updates.normal_price);
+    }
+
+    if (hasPortionsFlag) {
+      if (updates.full_price !== undefined) {
+        updates.full_price = isNaN(Number(updates.full_price)) ? 0 : Number(updates.full_price);
+      }
+    } else {
+      updates.full_price = null;
     }
 
     const updatedFoodItem = await FoodItems.findByIdAndUpdate(
       id,
       { $set: updates },
-      {
-        new: true,
-      },
+      { new: true }
     );
+    
     if (!updatedFoodItem) {
       return res.status(404).json({ message: "Food item not found" });
     }
     res.status(200).json(updatedFoodItem);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error updating food item", error: error.message });
+    console.error("CRITICAL: Error in updateFoodItem:", error);
+    res.status(500).json({ message: "Internal Server Error during update", error: error.message });
   }
 };
+
 const deleteFoodItem = async (req, res) => {
   try {
     const { id } = req.params;
@@ -107,17 +147,15 @@ const deleteFoodItem = async (req, res) => {
         await cloudinary.v2.uploader.destroy(foodItem.imagePublicId);
       } catch (cloudinaryError) {
         console.error("Error deleting image from Cloudinary:", cloudinaryError);
-        // Continue with database deletion even if Cloudinary deletion fails
       }
     }
     await FoodItems.findByIdAndDelete(id);
     res.status(200).json({ message: "Food item deleted successfully" });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error deleting food item", error: error.message });
+    res.status(500).json({ message: "Error deleting food item", error: error.message });
   }
 };
+
 const toggleFoodItemAvailability = async (req, res) => {
   try {
     const { id } = req.params;
@@ -141,6 +179,7 @@ const toggleFoodItemAvailability = async (req, res) => {
     });
   }
 };
+
 module.exports = {
   createFoodItem,
   getFoodItems,

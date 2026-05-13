@@ -76,7 +76,7 @@ const LiqourandRestruant = () => {
   );
   const monthlyrevenue = activeMonthOrders.reduce((total, order) => {
     const orderDate = new Date(order.pickupDate);
-    const iscompleted = order.status === "Completed";
+    const iscompleted = order.status === "Complete";
     const isthismonth =
       orderDate.getMonth() === currentMonth &&
       orderDate.getFullYear() === currentYear;
@@ -86,15 +86,15 @@ const LiqourandRestruant = () => {
     return total;
   }, 0);
   const orderStats = {
-    completed: activeMonthOrders.filter((order) => order.status === "Completed")
-      .length,
-    pending: activeMonthOrders.filter((order) => order.status === "In Progress")
-      .length,
-    cancelled: activeMonthOrders.filter((order) => order.status === "Cancelled")
-      .length,
+    pending: activeMonthOrders.filter((order) => order.status === "Pending").length,
+    accepted: activeMonthOrders.filter((order) => order.status === "Accepted").length,
+    preparing: activeMonthOrders.filter((order) => order.status === "Preparing").length,
+    complete: activeMonthOrders.filter((order) => order.status === "Complete").length,
+    overdue: activeMonthOrders.filter((order) => order.status === "Overdue").length,
+    total: activeMonthOrders.length
   };
   const completionRate =
-    orderStats.total > 0 ? (orderStats.completed / orderStats.total) * 100 : 0;
+    orderStats.total > 0 ? (orderStats.complete / orderStats.total) * 100 : 0;
 
   return (
     <div className="p-4 md:p-8 space-y-8 bg-transparent min-h-screen">
@@ -113,7 +113,7 @@ const LiqourandRestruant = () => {
               </div>
             </div>
             <p className="text-slate-400 text-xs font-bold uppercase tracking-[0.2em] mb-1">
-              Estimated Revenue
+              Estimated Restraunt Revenue
             </p>
             <h2 className="text-3xl font-black text-white italic tracking-tighter">
               Rs. {monthlyrevenue.toLocaleString()}
@@ -135,7 +135,7 @@ const LiqourandRestruant = () => {
           </div>
           <div>
             <h3 className="text-slate-900 font-serif italic text-xl mb-1">
-              Active Spirits
+              Active Liquor Items
             </h3>
             <div className="flex items-baseline gap-2">
               <span className="text-4xl font-black text-slate-800">
@@ -185,58 +185,94 @@ const LiqourandRestruant = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Completed - Success Card */}
-          <div className="group bg-gradient-to-br from-emerald-50 to-white rounded-[2rem] p-6 border border-emerald-100/50 hover:shadow-lg transition-all">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-emerald-500">
-                <CheckCircle size={24} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          {/* Pending Card */}
+          <div className="group bg-gradient-to-br from-amber-50 to-white rounded-[2rem] p-5 border border-amber-100/50 hover:shadow-lg transition-all">
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-amber-500">
+                <Clock size={20} />
               </div>
-              <span className="text-[10px] font-black text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full uppercase tracking-tighter">
-                Fulfilled
+              <span className="text-[9px] font-black text-amber-600 bg-amber-100 px-2.5 py-1 rounded-full uppercase tracking-tighter">
+                Pending
               </span>
             </div>
-            <p className="text-4xl font-black text-slate-800 mb-1">
-              {orderStats.completed}
-            </p>
-            <p className="text-xs font-medium text-slate-500">
-              Completed without issues
-            </p>
-          </div>
-
-          {/* Pending - Progress Card */}
-          <div className="group bg-gradient-to-br from-amber-50 to-white rounded-[2rem] p-6 border border-amber-100/50 hover:shadow-lg transition-all">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-amber-500">
-                <Clock size={24} className="animate-spin-slow" />
-              </div>
-              <span className="text-[10px] font-black text-amber-600 bg-amber-100 px-3 py-1 rounded-full uppercase tracking-tighter">
-                In Kitchen
-              </span>
-            </div>
-            <p className="text-4xl font-black text-slate-800 mb-1">
+            <p className="text-3xl font-black text-slate-800 mb-1">
               {orderStats.pending}
             </p>
-            <p className="text-xs font-medium text-slate-500">
-              Awaiting service completion
+            <p className="text-[10px] font-medium text-slate-500 uppercase tracking-widest">
+              New Orders
             </p>
           </div>
 
-          {/* Cancelled - Alert Card */}
-          <div className="group bg-gradient-to-br from-rose-50 to-white rounded-[2rem] p-6 border border-rose-100/50 hover:shadow-lg transition-all">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-rose-500">
-                <XCircle size={24} />
+          {/* Accepted Card */}
+          <div className="group bg-gradient-to-br from-blue-50 to-white rounded-[2rem] p-5 border border-blue-100/50 hover:shadow-lg transition-all">
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-blue-500">
+                <CheckCircle size={20} />
               </div>
-              <span className="text-[10px] font-black text-rose-600 bg-rose-100 px-3 py-1 rounded-full uppercase tracking-tighter">
-                Cancelled
+              <span className="text-[9px] font-black text-blue-600 bg-blue-100 px-2.5 py-1 rounded-full uppercase tracking-tighter">
+                Accepted
               </span>
             </div>
-            <p className="text-4xl font-black text-slate-800 mb-1">
-              {orderStats.cancelled}
+            <p className="text-3xl font-black text-slate-800 mb-1">
+              {orderStats.accepted}
             </p>
-            <p className="text-xs font-medium text-slate-500">
-              Rejected or voided transactions
+            <p className="text-[10px] font-medium text-slate-500 uppercase tracking-widest">
+              Confirmed
+            </p>
+          </div>
+
+          {/* Preparing Card */}
+          <div className="group bg-gradient-to-br from-purple-50 to-white rounded-[2rem] p-5 border border-purple-100/50 hover:shadow-lg transition-all">
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-purple-500">
+                <Utensils size={20} className="animate-pulse" />
+              </div>
+              <span className="text-[9px] font-black text-purple-600 bg-purple-100 px-2.5 py-1 rounded-full uppercase tracking-tighter">
+                Preparing
+              </span>
+            </div>
+            <p className="text-3xl font-black text-slate-800 mb-1">
+              {orderStats.preparing}
+            </p>
+            <p className="text-[10px] font-medium text-slate-500 uppercase tracking-widest">
+              In Kitchen
+            </p>
+          </div>
+
+          {/* Complete Card */}
+          <div className="group bg-gradient-to-br from-emerald-50 to-white rounded-[2rem] p-5 border border-emerald-100/50 hover:shadow-lg transition-all">
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-emerald-500">
+                <CheckCircle size={20} />
+              </div>
+              <span className="text-[9px] font-black text-emerald-600 bg-emerald-100 px-2.5 py-1 rounded-full uppercase tracking-tighter">
+                Complete
+              </span>
+            </div>
+            <p className="text-3xl font-black text-slate-800 mb-1">
+              {orderStats.complete}
+            </p>
+            <p className="text-[10px] font-medium text-slate-500 uppercase tracking-widest">
+              Fulfilled
+            </p>
+          </div>
+
+          {/* Overdue Card */}
+          <div className="group bg-gradient-to-br from-red-50 to-white rounded-[2rem] p-5 border border-red-100/50 hover:shadow-lg transition-all">
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-red-500">
+                <XCircle size={20} />
+              </div>
+              <span className="text-[9px] font-black text-red-600 bg-red-100 px-2.5 py-1 rounded-full uppercase tracking-tighter">
+                Overdue
+              </span>
+            </div>
+            <p className="text-3xl font-black text-slate-800 mb-1">
+              {orderStats.overdue}
+            </p>
+            <p className="text-[10px] font-medium text-slate-500 uppercase tracking-widest">
+              Action Required
             </p>
           </div>
         </div>

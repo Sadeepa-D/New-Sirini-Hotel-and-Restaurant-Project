@@ -39,7 +39,7 @@ const ReceptionHallBookingCard = ({ booking, onEdit, onCancel, onConfirm }) => {
       {/* Top color bar by event type */}
       <div className="h-1.5 w-full rounded-t-2xl bg-amber-400" />
 
-      <div className="p-4 sm:p-5 flex flex-col flex-1 gap-3 relative">
+      <div className="p-4 sm:p-5 flex flex-col flex-1 gap-3 relative h-full">
         {/* Status badge - positioned top right */}
         {/* Header section */}
         <div className="flex flex-col gap-2">
@@ -54,11 +54,11 @@ const ReceptionHallBookingCard = ({ booking, onEdit, onCancel, onConfirm }) => {
           </div>
 
           {/* Avatar + Full name */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 h-10">
             <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
               <User size={18} className="text-amber-600" />
             </div>
-            <h3 className="font-bold text-gray-800 text-sm leading-tight">
+            <h3 className="font-bold text-gray-800 text-sm leading-tight line-clamp-2">
               {booking.customerName}
             </h3>
           </div>
@@ -95,20 +95,30 @@ const ReceptionHallBookingCard = ({ booking, onEdit, onCancel, onConfirm }) => {
               {booking.numberOfGuests} Guests
             </span>
           </div>
+          <div className="flex items-center gap-2">
+            <Clock size={13} className="text-gray-400 shrink-0" />
+            <span className="text-xs text-gray-500">{booking.eventTime}</span>
+          </div>
         </div>
 
-        {/* Special requests */}
-        {booking.specialRequests && (
-          <div className="flex items-start gap-2 bg-gray-50 rounded-xl p-3">
-            <MessageSquare
-              size={13}
-              className="text-gray-400 shrink-0 mt-0.5"
-            />
-            <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">
-              {booking.specialRequests}
-            </p>
-          </div>
-        )}
+        {/* Special requests - Now with a min-height and consistent spacing */}
+        <div className="min-h-[64px] mb-2">
+          {/* Wraps the requests in a fixed-height container */}
+          {booking.specialRequests ? (
+            <div className="flex items-start gap-2 bg-gray-50 rounded-xl p-3 h-full">
+              <MessageSquare
+                size={13}
+                className="text-gray-400 shrink-0 mt-0.5"
+              />
+              <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">
+                {booking.specialRequests}
+              </p>
+            </div>
+          ) : (
+            /* This invisible div keeps the space occupied when there are no requests */
+            <div className="h-full w-full border border-dashed border-gray-100 rounded-xl" />
+          )}
+        </div>
 
         {/* Action buttons */}
         <div className="flex gap-2 mt-auto pt-2 border-t border-gray-100">

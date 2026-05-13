@@ -10,26 +10,21 @@ import Calander from "../../Components/Calander";
 import CateringSelectionHub from "../../Components/Receptionhall/CateringSelectionHub";
 import LoginMessage from "../../Components/LoginMessage";
 import toast from "react-hot-toast";
+import { Calendar } from "lucide-react";
 
 export default function Reception() {
   const VITE_URL = import.meta.env.VITE_API_URL;
 
   const [showcalander, setShowCalander] = useState(false);
-
-  // 1. State to handle form visibility
   const [showForm, setShowForm] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
-
-  // 2. State for calendar data
   const [bookedDates, setBookedDates] = useState([]);
   const [loadingDates, setLoadingDates] = useState(true);
-
   const [showLoginModal, setShowLoginModal] = useState(false);
-
-  // 3. Create the reference
+  const [isFabVisible, setIsFabVisible] = useState(false);
+  const [isNearFooter, setIsNearFooter] = useState(false);
   const formSectionRef = useRef(null);
 
-  // 4. Fetch booked dates from API
   const fetchBookedDates = async () => {
     try {
       const response = await axios.get(
@@ -43,7 +38,7 @@ export default function Reception() {
         const y = date.getUTCFullYear();
         const m = String(date.getUTCMonth() + 1).padStart(2, "0");
         const d = String(date.getUTCDate()).padStart(2, "0");
-        return `${y}-${m}-${d}`;
+        return { dateStr: `${y}-${m}-${d}`, time: item.eventTime };
       });
       setBookedDates(normalized);
     } catch (error) {
@@ -67,7 +62,6 @@ export default function Reception() {
     }
   };
 
-  // 5. Effect to scroll when showForm becomes true
   useEffect(() => {
     if (showForm && formSectionRef.current) {
       formSectionRef.current.scrollIntoView({
@@ -77,10 +71,27 @@ export default function Reception() {
     }
   }, [showForm]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+
+      // Show FAB after scrolling past hero (approx 100vh - header)
+      setIsFabVisible(scrollY > windowHeight * 0.7);
+
+      // Detect if near footer (approx 400px from bottom)
+      setIsNearFooter(scrollY + windowHeight > documentHeight - 350);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <div className="min-h-screen bg-neutral-50">
       {/* HERO SECTION - Aligned with MainPage */}
-      <header className="relative w-full h-[calc(100vh-120px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
+      <header className="relative w-full h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
         {/* Background */}
         <div
           className="absolute inset-0 z-0"
@@ -107,13 +118,7 @@ export default function Reception() {
               onClick={() => handleadrequest()}
               className="bg-yellow-500 hover:bg-amber-700 text-black px-8 py-3 rounded-full font-semibold uppercase tracking-widest text-sm transition-all duration-300 shadow-lg mt-4"
             >
-              {showForm ? "Close Booking" : "Book Your Visit"}
-            </button>
-            <button
-              onClick={() => setShowCalander(!showcalander)}
-              className="bg-yellow-500 hover:bg-amber-600 text-black px-8 py-3 rounded-full font-semibold uppercase tracking-widest text-sm transition-all duration-300 shadow-lg mt-4"
-            >
-              {showcalander ? "Hide Calendar" : "Show Calendar"}
+              {showForm ? "Close " : "Book Your Pre-Visit"}
             </button>
           </div>
         </div>
@@ -154,14 +159,43 @@ export default function Reception() {
       </section> */}
       <ReceptionHallPackages />
       <CateringItemCard />
-      <CateringSelectionHub />
       <AdvertismentSection />
       {/* Calendar */}
       {showcalander && (
-        <div className="flex justify-center lg:justify-end">
-          <Calander BookedDates={bookedDates} loading={loadingDates} />
+        <div className="fixed inset-0 z-[100] flex items-center justify-center">
+          {/* Dark Background */}
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowCalander(false)}
+          />
+
+          {/* Popup Calendar */}
+          <div className="relative z-[101] animate-in fade-in zoom-in-95 duration-300">
+            <Calander BookedDates={bookedDates} loading={loadingDates} />
+          </div>
         </div>
       )}
+
+      {/* Floating Action Button (FAB) - Smart visibility */}
+      <div
+        className={`fixed transition-all duration-500 ease-in-out z-[60] 
+          ${isFabVisible ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-10 pointer-events-none"}
+          ${isNearFooter ? "bottom-[380px] md:bottom-[420px]" : "bottom-8"}
+          right-8`}
+      >
+        <button
+          className="relative group transition-all duration-300"
+          onClick={() => setShowCalander(!showcalander)}
+        >
+          <div
+            className="w-16 h-16 md:w-20 md:h-20 bg-amber-500 text-white flex items-center justify-center rounded-full shadow-2xl group-hover:bg-amber-600 group-hover:scale-110 transition-all duration-300"
+            style={{ boxShadow: "0 10px 25px -5px rgba(245, 158, 11, 0.4)" }}
+          >
+            <Calendar className="w-8 h-8 md:w-10 md:h-10" />
+          </div>
+        </button>
+      </div>
+
       <LoginMessage
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}

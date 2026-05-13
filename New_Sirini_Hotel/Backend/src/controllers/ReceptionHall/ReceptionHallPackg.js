@@ -128,10 +128,98 @@ const toggleAvailability = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+const getPackageCateringItems = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const packageData = await ReceptionHallPackage.findById(id).populate({
+      path: "cateringItems",
+      model: "CateringItem",
+    });
+    if (!packageData) {
+      return res.status(404).json({ message: "Package not found" });
+    }
+    res.status(200).json(packageData.cateringItems || []);
+  } catch (error) {
+    console.error("Error fetching package catering items:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+const addCateringToPackage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { cateringItemId } = req.body;
+
+    if (!id || !cateringItemId) {
+      return res
+        .status(400)
+        .json({ message: "Package ID and catering item ID are required" });
+    }
+
+    const packageData = await ReceptionHallPackage.findById(id);
+    if (!packageData) {
+      return res.status(404).json({ message: "Package not found" });
+    }
+
+    if (packageData.cateringItems.includes(cateringItemId)) {
+      return res
+        .status(400)
+        .json({ message: "Item already added to this package" });
+    }
+
+    packageData.cateringItems.push(cateringItemId);
+    await packageData.save();
+
+    const updatedPackage = await ReceptionHallPackage.findById(id).populate({
+      path: "cateringItems",
+      model: "CateringItem",
+    });
+    res.status(200).json(updatedPackage.cateringItems);
+  } catch (error) {
+    console.error("Error adding catering item to package:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+const removeCateringFromPackage = async (req, res) => {
+  try {
+    const { id, itemId } = req.params;
+
+    if (!id || !itemId) {
+      return res
+        .status(400)
+        .json({ message: "Package ID and item ID are required" });
+    }
+
+    const packageData = await ReceptionHallPackage.findById(id);
+    if (!packageData) {
+      return res.status(404).json({ message: "Package not found" });
+    }
+
+    packageData.cateringItems = packageData.cateringItems.filter(
+      (item) => item.toString() !== itemId,
+    );
+    await packageData.save();
+
+    const updatedPackage = await ReceptionHallPackage.findById(id).populate({
+      path: "cateringItems",
+      model: "CateringItem",
+    });
+    res.status(200).json(updatedPackage.cateringItems);
+  } catch (error) {
+    console.error("Error removing catering item from package:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
 module.exports = {
   createReceptionHallPackage,
   getReceptionHallPackages,
   updateReceptionHallPackage,
   deleteReceptionHallPackage,
   toggleAvailability,
+  getPackageCateringItems,
+  addCateringToPackage,
+  removeCateringFromPackage,
 };

@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from "react";
 import logo from "../assets/Logo.png";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { FaBars, FaTimes } from "react-icons/fa";
+import {
+  Menu,
+  X,
+  User,
+  LogOut,
+  LogIn,
+  UserPlus,
+  ExternalLink,
+} from "lucide-react";
 import toast from "react-hot-toast";
-import { User } from "lucide-react";
 import axios from "axios";
 import Footer from "./Footer";
 
@@ -18,11 +25,21 @@ function Header() {
   const [logging, setLogging] = useState(
     localStorage.getItem("token") ? true : false,
   );
+  const [userData, setUserData] = useState([]);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
   const handlelogout = () => {
-    // Clear user session (e.g., remove token, clear local storage)
+    const userDataStr = localStorage.getItem("user");
+    if (userDataStr) {
+      try {
+        const user = JSON.parse(userDataStr);
+        localStorage.removeItem(`cart_items_${user._id}`);
+      } catch (e) {
+        console.error("Error clearing cart on logout:", e);
+      }
+    }
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setIsLoggedIn(false);
     navigate("/login");
     toast.success("logged out successfully.");
@@ -47,6 +64,7 @@ function Header() {
       } else {
         setUserImage(null);
       }
+      setUserData(userData);
       return userData.image;
     } catch (error) {
       console.error("Error fetching user image:", error);
@@ -66,7 +84,12 @@ function Header() {
     { label: "Contact Us", path: "/#contact" },
   ];
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => {
+    if (path.includes("#")) {
+      return location.pathname === "/" && location.hash === path.substring(1);
+    }
+    return location.pathname === path && !location.hash;
+  };
 
   const getLinkStyle = (path, id) => ({
     textDecoration: "none",
@@ -85,17 +108,13 @@ function Header() {
     textDecoration: "none",
     color: hoveredLink === id || isActive(path) ? "#facc15" : "#ffffff",
     transition: "color 0.2s ease",
-    fontSize: "1.25rem",
+    fontSize: "1.1rem",
   });
 
   const handleNavClick = (e, path) => {
     if (path.includes("#")) {
-      e.preventDefault();
       const sectionId = path.split("#")[1];
-
       if (location.pathname !== "/") {
-        // Navigate to home first, then scroll
-        navigate("/");
         setTimeout(() => {
           document
             .getElementById(sectionId)
@@ -107,37 +126,47 @@ function Header() {
           ?.scrollIntoView({ behavior: "smooth" });
       }
       closeMenu();
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      closeMenu();
     }
   };
 
   return (
-    <header className="bg-black h-30 relative z-50">
-      <div className="w-full px-4 h-full flex items-center justify-between">
-        {/* Logo and Title */}
-        <div className="flex items-center gap-2">
+    <header className="bg-black/95 backdrop-blur-md sticky top-0 z-50 border-b border-white/5">
+      <div className="w-full px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
+        {/* ── Logo ── */}
+        <div className="flex items-center gap-3 shrink-0">
           <img
             src={logo}
             alt="New Sirini Hotel Logo"
-            className="h-22 md:h-29 object-contain"
+            className="w-18 h-18 object-contain"
           />
-
-          <div className="text-white font-serif text-[19px] italic">
+          <span className="text-white font-serif text-lg italic hidden sm:block tracking-wide">
             New Sirini Hotel
-          </div>
+          </span>
         </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6 lg:gap-10 ml-auto">
+        {/* ── Desktop Nav ── */}
+        <nav className="hidden md:flex items-center gap-1">
           {navLinks.map((link) => {
             const id = `desktop-${link.path}`;
+            const active = isActive(link.path);
             return (
               <Link
                 key={id}
                 to={link.path}
                 onClick={(e) => handleNavClick(e, link.path)}
-                style={getLinkStyle(link.path, id)}
                 onMouseEnter={() => setHoveredLink(id)}
                 onMouseLeave={() => setHoveredLink(null)}
+                style={getLinkStyle(link.path, id)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  active
+                    ? "bg-yellow-500/10"
+                    : hoveredLink === id
+                      ? "bg-white/5"
+                      : ""
+                }`}
               >
                 {link.label}
               </Link>
@@ -145,152 +174,202 @@ function Header() {
           })}
         </nav>
 
-        {/* Desktop Auth Buttons */}
-        <div className="hidden md:flex items-center gap-2 ml-11">
+        {/* ── Desktop Auth ── */}
+        <div className="hidden md:flex items-center gap-3">
           {isLoggedIn ? (
-            <div className="flex flex-col items-center gap-2">
-              {/* Profile Picture / Dashboard Link */}
-              <button
-                onClick={() => navigate("/dashboard")}
-                className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center shrink-0 border-2 border-white bg-amber-500 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-                title="Go to Dashboard"
-              >
+            <div className="flex items-center gap-3">
+              {userData.Role !== "User" && (
+                <div>
+                  {userData.Role === "Admin" && (
+                    <>
+                      <button
+                        className="flex items-center gap-2 group transition-all"
+                        onClick={() => navigate("/admin")}
+                      >
+                        <ExternalLink
+                          className="text-amber-500 font-bold hover:scale-105"
+                          size={25}
+                        />
+                        <span className="text-amber-500 font-bold hover:scale-105">
+                          Admin Portal
+                        </span>
+                      </button>
+                    </>
+                  )}
+                  {userData.Role ===
+                    "Operation Manager 1 (Restraunt,Liquor)" && (
+                    <>
+                      <button
+                        className="flex items-center gap-2 group transition-all"
+                        onClick={() => navigate("/operationmanager")}
+                      >
+                        <ExternalLink
+                          className="text-amber-500 font-bold hover:scale-105"
+                          size={25}
+                        />
+                        <span className="text-amber-500 font-bold hover:scale-105">
+                          Manager Portal
+                        </span>
+                      </button>
+                    </>
+                  )}
+                  {userData.Role ===
+                    "Operation Manager 2 (Reception, Room)" && (
+                    <>
+                      <button
+                        className="flex items-center gap-2 group transition-all"
+                        onClick={() => navigate("/manager")}
+                      >
+                        <ExternalLink
+                          className="text-amber-500 font-bold hover:scale-105"
+                          size={25}
+                        />
+                        <span className="text-amber-500 font-bold hover:scale-105">
+                          Manager Portal
+                        </span>
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+              <div className="w-14 h-14 bg-amber-500 rounded-full overflow-hidden hover:scale-105 transition-transform cursor-pointer shadow-md ring-2 ring-amber-200 ring-offset-1">
                 {userImage ? (
                   <img
                     src={userImage}
                     alt="Profile"
                     className="w-full h-full object-cover"
+                    onClick={() => navigate("/dashboard")}
                   />
                 ) : (
-                  <User size={28} className="text-black" />
+                  <div
+                    className="w-full h-full flex items-center justify-center"
+                    onClick={() => navigate("/dashboard")}
+                  >
+                    <User size={20} className="text-white" />
+                  </div>
                 )}
-              </button>
-
-              {/* Log Out Button */}
+              </div>
               <button
                 onClick={handlelogout}
-                className="w-20 py-1 border border-white text-white rounded font-bold text-xs transition-all duration-300 hover:bg-red-600 hover:border-red-600 hover:text-white hover:-translate-y-1 hover:shadow-lg hover:shadow-red-600/50"
+                className="flex items-center gap-1.5 px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-400 rounded-lg text-sm font-medium hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-200"
               >
-                Log Out
+                <LogOut size={15} />
+                <span>Log Out</span>
               </button>
             </div>
           ) : (
-            <>
+            <div className="flex items-center gap-2">
               <button
-                onClick={() => navigate("/login")} // Adjust to your actual sign in route
-                className="w-28 py-1.5 border border-white text-white rounded
-                         hover:bg-yellow-500 hover:!text-black font-bold hover:border-yellow-500
-                         transition-colors duration-600"
+                onClick={() => navigate("/login")}
+                className="flex items-center gap-1.5 px-4 py-2 text-white/80 border border-white/20 rounded-lg text-sm font-medium hover:bg-white/10 hover:text-white hover:border-white/40 transition-all duration-200"
               >
-                Sign in
+                <LogIn size={15} />
+                <span>Sign In</span>
               </button>
               <button
                 onClick={() => {
                   navigate("/register");
                   closeMenu();
                 }}
-                className="w-28 py-1.5 border border-white text-white rounded
-                             hover:bg-yellow-500 hover:!text-black font-bold hover:border-yellow-500
-                             transition-colors duration-300"
+                className="flex items-center gap-1.5 px-4 py-2 bg-yellow-500 text-black rounded-lg text-sm font-bold hover:bg-yellow-400 transition-all duration-200 shadow-md shadow-yellow-500/20"
               >
-                Sign up
+                <UserPlus size={15} />
+                <span>Sign Up</span>
               </button>
-            </>
+            </div>
           )}
         </div>
 
-        {/* Mobile Menu Button */}
-        <div className="md:hidden">
+        {/* ── Mobile: avatar (if logged in) + hamburger ── */}
+        <div className="md:hidden flex items-center gap-3">
+          {isLoggedIn && (
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="w-9 h-9 rounded-full overflow-hidden hover:scale-105 transition-transform ring-2 ring-yellow-500/40"
+              title="Go to Dashboard"
+            >
+              {userImage ? (
+                <img
+                  src={userImage}
+                  alt="Profile"
+                  className="w-full h-full object-cover rounded-full"
+                />
+              ) : (
+                <div className="w-full h-full bg-amber-500 flex items-center justify-center">
+                  <User size={16} className="text-white" />
+                </div>
+              )}
+            </button>
+          )}
           <button
             onClick={toggleMenu}
-            className="text-white focus:outline-none"
+            className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
             aria-label="Toggle menu"
           >
-            {isMenuOpen ? (
-              <FaTimes className="w-7 h-7" />
-            ) : (
-              <FaBars className="w-7 h-7" />
-            )}
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* ── Mobile Drawer ── */}
       {isMenuOpen && (
-        <div className="absolute top-full left-0 w-full bg-black/95 flex flex-col items-center py-8 gap-6 shadow-xl border-t border-gray-800 md:hidden">
-          {/* Mobile Navigation Links */}
-          {navLinks.map((link) => {
-            const id = `mobile-${link.path}`;
-            return (
-              <Link
-                key={id}
-                to={link.path}
-                onClick={(e) => handleNavClick(e, link.path)}
-                style={getMobileLinkStyle(link.path, id)}
-                onMouseEnter={() => setHoveredLink(id)}
-                onMouseLeave={() => setHoveredLink(null)}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
+        <div className="md:hidden absolute top-full left-0 w-full bg-black/98 backdrop-blur-md border-t border-white/10 shadow-2xl">
+          {/* Nav Links */}
+          <nav className="flex flex-col px-6 pt-4 pb-2 gap-1">
+            {navLinks.map((link) => {
+              const id = `mobile-${link.path}`;
+              const active = isActive(link.path);
+              return (
+                <Link
+                  key={id}
+                  to={link.path}
+                  onClick={(e) => handleNavClick(e, link.path)}
+                  onMouseEnter={() => setHoveredLink(id)}
+                  onMouseLeave={() => setHoveredLink(null)}
+                  style={getMobileLinkStyle(link.path, id)}
+                  className={`flex items-center px-4 py-3 rounded-xl font-medium transition-all duration-200 ${
+                    active ? "bg-yellow-500/10" : "hover:bg-white/5"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+          </nav>
 
-          {/* Mobile Auth Buttons (Same Style as Desktop) */}
-          <div className="flex flex-col items-center gap-3 mt-4 w-full px-8">
+          {/* Auth section */}
+          <div className="px-6 pb-6 pt-2 border-t border-white/10 mt-2">
             {isLoggedIn ? (
-              <div className="flex items-center gap-4">
-                {/* Profile Picture / Dashboard Link */}
-                <button
-                  onClick={() => navigate("/dashboard")} // Change "/dashboard" to your actual route!
-                  className="w-10 h-10 rounded-full bg-amber-500 text-black flex items-center justify-center font-bold text-lg border-2 border-white hover:bg-yellow-400 hover:shadow-lg hover:shadow-yellow-500/30 hover:-translate-y-1 transition-all duration-300"
-                  title="Go to Dashboard"
-                >
-                  {/* You can replace "U" with an <img> tag if you fetch the user's photo later */}
-                  {userImage ? (
-                    <img
-                      src={userImage}
-                      alt="User"
-                      className="w-full h-full object-cover rounded-full"
-                    />
-                  ) : (
-                    <User className="w-full h-full object-cover rounded-full" />
-                  )}
-                </button>
-
-                {/* Log Out Button */}
-                <button
-                  onClick={handlelogout}
-                  className="w-16 py-1 border border-white text-white rounded font-bold text-xs transition-all duration-300 hover:bg-red-600 hover:border-red-600 hover:text-white hover:-translate-y-1 hover:shadow-lg hover:shadow-red-600/50"
-                >
-                  Log Out
-                </button>
-              </div>
+              <button
+                onClick={handlelogout}
+                className="w-full flex items-center justify-center gap-2 py-3 bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl text-sm font-medium hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-200"
+              >
+                <LogOut size={16} />
+                <span>Log Out</span>
+              </button>
             ) : (
-              <>
+              <div className="flex flex-col gap-3">
                 <button
                   onClick={() => {
-                    navigate("/login"); // Adjust to your actual sign in route
+                    navigate("/login");
                     closeMenu();
                   }}
-                  className="w-40 py-2 border border-white text-white rounded
-                             hover:bg-yellow-500 hover:text-black hover:border-yellow-500
-                             transition-colors duration-300"
+                  className="w-full flex items-center justify-center gap-2 py-3 border border-white/20 text-white rounded-xl text-sm font-medium hover:bg-white/10 hover:border-white/40 transition-all duration-200"
                 >
-                  Sign in
+                  <LogIn size={16} />
+                  <span>Sign In</span>
                 </button>
-
                 <button
                   onClick={() => {
                     navigate("/register");
                     closeMenu();
                   }}
-                  className="w-40 py-2 border border-white text-white rounded
-                             hover:bg-yellow-500 hover:text-black hover:border-yellow-500
-                             transition-colors duration-300"
+                  className="w-full flex items-center justify-center gap-2 py-3 bg-yellow-500 text-black rounded-xl text-sm font-bold hover:bg-yellow-400 transition-all duration-200 shadow-md shadow-yellow-500/20"
                 >
-                  Sign up
+                  <UserPlus size={16} />
+                  <span>Sign Up</span>
                 </button>
-              </>
+              </div>
             )}
           </div>
         </div>

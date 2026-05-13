@@ -17,7 +17,6 @@ const RoomOperation = () => {
   //this is the refresh tables after booking confirm or cancel
   const [refreshKey, setRefreshKey] = useState(0);
 
-
   const [activeTab, setActiveTab] = useState("manage");
 
   const fetchRooms = async () => {
@@ -30,15 +29,14 @@ const RoomOperation = () => {
   };
 
   const handleActionCompleted = () => {
-    fetchRooms(); // refresh Manage Rooms table 
-    setRefreshKey(prev => prev + 1); //send signal to Confirmed table 
+    fetchRooms(); // refresh Manage Rooms table
+    setRefreshKey((prev) => prev + 1); //send signal to Confirmed table
   };
 
   useEffect(() => {
     fetchRooms();
   }, []);
 
-  
   const filteredRooms = rooms.filter(
     (r) =>
       r.roomNumber?.toString().includes(searchTerm) ||
@@ -73,6 +71,7 @@ const RoomOperation = () => {
     data.append("roomNumber", formData.roomNumber);
     data.append("roomType", formData.roomType);
     data.append("price", formData.price);
+    data.append("shortStayPrice", formData.shortStayPrice || "1500");
     data.append("bedType", formData.bedType);
     data.append("capacity", formData.capacity);
     data.append("status", formData.status);
@@ -104,12 +103,11 @@ const RoomOperation = () => {
     } catch (err) {
       console.error("Save Error:", err.response?.data);
       alert(err.response?.data?.message || "Error saving room");
-    }
-    finally {      toast.dismiss(loadingtoast);
+    } finally {
+      toast.dismiss(loadingtoast);
     }
   };
 
-  
   const stats = {
     available: rooms.filter((r) => r.status === "available").length,
     reserved: rooms.filter((r) => r.status === "reserved").length,
@@ -118,7 +116,6 @@ const RoomOperation = () => {
 
   return (
     <div className="p-4 md:p-6">
-    
       <RoomStatsRow stats={stats} />
 
       <RoomTableHeader
@@ -133,26 +130,25 @@ const RoomOperation = () => {
         onDelete={handleDelete}
       />
 
-    {/* --- Booking Requests Section --- */}
-<div className="mt-10 animate-in fade-in slide-in-from-left-4 duration-500">
-  {/* Pending Requests Header */}
- 
-  
- 
+      {/* --- Booking Requests Section --- */}
+      <div className="mt-10 animate-in fade-in slide-in-from-left-4 duration-500">
+        {/* Pending Requests Header */}
 
-  {/* Confirmed Bookings Header  */}
-  <div className="mt-10 mb-4">
-    <h2 className="text-lg font-bold text-gray-800 uppercase tracking-wider">
-      Manage Booking Details
-    </h2>
-    <p className="text-gray-400 text-xs">Manage and monitor confirmed reservations</p>
-  </div>
+        {/* Confirmed Bookings Header  */}
+        <div className="mt-10 mb-4">
+          <h2 className="text-lg font-bold text-gray-800 uppercase tracking-wider">
+            Manage Booking Details
+          </h2>
+          <p className="text-gray-400 text-xs">
+            Manage and monitor confirmed reservations
+          </p>
+        </div>
 
-  <RoomBookedDetails
-    refreshKey={refreshKey} 
-    onActionCompleted={handleActionCompleted} 
-  />
-</div>
+        <RoomBookedDetails
+          refreshKey={refreshKey}
+          onActionCompleted={handleActionCompleted}
+        />
+      </div>
 
       {isFormOpen && (
         <RoomFormModal

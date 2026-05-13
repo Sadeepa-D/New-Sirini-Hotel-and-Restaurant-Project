@@ -27,7 +27,7 @@ router.put(
   ReceptionHallAppoint.updateReceptionAppointmentasCompleted,
 );
 router.put(
-  "/appointment/update/Canceled/:id",
+  "/appointment/update/canceled/:id",
   ReceptionHallAppoint.updateReceptionAppointmentasCancelled,
 );
 router.get(
@@ -67,6 +67,18 @@ router.delete(
   ReceptionHallPackg.deleteReceptionHallPackage,
 );
 router.put("/package/toggle/:id", ReceptionHallPackg.toggleAvailability);
+router.get(
+  "/package/:id/items",
+  ReceptionHallPackg.getPackageCateringItems,
+);
+router.post(
+  "/package/:id/add-catering",
+  ReceptionHallPackg.addCateringToPackage,
+);
+router.delete(
+  "/package/:id/remove-catering/:itemId",
+  ReceptionHallPackg.removeCateringFromPackage,
+);
 
 router.post(
   "/catering/add",

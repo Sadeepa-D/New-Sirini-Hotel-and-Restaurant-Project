@@ -8,11 +8,13 @@ import {
   X,
   ChevronRight,
   ChevronLeft,
+  CheckCircle2,
 } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import PackageAddForm from "./PackageAddForm";
 import ConfirmDialog from "../../ConfrimDialog";
+import CateringSelectionHub from "../../Receptionhall/CateringSelectionHub";
 
 const ActionRibbon = ({ item, onToggle, onEdit, onDelete }) => (
   <div className="absolute right-2 top-2 flex flex-col gap-1.5 z-10">
@@ -50,7 +52,13 @@ const PackagesMng = () => {
   const [showForm, setShowForm] = useState(false);
   const [editItem, setEditItem] = useState(null);
   const [itemsPerView, setItemsPerView] = useState(
-    typeof window !== "undefined" && window.innerWidth < 640 ? 1 : 3,
+    typeof window !== "undefined"
+      ? window.innerWidth < 640
+        ? 1
+        : window.innerWidth < 1024
+          ? 2
+          : 4
+      : 4,
   );
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
@@ -59,6 +67,8 @@ const PackagesMng = () => {
     title: "",
     message: "",
   });
+  const [showCateringHub, setShowCateringHub] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState(null);
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -83,7 +93,9 @@ const PackagesMng = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      setItemsPerView(window.innerWidth < 640 ? 1 : 3);
+      if (window.innerWidth < 640) setItemsPerView(1);
+      else if (window.innerWidth < 1024) setItemsPerView(2);
+      else setItemsPerView(4);
     };
 
     handleResize();
@@ -133,13 +145,16 @@ const PackagesMng = () => {
   };
 
   const handleDelete = async () => {
+    const loadingToast = toast.loading("Deleting package...");
     const { id } = confirmDialog;
     setConfirmDialog({ isOpen: false, id: null });
     try {
       await axios.delete(`${VITE_URL}/api/receptionhall/package/delete/${id}`);
       setPackages((prev) => prev.filter((p) => p._id !== id));
+      toast.dismiss(loadingToast);
       toast.success("Package deleted successfully");
     } catch (err) {
+      toast.dismiss(loadingToast);
       setError("Failed to delete package");
       toast.error("Failed to delete package");
     }
@@ -239,11 +254,14 @@ const PackagesMng = () => {
             {visibleItems.map((item) => (
               <div
                 key={item._id}
-                className="relative shrink-0 rounded-xl overflow-hidden border border-gray-100 shadow-sm group"
+                className="relative shrink-0 rounded-xl overflow-hidden border border-gray-100 shadow-sm group cursor-pointer hover:shadow-md transition-shadow"
                 style={{ width: cardWidth }}
+                onClick={() => {
+                  setSelectedPackage(item);
+                }}
               >
                 {/* Image */}
-                <div className="h-40 overflow-hidden">
+                <div className="h-48 overflow-hidden">
                   <img
                     src={item.image}
                     alt={item.name}
@@ -273,34 +291,57 @@ const PackagesMng = () => {
                   <h3 className="font-semibold text-gray-800 text-sm truncate">
                     {item.name}
                   </h3>
-                  <p className="text-xs text-gray-400 truncate mt-0.5">
+                  <p
+                    className="text-gray-500 text-xs sm:text-sm leading-relaxed mb-2 sm:mb-3 line-clamp-1 sm:line-clamp-2"
+                    title={item.description}
+                  >
                     {item.description}
                   </p>
 
                   {/* Features */}
                   {item.features && item.features.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-1.5">
-                      {item.features[0]
-                        .split(",")
-                        .slice(0, 2)
-                        .map((f, i) => (
-                          <span
-                            key={i}
-                            className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full border border-amber-100"
-                          >
-                            {f.trim()}
-                          </span>
-                        ))}
+                    <div className="mb-2 sm:mb-4">
+                      <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                        What's Included
+                      </p>
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                        {item.features[0]
+                          .split(",")
+                          .slice(0, 5)
+                          .map((feature, i) => (
+                            <span
+                              key={i}
+                              className="flex items-center gap-1 text-[10px] sm:text-xs font-medium text-gray-700 bg-amber-50/50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-amber-100/50"
+                            >
+                              <CheckCircle2
+                                size={12}
+                                className="text-amber-500"
+                              />
+                              <span className="hidden sm:inline">
+                                {feature.trim()}
+                              </span>
+                              <span className="sm:hidden">
+                                {feature.trim().split(" ")[0]}
+                              </span>
+                            </span>
+                          ))}
+                        <p className="text-[10px] font-bold text-amber-600 uppercase tracking-[0.2em] mt-3 cursor-pointer hover:text-amber-700 hover:underline underline-offset-4 transition-all decoration-amber-200">
+                          + More
+                        </p>
+                      </div>
                     </div>
                   )}
-
+                  {/* item */}
                   <div className="flex items-center justify-between mt-2">
                     <span className="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
                       Rs. {Number(item.price).toLocaleString()}
                     </span>
-                    <span className="text-xs text-gray-400">
-                      Seats: {item.seatings}
-                    </span>
+                    <button
+                      className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors shadow-sm"
+                      onClick={() => setShowCateringHub(true)}
+                    >
+                      Show Food Menu
+                    </button>
                   </div>
                 </div>
               </div>
@@ -381,6 +422,16 @@ const PackagesMng = () => {
         onConfirm={handleDelete}
         onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
       />
+      {showCateringHub && (
+        <CateringSelectionHub
+          selectedPackage={selectedPackage}
+          onClose={() => {
+            setShowCateringHub(false);
+            setSelectedPackage(null);
+          }}
+          isAdd={true}
+        />
+      )}
     </div>
   );
 };
