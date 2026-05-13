@@ -278,6 +278,16 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
         {/* Footer */}
         {cartItems.length > 0 && (
           <div className="border-t-2 border-gray-200 bg-linear-to-r from-gray-50 to-amber-50 p-6">
+            {/* Session Warning Message */}
+            <div className="mb-4 flex items-center gap-3 p-3 bg-amber-100/50 border border-amber-200 rounded-xl text-amber-800 animate-in fade-in slide-in-from-top-1 duration-500">
+              <div className="bg-amber-500 text-white rounded-full p-1 shadow-sm shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m12 9 4 7H8l4-7Z"/><path d="M12 3a9 9 0 1 0 9 9 9 9 0 0 0-9-9Z"/><path d="M12 17v.01"/></svg>
+              </div>
+              <p className="text-md font-medium">
+                Your cart is saved for this session, but it will be cleared if you log out before checking out.
+              </p>
+            </div>
+
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
               <span className="text-lg font-bold text-gray-800">
                 Cart Total:
