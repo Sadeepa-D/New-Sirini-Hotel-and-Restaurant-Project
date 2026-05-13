@@ -5,6 +5,7 @@ import Room_1 from "../../assets/Rooms/Room_1.jpg";
 import Room_2 from "../../assets/Rooms/Room_2.jpg";
 import Room_3 from "../../assets/Rooms/Room_3.webp";
 import BookingForm from "../../Components/RoomCompo/BookingForm";
+import RoomPackageInfo from "../../Components/RoomCompo/RoomPackageInfo";
 import Exploreindicator from "../../Components/Exploreindicator";
 import Calander from "../../Components/Calander";
 import toast from "react-hot-toast";
@@ -75,10 +76,6 @@ function Rooms() {
   }, [VITE_URL]);
 
   const handleBookNow = (room) => {
-    if (!isLoggedIn) {
-      setShowLoginModal(true);
-      return;
-    }
     setSelectedRoom(room);
     setIsModalOpen(true);
     fetchBookedDates(room.roomNumber);
@@ -149,6 +146,7 @@ function Rooms() {
 
       {/* --- Main Content --- */}
       <main className="max-w-7xl mx-auto py-16 px-6">
+        <RoomPackageInfo />
         {loading ? (
           <div className="flex justify-center py-20">
             <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
@@ -158,7 +156,7 @@ function Rooms() {
             {roomList.map((room) => (
               <div
                 key={room._id}
-                className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col h-full"
+                className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:scale-[1.02] transition-all duration-500 border border-gray-100 flex flex-col h-full"
               >
                 {/* Image Section */}
                 <div className="relative h-64 overflow-hidden">
@@ -175,10 +173,23 @@ function Rooms() {
                       Room {room.roomNumber}
                     </span>
                   </div>
-                  <div className="absolute bottom-4 left-4 z-10">
-                    <p className="text-white font-bold text-2xl drop-shadow-lg">
-                      Rs.{room.price.toLocaleString()}
-                    </p>
+                  <div className="absolute bottom-4 left-4 z-10 flex flex-col">
+                    <div className="flex items-baseline gap-1.5">
+                      <p className="text-white font-bold text-2xl drop-shadow-lg">
+                        Rs.{room.price.toLocaleString()}
+                      </p>
+                      <span className="text-white/90 text-xs font-medium italic drop-shadow-md">
+                        per night
+                      </span>
+                    </div>
+                    <div className="flex items-baseline gap-1.5 mt-0.5">
+                      <p className="text-white/90 font-semibold text-sm drop-shadow-lg">
+                        Rs.{(room.shortStayPrice || 1500).toLocaleString()}
+                      </p>
+                      <span className="text-white/80 text-[10px] font-medium italic drop-shadow-md">
+                        per 3 hours
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -222,7 +233,7 @@ function Rooms() {
                     </div>
                   </div>
 
-                  <div className="mt-auto pt-5 border-t border-gray-50 flex items-center justify-between">
+                  <div className="mt-auto pt-5 border-t border-gray-50 flex flex-wrap items-center justify-between gap-y-4">
                     <div className="flex items-center gap-2">
                       <div
                         className={`w-1.5 h-1.5 rounded-full ${room.status === "available" ? "bg-green-500 animate-pulse" : "bg-red-400"}`}
@@ -233,18 +244,36 @@ function Rooms() {
                         {room.status}
                       </span>
                     </div>
-                    <button
-                      onClick={() => handleBookNow(room)}
-                      disabled={room.status !== "available"}
-                      className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
-                        room.status === "available"
-                          ? "bg-black text-white hover:bg-yellow-400 shadow-lg hover:shadow-xl hover:shadow-yellow-400/60 hover:scale-105 active:scale-95"
-                          : "bg-gray-100 text-gray-400 cursor-not-allowed opacity-60"
-                      }`}
-                    >
-                      Book{" "}
-                      <ArrowRight size={12} className="transition-transform" />
-                    </button>
+                  <button
+  onClick={() => handleBookNow(room)}
+  disabled={room.status !== "available"}
+  className={`group relative flex items-center justify-center 
+    w-full sm:w-fit px-6 py-3 sm:py-2.5 
+    rounded-full text-[11px] sm:text-[10px] font-black uppercase tracking-[0.15em] 
+    transition-all duration-500 overflow-hidden ${
+    room.status === "available"
+      ? "bg-gray-900 text-white shadow-md hover:shadow-orange-500/20 hover:-translate-y-0.5 active:scale-95"
+      : "bg-gray-50 text-gray-300 cursor-not-allowed border border-gray-100"
+  }`}
+>
+  {/* Hover Glow Effect */}
+  {room.status === "available" && (
+    <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+  )}
+
+  <span className="relative z-10 flex items-center gap-2">
+    Book Now
+    <ArrowRight
+      size={12}
+      className="shrink-0 transition-all duration-500 group-hover:translate-x-0.5 group-hover:rotate-[-45deg]"
+    />
+  </span>
+
+  {/* Subtle Shine Effect */}
+  {room.status === "available" && (
+    <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+  )}
+</button>
                   </div>
                 </div>
               </div>
@@ -264,6 +293,8 @@ function Rooms() {
             selectedRoom={selectedRoom}
             onClose={() => setIsModalOpen(false)}
             onConfirmed={handleBookingConfirmed}
+            isLoggedIn={isLoggedIn}
+            onRequireLogin={() => setShowLoginModal(true)}
           />
           <Calander BookedDates={bookedDates} />
         </>

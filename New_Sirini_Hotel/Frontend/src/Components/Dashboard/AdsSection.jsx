@@ -115,16 +115,21 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
   return (
     <div className="space-y-6 font-sans">
       {/* ── Header ── */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 tracking-tight">My Advertisements</h2>
-          <p className="text-gray-400 text-xs mt-0.5">Manage your business promotions</p>
+      <div className="flex items-center justify-between gap-2 mb-2">
+        <div className="min-w-0">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight truncate">
+            My Advertisements
+          </h2>
+          <p className="text-gray-400 text-[10px] sm:text-xs mt-0.5 truncate">
+            Manage promotions
+          </p>
         </div>
         <button
-          className="flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-full text-xs uppercase tracking-wider transition-all duration-200 shadow-md shadow-amber-500/25 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0"
+          className="flex items-center gap-1.5 px-3 sm:px-5 py-2 sm:py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-full text-[10px] sm:text-xs uppercase tracking-wider transition-all duration-200 shadow-md shadow-amber-500/25 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap shrink-0"
           onClick={() => navigate("/reception")}
         >
-          <Plus size={14} /> Place New Ad
+          <Plus size={14} className="shrink-0" />
+          <span>New Ad</span>
         </button>
       </div>
 
@@ -194,11 +199,10 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
                 <button
                   key={i}
                   onClick={() => setIndex(i * itemsPerView)}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    Math.floor(index / itemsPerView) === i
+                  className={`w-2 h-2 rounded-full transition-colors ${Math.floor(index / itemsPerView) === i
                       ? "bg-amber-500"
                       : "bg-gray-200 hover:bg-gray-300"
-                  }`}
+                    }`}
                 />
               ))}
             </div>

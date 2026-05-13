@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { X, Trash2, Plus, Minus } from "lucide-react";
-import LoginMessage from "../LoginMessage";
+import toast from "react-hot-toast";
+
 
 const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const isLoggedIn= !!localStorage.getItem("token");
+  const isLoggedIn = !!localStorage.getItem("token");
 
   const handleQuantity = (cartId, delta) => {
     setCartItems((prev) =>
@@ -26,37 +26,7 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
     setCartItems((prev) => prev.filter((item) => item.cartId !== cartId));
   };
 
-  const handlePortionChange = (cartId, newPortion) => {
-    setCartItems((prev) => {
-      const itemToChange = prev.find((i) => i.cartId === cartId);
-      if (!itemToChange) return prev;
 
-      const targetCartId = `${itemToChange.id}_${newPortion}`;
-      const alreadyExists = prev.find((i) => i.cartId === targetCartId);
-
-      if (alreadyExists) {
-        // Merge quantities if the portion already exists
-        return prev
-          .map((i) =>
-            i.cartId === targetCartId
-              ? {
-                  ...i,
-                  quantity:
-                    (i.quantity || 1) + (itemToChange.quantity || 1),
-                }
-              : i,
-          )
-          .filter((i) => i.cartId !== cartId);
-      }
-
-      // Normal portion update
-      return prev.map((item) =>
-        item.cartId === cartId
-          ? { ...item, portion: newPortion, cartId: targetCartId }
-          : item,
-      );
-    });
-  };
 
   const getItemPrice = (item) => {
     if (item.portion === "Full" && item.has_portions) {
@@ -170,25 +140,9 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
                         {/* Portion */}
                         <td className="py-4 px-3">
                           <div className="flex items-center justify-center">
-                            {item.has_portions ? (
-                              <select
-                                value={item.portion || "Normal"}
-                                onChange={(e) =>
-                                  handlePortionChange(
-                                    item.cartId,
-                                    e.target.value,
-                                  )
-                                }
-                                className="text-sm px-3 py-2 border border-amber-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium cursor-pointer"
-                              >
-                                <option value="Normal">Normal</option>
-                                <option value="Full">Full</option>
-                              </select>
-                            ) : (
-                              <span className="text-sm text-gray-700 font-medium">
-                                Regular
-                              </span>
-                            )}
+                            <span className="text-sm text-gray-700 font-bold bg-amber-50 px-3 py-1.5 rounded-lg">
+                              {item.portion || "Normal"}
+                            </span>
                           </div>
                         </td>
 
@@ -264,23 +218,14 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
                     </div>
 
                     <div className="grid grid-cols-2 gap-3 mb-3">
-                      {item.has_portions && (
                         <div>
                           <label className="text-xs font-semibold text-gray-600 block mb-1">
                             Portion
                           </label>
-                          <select
-                            value={item.portion || "Normal"}
-                            onChange={(e) =>
-                              handlePortionChange(item.cartId, e.target.value)
-                            }
-                            className="w-full text-xs px-2 py-1.5 border border-amber-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium cursor-pointer"
-                          >
-                            <option value="Normal">Normal</option>
-                            <option value="Full">Full</option>
-                          </select>
+                          <span className="text-xs text-gray-700 font-bold bg-amber-50 px-2 py-1.5 rounded-lg  block text-center">
+                            {item.portion || "Normal"}
+                          </span>
                         </div>
-                      )}
 
                       <div>
                         <label className="text-xs font-semibold text-gray-600 block mb-1">
@@ -351,7 +296,9 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
 
               <button
                 onClick={() =>
-                  !isLoggedIn ? setShowLoginModal(true) : onCheckout(cartItems)
+                  !isLoggedIn
+                    ? toast.error("You should log in first to proceed to checkout.")
+                    : onCheckout(cartItems)
                 }
                 className="flex-1 py-3 bg-linear-to-r from-amber-500 to-amber-600 text-white rounded-xl hover:from-amber-600 hover:to-amber-700 transition-all font-bold text-sm md:text-base shadow-lg hover:shadow-xl"
               >
@@ -372,12 +319,7 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
           </div>
         )}
       </div>
-      {showLoginModal && (
-        <LoginMessage
-          isOpen={showLoginModal}
-          onClose={() => setShowLoginModal(false)}
-        />
-      )}
+
     </div>
   );
 };
