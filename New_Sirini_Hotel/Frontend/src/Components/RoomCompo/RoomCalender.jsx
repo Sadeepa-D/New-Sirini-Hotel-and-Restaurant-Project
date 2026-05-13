@@ -9,6 +9,7 @@ const RoomCalender = ({
   onNext,
   onClose,
   roomNumber,
+  onBack,
 }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const today = new Date();
@@ -45,6 +46,17 @@ const RoomCalender = ({
       >
         <X size={20} />
       </button>
+
+      {/* Back Button */}
+      {onBack && (
+        <button
+          onClick={onBack}
+          className="group text-gray-400 text-[9px] font-black uppercase tracking-[0.2em] flex items-center gap-2 hover:text-orange-500 transition-colors mb-5"
+        >
+          <ChevronLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
+          Back
+        </button>
+      )}
 
       <div className="mb-6">
         <h2 className="text-gray-900 text-xl font-serif italic tracking-tight">
