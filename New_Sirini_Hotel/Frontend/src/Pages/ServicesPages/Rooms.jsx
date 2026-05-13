@@ -5,6 +5,7 @@ import Room_1 from "../../assets/Rooms/Room_1.jpg";
 import Room_2 from "../../assets/Rooms/Room_2.jpg";
 import Room_3 from "../../assets/Rooms/Room_3.webp";
 import BookingForm from "../../Components/RoomCompo/BookingForm";
+import RoomPackageInfo from "../../Components/RoomCompo/RoomPackageInfo";
 import Exploreindicator from "../../Components/Exploreindicator";
 import Calander from "../../Components/Calander";
 import toast from "react-hot-toast";
@@ -149,6 +150,7 @@ function Rooms() {
 
       {/* --- Main Content --- */}
       <main className="max-w-7xl mx-auto py-16 px-6">
+        <RoomPackageInfo />
         {loading ? (
           <div className="flex justify-center py-20">
             <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
