@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { X, Trash2, Plus, Minus } from "lucide-react";
-import LoginMessage from "../LoginMessage";
+import toast from "react-hot-toast";
+
 
 const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const isLoggedIn= !!localStorage.getItem("token");
+  const isLoggedIn = !!localStorage.getItem("token");
 
   const handleQuantity = (cartId, delta) => {
     setCartItems((prev) =>
@@ -27,11 +27,35 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
   };
 
   const handlePortionChange = (cartId, newPortion) => {
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.cartId === cartId ? { ...item, portion: newPortion } : item,
-      ),
-    );
+    setCartItems((prev) => {
+      const itemToChange = prev.find((i) => i.cartId === cartId);
+      if (!itemToChange) return prev;
+
+      const targetCartId = `${itemToChange.id}_${newPortion}`;
+      const alreadyExists = prev.find((i) => i.cartId === targetCartId);
+
+      if (alreadyExists) {
+        // Merge quantities if the portion already exists
+        return prev
+          .map((i) =>
+            i.cartId === targetCartId
+              ? {
+                  ...i,
+                  quantity:
+                    (i.quantity || 1) + (itemToChange.quantity || 1),
+                }
+              : i,
+          )
+          .filter((i) => i.cartId !== cartId);
+      }
+
+      // Normal portion update
+      return prev.map((item) =>
+        item.cartId === cartId
+          ? { ...item, portion: newPortion, cartId: targetCartId }
+          : item,
+      );
+    });
   };
 
   const getItemPrice = (item) => {
@@ -115,7 +139,7 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
                   <tbody>
                     {cartItems.map((item) => (
                       <tr
-                        key={item.id}
+                        key={item.cartId}
                         className="border-b border-gray-100 hover:bg-amber-50 transition-colors duration-200"
                       >
                         {/* Image */}
@@ -218,7 +242,7 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
               <div className="md:hidden space-y-4">
                 {cartItems.map((item) => (
                   <div
-                    key={item.id}
+                    key={item.cartId}
                     className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow"
                   >
                     <div className="flex gap-4 mb-4">
@@ -327,7 +351,9 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
 
               <button
                 onClick={() =>
-                  !isLoggedIn ? setShowLoginModal(true) : onCheckout(cartItems)
+                  !isLoggedIn
+                    ? toast.error("You should log in first to proceed to checkout.")
+                    : onCheckout(cartItems)
                 }
                 className="flex-1 py-3 bg-linear-to-r from-amber-500 to-amber-600 text-white rounded-xl hover:from-amber-600 hover:to-amber-700 transition-all font-bold text-sm md:text-base shadow-lg hover:shadow-xl"
               >
@@ -348,12 +374,7 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
           </div>
         )}
       </div>
-      {showLoginModal && (
-        <LoginMessage
-          isOpen={showLoginModal}
-          onClose={() => setShowLoginModal(false)}
-        />
-      )}
+
     </div>
   );
 };

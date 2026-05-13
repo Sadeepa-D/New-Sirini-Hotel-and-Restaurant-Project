@@ -35,6 +35,12 @@ const receptionHallPackagesSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    cateringItems: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "CateringItems",
+      },
+    ],
   },
   { timestamps: true },
 );

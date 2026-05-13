@@ -98,14 +98,13 @@ const Calander = ({ BookedDates = [], loading = false }) => {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-60 bg-white rounded-2xl shadow-xl border border-gray-200 p-2.5 max-w-xs w-full">
+    <div className="bg-white rounded-3xl shadow-2xl border border-gray-200 p-4 w-[340px] max-w-[95vw]">
       <div className="flex items-center gap-2 mb-2">
         <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
           <CalendarDays size={16} className="text-amber-600" />
         </div>
         <h2 className="text-xs font-bold text-gray-900">Select Date</h2>
       </div>
-
       {loading ? (
         <div className="flex items-center justify-center h-24">
           <p className="text-xs text-gray-400 animate-pulse uppercase tracking-tight">
@@ -159,7 +158,6 @@ const Calander = ({ BookedDates = [], loading = false }) => {
           </div>
         </>
       )}
-
       {/* Legend */}
       <div className="grid grid-cols-2 gap-2 mt-3 pt-2 border-t border-gray-100 text-[9px]">
         <div className="flex items-center gap-1.5">
