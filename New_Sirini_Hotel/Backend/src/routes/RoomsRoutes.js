@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const upload = require("../config/CloudinaryConfig");
-const authmiddleware = require("../middleware/authMiddleware");
+const authmiddleware = require("../middleware/AuthMiddleware");
 const roomBookingController = require("../controllers/Room/RoomBookingCont");
 const roomController = require("../controllers/Room/RoomCont");
 
