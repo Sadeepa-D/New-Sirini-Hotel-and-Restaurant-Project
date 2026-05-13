@@ -209,7 +209,7 @@ const RestaurantSection = ({ data }) => {
           {index > 0 && (
             <button
               onClick={() => setIndex(Math.max(0, index - 1))}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 border border-gray-100 group-hover/nav:scale-110"
+              className="absolute left-2 sm:left-0 top-1/2 -translate-y-1/2 sm:-translate-x-4 z-10 w-10 h-10 sm:w-12 sm:h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 border border-gray-100 group-hover/nav:scale-110"
             >
               <ChevronLeft className="w-6 h-6 text-neutral-900" />
             </button>
@@ -334,7 +334,7 @@ const RestaurantSection = ({ data }) => {
           {index < filteredOrders.length - itemsPerView && (
             <button
               onClick={() => setIndex(Math.min(filteredOrders.length - itemsPerView, index + 1))}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 border border-gray-100 group-hover/nav:scale-110"
+              className="absolute right-2 sm:right-0 top-1/2 -translate-y-1/2 sm:translate-x-4 z-10 w-10 h-10 sm:w-12 sm:h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 border border-gray-100 group-hover/nav:scale-110"
             >
               <ChevronRight className="w-6 h-6 text-neutral-900" />
             </button>
