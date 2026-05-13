@@ -153,62 +153,64 @@ const Admin = () => {
   return (
     <div className="flex flex-col h-screen bg-black font-sans">
       {/* Top Header */}
-      <header className="bg-white mx-2 mt-3 mb-2 rounded-xl shadow-sm px-4 py-3 shrink-0">
+      <header className="bg-white mx-2 mt-3 mb-2 rounded-2xl shadow-md px-3 sm:px-4 py-2 sm:py-3 shrink-0">
         {/* ── MOBILE layout (< lg): two rows ── */}
         <div className="lg:hidden">
           {/* Row 1: Logo + Profile */}
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between gap-2 mb-2.5 sm:mb-3">
+            <div className="flex items-center gap-2 min-w-0">
               <img
                 src={Logo}
                 alt="Hotel Logo"
-                className="w-12 h-12 object-contain"
+                className="w-10 sm:w-12 h-10 sm:h-12 object-contain shrink-0"
               />
-              <div className="text-left">
-                <h3 className="font-serif italic text-sm text-gray-900 leading-tight">
+              <div className="text-left min-w-0">
+                <h3 className="font-serif italic text-xs sm:text-sm text-gray-900 leading-tight truncate">
                   Sirini Admin
                 </h3>
-                <h4 className="text-[9px] text-gray-500 uppercase font-bold tracking-[0.2em] mt-0.5">
+                <h4 className="text-[8px] sm:text-[9px] text-gray-500 uppercase font-bold tracking-[0.15em] mt-0.5">
                   Admin Portal
                 </h4>
               </div>
             </div>
-            <div className="flex items-center gap-1 shrink-0 relative">
+            <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
               <button
                 onClick={() => navigate("/")}
-                className="p-1.5 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"
+                className="p-1.5 sm:p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors active:scale-95"
+                title="Home"
               >
-                <Home size={18} />
+                <Home size={16} className="sm:w-5 sm:h-5" />
               </button>
               <button
                 onClick={() => setGalleryselection(!galleryselection)}
-                className="p-1.5 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-1.5 sm:p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors active:scale-95"
+                title="Gallery"
               >
-                <Camera size={18} />
+                <Camera size={16} className="sm:w-5 sm:h-5" />
               </button>
               <button
                 onClick={() => setManagerpagesselection(!managerpagesselection)}
                 title="Manager Portals"
-                className={`p-1.5 rounded-lg transition-colors ${managerpagesselection ? "bg-amber-100 text-amber-600" : "text-gray-500 hover:bg-gray-100"}`}
+                className={`p-1.5 sm:p-2 rounded-lg transition-colors active:scale-95 ${managerpagesselection ? "bg-amber-100 text-amber-600" : "text-gray-500 hover:bg-gray-100"}`}
               >
-                <User size={18} />
+                <User size={16} className="sm:w-5 sm:h-5" />
               </button>
               {managerpagesselection && (
-                <div className="absolute right-12 top-12 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-100 p-2 z-50 animate-in fade-in duration-200">
+                <div className="absolute right-3 top-14 sm:right-4 sm:top-16 w-52 bg-white rounded-xl shadow-xl border border-gray-100 p-2 z-50 animate-in fade-in duration-200">
                   <button
                     onClick={() => {
                       setManagerpagesselection(false);
                       navigate("/operationmanager");
                     }}
-                    className="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors font-medium flex items-center gap-2 group"
+                    className="w-full text-left px-2 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs text-gray-700 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors font-medium flex items-center gap-2 group"
                   >
                     <Store
-                      size={14}
-                      className="text-gray-400 group-hover:text-amber-500 shrink-0"
+                      size={13}
+                      className="sm:w-4 sm:h-4 text-gray-400 group-hover:text-amber-500 shrink-0"
                     />
                     <div>
-                      <div>Manager 1</div>
-                      <span className="text-[9px] text-gray-400 group-hover:text-amber-500/70">
+                      <div className="font-semibold">Manager 1</div>
+                      <span className="text-[8px] sm:text-[9px] text-gray-400 group-hover:text-amber-500/70">
                         Restaurant, Liquor
                       </span>
                     </div>
@@ -219,15 +221,15 @@ const Admin = () => {
                       setManagerpagesselection(false);
                       navigate("/manager");
                     }}
-                    className="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors font-medium flex items-center gap-2 group"
+                    className="w-full text-left px-2 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs text-gray-700 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors font-medium flex items-center gap-2 group"
                   >
                     <Hotel
-                      size={14}
-                      className="text-gray-400 group-hover:text-amber-500 shrink-0"
+                      size={13}
+                      className="sm:w-4 sm:h-4 text-gray-400 group-hover:text-amber-500 shrink-0"
                     />
                     <div>
-                      <div>Manager 2</div>
-                      <span className="text-[9px] text-gray-400 group-hover:text-amber-500/70">
+                      <div className="font-semibold">Manager 2</div>
+                      <span className="text-[8px] sm:text-[9px] text-gray-400 group-hover:text-amber-500/70">
                         Reception, Rooms
                       </span>
                     </div>
@@ -236,13 +238,15 @@ const Admin = () => {
               )}
               <button
                 onClick={handleLogout}
-                className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                className="p-1.5 sm:p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors active:scale-95"
+                title="Logout"
               >
-                <LogOut size={18} />
+                <LogOut size={16} className="sm:w-5 sm:h-5" />
               </button>
               <div
-                className="w-10 h-10 ml-1 bg-black rounded-full overflow-hidden flex items-center justify-center shadow-sm border-[2px] border-amber-500 cursor-pointer"
+                className="w-9 sm:w-10 h-9 sm:h-10 bg-black rounded-full overflow-hidden flex items-center justify-center shadow-sm border-2 border-amber-500 cursor-pointer hover:scale-105 transition-transform active:scale-95 shrink-0"
                 onClick={() => navigate("/dashboard")}
+                title="Profile"
               >
                 {adminData?.image ? (
                   <img
@@ -251,13 +255,13 @@ const Admin = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <User size={16} className="text-white" />
+                  <User size={14} className="sm:w-4 sm:h-4 text-white" />
                 )}
               </div>
             </div>
           </div>
           {/* Row 2: Icon-only tabs (scrollable) */}
-          <div className="flex items-center gap-1 bg-gray-100 rounded-xl p-1 shadow-inner overflow-x-auto no-scrollbar">
+          <div className="flex items-center gap-1 bg-gray-50 rounded-xl p-1 shadow-inner overflow-x-auto no-scrollbar border border-gray-100">
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -266,13 +270,13 @@ const Admin = () => {
                   key={item.id}
                   title={item.label}
                   onClick={() => setActiveTab(item.id)}
-                  className={`shrink-0 flex items-center justify-center w-12 h-10 rounded-lg transition-all duration-200 ${
+                  className={`flex-1 min-w-0 flex items-center justify-center h-9 sm:h-10 rounded-lg transition-all duration-200 active:scale-95 ${
                     isActive
                       ? "bg-amber-600 text-white shadow-lg ring-2 ring-amber-400 ring-offset-1"
-                      : "text-gray-500 hover:bg-white hover:shadow-sm"
+                      : "text-gray-500 hover:bg-white hover:shadow-sm hover:text-gray-700"
                   }`}
                 >
-                  <Icon size={18} />
+                  <Icon size={17} className="sm:w-5 sm:h-5" />
                 </button>
               );
             })}
@@ -280,27 +284,27 @@ const Admin = () => {
         </div>
 
         {/* ── DESKTOP layout (≥ lg): single row, flex space-between ── */}
-        <div className="hidden lg:flex lg:items-center lg:justify-between">
-          {/* Left: Logo */}
-          <div className="flex items-center gap-3 w-1/4">
+        <div className="hidden lg:flex lg:items-center lg:justify-between lg:gap-4">
+          {/* Left: Logo + Admin Info */}
+          <div className="flex items-center gap-3 shrink-0">
             <img
               src={Logo}
               alt="Hotel Logo"
-              className="w-20 h-20 object-contain"
+              className="w-16 h-16 object-contain"
             />
-            <div className="text-left">
-              <h3 className="text-[10px] text-gray-500 font-bold tracking-widest">
+            <div className="text-left border-r border-gray-200 pr-4">
+              <h3 className="text-xs text-gray-500 font-bold tracking-widest uppercase">
                 Admin Portal
               </h3>
-              <h4 className="text-sm font-bold text-gray-800">
-                {adminData.name}
+              <h4 className="text-sm font-bold text-gray-800 mt-0.5">
+                {adminData.name || "Admin"}
               </h4>
             </div>
           </div>
 
           {/* Center: Floating pill tabs */}
           <div className="flex-1 flex justify-center">
-            <div className="flex items-center gap-2 bg-gray-100 rounded-xl p-1.5 shadow-inner">
+            <div className="flex items-center gap-1.5 bg-gray-100 rounded-xl p-1.5 shadow-inner border border-gray-200">
               {menuItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = activeTab === item.id;
@@ -308,10 +312,10 @@ const Admin = () => {
                   <button
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
-                    className={`flex items-center gap-2.5 pl-3 pr-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    className={`flex items-center gap-2.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-200 active:scale-95 ${
                       isActive
                         ? "bg-amber-600 text-white shadow-lg scale-105 ring-2 ring-amber-400 ring-offset-1"
-                        : "text-gray-500 hover:bg-white hover:text-gray-800 hover:shadow-sm"
+                        : "text-gray-600 hover:bg-white hover:text-gray-800 hover:shadow-sm"
                     }`}
                   >
                     <Icon size={16} />
@@ -322,83 +326,91 @@ const Admin = () => {
             </div>
           </div>
 
-          {/* Right: Logout + Profile */}
-          <div className="flex items-center justify-end gap-3 w-1/4">
-            <div className="relative">
-              <button onClick={() => setGalleryselection(!galleryselection)}>
-                <Camera
-                  size={26}
-                  className="text-gray-500 hover:text-gray-700 transition-colors"
-                />
+          {/* Right: Action Buttons + Profile */}
+          <div className="flex items-center justify-end gap-1 w-1/4">
+            {/* Action Button Group */}
+            <div className="flex items-center gap-1 bg-gray-50 rounded-xl p-1.5 border border-gray-100">
+              <button
+                onClick={() => setGalleryselection(!galleryselection)}
+                className="p-2 text-gray-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all duration-200 active:scale-95"
+                title="Gallery"
+              >
+                <Camera size={20} />
               </button>
+              <div className="w-px h-6 bg-gray-200"></div>
               <button
                 onClick={() => setManagerpagesselection(!managerpagesselection)}
                 title="Manager Portals"
-                className={`p-2 rounded-lg transition-colors ${managerpagesselection ? "bg-amber-100 text-amber-600" : "text-gray-500 hover:bg-gray-100"}`}
+                className={`p-2 rounded-lg transition-all duration-200 active:scale-95 ${managerpagesselection ? "bg-amber-100 text-amber-600" : "text-gray-500 hover:bg-amber-50 hover:text-amber-600"}`}
               >
-                <User size={26} />
+                <User size={20} />
               </button>
 
               {/* Dropdown Menu */}
               {managerpagesselection && (
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100 p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="absolute right-20 top-20 w-56 bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100 p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                   <button
                     onClick={() => {
                       setManagerpagesselection(false);
                       navigate("/operationmanager");
                     }}
-                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors font-medium flex items-center gap-3 group"
+                    className="w-full text-left px-3 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors font-medium flex items-center gap-3 group"
                   >
                     <Store
                       size={18}
                       className="text-gray-400 group-hover:text-amber-500 transition-colors shrink-0"
                     />
                     <div>
-                      Operation Manager 1
-                      <span className="block text-[10px] text-gray-400 font-normal mt-0.5 group-hover:text-amber-500/70">
+                      <div className="font-semibold">Manager 1</div>
+                      <span className="text-xs text-gray-400 group-hover:text-amber-500/70">
                         Restaurant, Liquor
                       </span>
                     </div>
                   </button>
-                  <div className="h-px bg-gray-100 my-1"></div>
+                  <div className="h-px bg-gray-100 my-1.5"></div>
                   <button
                     onClick={() => {
                       setManagerpagesselection(false);
                       navigate("/manager");
                     }}
-                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors font-medium flex items-center gap-3 group"
+                    className="w-full text-left px-3 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors font-medium flex items-center gap-3 group"
                   >
                     <Hotel
                       size={18}
                       className="text-gray-400 group-hover:text-amber-500 transition-colors shrink-0"
                     />
                     <div>
-                      Operation Manager 2
-                      <span className="block text-[10px] text-gray-400 font-normal mt-0.5 group-hover:text-amber-500/70">
+                      <div className="font-semibold">Manager 2</div>
+                      <span className="text-xs text-gray-400 group-hover:text-amber-500/70">
                         Reception, Rooms
                       </span>
                     </div>
                   </button>
                 </div>
               )}
+
+              <div className="w-px h-6 bg-gray-200"></div>
+              <button
+                onClick={() => navigate("/")}
+                title="Home"
+                className="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-all duration-200 active:scale-95"
+              >
+                <Home size={20} />
+              </button>
+              <button
+                onClick={handleLogout}
+                title="Logout"
+                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200 active:scale-95"
+              >
+                <LogOut size={20} />
+              </button>
             </div>
-            <button
-              onClick={() => navigate("/")}
-              title="Home"
-              className="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"
-            >
-              <Home size={28} />
-            </button>
-            <button
-              onClick={handleLogout}
-              title="Logout"
-              className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-            >
-              <LogOut size={25} />
-            </button>
+
+            {/* Profile Avatar - Standalone */}
             <div
-              className="w-[72px] h-[72px] bg-black rounded-full overflow-hidden hover:scale-105 transition-transform cursor-pointer flex items-center justify-center shadow-md border-[3px] border-amber-500"
+              className="w-14 h-14 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full overflow-hidden hover:scale-110 transition-transform cursor-pointer flex items-center justify-center shadow-lg border-2 border-amber-600 ml-2"
               onClick={() => navigate("/dashboard")}
+              title={adminData.name}
             >
               {adminData?.image ? (
                 <img
@@ -407,7 +419,7 @@ const Admin = () => {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <User size={20} className="text-white" />
+                <User size={22} className="text-white" />
               )}
             </div>
           </div>
