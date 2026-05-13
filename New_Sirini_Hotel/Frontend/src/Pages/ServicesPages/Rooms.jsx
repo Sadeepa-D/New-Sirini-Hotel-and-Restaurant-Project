@@ -175,10 +175,23 @@ function Rooms() {
                       Room {room.roomNumber}
                     </span>
                   </div>
-                  <div className="absolute bottom-4 left-4 z-10">
-                    <p className="text-white font-bold text-2xl drop-shadow-lg">
-                      Rs.{room.price.toLocaleString()}
-                    </p>
+                  <div className="absolute bottom-4 left-4 z-10 flex flex-col">
+                    <div className="flex items-baseline gap-1.5">
+                      <p className="text-white font-bold text-2xl drop-shadow-lg">
+                        Rs.{room.price.toLocaleString()}
+                      </p>
+                      <span className="text-white/90 text-xs font-medium italic drop-shadow-md">
+                        per night
+                      </span>
+                    </div>
+                    <div className="flex items-baseline gap-1.5 mt-0.5">
+                      <p className="text-white/90 font-semibold text-sm drop-shadow-lg">
+                        Rs.{(room.shortStayPrice || 1500).toLocaleString()}
+                      </p>
+                      <span className="text-white/80 text-[10px] font-medium italic drop-shadow-md">
+                        per 3 hours
+                      </span>
+                    </div>
                   </div>
                 </div>
 

@@ -182,14 +182,12 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
           </button>
 
           <div className="mb-5 text-center">
-            <p className="text-orange-500 text-[8px] font-black uppercase tracking-[0.3em] mb-1">
-              Step 01
-            </p>
+
             <h2 className="text-gray-900 text-2xl font-serif italic font-medium tracking-tight">
               Choose a Package
             </h2>
             <p className="text-gray-400 text-[9px] font-bold uppercase tracking-[0.2em] mt-1.5">
-              Room {selectedRoom.roomNumber} · {selectedRoom.roomType}
+              Room {selectedRoom.roomNumber} · {selectedRoom.roomType} Room
             </p>
           </div>
 
