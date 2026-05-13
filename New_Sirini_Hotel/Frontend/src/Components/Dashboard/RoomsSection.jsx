@@ -1,11 +1,23 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Clock, CheckCircle2, XCircle, Archive, Check, Bed, CalendarDays, BadgeDollarSign } from "lucide-react";
+import {
+  Clock,
+  CheckCircle2,
+  XCircle,
+  Archive,
+  Check,
+  Bed,
+  CalendarDays,
+  BadgeDollarSign,
+  Trash2,
+} from "lucide-react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const RoomsSection = () => {
   const [allRooms, setAllRooms] = useState([]);
   const [activeTab, setActiveTab] = useState("Pending");
   const [loading, setLoading] = useState(true);
+  const [cancellationLoading, setCancellationLoading] = useState(null);
   const VITE_API_URL = import.meta.env.VITE_API_URL;
 
   const fetchUserSpecificRooms = useCallback(async () => {
@@ -18,7 +30,7 @@ const RoomsSection = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       setAllRooms(response.data);
     } catch (error) {
@@ -32,11 +44,50 @@ const RoomsSection = () => {
     fetchUserSpecificRooms();
   }, [fetchUserSpecificRooms]);
 
+  const handleCancelBooking = async (bookingId, roomNumber) => {
+    if (
+      !window.confirm(
+        "Are you sure you want to cancel this booking? The dates will become available again.",
+      )
+    ) {
+      return;
+    }
+
+    setCancellationLoading(bookingId);
+    const toastId = toast.loading("Cancelling booking...");
+
+    try {
+      await axios.put(`${VITE_API_URL}/api/rooms/cancelbooking/${bookingId}`);
+      toast.success(
+        "Booking cancelled successfully. Dates are now available.",
+        { id: toastId },
+      );
+      fetchUserSpecificRooms();
+    } catch (error) {
+      console.error("Error cancelling booking:", error);
+      toast.error(error.response?.data?.error || "Failed to cancel booking", {
+        id: toastId,
+      });
+    } finally {
+      setCancellationLoading(null);
+    }
+  };
+
   const counts = {
-    pending: allRooms.filter(r => r.status?.toLowerCase() === "pending").length,
-    approved: allRooms.filter(r => r.status?.toLowerCase() === "confirmed" || r.status?.toLowerCase() === "approved").length,
-    completed: allRooms.filter(r => r.status?.toLowerCase() === "completed").length,
-    cancelled: allRooms.filter(r => r.status?.toLowerCase() === "cancelled" || r.status?.toLowerCase() === "canceled").length,
+    pending: allRooms.filter((r) => r.status?.toLowerCase() === "pending")
+      .length,
+    approved: allRooms.filter(
+      (r) =>
+        r.status?.toLowerCase() === "confirmed" ||
+        r.status?.toLowerCase() === "approved",
+    ).length,
+    completed: allRooms.filter((r) => r.status?.toLowerCase() === "completed")
+      .length,
+    cancelled: allRooms.filter(
+      (r) =>
+        r.status?.toLowerCase() === "cancelled" ||
+        r.status?.toLowerCase() === "canceled",
+    ).length,
   };
 
   const filteredRooms = allRooms.filter((room) => {
@@ -48,28 +99,57 @@ const RoomsSection = () => {
     return true;
   });
 
-  if (loading) return (
-    <div className="flex flex-col items-center justify-center py-20 gap-4">
-      <div className="w-10 h-10 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
-      <p className="text-gray-400 text-sm animate-pulse">Loading bookings…</p>
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-4">
+        <div className="w-10 h-10 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
+        <p className="text-gray-400 text-sm animate-pulse">Loading bookings…</p>
+      </div>
+    );
 
   return (
     <div className="space-y-6 font-sans">
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-xl font-bold text-gray-900 tracking-tight">My Room Bookings</h2>
-          <p className="text-gray-400 text-xs mt-0.5">Track all your room reservation statuses</p>
+          <h2 className="text-xl font-bold text-gray-900 tracking-tight">
+            My Room Bookings
+          </h2>
+          <p className="text-gray-400 text-xs mt-0.5">
+            Track all your room reservation statuses
+          </p>
         </div>
 
         {/* Tab Navigation */}
         <div className="flex bg-gray-100 p-1 rounded-xl border border-gray-200 max-w-full gap-0.5 shadow-inner">
-          <TabBtn active={activeTab === "Pending"} onClick={() => setActiveTab("Pending")} label="Pending" count={counts.pending} icon={<Clock size={13} />} />
-          <TabBtn active={activeTab === "Approved"} onClick={() => setActiveTab("Approved")} label="Approved" count={counts.approved} icon={<Check size={13} />} />
-          <TabBtn active={activeTab === "Completed"} onClick={() => setActiveTab("Completed")} label="Completed" count={counts.completed} icon={<Archive size={13} />} />
-          <TabBtn active={activeTab === "Cancelled"} onClick={() => setActiveTab("Cancelled")} label="Cancelled" count={counts.cancelled} icon={<XCircle size={13} />} />
+          <TabBtn
+            active={activeTab === "Pending"}
+            onClick={() => setActiveTab("Pending")}
+            label="Pending"
+            count={counts.pending}
+            icon={<Clock size={13} />}
+          />
+          <TabBtn
+            active={activeTab === "Approved"}
+            onClick={() => setActiveTab("Approved")}
+            label="Approved"
+            count={counts.approved}
+            icon={<Check size={13} />}
+          />
+          <TabBtn
+            active={activeTab === "Completed"}
+            onClick={() => setActiveTab("Completed")}
+            label="Completed"
+            count={counts.completed}
+            icon={<Archive size={13} />}
+          />
+          <TabBtn
+            active={activeTab === "Cancelled"}
+            onClick={() => setActiveTab("Cancelled")}
+            label="Cancelled"
+            count={counts.cancelled}
+            icon={<XCircle size={13} />}
+          />
         </div>
       </div>
 
@@ -96,11 +176,18 @@ const RoomsSection = () => {
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center group-hover:bg-amber-500 transition-colors duration-300">
-                      <Bed size={20} className="text-amber-500 group-hover:text-white transition-colors duration-300" />
+                      <Bed
+                        size={20}
+                        className="text-amber-500 group-hover:text-white transition-colors duration-300"
+                      />
                     </div>
                     <div>
-                      <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest leading-none mb-1">Room No.</p>
-                      <p className="text-xl font-black text-gray-900 leading-none">{room.roomNumber}</p>
+                      <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest leading-none mb-1">
+                        Room No.
+                      </p>
+                      <p className="text-xl font-black text-gray-900 leading-none">
+                        {room.roomNumber}
+                      </p>
                     </div>
                   </div>
                   <StatusBadge status={room.status} />
@@ -109,9 +196,14 @@ const RoomsSection = () => {
                 {/* Check-in / Check-out */}
                 <div className="bg-gray-50 rounded-xl p-4 flex items-center justify-between mb-4 border border-gray-100">
                   <div className="flex items-center gap-2">
-                    <CalendarDays size={14} className="text-amber-500 shrink-0" />
+                    <CalendarDays
+                      size={14}
+                      className="text-amber-500 shrink-0"
+                    />
                     <div>
-                      <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Check In</p>
+                      <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                        Check In
+                      </p>
                       <p className="text-xs font-bold text-gray-800">
                         {new Date(room.checkInDate).toLocaleDateString("en-GB")}
                       </p>
@@ -120,29 +212,58 @@ const RoomsSection = () => {
                   <div className="h-8 w-px bg-gray-200" />
                   <div className="flex items-center gap-2 text-right">
                     <div>
-                      <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Check Out</p>
+                      <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                        Check Out
+                      </p>
                       <p className="text-xs font-bold text-gray-800">
-                        {new Date(room.checkOutDate).toLocaleDateString("en-GB")}
+                        {new Date(room.checkOutDate).toLocaleDateString(
+                          "en-GB",
+                        )}
                       </p>
                     </div>
-                    <CalendarDays size={14} className="text-amber-500 shrink-0" />
+                    <CalendarDays
+                      size={14}
+                      className="text-amber-500 shrink-0"
+                    />
                   </div>
                 </div>
 
-                {/* Footer: Price */}
-                <div className="flex justify-between items-center pt-3 border-t border-gray-100">
-                  <div className="flex items-center gap-2">
-                    <BadgeDollarSign size={16} className="text-amber-500" />
-                    <div>
-                      <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Total Paid</p>
-                      <p className="text-lg font-black text-amber-600 leading-none">
-                        Rs.{room.totalAmount?.toLocaleString()}
-                      </p>
+                {/* Footer: Price & Action Button */}
+                <div className="flex flex-col gap-3 pt-3 border-t border-gray-100">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <BadgeDollarSign size={16} className="text-amber-500" />
+                      <div>
+                        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                          Total Paid
+                        </p>
+                        <p className="text-lg font-black text-amber-600 leading-none">
+                          Rs.{room.totalAmount?.toLocaleString()}
+                        </p>
+                      </div>
                     </div>
+                    <p className="text-[9px] text-gray-300 font-bold uppercase tracking-widest italic">
+                      New Sirini Hotel
+                    </p>
                   </div>
-                  <p className="text-[9px] text-gray-300 font-bold uppercase tracking-widest italic">
-                    New Sirini Hotel
-                  </p>
+
+                  {/* Cancel Button for Pending Bookings Only */}
+                  {room.status?.toLowerCase() === "pending" && (
+                    <button
+                      onClick={() =>
+                        handleCancelBooking(room._id, room.roomNumber)
+                      }
+                      disabled={cancellationLoading === room._id}
+                      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-sm transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed border border-red-200 hover:border-red-300"
+                    >
+                      <Trash2 size={16} />
+                      <span className="tracking-wider uppercase text-xs">
+                        {cancellationLoading === room._id
+                          ? "Cancelling..."
+                          : "Cancel Booking"}
+                      </span>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -164,7 +285,9 @@ const TabBtn = ({ active, onClick, label, icon, count }) => (
   >
     {React.cloneElement(icon, { size: 12 })}
     <span>{label}</span>
-    <span className={`ml-0.5 text-[9px] font-mono ${active ? "text-amber-400" : "opacity-50"}`}>
+    <span
+      className={`ml-0.5 text-[9px] font-mono ${active ? "text-amber-400" : "opacity-50"}`}
+    >
       ({count})
     </span>
   </button>
@@ -188,7 +311,9 @@ const StatusBadge = ({ status }) => {
   }
 
   return (
-    <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border ${style} font-sans`}>
+    <span
+      className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border ${style} font-sans`}
+    >
       {label}
     </span>
   );

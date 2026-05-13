@@ -119,7 +119,7 @@ const AdvertisementSection = () => {
   return (
     <section className="bg-neutral-50 py-16 px-4 sm:px-6 lg:px-8 border-t border-gray-100">
       {/* Section Header */}
-      <div className="text-center mb-10">
+      <div className="text-center mb-10 h-20">
         <p className="text-amber-500 text-xs uppercase tracking-[0.3em] mb-2 font-medium">
           Partner Services
         </p>

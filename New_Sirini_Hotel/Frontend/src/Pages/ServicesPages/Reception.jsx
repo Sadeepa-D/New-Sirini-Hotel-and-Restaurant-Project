@@ -76,10 +76,10 @@ export default function Reception() {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
       const documentHeight = document.documentElement.scrollHeight;
-      
+
       // Show FAB after scrolling past hero (approx 100vh - header)
       setIsFabVisible(scrollY > windowHeight * 0.7);
-      
+
       // Detect if near footer (approx 400px from bottom)
       setIsNearFooter(scrollY + windowHeight > documentHeight - 350);
     };
@@ -119,12 +119,6 @@ export default function Reception() {
               className="bg-yellow-500 hover:bg-amber-700 text-black px-8 py-3 rounded-full font-semibold uppercase tracking-widest text-sm transition-all duration-300 shadow-lg mt-4"
             >
               {showForm ? "Close " : "Book Your Pre-Visit"}
-            </button>
-            <button
-              onClick={() => setShowCalander(!showcalander)}
-              className="bg-yellow-500 hover:bg-amber-600 text-black px-8 py-3 rounded-full font-semibold uppercase tracking-widest text-sm transition-all duration-300 shadow-lg mt-4"
-            >
-              {showcalander ? "Close" : "Sirini's Calender"}
             </button>
           </div>
         </div>
@@ -168,23 +162,32 @@ export default function Reception() {
       <AdvertismentSection />
       {/* Calendar */}
       {showcalander && (
-        <div className="flex justify-center lg:justify-end">
-          <Calander BookedDates={bookedDates} loading={loadingDates} />
+        <div className="fixed inset-0 z-[100] flex items-center justify-center">
+          {/* Dark Background */}
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowCalander(false)}
+          />
+
+          {/* Popup Calendar */}
+          <div className="relative z-[101] animate-in fade-in zoom-in-95 duration-300">
+            <Calander BookedDates={bookedDates} loading={loadingDates} />
+          </div>
         </div>
       )}
 
       {/* Floating Action Button (FAB) - Smart visibility */}
-      <div 
+      <div
         className={`fixed transition-all duration-500 ease-in-out z-[60] 
-          ${isFabVisible ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-10 pointer-events-none'}
-          ${isNearFooter ? 'bottom-[380px] md:bottom-[420px]' : 'bottom-8'}
+          ${isFabVisible ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-10 pointer-events-none"}
+          ${isNearFooter ? "bottom-[380px] md:bottom-[420px]" : "bottom-8"}
           right-8`}
       >
         <button
           className="relative group transition-all duration-300"
-          onClick={() => setShowCalander(true)}
+          onClick={() => setShowCalander(!showcalander)}
         >
-          <div 
+          <div
             className="w-16 h-16 md:w-20 md:h-20 bg-amber-500 text-white flex items-center justify-center rounded-full shadow-2xl group-hover:bg-amber-600 group-hover:scale-110 transition-all duration-300"
             style={{ boxShadow: "0 10px 25px -5px rgba(245, 158, 11, 0.4)" }}
           >
