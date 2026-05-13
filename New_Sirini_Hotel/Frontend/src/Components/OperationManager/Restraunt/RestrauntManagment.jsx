@@ -215,7 +215,7 @@ const RestaurantManager = () => {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 whitespace-nowrap shadow-sm border
+              className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 whitespace-nowrap shadow-sm border
                 ${selectedCategory === cat
                   ? "bg-amber-500 text-black border-amber-500 shadow-md scale-105"
                   : "bg-gray-50 text-neutral-600 hover:bg-gray-100 border-neutral-200"

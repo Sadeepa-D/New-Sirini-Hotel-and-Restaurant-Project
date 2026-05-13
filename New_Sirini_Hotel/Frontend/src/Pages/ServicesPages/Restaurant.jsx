@@ -107,62 +107,25 @@ export default function Restaurant() {
       ? mealData
       : mealData.filter((item) => item.category === selectedCategory);
 
-  const handleAddToCart = (item) => {
+  const handleAddToCart = (item, selectedPortion) => {
+    const portionToUse = item.has_portions ? selectedPortion : "Normal";
+    const cartId = item.has_portions ? `${item.id}_${portionToUse}` : item.id;
 
+    const existing = cartItems.find((i) => i.cartId === cartId);
 
-    if (!item.has_portions) {
-      // Case 1: Food item has NO portion
-      const existing = cartItems.find((i) => i.id === item.id);
-      if (existing) {
-        setCartItems((prev) =>
-          prev.map((i) =>
-            i.id === item.id ? { ...i, quantity: (i.quantity || 1) + 1 } : i,
-          ),
-        );
-        toast.success(`${item.name} quantity updated!`);
-      } else {
-        setCartItems((prev) => [
-          ...prev,
-          { ...item, cartId: item.id, quantity: 1, portion: "Normal" },
-        ]);
-        toast.success(`${item.name} added to cart!`);
-      }
-      return;
-    }
-
-    // Case 2: Food item HAS portion options
-    const existingNormal = cartItems.find(
-      (i) => i.id === item.id && i.portion === "Normal",
-    );
-    const existingFull = cartItems.find(
-      (i) => i.id === item.id && i.portion === "Full",
-    );
-
-    if (existingNormal && existingFull) {
-      // If both portion variants exist, block further adding and show message
-      toast.error("Already added. You can change quantity in the cart");
-      return;
-    } else if (existingNormal) {
-      // If Normal exists, add Full portion
-      setCartItems((prev) => [
-        ...prev,
-        { ...item, cartId: `${item.id}_Full`, quantity: 1, portion: "Full" },
-      ]);
-      toast.success(`${item.name} (Full) added to cart!`);
-    } else if (existingFull) {
-      // If Full exists, add Normal portion
-      setCartItems((prev) => [
-        ...prev,
-        { ...item, cartId: `${item.id}_Normal`, quantity: 1, portion: "Normal" },
-      ]);
-      toast.success(`${item.name} (Normal) added to cart!`);
+    if (existing) {
+      setCartItems((prev) =>
+        prev.map((i) =>
+          i.cartId === cartId ? { ...i, quantity: (i.quantity || 1) + 1 } : i,
+        ),
+      );
+      toast.success(`${item.name} (${portionToUse}) quantity updated!`);
     } else {
-      // If none exist, add Normal portion as default
       setCartItems((prev) => [
         ...prev,
-        { ...item, cartId: `${item.id}_Normal`, quantity: 1, portion: "Normal" },
+        { ...item, cartId, quantity: 1, portion: portionToUse },
       ]);
-      toast.success(`${item.name} added to cart!`);
+      toast.success(`${item.name} (${portionToUse}) added to cart!`);
     }
   };
 
@@ -263,9 +226,10 @@ export default function Restaurant() {
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 whitespace-nowrap shadow-sm border
-                    ${selectedCategory === cat
-                      ? "bg-amber-600 text-white border-amber-600 shadow-md shadow-amber-200 scale-105"
-                      : "bg-white text-neutral-600 hover:bg-neutral-100 border-neutral-200 hover:border-amber-200"
+                    ${
+                      selectedCategory === cat
+                        ? "bg-amber-600 text-white border-amber-600 shadow-md shadow-amber-200 scale-105"
+                        : "bg-white text-neutral-600 hover:bg-neutral-100 border-neutral-200 hover:border-amber-200"
                     }`}
                 >
                   {cat}

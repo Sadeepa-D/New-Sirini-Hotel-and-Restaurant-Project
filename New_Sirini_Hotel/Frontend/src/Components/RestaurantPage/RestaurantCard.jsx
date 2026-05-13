@@ -1,9 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function RestaurantCard({ item, itemsPerView, onOrder }) {
+  const [selectedPortion, setSelectedPortion] = useState(item.has_portions ? "" : "Normal");
+
   const widthPercentage = 100 / itemsPerView;
   const gap = itemsPerView === 1 ? 16 : 24;
   const width = `calc(${widthPercentage}% - ${(gap * (itemsPerView - 1)) / itemsPerView}px)`;
+
+  const handleAddClick = () => {
+    if (item.has_portions && !selectedPortion) {
+      toast.error("Please select a portion (Normal or Full) first.");
+      return;
+    }
+    onOrder(item, selectedPortion);
+  };
 
   return (
     <div
@@ -37,27 +48,31 @@ export default function RestaurantCard({ item, itemsPerView, onOrder }) {
             </p>
           </div>
 
-          <div className="flex flex-col gap-1 mb-4 bg-neutral-50 rounded-xl px-3 py-2 border border-neutral-100">
-            <span className="text-sm font-semibold text-neutral-800">
-              Normal:
-              <span className="text-amber-600 ml-1 font-bold">
-                LKR {item.normal_price}
-              </span>
-            </span>
-
-            {item.has_portions && (
-              <span className="text-sm font-semibold text-neutral-800">
-                Full:
-                <span className="text-amber-600 ml-1 font-bold">
-                  LKR {item.full_price}
+          <div className="flex flex-col gap-2 mb-4">
+            {item.has_portions ? (
+              <select
+                value={selectedPortion}
+                onChange={(e) => setSelectedPortion(e.target.value)}
+                className="w-full bg-neutral-50 border border-neutral-200 text-neutral-800 text-sm rounded-xl px-3 py-2.5 outline-none focus:ring-1 focus:ring-amber-500 transition-all font-semibold appearance-none cursor-pointer"
+                style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234b5563'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.75rem center', backgroundSize: '1rem' }}
+              >
+                <option value="" disabled>Select Portion</option>
+                <option value="Normal">Normal - LKR {item.normal_price}</option>
+                <option value="Full">Full - LKR {item.full_price}</option>
+              </select>
+            ) : (
+              <div className="bg-neutral-50 rounded-xl px-3 py-2.5 border border-neutral-100 flex items-center justify-between">
+                <span className="text-sm font-semibold text-neutral-600 uppercase tracking-wider">Price</span>
+                <span className="text-amber-600 font-bold">
+                  LKR {item.normal_price}
                 </span>
-              </span>
+              </div>
             )}
           </div>
 
           <div className="mt-auto flex justify-center">
             <button
-              onClick={() => onOrder(item)}
+              onClick={handleAddClick}
               disabled={item.availability === false}
               className={`w-[60%] mx-auto py-2.5 text-white text-sm font-semibold rounded-full transition-all duration-300 shadow-sm hover:shadow-md ${
                 item.availability !== false
@@ -73,4 +88,4 @@ export default function RestaurantCard({ item, itemsPerView, onOrder }) {
       </div>
     </div>
   );
-}
+}
