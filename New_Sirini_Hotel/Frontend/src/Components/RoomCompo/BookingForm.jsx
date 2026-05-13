@@ -221,7 +221,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
                       ? selectedRoom.shortStayPrice || 1500
                       : selectedRoom.price
                     ).toLocaleString()}
-                    {pkg.id === "fullday" && " / day"}
+                    {pkg.id === "fullday" && " / Per Night"}
                   </p>
                 </div>
                 <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-orange-500 transition-colors shrink-0">
