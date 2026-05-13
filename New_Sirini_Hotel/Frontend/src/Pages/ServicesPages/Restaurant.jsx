@@ -6,13 +6,13 @@ import resturantImg from "../../assets/resturant.png";
 import OrderForm from "../../Components/RestaurantPage/OrderForm";
 import RestaurantCard from "../../Components/RestaurantPage/RestaurantCard";
 import ProcessFlow from "../../Components/RestaurantPage/ProcessFlow";
-import { ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import CartComp from "../../Components/RestaurantPage/CartComp";
 
 // Initial hardcoded data removed. Data is now fetched from the backend API.
 
 const CATEGORIES = [
-  
+  "All",
   "Chopsy Rice",
   "Rice & Nasi Goreng",
   "Kottu",
@@ -43,6 +43,7 @@ export default function Restaurant() {
     return [];
   });
   const [openorderform, setOpenorderform] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   const fetchFoodItems = async () => {
     try {
@@ -102,58 +103,10 @@ export default function Restaurant() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const [categoryIndices, setCategoryIndices] = useState(() => {
-    const defaultIndices = CATEGORIES.reduce((acc, cat) => {
-      acc[cat] = 0;
-      return acc;
-    }, {});
-    try {
-      const saved = sessionStorage.getItem("restaurant_category_indices");
-      return saved
-        ? { ...defaultIndices, ...JSON.parse(saved) }
-        : defaultIndices;
-    } catch (e) {
-      return defaultIndices;
-    }
-  });
-
-  // Persist category indices to sessionStorage
-  useEffect(() => {
-    sessionStorage.setItem(
-      "restaurant_category_indices",
-      JSON.stringify(categoryIndices),
-    );
-  }, [categoryIndices]);
-
-  const getCategoryIndex = (cat) => categoryIndices[cat] || 0;
-
-  const handlePrev = (e, cat) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      if (e.nativeEvent && e.nativeEvent.stopImmediatePropagation) {
-        e.nativeEvent.stopImmediatePropagation();
-      }
-    }
-    setCategoryIndices((prev) => ({
-      ...prev,
-      [cat]: Math.max(0, (prev[cat] || 0) - 1),
-    }));
-  };
-
-  const handleNext = (e, cat, itemsCount) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      if (e.nativeEvent && e.nativeEvent.stopImmediatePropagation) {
-        e.nativeEvent.stopImmediatePropagation();
-      }
-    }
-    setCategoryIndices((prev) => ({
-      ...prev,
-      [cat]: Math.min(itemsCount - itemsPerView, (prev[cat] || 0) + 1),
-    }));
-  };
+  const filteredItems =
+    selectedCategory === "All"
+      ? mealData
+      : mealData.filter((item) => item.category === selectedCategory);
 
   const handleAddToCart = (item) => {
 
@@ -232,60 +185,7 @@ export default function Restaurant() {
     setOpenorderform(true);
   };
 
-const MenuSection = ({
-  title,
-  items,
-  index,
-  onPrev,
-  onNext,
-  onOrder,
-  itemsPerView,
-}) => (
-  <div className="mb-16">
-    <h3 className="text-2xl font-bold text-neutral-900 mb-6">{title}</h3>
-    <div className="relative">
-      {index > 0 && (
-        <button
-          type="button"
-          onClick={onPrev}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
-        >
-          <ChevronLeft className="w-6 h-6 text-neutral-900" />
-        </button>
-      )}
 
-      <div className="overflow-hidden">
-        <div
-          className="flex justify-start gap-4 sm:gap-6 transition-transform duration-[1200ms] ease-in-out"
-          style={{
-            transform: `translateX(calc(-${index * (100 / itemsPerView)}% - ${
-              index * ((itemsPerView === 1 ? 16 : 24) / itemsPerView)
-            }px))`,
-          }}
-        >
-          {items.map((item) => (
-            <RestaurantCard
-              key={item.id}
-              item={item}
-              itemsPerView={itemsPerView}
-              onOrder={onOrder}
-            />
-          ))}
-        </div>
-      </div>
-
-      {index < items.length - itemsPerView && (
-        <button
-          type="button"
-          onClick={onNext}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
-        >
-          <ChevronRight className="w-6 h-6 text-neutral-900" />
-        </button>
-      )}
-    </div>
-  </div>
-);
 
   const [isFabVisible, setIsFabVisible] = useState(false);
   const [isNearFooter, setIsNearFooter] = useState(false);
@@ -355,25 +255,56 @@ const MenuSection = ({
         {/* Process Flow Section */}
         <ProcessFlow />
 
-        {/* Categories Section */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {CATEGORIES.map((cat) => {
-            const catItems = mealData.filter((item) => item.category === cat);
-            if (catItems.length === 0) return null;
+        {/* Category Navigation Bar */}
+        <div className="sticky top-[75px] z-30 bg-neutral-50/80 backdrop-blur-md py-6 mb-8 border-b border-neutral-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex overflow-x-auto gap-3 pb-2 hide-scrollbar scroll-smooth">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 whitespace-nowrap shadow-sm border
+                    ${
+                      selectedCategory === cat
+                        ? "bg-amber-600 text-white border-amber-600 shadow-md shadow-amber-200 scale-105"
+                        : "bg-white text-neutral-600 hover:bg-neutral-100 border-neutral-200 hover:border-amber-200"
+                    }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
 
-            return (
-              <MenuSection
-                key={cat}
-                title={cat}
-                items={catItems}
-                index={getCategoryIndex(cat)}
-                onPrev={(e) => handlePrev(e, cat)}
-                onNext={(e) => handleNext(e, cat, catItems.length)}
-                onOrder={handleAddToCart}
-                itemsPerView={itemsPerView}
-              />
-            );
-          })}
+        {/* Food Items Grid Section */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-[400px]">
+          {filteredItems.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12">
+              {filteredItems.map((item) => (
+                <RestaurantCard
+                  key={item.id}
+                  item={item}
+                  itemsPerView={1}
+                  onOrder={handleAddToCart}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <div className="w-20 h-20 bg-neutral-100 rounded-full flex items-center justify-center mb-4">
+                <ShoppingCart className="w-10 h-10 text-neutral-300" />
+              </div>
+              <h3 className="text-xl font-semibold text-neutral-800 mb-2">No items found</h3>
+              <p className="text-neutral-500 max-w-xs">We couldn't find any dishes in the "{selectedCategory}" category at the moment.</p>
+              <button 
+                onClick={() => setSelectedCategory("All")}
+                className="mt-6 text-amber-600 font-bold hover:underline"
+              >
+                View all items
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Floating Action Button (FAB) - Smart visibility */}
