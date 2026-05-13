@@ -64,6 +64,39 @@ const Login = () => {
       if (data.token && data.user) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
+
+        // Merge guest cart items into user cart
+        const guestCartData = localStorage.getItem("guest_cart");
+        if (guestCartData) {
+          try {
+            const guestCart = JSON.parse(guestCartData);
+            if (Array.isArray(guestCart) && guestCart.length > 0) {
+              const userCartKey = `cart_items_${data.user._id}`;
+              const userCartData = localStorage.getItem(userCartKey);
+              let userCart = userCartData ? JSON.parse(userCartData) : [];
+
+              // Merge items
+              guestCart.forEach((gItem) => {
+                const existingIndex = userCart.findIndex(
+                  (uItem) => uItem.cartId === gItem.cartId,
+                );
+                if (existingIndex > -1) {
+                  userCart[existingIndex].quantity =
+                    (userCart[existingIndex].quantity || 1) +
+                    (gItem.quantity || 1);
+                } else {
+                  userCart.push(gItem);
+                }
+              });
+
+              localStorage.setItem(userCartKey, JSON.stringify(userCart));
+            }
+            localStorage.removeItem("guest_cart");
+          } catch (e) {
+            console.error("Error merging guest cart:", e);
+          }
+        }
+
         toast.success("Welcome back, " + data.user.name);
 
         // Role-based Redirection

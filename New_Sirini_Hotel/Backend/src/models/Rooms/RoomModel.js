@@ -15,6 +15,10 @@ const RoomSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    shortStayPrice: {
+      type: Number,
+      default: 1500,
+    },
     bedType: {
       type: String,
       required: true,

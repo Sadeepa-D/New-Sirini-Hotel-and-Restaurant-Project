@@ -33,6 +33,9 @@ export default function Restaurant() {
         const user = JSON.parse(userData);
         const savedCart = localStorage.getItem(`cart_items_${user._id}`);
         return savedCart ? JSON.parse(savedCart) : [];
+      } else {
+        const savedGuestCart = localStorage.getItem("guest_cart");
+        return savedGuestCart ? JSON.parse(savedGuestCart) : [];
       }
     } catch (error) {
       console.error("Error loading cart from localStorage:", error);
@@ -81,6 +84,8 @@ export default function Restaurant() {
       if (userData) {
         const user = JSON.parse(userData);
         localStorage.setItem(`cart_items_${user._id}`, JSON.stringify(cartItems));
+      } else {
+        localStorage.setItem("guest_cart", JSON.stringify(cartItems));
       }
     } catch (error) {
       console.error("Error saving cart to localStorage:", error);
@@ -151,11 +156,7 @@ export default function Restaurant() {
   };
 
   const handleAddToCart = (item) => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      toast.error("You should log in first");
-      return;
-    }
+
 
     if (!item.has_portions) {
       // Case 1: Food item has NO portion
@@ -218,6 +219,13 @@ export default function Restaurant() {
       toast.error("Your cart is empty!");
       return;
     }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("You should log in first to proceed to checkout.");
+      return;
+    }
+
     // Update cartItems with the modified items from CartComp
     setCartItems(updatedItems);
     setShowCart(false);

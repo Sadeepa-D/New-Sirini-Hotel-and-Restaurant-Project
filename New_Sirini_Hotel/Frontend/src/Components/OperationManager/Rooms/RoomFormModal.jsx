@@ -7,20 +7,21 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
       roomNumber: "",
       roomType: "Single",
       price: "",
+      shortStayPrice: "1500",
       bedType: "Single Bed",
-      capacity: "1", 
+      capacity: "1",
       description: "",
       condition: "Fan",
       status: "available",
     },
   );
   const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(initialData?.image || null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     let updatedForm = { ...form, [name]: value };
 
-    
     if (name === "roomType") {
       switch (value) {
         case "Single":
@@ -42,12 +43,24 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
   };
 
   const handleFileChange = (e) => {
-    setImageFile(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = () => {
-   
-    if (!form.roomNumber || !form.price || !form.capacity) {
+    if (
+      !form.roomNumber ||
+      !form.price ||
+      !form.capacity ||
+      !form.shortStayPrice
+    ) {
       alert("Please fill in all required fields.");
       return;
     }
@@ -92,23 +105,34 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
         </div>
 
         <div className="px-4 sm:px-6 py-4 sm:py-5 space-y-3 sm:space-y-4">
-          {/* Image Upload */}
+          {/* Image Upload with Preview */}
           <div>
-            <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
+            <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 block">
               Room Image *
             </label>
-            <div className="relative border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-yellow-400 transition cursor-pointer">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="absolute inset-0 opacity-0 cursor-pointer"
-              />
-              <div className="flex flex-col items-center gap-1">
-                <Upload size={20} className="text-gray-400" />
-                <p className="text-[10px] sm:text-xs text-gray-500">
-                  {imageFile ? imageFile.name : "Click to upload room image"}
-                </p>
+            <div className="flex flex-row gap-4 items-center">
+              {imagePreview && (
+                <div className="w-32 h-32 shrink-0 relative rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <div className="flex-1 h-32 relative border-2 border-dashed border-gray-200 rounded-xl p-4 flex items-center justify-center text-center hover:border-yellow-400 hover:bg-yellow-50/50 transition cursor-pointer">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                />
+                <div className="flex flex-col items-center gap-2">
+                  <Upload size={24} className="text-gray-400" />
+                  <p className="text-[10px] sm:text-xs text-gray-500 max-w-[150px] truncate px-2">
+                    {imageFile ? imageFile.name : "Click to upload room image"}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -145,33 +169,48 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
             </div>
           </div>
 
-          {/* Price & Capacity Row */}
+          {/* Price & Mid Day Stay Price Row */}
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
-                Price (Rs.) *
+                Overnight Price (Rs.) *
               </label>
               <input
                 name="price"
                 type="number"
                 value={form.price}
                 onChange={handleChange}
-                placeholder="5000"
+                placeholder="3000"
                 className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
               />
             </div>
             <div>
               <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
-                Capacity (Auto)
+                Mid Day Stay Price (Rs.) *
               </label>
               <input
-                name="capacity"
+                name="shortStayPrice"
                 type="number"
-                value={form.capacity}
-                readOnly 
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm bg-gray-50 text-gray-500 outline-none"
+                value={form.shortStayPrice}
+                onChange={handleChange}
+                placeholder="1500"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
               />
             </div>
+          </div>
+
+          {/* Capacity */}
+          <div>
+            <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
+              Capacity (Auto)
+            </label>
+            <input
+              name="capacity"
+              type="number"
+              value={form.capacity}
+              readOnly
+              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm bg-gray-50 text-gray-500 outline-none"
+            />
           </div>
 
           {/* Condition & Bed Type */}

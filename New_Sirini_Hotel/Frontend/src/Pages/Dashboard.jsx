@@ -21,6 +21,14 @@ const UserDashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("profile");
 
+  const tabs = [
+    { id: "profile", label: "Profile Details", icon: User },
+    { id: "rooms", label: "Room Bookings", icon: Bed },
+    { id: "restaurant", label: "Restaurant Orders", icon: UtensilsCrossed },
+    { id: "appointments", label: "Appointments", icon: CalendarDays },
+    { id: "ads", label: "Advertisements", icon: Megaphone },
+  ];
+
   const handlelogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
@@ -39,10 +47,10 @@ const UserDashboard = () => {
             <ArrowLeft size={20} />
           </button>
           <div>
-            <h1 className="text-white text-lg font-bold tracking-wide leading-none">
+            <h1 className="text-white text-base sm:text-lg font-bold tracking-wide leading-none">
               My Account
             </h1>
-            <p className="text-gray-500 text-xs italic mt-0.5">
+            <p className="text-gray-500 text-[10px] sm:text-xs italic mt-1 hidden sm:block">
               Manage your bookings, orders, and profile details.
             </p>
           </div>
@@ -58,51 +66,67 @@ const UserDashboard = () => {
 
       {/* ── Body ── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="flex flex-col lg:flex-row gap-6">
+        {/* Mobile Dropdown Navigation */}
+        <div className="lg:hidden mb-6">
+          <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">
+            Navigate Section
+          </label>
+          <div className="relative">
+            <select
+              value={activeTab}
+              onChange={(e) => setActiveTab(e.target.value)}
+              className="w-full bg-neutral-900 border border-white/10 rounded-xl px-4 py-3 text-amber-400 font-sans font-semibold appearance-none outline-none focus:ring-2 focus:ring-amber-500/50 transition-all"
+            >
+              {tabs.map((tab) => (
+                <option key={tab.id} value={tab.id}>
+                  {tab.label}
+                </option>
+              ))}
+            </select>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+              <svg
+                width="12"
+                height="8"
+                viewBox="0 0 12 8"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1 1L6 6L11 1"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
 
-          {/* ── Sidebar Navigation ── */}
-          <div className="w-full lg:w-64 shrink-0">
-            <div className="bg-neutral-900 border border-white/8 rounded-2xl p-2 flex lg:flex-col overflow-x-auto lg:overflow-visible overflow-y-hidden hide-scrollbar gap-1">
-              <NavButton
-                icon={User}
-                label="Profile Details"
-                isActive={activeTab === "profile"}
-                onClick={() => setActiveTab("profile")}
-              />
-              <NavButton
-                icon={Bed}
-                label="Room Bookings"
-                isActive={activeTab === "rooms"}
-                onClick={() => setActiveTab("rooms")}
-              />
-              <NavButton
-                icon={UtensilsCrossed}
-                label="Restaurant"
-                isActive={activeTab === "restaurant"}
-                onClick={() => setActiveTab("restaurant")}
-              />
-              <NavButton
-                icon={CalendarDays}
-                label="Appointments"
-                isActive={activeTab === "appointments"}
-                onClick={() => setActiveTab("appointments")}
-              />
-              <NavButton
-                icon={Megaphone}
-                label="Advertisements"
-                isActive={activeTab === "ads"}
-                onClick={() => setActiveTab("ads")}
-              />
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* ── Sidebar Navigation (Desktop) ── */}
+          <div className="hidden lg:block w-64 shrink-0">
+            <div className="bg-neutral-900 border border-white/8 rounded-2xl p-2 flex flex-col gap-1 sticky top-28">
+              {tabs.map((tab) => (
+                <NavButton
+                  key={tab.id}
+                  icon={tab.icon}
+                  label={tab.label}
+                  isActive={activeTab === tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                />
+              ))}
             </div>
           </div>
 
           {/* ── Main Content Area ── */}
-          <div className="flex-1 min-w-0 bg-white border border-gray-100 rounded-2xl shadow-sm p-5 sm:p-8 min-h-[600px]">
-            {activeTab === "profile" && <ProfileSection />}
-            {activeTab === "rooms" && <RoomsSection />}
-            {activeTab === "restaurant" && <RestrauntSection />}
-            {activeTab === "appointments" && <AppointmentsSection />}
-            {activeTab === "ads" && <AdsSection />}
+          <div className="flex-1 min-w-0 bg-white border border-gray-100 rounded-3xl shadow-sm p-4 sm:p-6 lg:p-8 min-h-[500px] sm:min-h-[600px]">
+            <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+              {activeTab === "profile" && <ProfileSection />}
+              {activeTab === "rooms" && <RoomsSection />}
+              {activeTab === "restaurant" && <RestrauntSection />}
+              {activeTab === "appointments" && <AppointmentsSection />}
+              {activeTab === "ads" && <AdsSection />}
+            </div>
           </div>
         </div>
       </div>
