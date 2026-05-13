@@ -243,14 +243,8 @@ const RestaurantSection = ({ data }) => {
                         : "bg-white border-gray-100 hover:shadow-xl hover:border-amber-200/50"
                     }`}
                   >
-                    {/* Overdue Badge */}
-                    {order.status === "Overdue" && (
-                      <div className="absolute top-4 right-4 z-10">
-                        <span className="bg-orange-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg shadow-orange-500/20 uppercase tracking-wider animate-pulse">
-                          Overdue
-                        </span>
-                      </div>
-                    )}
+        
+                  
                     {/* Card Header */}
                     <div className="flex items-start mb-4">
                       <div className="flex items-center gap-3">
