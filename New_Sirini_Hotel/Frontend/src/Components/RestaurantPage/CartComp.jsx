@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { X, Trash2, Plus, Minus } from "lucide-react";
-import LoginMessage from "../LoginMessage";
+import toast from "react-hot-toast";
+
 
 const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const isLoggedIn= !!localStorage.getItem("token");
+  const isLoggedIn = !!localStorage.getItem("token");
 
   const handleQuantity = (cartId, delta) => {
     setCartItems((prev) =>
@@ -351,7 +351,9 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
 
               <button
                 onClick={() =>
-                  !isLoggedIn ? setShowLoginModal(true) : onCheckout(cartItems)
+                  !isLoggedIn
+                    ? toast.error("You should log in first to proceed to checkout.")
+                    : onCheckout(cartItems)
                 }
                 className="flex-1 py-3 bg-linear-to-r from-amber-500 to-amber-600 text-white rounded-xl hover:from-amber-600 hover:to-amber-700 transition-all font-bold text-sm md:text-base shadow-lg hover:shadow-xl"
               >
@@ -372,12 +374,7 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
           </div>
         )}
       </div>
-      {showLoginModal && (
-        <LoginMessage
-          isOpen={showLoginModal}
-          onClose={() => setShowLoginModal(false)}
-        />
-      )}
+
     </div>
   );
 };
