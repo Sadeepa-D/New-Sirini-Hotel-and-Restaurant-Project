@@ -188,6 +188,15 @@ const RoomsSection = () => {
                       <p className="text-xl font-black text-gray-900 leading-none">
                         {room.roomNumber}
                       </p>
+                      {room.timeSlot && (
+                        <span className={`inline-block mt-1.5 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-md ${
+                          room.timeSlot === "day" 
+                            ? "bg-blue-50 text-blue-500 border border-blue-100" 
+                            : "bg-purple-50 text-purple-500 border border-purple-100"
+                        }`}>
+                          {room.timeSlot === "day" ? "Mid Day Stay" : "Overnight Stay"}
+                        </span>
+                      )}
                     </div>
                   </div>
                   <StatusBadge status={room.status} />
@@ -216,9 +225,10 @@ const RoomsSection = () => {
                         Check Out
                       </p>
                       <p className="text-xs font-bold text-gray-800">
-                        {new Date(room.checkOutDate).toLocaleDateString(
-                          "en-GB",
-                        )}
+                         {room.timeSlot === "day" 
+                          ? new Date(room.checkInDate).toLocaleDateString("en-GB")
+                          : new Date(room.checkOutDate).toLocaleDateString("en-GB")
+                        }
                       </p>
                     </div>
                     <CalendarDays

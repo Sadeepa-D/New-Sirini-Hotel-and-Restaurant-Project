@@ -13,10 +13,11 @@ import toast from "react-hot-toast";
 
 const GalleryManagementHub = ({ onClose }) => {
   const [activeCategory, setActiveCategory] = useState("Reception");
-  const [previewImage, setPreviewImage] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewImages, setPreviewImages] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [galleryImages, setGalleryImages] = useState([]);
+  const [isDragging, setIsDragging] = useState(false);
   const VITE_URL = import.meta.env.VITE_API_URL;
 
   const fetchGalleryImages = async () => {
@@ -34,14 +35,36 @@ const GalleryManagementHub = ({ onClose }) => {
 
   const categories = ["Reception", "Rooms", "Restaurant"];
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setSelectedFile(file);
-      setPreviewImage(URL.createObjectURL(file));
+  // const handleFileChange = (e) => {};
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleFiles = (files) => {
+    const validFiles = files.filter((file) => file.type.startsWith("image/"));
+    if (validFiles.length > 0) {
+      setSelectedFiles((prev) => [...prev, ...validFiles]);
+      const newPreviews = validFiles.map((file) => URL.createObjectURL(file));
+      setPreviewImages((prev) => [...prev, ...newPreviews]);
     }
   };
 
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const files = Array.from(e.dataTransfer.files);
+      handleFiles(files);
+      e.dataTransfer.clearData();
+    }
+  };
   const handleDelete = async (id) => {
     const loadingToast = toast.loading("Deleting image...");
     try {
@@ -58,15 +81,19 @@ const GalleryManagementHub = ({ onClose }) => {
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) {
-      toast.error("Please select an image to upload.");
+    if (selectedFiles.length === 0) {
+      toast.error("Please select At least one image to upload.");
       return;
     }
     setUploading(true);
-    const loadingToast = toast.loading("Publishing to gallery...");
+    const loadingToast = toast.loading(
+      `Publishing ${selectedFiles.length} images...`,
+    );
     try {
       const formData = new FormData();
-      formData.append("image", selectedFile);
+      selectedFiles.forEach((file) => {
+        formData.append("images", file);
+      });
       formData.append("category", activeCategory);
       const response = await axios.post(
         `${VITE_URL}/api/gallery/add`,
@@ -79,8 +106,8 @@ const GalleryManagementHub = ({ onClose }) => {
       );
       toast.dismiss(loadingToast);
       toast.success("Image added to gallery!");
-      setPreviewImage(null);
-      setSelectedFile(null);
+      setPreviewImages([]);
+      setSelectedFiles([]);
       fetchGalleryImages();
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -189,65 +216,94 @@ const GalleryManagementHub = ({ onClose }) => {
             {/* Upload Button/Input */}
             <div className="mb-6">
               <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">
-                Select File
+                Select or Drag Files
               </label>
-              <label className="flex items-center justify-center w-full h-14 bg-amber-50/50 border-2 border-dashed border-amber-200 text-amber-600 rounded-2xl cursor-pointer hover:bg-amber-100/50 hover:border-amber-400 transition-all duration-300 group">
-                <div className="flex items-center gap-3 align-middle">
-                  <div className="bg-amber-500 text-white p-1.5 rounded-lg group-hover:scale-110 transition-transform">
-                    <Plus size={18} strokeWidth={3} />
+              <label
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                className={`group relative flex flex-col h-32 w-full cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed transition-all duration-300 ${
+                  isDragging
+                    ? "border-amber-500 bg-amber-100 scale-[1.02] shadow-inner"
+                    : "border-amber-200 bg-amber-50/30 hover:border-amber-400 hover:bg-amber-50"
+                }`}
+              >
+                <div className="flex flex-col items-center gap-2">
+                  <div
+                    className={`flex items-center justify-center rounded-xl p-2 text-white shadow-lg transition-all duration-300 ${
+                      isDragging
+                        ? "bg-amber-600 scale-110 animate-bounce"
+                        : "bg-amber-500 shadow-amber-200"
+                    }`}
+                  >
+                    <Upload size={20} strokeWidth={3} />
                   </div>
-                  <span className="font-bold text-sm tracking-wide">
-                    Select Image
-                  </span>
+
+                  <div className="text-center">
+                    <span className="text-sm font-black tracking-wide text-amber-900 block">
+                      {isDragging ? "Drop to Upload" : "Select Images"}
+                    </span>
+                    <span className="text-[9px] text-amber-600/70 font-bold uppercase tracking-tight">
+                      or drag and drop here
+                    </span>
+                  </div>
                 </div>
+
                 <input
                   type="file"
+                  multiple
                   className="hidden"
-                  onChange={handleFileChange}
+                  onChange={(e) => handleFiles(Array.from(e.target.files))}
                   accept="image/*"
                 />
               </label>
             </div>
 
             {/* Preview Box (Bottom right in sketch) */}
-            <div className="flex-1 flex flex-col">
-              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">
-                Preview
-              </label>
-              <div className="flex-1 min-h-[180px] bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200 overflow-hidden flex items-center justify-center relative group">
-                {previewImage ? (
-                  <>
-                    <img
-                      src={previewImage}
-                      alt="Preview"
-                      className="w-full h-full object-cover"
-                    />
-                    <button
-                      onClick={() => setPreviewImage(null)}
-                      className="absolute top-2 right-2 p-1.5 bg-black/50 text-white rounded-full hover:bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity"
+            <div className="flex-1 min-h-[180px] bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200 p-2 overflow-y-auto">
+              {previewImages.length > 0 ? (
+                <div className="grid grid-cols-2 gap-2">
+                  {previewImages.map((url, index) => (
+                    <div
+                      key={index}
+                      className="relative aspect-square rounded-lg overflow-hidden group"
                     >
-                      <X size={14} />
-                    </button>
-                  </>
-                ) : (
-                  <div className="text-center p-4">
-                    <ImageIcon
-                      size={40}
-                      className="text-gray-200 mx-auto mb-2"
-                    />
-                    <p className="text-[10px] text-gray-400 font-medium">
-                      No image selected
-                    </p>
-                  </div>
-                )}
-              </div>
+                      <img
+                        src={url}
+                        alt="Preview"
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        onClick={() => {
+                          setPreviewImages((prev) =>
+                            prev.filter((_, i) => i !== index),
+                          );
+                          setSelectedFiles((prev) =>
+                            prev.filter((_, i) => i !== index),
+                          );
+                        }}
+                        className="absolute top-1 right-1 p-1 bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-full text-center p-4">
+                  <ImageIcon size={40} className="text-gray-200 mb-2" />
+                  <p className="text-[10px] text-gray-400 font-medium">
+                    No images selected
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Submit Action */}
             <div className="pt-3">
               <button
                 onClick={handleUpload}
-                disabled={!previewImage || uploading}
+                disabled={!previewImages || uploading}
                 className="mt-auto w-full relative overflow-hidden bg-[#121826] hover:bg-[#1a2335] disabled:bg-gray-100 disabled:text-gray-400 text-white font-black py-4 sm:py-5 px-6 rounded-[1.25rem] transition-all duration-300 shadow-xl shadow-gray-200 uppercase tracking-[0.2em] text-[10px] sm:text-xs flex items-center justify-center gap-3 group active:scale-[0.98] disabled:active:scale-100"
               >
                 {/* Shine Effect Layer */}
