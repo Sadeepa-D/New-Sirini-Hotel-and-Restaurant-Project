@@ -5,6 +5,7 @@ import Room_1 from "../../assets/Rooms/Room_1.jpg";
 import Room_2 from "../../assets/Rooms/Room_2.jpg";
 import Room_3 from "../../assets/Rooms/Room_3.webp";
 import BookingForm from "../../Components/RoomCompo/BookingForm";
+import RoomPackageInfo from "../../Components/RoomCompo/RoomPackageInfo";
 import Exploreindicator from "../../Components/Exploreindicator";
 import Calander from "../../Components/Calander";
 import toast from "react-hot-toast";
@@ -75,10 +76,6 @@ function Rooms() {
   }, [VITE_URL]);
 
   const handleBookNow = (room) => {
-    if (!isLoggedIn) {
-      setShowLoginModal(true);
-      return;
-    }
     setSelectedRoom(room);
     setIsModalOpen(true);
     fetchBookedDates(room.roomNumber);
@@ -149,6 +146,7 @@ function Rooms() {
 
       {/* --- Main Content --- */}
       <main className="max-w-7xl mx-auto py-16 px-6">
+        <RoomPackageInfo />
         {loading ? (
           <div className="flex justify-center py-20">
             <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
@@ -175,10 +173,23 @@ function Rooms() {
                       Room {room.roomNumber}
                     </span>
                   </div>
-                  <div className="absolute bottom-4 left-4 z-10">
-                    <p className="text-white font-bold text-2xl drop-shadow-lg">
-                      Rs.{room.price.toLocaleString()}
-                    </p>
+                  <div className="absolute bottom-4 left-4 z-10 flex flex-col">
+                    <div className="flex items-baseline gap-1.5">
+                      <p className="text-white font-bold text-2xl drop-shadow-lg">
+                        Rs.{room.price.toLocaleString()}
+                      </p>
+                      <span className="text-white/90 text-xs font-medium italic drop-shadow-md">
+                        per night
+                      </span>
+                    </div>
+                    <div className="flex items-baseline gap-1.5 mt-0.5">
+                      <p className="text-white/90 font-semibold text-sm drop-shadow-lg">
+                        Rs.{(room.shortStayPrice || 1500).toLocaleString()}
+                      </p>
+                      <span className="text-white/80 text-[10px] font-medium italic drop-shadow-md">
+                        per 3 hours
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -264,6 +275,8 @@ function Rooms() {
             selectedRoom={selectedRoom}
             onClose={() => setIsModalOpen(false)}
             onConfirmed={handleBookingConfirmed}
+            isLoggedIn={isLoggedIn}
+            onRequireLogin={() => setShowLoginModal(true)}
           />
           <Calander BookedDates={bookedDates} />
         </>
