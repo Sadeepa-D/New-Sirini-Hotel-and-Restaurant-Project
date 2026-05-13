@@ -11,7 +11,7 @@ const PACKAGES = [
     timeRange: "12:00 PM – 3:00 PM",
     icon: "☀️",
     description: "3-hour daytime access. Cannot be booked on Full Day dates.",
-    priceMultiplier: 0.3,
+    basePrice: 1500,
   },
   {
     id: "fullday",
@@ -20,7 +20,7 @@ const PACKAGES = [
     icon: "🏨",
     description:
       "Check in at 4 PM, check out at 10 AM. Select your date range.",
-    priceMultiplier: 0.7,
+    basePrice: 3000,
   },
 ];
 
@@ -53,7 +53,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
     if (!bookingMode) return;
     const pkg = PACKAGES.find((p) => p.id === bookingMode);
     if (!pkg) return;
-    const basePrice = Math.round(selectedRoom.price * pkg.priceMultiplier);
+    const basePrice = pkg.basePrice;
     if (
       bookingMode === "fullday" &&
       formData.checkInDate &&
@@ -69,12 +69,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
     } else {
       setTotalPrice(basePrice);
     }
-  }, [
-    bookingMode,
-    formData.checkInDate,
-    formData.checkOutDate,
-    selectedRoom.price,
-  ]);
+  }, [bookingMode, formData.checkInDate, formData.checkOutDate]);
 
   // ----- Handlers -----
   const handleSelectMode = (mode) => {
@@ -156,7 +151,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
     );
 
   const selectedPkg = PACKAGES.find((p) => p.id === bookingMode);
-  const nightBasePrice = Math.round(selectedRoom.price * 0.7);
+  const nightBasePrice = selectedPkg?.basePrice || 0;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -211,9 +206,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed }) {
                   </p>
                   <p className="text-[10px] font-black text-gray-800 mt-1.5">
                     Rs.
-                    {Math.round(
-                      selectedRoom.price * pkg.priceMultiplier,
-                    ).toLocaleString()}
+                    {pkg.basePrice.toLocaleString()}
                     {pkg.id === "fullday" && " / day"}
                   </p>
                 </div>
