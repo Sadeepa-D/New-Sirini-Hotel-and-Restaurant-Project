@@ -191,7 +191,7 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
                             ? "bg-blue-50 text-blue-500 border border-blue-100" 
                             : "bg-purple-50 text-purple-500 border border-purple-100"
                         }`}>
-                          {req.timeSlot === "day" ? "Short Stay" : "Overnight Stay"}
+                          {req.timeSlot === "day" ? "Mid Day Stay" : "Overnight Stay"}
                         </span>
                       )}
                     <span className="font-mono font-bold text-black text-lg">{req.roomNumber}</span>

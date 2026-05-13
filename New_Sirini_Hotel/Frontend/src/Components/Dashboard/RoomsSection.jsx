@@ -194,7 +194,7 @@ const RoomsSection = () => {
                             ? "bg-blue-50 text-blue-500 border border-blue-100" 
                             : "bg-purple-50 text-purple-500 border border-purple-100"
                         }`}>
-                          {room.timeSlot === "day" ? "Short Stay" : "Overnight Stay"}
+                          {room.timeSlot === "day" ? "Mid Day Stay" : "Overnight Stay"}
                         </span>
                       )}
                     </div>

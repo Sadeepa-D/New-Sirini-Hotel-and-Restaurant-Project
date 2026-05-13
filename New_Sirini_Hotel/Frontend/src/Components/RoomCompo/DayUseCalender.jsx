@@ -243,7 +243,9 @@ const DayUseCalender = ({
                   ? "Not available on this date"
                   : status === "span-blocked"
                     ? "Cannot span across a blocked date"
-                    : undefined
+                    : status === "has-fullday-edge"
+                      ? "Room is booked for the night, but still available for a Mid Day Stay."
+                      : undefined
               }
               className={`group relative aspect-square rounded-[10px] text-[10px] font-bold transition-all duration-300 flex items-center justify-center border overflow-hidden outline-none focus:ring-2 focus:ring-orange-500/20 focus:ring-offset-1 ${
                 status === "past"
@@ -308,10 +310,13 @@ const DayUseCalender = ({
           </>
         )}
         {!isFullDay && (
-          <div className="flex items-center gap-1">
+          <div 
+            className="flex items-center gap-1 cursor-help"
+            title="An Overnight Stay starts or ends on this date, but it is still available for a Mid Day Stay."
+          >
             <div className="w-1.5 h-1.5 rounded-full bg-purple-400" />
             <span className="text-[7px] font-bold text-gray-400 uppercase tracking-widest">
-              Check-in/out
+              Night Booked (Day Free)
             </span>
           </div>
         )}

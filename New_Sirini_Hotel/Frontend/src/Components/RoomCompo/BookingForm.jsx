@@ -7,7 +7,7 @@ import DayUseCalender from "./DayUseCalender";
 const PACKAGES = [
   {
     id: "day",
-    label: "Short Stay",
+    label: "Mid Day Stay",
     timeRange: "12:00 PM – 3:00 PM",
     icon: "☀️",
     description: "3-hour daytime access. Cannot be booked on Full Day dates.",
