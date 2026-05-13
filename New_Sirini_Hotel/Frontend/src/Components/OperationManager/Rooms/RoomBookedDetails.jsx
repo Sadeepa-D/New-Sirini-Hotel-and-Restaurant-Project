@@ -184,7 +184,18 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
                 <div className="bg-gray-50 rounded-2xl p-4 space-y-3 mb-6">
                   <div className="flex justify-between items-center">
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Room Number</span>
+                    <div className="flex items-center gap-2">
+                      {req.timeSlot && (
+                        <span className={`px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-md ${
+                          req.timeSlot === "day" 
+                            ? "bg-blue-50 text-blue-500 border border-blue-100" 
+                            : "bg-purple-50 text-purple-500 border border-purple-100"
+                        }`}>
+                          {req.timeSlot === "day" ? "Short Stay" : "Overnight Stay"}
+                        </span>
+                      )}
                     <span className="font-mono font-bold text-black text-lg">{req.roomNumber}</span>
+                    </div>
                   </div>
                   <div className="flex justify-between items-center pt-2 border-t border-gray-200/50">
                     <div className="space-y-1">
@@ -193,7 +204,12 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
                     </div>
                     <div className="text-right space-y-1">
                       <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Out</p>
-                      <p className="text-xs font-bold text-gray-700">{new Date(req.checkOutDate).toLocaleDateString()}</p>
+                       <p className="text-xs font-bold text-gray-700">
+                        {req.timeSlot === "day" 
+                          ? new Date(req.checkInDate).toLocaleDateString()
+                          : new Date(req.checkOutDate).toLocaleDateString()
+                        }
+                      </p>
                     </div>
                   </div>
                 </div>
