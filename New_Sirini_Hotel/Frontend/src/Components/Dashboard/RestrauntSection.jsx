@@ -12,6 +12,8 @@ import {
   BadgeDollarSign,
   Pencil,
   Trash2,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import EditOrderForm from "../RestaurantPage/EditOrderForm";
 
@@ -29,6 +31,8 @@ const RestaurantSection = ({ data }) => {
   });
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [index, setIndex] = useState(0);
+  const [itemsPerView, setItemsPerView] = useState(3);
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -58,6 +62,20 @@ const RestaurantSection = ({ data }) => {
 
   useEffect(() => {
     fetchOrders();
+  }, []);
+
+  useEffect(() => {
+    setIndex(0);
+  }, [activeTab]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const w = window.innerWidth;
+      setItemsPerView(w < 640 ? 1 : w < 1024 ? 2 : 3);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const handleDelete = (order) => {
@@ -186,78 +204,141 @@ const RestaurantSection = ({ data }) => {
           <p className="text-gray-400 text-sm font-medium mt-1">No items found in the {activeTab.toLowerCase()} section</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredOrders.map((order) => (
-            <div
-              key={order._id}
-              className={`p-5 rounded-[1.75rem] shadow-sm border transition-all duration-300 flex flex-col h-full group ${order.status === "delete"
-                ? "bg-red-50/30 border-red-100 hover:border-red-200"
-                : order.status === "Overdue"
-                  ? "bg-orange-50/30 border-orange-100 hover:border-orange-200"
-                  : "bg-white border-gray-100 hover:shadow-xl hover:border-amber-200/50"
-                }`}
+        <div className="relative group/nav">
+          {/* Left Arrow */}
+          {index > 0 && (
+            <button
+              onClick={() => setIndex(Math.max(0, index - 1))}
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 border border-gray-100 group-hover/nav:scale-110"
             >
-              {/* Overdue Badge */}
-              {order.status === "Overdue" && (
-                <div className="absolute top-4 right-4 z-10">
-                  <span className="bg-orange-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg shadow-orange-500/20 uppercase tracking-wider animate-pulse">
-                    Overdue
-                  </span>
-                </div>
-              )}
-              {/* Card Header */}
-              <div className="flex items-start mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex flex-col">
-                    <h5 className="font-bold text-gray-900 text-[12px] leading-snug">{order.foodName}</h5>
-                    <span className="text-[10px] font-mono font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded-md w-fit mt-1">
-                      #{order.orderCode}
-                    </span>
+              <ChevronLeft className="w-6 h-6 text-neutral-900" />
+            </button>
+          )}
+
+          <div className="overflow-hidden px-1 py-4">
+            <div
+              className="flex justify-start gap-6 transition-transform duration-[1200ms] ease-in-out"
+              style={{
+                transform: `translateX(calc(-${index * (100 / itemsPerView)}% - ${
+                  index * (24 / itemsPerView)
+                }px))`,
+              }}
+            >
+              {filteredOrders.map((order) => (
+                <div
+                  key={order._id}
+                  className="flex-shrink-0"
+                  style={{
+                    width: `calc(${100 / itemsPerView}% - ${
+                      ((itemsPerView - 1) * 24) / itemsPerView
+                    }px)`,
+                  }}
+                >
+                  <div
+                    className={`p-5 rounded-[1.75rem] shadow-sm border transition-all duration-300 flex flex-col h-full group ${
+                      order.status === "delete"
+                        ? "bg-red-50/30 border-red-100 hover:border-red-200"
+                        : order.status === "Overdue"
+                        ? "bg-orange-50/30 border-orange-100 hover:border-orange-200"
+                        : "bg-white border-gray-100 hover:shadow-xl hover:border-amber-200/50"
+                    }`}
+                  >
+                    {/* Overdue Badge */}
+                    {order.status === "Overdue" && (
+                      <div className="absolute top-4 right-4 z-10">
+                        <span className="bg-orange-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg shadow-orange-500/20 uppercase tracking-wider animate-pulse">
+                          Overdue
+                        </span>
+                      </div>
+                    )}
+                    {/* Card Header */}
+                    <div className="flex items-start mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex flex-col">
+                          <h5 className="font-bold text-gray-900 text-[12px] leading-snug">
+                            {order.foodName}
+                          </h5>
+                          <span className="text-[10px] font-mono font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded-md w-fit mt-1">
+                            #{order.orderCode}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Order Details */}
+                    <div className="flex-1 space-y-2.5 px-1">
+                      <div className="flex justify-between items-center pb-2 border-b border-gray-50">
+                        <span className="text-[13px] text-gray-500 font-medium">
+                          Pickup Date
+                        </span>
+                        <span className="text-[13px] font-semibold text-gray-800">
+                          {new Date(order.pickupDate).toLocaleDateString(
+                            "en-GB",
+                            { day: "2-digit", month: "short", year: "numeric" },
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center pb-2 border-b border-gray-50">
+                        <span className="text-[13px] text-gray-500 font-medium">
+                          Pickup Time
+                        </span>
+                        <span className="text-[13px] font-semibold text-gray-800">
+                          {order.pickupTime}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center pb-2 border-b border-gray-50">
+                        <span className="text-[13px] text-gray-500 font-medium">
+                          Quantity
+                        </span>
+                        <span className="text-[13px] font-bold text-gray-900">
+                          {order.quantity}{" "}
+                          <span className="text-gray-400 font-medium text-[11px]">
+                            items
+                          </span>
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center pt-1">
+                        <span className="text-[13px] text-gray-500 font-medium">
+                          Total Price
+                        </span>
+                        <span className="text-[15px] font-bold text-amber-600 font-sans">
+                          Rs. {order.Price?.toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    {order.status === "Pending" && (
+                      <div className="flex gap-3 mt-6">
+                        <button
+                          onClick={() => handleEdit(order)}
+                          className="flex-1 py-1.5 bg-gradient-to-r from-blue-900 to-blue-500 text-white rounded-full font-bold text-[10px] tracking-widest hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 uppercase"
+                        >
+                          <Pencil size={14} strokeWidth={2.5} /> Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(order)}
+                          className="flex-1 py-1.5 bg-white text-red-700 border border-red-100 rounded-full font-bold text-[10px] tracking-widest hover:bg-red-50 hover:shadow-lg hover:shadow-red-500/10 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 uppercase"
+                        >
+                          <Trash2 size={14} strokeWidth={2.5} /> Delete
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-
-              {/* Order Details */}
-              <div className="flex-1 space-y-2.5 px-1">
-                <div className="flex justify-between items-center pb-2 border-b border-gray-50">
-                  <span className="text-[13px] text-gray-500 font-medium">Pickup Date</span>
-                  <span className="text-[13px] font-semibold text-gray-800">
-                    {new Date(order.pickupDate).toLocaleDateString("en-GB", { day: '2-digit', month: 'short', year: 'numeric' })}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center pb-2 border-b border-gray-50">
-                  <span className="text-[13px] text-gray-500 font-medium">Pickup Time</span>
-                  <span className="text-[13px] font-semibold text-gray-800">{order.pickupTime}</span>
-                </div>
-                <div className="flex justify-between items-center pb-2 border-b border-gray-50">
-                  <span className="text-[13px] text-gray-500 font-medium">Quantity</span>
-                  <span className="text-[13px] font-bold text-gray-900">{order.quantity} <span className="text-gray-400 font-medium text-[11px]">items</span></span>
-                </div>
-                <div className="flex justify-between items-center pt-1">
-                  <span className="text-[13px] text-gray-500 font-medium">Total Price</span>
-                  <span className="text-[15px] font-bold text-amber-600 font-sans">Rs. {order.Price?.toLocaleString()}</span>
-                </div>
-              </div>
-
-              {/* Actions */}
-              {order.status === "Pending" && (
-                <div className="flex gap-3 mt-6">
-                    <button
-                      onClick={() => handleEdit(order)}
-                      className="flex-1 py-1.5 bg-gradient-to-r from-blue-900 to-blue-500 text-white rounded-full font-bold text-[10px] tracking-widest hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 uppercase"
-                    >
-                      <Pencil size={14} strokeWidth={2.5} /> Edit
-                    </button>
-                  <button
-                    onClick={() => handleDelete(order)}
-                    className="flex-1 py-1.5 bg-white text-red-700 border border-red-100 rounded-full font-bold text-[10px] tracking-widest hover:bg-red-50 hover:shadow-lg hover:shadow-red-500/10 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 uppercase"
-                  >
-                    <Trash2 size={14} strokeWidth={2.5} /> Delete
-                  </button>
-                </div>
-              )}
+              ))}
             </div>
-          ))}
+          </div>
+
+          {/* Right Arrow */}
+          {index < filteredOrders.length - itemsPerView && (
+            <button
+              onClick={() => setIndex(Math.min(filteredOrders.length - itemsPerView, index + 1))}
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 border border-gray-100 group-hover/nav:scale-110"
+            >
+              <ChevronRight className="w-6 h-6 text-neutral-900" />
+            </button>
+          )}
         </div>
       )}
 
