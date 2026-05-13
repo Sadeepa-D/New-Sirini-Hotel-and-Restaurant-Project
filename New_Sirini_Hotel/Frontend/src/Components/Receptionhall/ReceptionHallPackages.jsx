@@ -100,8 +100,7 @@ export default function ReceptionHallPackages() {
               Book for **100+ guests** and get the **Reception Hall for FREE!**{" "}
               <br />
               <span className="italic text-[10px]">
-                *Less than 100 guests will incur a Rs. 2,000 hall fee per
-                person.*
+                *Less than 100 guests, they charge Rs. 8,000 for Hall.*
               </span>
             </p>
           </div>
@@ -282,5 +281,5 @@ export default function ReceptionHallPackages() {
       )}
     </section>
   );
-  
+
 }
