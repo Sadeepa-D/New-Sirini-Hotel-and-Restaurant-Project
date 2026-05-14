@@ -36,7 +36,6 @@ const createRoom = async (req, res) => {
       bedType,
       capacity,
       image,
-
       status: status || "available",
       description,
       condition: condition || "Fan",

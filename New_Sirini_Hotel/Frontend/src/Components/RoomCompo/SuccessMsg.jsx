@@ -16,12 +16,12 @@ function BookingSuccess({ selectedRoom, onClose, totalPrice }) {
       className="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6 overflow-hidden"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      {/* Heavy Blur Overlay */}
+      
       <div className="absolute inset-0 bg-black/60 backdrop-blur-xl animate-in fade-in duration-500" />
 
-      {/* Main Success Container */}
+      
       <div className="relative w-full max-w-sm bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in slide-in-from-bottom-8 duration-500">
-        {/* Top Decorative Header */}
+        
         <div className="relative h-24 flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-orange-500/20 to-transparent" />
           <div className="absolute -top-20 -left-20 w-40 h-40 bg-orange-500/10 rounded-full blur-3xl" />
@@ -59,7 +59,7 @@ function BookingSuccess({ selectedRoom, onClose, totalPrice }) {
             </p>
           </div>
 
-          {/* Luxury Room Card */}
+          {/*Room Card */}
           <div className="bg-white/[0.03] border border-white/5 rounded-2xl p-3.5 mb-4 group hover:border-orange-500/20 transition-all duration-500">
             <div className="flex items-center gap-3 text-left">
               <div className="relative w-14 h-14 rounded-xl overflow-hidden border border-white/10 shrink-0">
@@ -96,7 +96,7 @@ function BookingSuccess({ selectedRoom, onClose, totalPrice }) {
             </div>
           </div>
 
-          {/* Admin Review Note */}
+          
           <div className="bg-orange-500/5 border border-orange-500/10 rounded-xl p-3 mb-4 flex gap-3 items-start text-left">
             <div className="p-1.5 bg-orange-500/10 rounded-lg shrink-0">
               <Bell size={14} className="text-orange-500 animate-pulse" />
@@ -112,7 +112,7 @@ function BookingSuccess({ selectedRoom, onClose, totalPrice }) {
             </div>
           </div>
 
-          {/* Final Button */}
+          
           <button
             onClick={onClose}
             className="group relative w-auto mx-auto bg-orange-500 hover:bg-orange-400 text-black py-2 px-6 rounded-xl font-black text-[8px] uppercase tracking-[0.2em] transition-all active:scale-95 shadow-lg shadow-orange-500/20 flex items-center justify-center gap-1"

@@ -40,10 +40,10 @@ const GuestDetail = ({
 
   return (
     <div className="relative w-full max-w-[350px] sm:max-w-[380px] bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-6 sm:p-8 border border-gray-100 animate-in slide-in-from-right-8 duration-500 overflow-hidden mx-auto">
-      {/* Decorative Glow */}
+      
       <div className="absolute -top-12 -right-12 w-32 h-32 bg-orange-50 rounded-full blur-3xl opacity-60" />
 
-      {/* Action Buttons Row */}
+      
       <div className="flex justify-between items-center mb-3 relative z-10">
         <button
           onClick={onBack}
@@ -62,7 +62,7 @@ const GuestDetail = ({
         </button>
       </div>
 
-      {/* Compact Header */}
+     
       <div className="mb-3 relative">
         <div className="flex items-center gap-1.5 mb-1">
           <Sparkles size={10} className="text-orange-400" />
@@ -95,7 +95,7 @@ const GuestDetail = ({
             />
           </div>
 
-          {/* Email & Phone Row (Compact) */}
+          {/* Email & Phone*/}
           <div className="grid grid-cols-1 gap-3">
             <div className="relative group">
               <Mail
@@ -157,7 +157,7 @@ const GuestDetail = ({
           </div>
         </div>
 
-        {/* Summary Card - Modern Glass Look */}
+        {/* Summary Card */}
         <div className="bg-gray-900 rounded-[1.5rem] p-4 text-center relative overflow-hidden group">
           {selectedPkg && (
             <div className="mb-3 border-b border-white/5 pb-3">

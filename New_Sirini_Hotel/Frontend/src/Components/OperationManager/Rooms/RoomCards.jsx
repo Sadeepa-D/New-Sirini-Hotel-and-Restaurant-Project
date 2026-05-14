@@ -18,14 +18,14 @@ const RoomCards = ({ rooms, onEdit, onDelete }) => {
           <p className="text-gray-500 font-medium">No rooms in inventory</p>
         </div>
       ) : (
-        /* Increased column count to decrease individual card width */
+    
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
           {rooms.map((room) => (
             <div
               key={room._id}
               className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300 flex flex-col group"
             >
-              {/* 1. Decreased Image Height */}
+              
               <div className="relative h-40 w-full bg-gray-100 overflow-hidden">
                 {room.image ? (
                   <img
@@ -44,7 +44,7 @@ const RoomCards = ({ rooms, onEdit, onDelete }) => {
                 </div>
               </div>
 
-              {/* 2. Compact Content Area */}
+              
               <div className="p-4 flex-grow flex flex-col">
                 <div className="mb-3">
                   <span className="text-[9px] font-bold uppercase tracking-wider text-[#D4AF37] block">
@@ -58,7 +58,7 @@ const RoomCards = ({ rooms, onEdit, onDelete }) => {
                   </p>
                 </div>
 
-                {/* Compact Features Row */}
+                
                 <div className="flex gap-2 mb-3">
                   <div
                     className={`flex items-center gap-1.5 px-2 py-1 rounded-md border text-[10px] font-bold uppercase ${
@@ -81,12 +81,12 @@ const RoomCards = ({ rooms, onEdit, onDelete }) => {
                   </div>
                 </div>
 
-                {/* Shortened Description (Max 1 line) */}
+                {/* Description*/}
                 <p className="text-[11px] text-gray-400 line-clamp-1 italic mb-4">
                   {room.description || "No description provided."}
                 </p>
 
-                {/* 3. Small Action Buttons */}
+                {/*Small Action Buttons */}
                 <div className="flex gap-2 pt-3 border-t border-gray-50">
                   <button
                     onClick={() => onEdit(room)}

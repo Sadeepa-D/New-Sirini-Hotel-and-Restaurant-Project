@@ -13,7 +13,7 @@ const RoomOperation = () => {
   const [editingRoom, setEditingRoom] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  //this is the refresh tables after booking confirm or cancel
+  //refresh the tables after booking confirm or cancel
   const [refreshKey, setRefreshKey] = useState(0);
 
   const [activeTab, setActiveTab] = useState("manage");
@@ -28,8 +28,8 @@ const RoomOperation = () => {
   };
 
   const handleActionCompleted = () => {
-    fetchRooms(); // refresh Manage Rooms table
-    setRefreshKey((prev) => prev + 1); //send signal to Confirmed table
+    fetchRooms(); 
+    setRefreshKey((prev) => prev + 1); 
   };
 
   useEffect(() => {
@@ -129,9 +129,9 @@ const RoomOperation = () => {
         onDelete={handleDelete}
       />
 
-      {/* --- Booking Requests Section --- */}
+      
       <div className="mt-10 animate-in fade-in slide-in-from-left-4 duration-500">
-        {/* Confirmed Bookings Header  */}
+       
         <div className="mt-10 mb-4">
           <h2 className="text-lg font-bold text-gray-800 uppercase tracking-wider">
             Manage Booking Details
