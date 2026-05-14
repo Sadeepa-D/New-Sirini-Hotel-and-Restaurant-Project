@@ -7,6 +7,8 @@ import {
   Plus,
   CheckCircle2,
   AlertCircle,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -18,6 +20,8 @@ const GalleryManagementHub = ({ onClose }) => {
   const [uploading, setUploading] = useState(false);
   const [galleryImages, setGalleryImages] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const VITE_URL = import.meta.env.VITE_API_URL;
 
   const fetchGalleryImages = async () => {
@@ -118,59 +122,80 @@ const GalleryManagementHub = ({ onClose }) => {
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-2 sm:p-4 animate-in fade-in duration-200">
-      <div className="bg-white w-full max-w-6xl max-h-[90vh] overflow-hidden rounded-[2.5rem] shadow-2xl flex flex-col animate-in zoom-in-95 duration-300">
-        {/* Header */}
-        <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-white sticky top-0 z-10">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-              <ImageIcon className="text-amber-500" />
-              Media Management
-            </h2>
-            <p className="text-xs text-gray-500 font-medium mt-1">
-              Manage your hotel gallery and upload new event photos.
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full text-gray-400 transition-colors"
-          >
-            <X size={24} />
-          </button>
-        </div>
+  const filteredImages = galleryImages.filter(
+    (img) => img.category === activeCategory,
+  );
 
-        {/* Content Area */}
-        <div className="flex-1 overflow-hidden flex flex-col lg:flex-row bg-gray-50/50">
-          {/* LEFT: Image Gallery Section */}
-          <div className="flex-1 overflow-y-auto p-6 lg:border-r border-gray-200">
-            {/* Category Tabs (Top center in sketch) */}
-            <div className="flex justify-center mb-8">
-              <div className="bg-gray-100 p-1 rounded-2xl flex gap-1 border border-gray-200">
+  const openPreview = (index) => {
+    setSelectedImageIndex(index);
+    setIsPreviewOpen(true);
+  };
+
+  const closePreview = () => {
+    setIsPreviewOpen(false);
+  };
+
+  const goToPrevious = () => {
+    setSelectedImageIndex((prev) =>
+      prev === 0 ? filteredImages.length - 1 : prev - 1,
+    );
+  };
+
+  const goToNext = () => {
+    setSelectedImageIndex((prev) =>
+      prev === filteredImages.length - 1 ? 0 : prev + 1,
+    );
+  };
+
+  return (
+    <>
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-2 sm:p-4 animate-in fade-in duration-200 overflow-y-auto">
+        <div className="bg-white w-full max-w-6xl my-auto min-h-fit max-h-[85vh] overflow-hidden rounded-2xl sm:rounded-[2.5rem] shadow-2xl flex flex-col animate-in zoom-in-95 duration-300">
+          {/* Header */}
+          <div className="p-4 sm:p-6 border-b border-gray-100 flex items-center justify-between bg-white sticky top-0 z-10 shrink-0">
+            <div className="min-w-0">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-2">
+                <ImageIcon className="text-amber-500 shrink-0" />
+                <span className="truncate">Media Management</span>
+              </h2>
+              <p className="text-xs text-gray-500 font-medium mt-1">
+                Manage your hotel gallery and upload new event photos.
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-gray-100 rounded-full text-gray-400 transition-colors shrink-0"
+            >
+              <X size={24} />
+            </button>
+          </div>
+
+          {/* Content Area */}
+          <div className="flex-1 overflow-hidden flex flex-col lg:flex-row bg-gray-50/50">
+            {/* LEFT: Image Gallery Section */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:border-r border-gray-200 order-2 lg:order-1">
+              <div className="flex justify-center gap-2 sm:gap-4 mb-4 sm:mb-8 flex-wrap">
                 {categories.map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setActiveCategory(cat)}
-                    className={`px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${
+                    className={`px-4 sm:px-8 py-2 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-200 border-2 ${
                       activeCategory === cat
-                        ? "bg-white text-amber-600 shadow-sm"
-                        : "text-gray-400 hover:text-gray-600"
+                        ? "bg-amber-500 text-white border-amber-600 shadow-lg shadow-amber-200"
+                        : "bg-white text-gray-600 border-gray-200 hover:border-amber-300 hover:bg-amber-50"
                     }`}
                   >
                     {cat}
                   </button>
                 ))}
               </div>
-            </div>
 
-            {/* Images Grid (Delete btn on top left as per sketch) */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {galleryImages
-                .filter((img) => img.category === activeCategory)
-                .map((img) => (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
+                {filteredImages.map((img, idx) => (
                   <div
                     key={img._id}
-                    className="relative group aspect-square rounded-2xl overflow-hidden border border-gray-200 shadow-sm"
+                    className="relative group aspect-square rounded-lg sm:rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-all cursor-pointer"
+                    onClick={() => openPreview(idx)}
                   >
                     <img
                       src={img.image}
@@ -178,157 +203,215 @@ const GalleryManagementHub = ({ onClose }) => {
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-
                     <button
-                      onClick={() => handleDelete(img._id)}
-                      className="absolute top-2 left-2 p-2 bg-white/90 backdrop-blur-md text-rose-500 rounded-lg shadow-lg hover:bg-rose-500 hover:text-white transition-all transform -translate-y-2 group-hover:translate-y-0"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(img._id);
+                      }}
+                      className="absolute top-1 sm:top-2 left-1 sm:left-2 p-1 sm:p-2 bg-white/90 backdrop-blur-md text-rose-500 rounded-lg shadow-lg hover:bg-rose-500 hover:text-white transition-all transform -translate-y-2 group-hover:translate-y-0"
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={14} className="sm:w-4 sm:h-4" />
                     </button>
                   </div>
                 ))}
-            </div>
-          </div>
-
-          {/* RIGHT: Upload Section (Side panel in sketch) */}
-          <div className="w-full lg:w-[380px] bg-white p-6 flex flex-col shadow-[-10px_0_30px_-15px_rgba(0,0,0,0.05)] overflow-y-auto">
-            <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
-              <Upload size={18} className="text-amber-500" />
-              Upload Photo
-            </h3>
-
-            {/* Category Select Box */}
-            <div className="mb-6">
-              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">
-                Target Category
-              </label>
-              <select
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-amber-500 transition-all cursor-pointer"
-                value={activeCategory}
-                onChange={(e) => setActiveCategory(e.target.value)}
-              >
-                {categories.map((cat) => (
-                  <option key={cat}>{cat}</option>
-                ))}
-              </select>
+              </div>
             </div>
 
-            {/* Upload Button/Input */}
-            <div className="mb-6">
-              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">
-                Select or Drag Files
-              </label>
-              <label
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                className={`group relative flex flex-col h-32 w-full cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed transition-all duration-300 ${
-                  isDragging
-                    ? "border-amber-500 bg-amber-100 scale-[1.02] shadow-inner"
-                    : "border-amber-200 bg-amber-50/30 hover:border-amber-400 hover:bg-amber-50"
-                }`}
-              >
-                <div className="flex flex-col items-center gap-2">
-                  <div
-                    className={`flex items-center justify-center rounded-xl p-2 text-white shadow-lg transition-all duration-300 ${
-                      isDragging
-                        ? "bg-amber-600 scale-110 animate-bounce"
-                        : "bg-amber-500 shadow-amber-200"
-                    }`}
-                  >
-                    <Upload size={20} strokeWidth={3} />
-                  </div>
+            {/* RIGHT: Upload Section */}
+            <div className="w-full lg:w-[380px] bg-white p-4 sm:p-6 flex flex-col shadow-[-10px_0_30px_-15px_rgba(0,0,0,0.05)] overflow-y-auto order-1 lg:order-2 border-t lg:border-t-0 lg:border-l border-gray-200">
+              <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-4 sm:mb-6 flex items-center gap-2">
+                <Upload size={18} className="text-amber-500 shrink-0" />
+                <span className="truncate">Upload Photo</span>
+              </h3>
 
-                  <div className="text-center">
-                    <span className="text-sm font-black tracking-wide text-amber-900 block">
-                      {isDragging ? "Drop to Upload" : "Select Images"}
-                    </span>
-                    <span className="text-[9px] text-amber-600/70 font-bold uppercase tracking-tight">
-                      or drag and drop here
-                    </span>
-                  </div>
-                </div>
-
-                <input
-                  type="file"
-                  multiple
-                  className="hidden"
-                  onChange={(e) => handleFiles(Array.from(e.target.files))}
-                  accept="image/*"
-                />
-              </label>
-            </div>
-
-            {/* Preview Box (Bottom right in sketch) */}
-            <div className="flex-1 min-h-[180px] bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200 p-2 overflow-y-auto">
-              {previewImages.length > 0 ? (
-                <div className="grid grid-cols-2 gap-2">
-                  {previewImages.map((url, index) => (
-                    <div
-                      key={index}
-                      className="relative aspect-square rounded-lg overflow-hidden group"
-                    >
-                      <img
-                        src={url}
-                        alt="Preview"
-                        className="w-full h-full object-cover"
-                      />
-                      <button
-                        onClick={() => {
-                          setPreviewImages((prev) =>
-                            prev.filter((_, i) => i !== index),
-                          );
-                          setSelectedFiles((prev) =>
-                            prev.filter((_, i) => i !== index),
-                          );
-                        }}
-                        className="absolute top-1 right-1 p-1 bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <X size={12} />
-                      </button>
-                    </div>
+              <div className="mb-4 sm:mb-6">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">
+                  Target Category
+                </label>
+                <select
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg sm:rounded-xl px-3 sm:px-4 py-2 sm:py-3 text-sm focus:outline-none focus:border-amber-500 transition-all cursor-pointer"
+                  value={activeCategory}
+                  onChange={(e) => setActiveCategory(e.target.value)}
+                >
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
                   ))}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center h-full text-center p-4">
-                  <ImageIcon size={40} className="text-gray-200 mb-2" />
-                  <p className="text-[10px] text-gray-400 font-medium">
-                    No images selected
-                  </p>
-                </div>
-              )}
-            </div>
+                </select>
+              </div>
 
-            {/* Submit Action */}
-            <div className="pt-3">
-              <button
-                onClick={handleUpload}
-                disabled={!previewImages || uploading}
-                className="mt-auto w-full relative overflow-hidden bg-[#121826] hover:bg-[#1a2335] disabled:bg-gray-100 disabled:text-gray-400 text-white font-black py-4 sm:py-5 px-6 rounded-[1.25rem] transition-all duration-300 shadow-xl shadow-gray-200 uppercase tracking-[0.2em] text-[10px] sm:text-xs flex items-center justify-center gap-3 group active:scale-[0.98] disabled:active:scale-100"
-              >
-                {/* Shine Effect Layer */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] transition-transform" />
+              <div className="mb-4 sm:mb-6">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">
+                  Select or Drag Files
+                </label>
+                <label
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  className={`group relative flex flex-col h-24 sm:h-32 w-full cursor-pointer items-center justify-center rounded-lg sm:rounded-2xl border-2 border-dashed transition-all duration-300 ${
+                    isDragging
+                      ? "border-amber-500 bg-amber-100 scale-[1.02] shadow-inner"
+                      : "border-amber-200 bg-amber-50/30 hover:border-amber-400 hover:bg-amber-50"
+                  }`}
+                >
+                  <div className="flex flex-col items-center gap-1 sm:gap-2">
+                    <div
+                      className={`flex items-center justify-center rounded-lg sm:rounded-xl p-1.5 sm:p-2 text-white shadow-lg transition-all duration-300 ${
+                        isDragging
+                          ? "bg-amber-600 scale-110 animate-bounce"
+                          : "bg-amber-500 shadow-amber-200"
+                      }`}
+                    >
+                      <Upload
+                        size={16}
+                        className="sm:w-5 sm:h-5"
+                        strokeWidth={3}
+                      />
+                    </div>
+                    <div className="text-center">
+                      <span className="text-xs sm:text-sm font-black tracking-wide text-amber-900 block">
+                        {isDragging ? "Drop to Upload" : "Select Images"}
+                      </span>
+                    </div>
+                  </div>
+                  <input
+                    type="file"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => handleFiles(Array.from(e.target.files))}
+                    accept="image/*"
+                  />
+                </label>
+              </div>
 
-                {uploading ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    <span>Processing...</span>
-                  </>
+              {/* Preview Box */}
+              <div className="flex-1 min-h-[120px] sm:min-h-[180px] max-h-[180px] sm:max-h-[280px] bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200 p-2 overflow-y-auto">
+                {previewImages.length > 0 ? (
+                  <div className="grid grid-cols-2 gap-2">
+                    {previewImages.map((url, index) => (
+                      <div
+                        key={index}
+                        className="relative aspect-square rounded-lg overflow-hidden group"
+                      >
+                        <img
+                          src={url}
+                          alt="Preview"
+                          className="w-full h-full object-cover"
+                        />
+                        <button
+                          onClick={() => {
+                            setPreviewImages((prev) =>
+                              prev.filter((_, i) => i !== index),
+                            );
+                            setSelectedFiles((prev) =>
+                              prev.filter((_, i) => i !== index),
+                            );
+                          }}
+                          className="absolute top-1 right-1 p-1 bg-black/50 text-white rounded-full opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <X size={12} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 ) : (
-                  <>
-                    <CheckCircle2
-                      size={18}
-                      className="text-amber-500 group-hover:text-white transition-colors duration-300"
+                  <div className="flex flex-col items-center justify-center h-full text-center p-3 sm:p-4">
+                    <ImageIcon
+                      size={32}
+                      className="sm:w-10 sm:h-10 text-gray-200 mb-2"
                     />
-                    <span>Publish to Gallery</span>
-                  </>
+                    <p className="text-[10px] text-gray-400 font-medium">
+                      No images selected
+                    </p>
+                  </div>
                 )}
-              </button>
+              </div>
+
+              {/* Submit Action - FIXED: Disabled logic check for array length */}
+              <div className="pt-2 sm:pt-3">
+                <button
+                  onClick={handleUpload}
+                  disabled={previewImages.length === 0 || uploading}
+                  className="w-full relative overflow-hidden bg-[#121826] hover:bg-[#1a2335] disabled:bg-gray-100 disabled:text-gray-400 text-white font-black py-3 sm:py-4 px-4 sm:px-6 rounded-lg sm:rounded-[1.25rem] transition-all duration-300 shadow-xl shadow-gray-200 uppercase tracking-[0.2em] text-[9px] sm:text-xs flex items-center justify-center gap-2 sm:gap-3 group active:scale-[0.98] disabled:active:scale-100"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] transition-transform" />
+                  {uploading ? (
+                    <>
+                      <div className="w-3 sm:w-4 h-3 sm:h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Processing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2
+                        size={16}
+                        className="sm:w-4.5 sm:h-4.5 text-amber-500 group-hover:text-white transition-colors duration-300 shrink-0"
+                      />
+                      <span>Publish to Gallery</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Image Preview Modal */}
+      {isPreviewOpen && filteredImages.length > 0 && (
+        <div className="fixed inset-0 bg-black/90 z-[200] flex items-center justify-center p-2 sm:p-4 animate-in fade-in duration-200">
+          <div className="relative w-full max-w-4xl my-auto min-h-fit max-h-[95vh] flex flex-col">
+            <button
+              onClick={closePreview}
+              className="absolute -top-10 sm:-top-12 right-0 text-white hover:text-amber-500 transition-colors p-2 z-10"
+            >
+              <X size={28} className="sm:w-8 sm:h-8" />
+            </button>
+
+            <div className="relative flex-1 flex items-center justify-center bg-black/50 rounded-lg sm:rounded-2xl overflow-hidden">
+              <img
+                src={filteredImages[selectedImageIndex]?.image}
+                alt="Preview"
+                className="max-w-full max-h-[70vh] object-contain"
+              />
+              <button
+                onClick={goToPrevious}
+                className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-amber-500 text-white p-2 sm:p-3 rounded-full transition-all duration-200 hover:scale-110 z-20"
+              >
+                <ChevronLeft size={20} className="sm:w-6 sm:h-6" />
+              </button>
+              <button
+                onClick={goToNext}
+                className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-amber-500 text-white p-2 sm:p-3 rounded-full transition-all duration-200 hover:scale-110 z-20"
+              >
+                <ChevronRight size={20} className="sm:w-6 sm:h-6" />
+              </button>
+            </div>
+
+            {/* Thumbnail Navigation - FIXED: Brackets and filter logic */}
+            <div className="mt-3 sm:mt-4 flex gap-2 overflow-x-auto pb-2 px-2 scrollbar-hide">
+              {filteredImages.map((item, idx) => (
+                <button
+                  key={item._id}
+                  onClick={() => setSelectedImageIndex(idx)}
+                  className={`flex-shrink-0 w-12 sm:w-16 h-12 sm:h-16 rounded-lg overflow-hidden border-2 transition-all ${
+                    idx === selectedImageIndex
+                      ? "border-amber-500 ring-2 ring-amber-500/50"
+                      : "border-gray-600 hover:border-amber-500"
+                  }`}
+                >
+                  <img
+                    src={item.image}
+                    alt={`Thumb ${idx}`}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

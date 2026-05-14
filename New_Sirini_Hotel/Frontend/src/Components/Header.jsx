@@ -281,29 +281,65 @@ function Header() {
         </div>
 
         {/* ── Mobile: avatar (if logged in) + hamburger ── */}
-        <div className="md:hidden flex items-center gap-3">
+        <div className="md:hidden flex items-center gap-2 sm:gap-3">
           {isLoggedIn && (
-            <button
-              onClick={() => navigate("/dashboard")}
-              className="w-9 h-9 rounded-full overflow-hidden hover:scale-105 transition-transform ring-2 ring-yellow-500/40"
-              title="Go to Dashboard"
-            >
-              {userImage ? (
-                <img
-                  src={userImage}
-                  alt="Profile"
-                  className="w-full h-full object-cover rounded-full"
-                />
-              ) : (
-                <div className="w-full h-full bg-amber-500 flex items-center justify-center">
-                  <User size={16} className="text-white" />
+            <div className="flex items-center gap-2">
+              {userData.Role !== "User" && (
+                <div className="flex items-center">
+                  {userData.Role === "Admin" && (
+                    <button
+                      className="p-1.5 sm:p-2 text-amber-500 hover:bg-amber-500/10 rounded-lg transition-all hover:scale-105"
+                      onClick={() => navigate("/admin")}
+                      title="Admin Portal"
+                    >
+                      <ExternalLink size={20} />
+                    </button>
+                  )}
+                  {userData.Role ===
+                    "Operation Manager 1 (Restraunt,Liquor)" && (
+                    <button
+                      className="p-1.5 sm:p-2 text-amber-500 hover:bg-amber-500/10 rounded-lg transition-all hover:scale-105"
+                      onClick={() => navigate("/operationmanager")}
+                      title="Manager Portal"
+                    >
+                      <ExternalLink size={20} />
+                    </button>
+                  )}
+                  {userData.Role ===
+                    "Operation Manager 2 (Reception, Room)" && (
+                    <button
+                      className="p-1.5 sm:p-2 text-amber-500 hover:bg-amber-500/10 rounded-lg transition-all hover:scale-105"
+                      onClick={() => navigate("/manager")}
+                      title="Manager Portal"
+                    >
+                      <ExternalLink size={20} />
+                    </button>
+                  )}
                 </div>
               )}
-            </button>
+
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden hover:scale-105 transition-transform ring-2 ring-yellow-500/40"
+                title="Go to Dashboard"
+              >
+                {userImage ? (
+                  <img
+                    src={userImage}
+                    alt="Profile"
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-amber-500 flex items-center justify-center">
+                    <User size={14} className="text-white" />
+                  </div>
+                )}
+              </button>
+            </div>
           )}
           <button
             onClick={toggleMenu}
-            className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
+            className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors ml-auto"
             aria-label="Toggle menu"
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}

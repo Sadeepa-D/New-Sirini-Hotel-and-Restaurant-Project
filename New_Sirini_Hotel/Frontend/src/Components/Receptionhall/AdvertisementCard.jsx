@@ -6,11 +6,13 @@ const AdvertisementCard = ({ ad }) => {
     <div className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group flex flex-col relative">
       {/* Image */}
       <div className="relative h- sm:h-60 w-full overflow-hidden">
-        <img
-          src={ad.image}
-          alt={ad.BuissnesName}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-        />
+        <div className="relative aspect-[4/3] sm:aspect-video w-full overflow-hidden">
+          <img
+            src={ad.image}
+            alt={ad.BuissnesName}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+          />
+        </div>
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-500" />
 
         {/* Price badge */}

@@ -75,45 +75,66 @@ const Manager = () => {
   return (
     <div className="flex flex-col h-screen bg-black font-sans">
       {/* Top Header */}
-      <header className="bg-white mx-2 mt-3 mb-2 rounded-xl shadow-sm px-4 py-3">
+      <header className="bg-white mx-2 mt-3 mb-2 rounded-2xl shadow-md px-3 sm:px-4 py-2 sm:py-3 shrink-0">
         {/* MOBILE layout */}
         <div className="md:hidden">
           {/* Row 1: Logo + Profile */}
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between gap-2 mb-2.5 sm:mb-3">
+            <div className="flex items-center gap-2 min-w-0">
               <img
                 src={Logo}
                 alt="Hotel Logo"
-                className="w-20 h-20 object-contain"
+                className="w-10 sm:w-12 h-10 sm:h-12 object-contain shrink-0"
               />
-              <div>
-                <h2 className="font-serif italic text-sm text-gray-900 leading-tight">
+              <div className="text-left min-w-0">
+                <h2 className="font-serif italic text-xs sm:text-sm text-gray-900 leading-tight truncate">
                   New Sirini Hotel
                 </h2>
-                <p className="text-[8px] font-bold text-gray-400 tracking-widest uppercase">
-                  Operation Manager 2
+                <p className="text-[8px] font-bold text-gray-500 tracking-[0.15em] uppercase mt-0.5">
+                  Manager 2
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
               <button
                 onClick={() => usenavigate("/")}
-                className="p-1.5 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-1.5 sm:p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors active:scale-95"
+                title="Home"
               >
-                <Home size={20} />
+                <Home size={16} className="sm:w-5 sm:h-5" />
               </button>
-              <div className="w-13 h-13 bg-amber-500 rounded-full overflow-hidden hover:scale-105 transition-transform cursor-pointer shadow-md ring-2 ring-amber-200 ring-offset-1">
+              {userdata.Role === "Admin" && (
+                <button
+                  onClick={() => usenavigate("/admin")}
+                  className="p-1.5 sm:p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors active:scale-95"
+                  title="Admin Portal"
+                >
+                  <ExternalLink size={16} className="sm:w-5 sm:h-5" />
+                </button>
+              )}
+              <button
+                onClick={handleLogout}
+                className="p-1.5 sm:p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors active:scale-95"
+                title="Logout"
+              >
+                <LogOut size={16} className="sm:w-5 sm:h-5" />
+              </button>
+              <div
+                className="w-9 sm:w-10 h-9 sm:h-10 bg-amber-500 rounded-full overflow-hidden flex items-center justify-center shadow-sm border-2 border-amber-600 cursor-pointer hover:scale-105 transition-transform active:scale-95 shrink-0"
+                onClick={() => usenavigate("/dashboard")}
+                title="Profile"
+              >
                 <img
                   src={userdata.image || Logo}
                   alt="Profile"
                   className="w-full h-full object-cover"
-                  onClick={() => usenavigate("/dashboard")}
                 />
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-1 bg-gray-100 rounded-xl p-1 shadow-inner">
+          {/* Row 2: Navigation tabs */}
+          <div className="flex items-center gap-1 bg-gray-50 rounded-xl p-1 shadow-inner overflow-x-auto no-scrollbar border border-gray-100">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -129,15 +150,15 @@ const Manager = () => {
                       setIsSidebarOpen(false);
                     }
                   }}
-                  className={`flex-1 flex items-center justify-center py-2.5 rounded-lg transition-all duration-200 ${
-                    isActive
+                  className={`flex-1 min-w-0 flex items-center justify-center h-9 sm:h-10 rounded-lg transition-all duration-200 active:scale-95 ${
+                    isActive && !isLogout
                       ? "bg-amber-600 text-white shadow-lg ring-2 ring-amber-400 ring-offset-1"
                       : isLogout
-                        ? "text-red-400 hover:bg-red-50"
-                        : "text-gray-500 hover:bg-white hover:shadow-sm"
+                        ? "text-red-500 hover:bg-red-50 hover:text-red-600"
+                        : "text-gray-500 hover:bg-white hover:shadow-sm hover:text-gray-700"
                   }`}
                 >
-                  <Icon size={18} />
+                  <Icon size={17} className="sm:w-5 sm:h-5" />
                 </button>
               );
             })}
@@ -145,24 +166,27 @@ const Manager = () => {
         </div>
 
         {/* DESKTOP layout */}
-        <div className="hidden md:grid md:grid-cols-3 md:items-center">
+        <div className="hidden md:grid md:grid-cols-3 md:items-center md:gap-4">
           {/* Left: Logo */}
           <div className="flex items-center gap-3">
             <img
               src={Logo}
               alt="Hotel Logo"
-              className="w-20 h-20 object-contain"
+              className="w-16 h-16 sm:w-20 sm:h-20 object-contain"
             />
-            <div>
-              <h2 className="font-serif italic text-base text-gray-900 leading-tight">
+            <div className="text-left">
+              <h2 className="font-serif italic text-sm sm:text-base text-gray-900 leading-tight">
                 New Sirini Hotel
               </h2>
+              <p className="text-[9px] sm:text-xs font-bold text-gray-500 tracking-[0.1em] uppercase mt-1">
+                Manager 2
+              </p>
             </div>
           </div>
 
           {/* Center: Floating pill tabs */}
           <div className="flex justify-center">
-            <div className="flex items-center gap-1 bg-gray-100 rounded-xl p-1 shadow-inner">
+            <div className="flex items-center gap-2 bg-gray-100 rounded-xl p-1.5 shadow-inner">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = activeTab === item.id;
@@ -177,57 +201,62 @@ const Manager = () => {
                         setIsSidebarOpen(false);
                       }
                     }}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                      isActive
+                    className={`flex items-center gap-2.5 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      isActive && !isLogout
                         ? "bg-amber-600 text-white shadow-lg scale-105 ring-2 ring-amber-400 ring-offset-1"
                         : isLogout
-                          ? "text-red-400 hover:bg-red-50 hover:text-red-500"
+                          ? "text-red-500 hover:bg-red-50 hover:text-red-600"
                           : "text-gray-500 hover:bg-white hover:text-gray-800 hover:shadow-sm"
                     }`}
                   >
                     <Icon size={16} />
-                    <span>{item.label}</span>
+                    <span className="whitespace-nowrap">{item.label}</span>
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* Right: Home + Avatar + Name */}
+          {/* Right: Admin Portal + Home + Avatar + Name */}
           <div className="flex items-center justify-end gap-3">
             {userdata.Role === "Admin" && (
               <button
-                className="flex items-center gap-2 group transition-all"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 hover:bg-amber-100 transition-colors group"
                 onClick={() => usenavigate("/admin")}
+                title="Go to Admin Portal"
               >
                 <ExternalLink
-                  className="text-amber-500 font-bold hover:scale-105"
-                  size={25}
+                  className="text-amber-600 group-hover:text-amber-700"
+                  size={18}
                 />
-                <span className="text-amber-500 font-bold hover:scale-105">
-                  Admin Portal
+                <span className="text-xs sm:text-sm text-amber-600 group-hover:text-amber-700 font-semibold whitespace-nowrap">
+                  Admin
                 </span>
               </button>
             )}
             <button
               onClick={() => usenavigate("/")}
-              className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"
+              title="Home"
             >
               <Home size={22} />
             </button>
-            <div className="w-15 h-15 bg-amber-500 rounded-full overflow-hidden hover:scale-105 transition-transform cursor-pointer shadow-md ring-2 ring-amber-200 ring-offset-1">
+            <div
+              className="w-12 h-12 bg-amber-500 rounded-full overflow-hidden flex items-center justify-center shadow-md border-2 border-amber-600 cursor-pointer hover:scale-105 transition-transform"
+              onClick={() => usenavigate("/dashboard")}
+              title="Profile"
+            >
               <img
                 src={userdata.image || Logo}
                 alt="Profile"
                 className="w-full h-full object-cover"
-                onClick={() => usenavigate("/dashboard")}
               />
             </div>
             <div className="text-right">
               <p className="text-sm font-bold text-gray-800">
                 {userdata.name || "User Name"}
               </p>
-              <p className="text-xs text-gray-500">Operation Manager 2</p>
+              <p className="text-xs text-gray-500 font-medium">Manager 2</p>
             </div>
           </div>
         </div>
@@ -239,6 +268,17 @@ const Manager = () => {
           {renderContent()}
         </div>
       </main>
+
+      {/* Global Style for hiding scrollbars on mobile horizontal list */}
+      <style>{`
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </div>
   );
 };
