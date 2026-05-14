@@ -28,7 +28,6 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Slider එක පාලනය කිරීමට useRef භාවිතා කිරීම
   const scrollRef = useRef(null);
 
   const fetchAllData = useCallback(async () => {
@@ -41,10 +40,18 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
         axios.get("http://localhost:5000/api/rooms/viewcompletedbookings"),
       ]);
 
-      setPendingList(responses[0].status === "fulfilled" ? responses[0].value.data : []);
-      setConfirmedList(responses[1].status === "fulfilled" ? responses[1].value.data : []);
-      setCancelledList(responses[2].status === "fulfilled" ? responses[2].value.data : []);
-      setCompletedList(responses[3].status === "fulfilled" ? responses[3].value.data : []);
+      setPendingList(
+        responses[0].status === "fulfilled" ? responses[0].value.data : [],
+      );
+      setConfirmedList(
+        responses[1].status === "fulfilled" ? responses[1].value.data : [],
+      );
+      setCancelledList(
+        responses[2].status === "fulfilled" ? responses[2].value.data : [],
+      );
+      setCompletedList(
+        responses[3].status === "fulfilled" ? responses[3].value.data : [],
+      );
     } catch (err) {
       console.error("Fetch Error:", err);
     } finally {
@@ -56,11 +63,13 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
     fetchAllData();
   }, [fetchAllData, refreshKey]);
 
-  // Slider එක දෙපසට scroll කරන function එක
   const scroll = (direction) => {
     if (scrollRef.current) {
       const { scrollLeft, clientWidth } = scrollRef.current;
-      const scrollTo = direction === "left" ? scrollLeft - clientWidth : scrollLeft + clientWidth;
+      const scrollTo =
+        direction === "left"
+          ? scrollLeft - clientWidth
+          : scrollLeft + clientWidth;
       scrollRef.current.scrollTo({ left: scrollTo, behavior: "smooth" });
     }
   };
@@ -100,36 +109,76 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
 
   const getActiveList = () => {
     switch (activeTab) {
-      case "pending": return pendingList;
-      case "approved": return confirmedList;
-      case "completed": return completedList;
-      case "cancelled": return cancelledList;
-      default: return [];
+      case "pending":
+        return pendingList;
+      case "approved":
+        return confirmedList;
+      case "completed":
+        return completedList;
+      case "cancelled":
+        return cancelledList;
+      default:
+        return [];
     }
   };
 
   const filteredList = getActiveList().filter(
     (item) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.roomNumber.toString().includes(searchTerm)
+      item.roomNumber.toString().includes(searchTerm),
   );
 
   if (loading)
-    return <div className="text-center py-20 text-gray-400 italic tracking-widest uppercase">Loading Records...</div>;
+    return (
+      <div className="text-center py-20 text-gray-400 italic tracking-widest uppercase">
+        Loading Records...
+      </div>
+    );
 
   return (
     <div className="mt-8 space-y-8">
       {/* Search & Tabs Navigation */}
       <div className="flex flex-col xl:flex-row justify-between items-center gap-6">
-        <div className="flex bg-gray-100 p-1.5 rounded-2xl border border-gray-200 overflow-x-auto w-full xl:w-auto">
-          <TabButton active={activeTab === "pending"} onClick={() => setActiveTab("pending")} icon={<Clock size={16} />} label="Pending" count={pendingList.length} color="text-yellow-600" />
-          <TabButton active={activeTab === "approved"} onClick={() => setActiveTab("approved")} icon={<CheckCircle2 size={16} />} label="Approved" count={confirmedList.length} color="text-green-600" />
-          <TabButton active={activeTab === "completed"} onClick={() => setActiveTab("completed")} icon={<Archive size={16} />} label="Completed" count={completedList.length} color="text-blue-600" />
-          <TabButton active={activeTab === "cancelled"} onClick={() => setActiveTab("cancelled")} icon={<History size={16} />} label="Cancelled" count={cancelledList.length} color="text-red-600" />
+        <div className="flex bg-gray-100 p-1.5 rounded-2xl border border-gray-200 overflow-x-auto w-full xl:w-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <TabButton
+            active={activeTab === "pending"}
+            onClick={() => setActiveTab("pending")}
+            icon={<Clock size={16} />}
+            label="Pending"
+            count={pendingList.length}
+            color="text-yellow-600"
+          />
+          <TabButton
+            active={activeTab === "approved"}
+            onClick={() => setActiveTab("approved")}
+            icon={<CheckCircle2 size={16} />}
+            label="Approved"
+            count={confirmedList.length}
+            color="text-green-600"
+          />
+          <TabButton
+            active={activeTab === "completed"}
+            onClick={() => setActiveTab("completed")}
+            icon={<Archive size={16} />}
+            label="Completed"
+            count={completedList.length}
+            color="text-blue-600"
+          />
+          <TabButton
+            active={activeTab === "cancelled"}
+            onClick={() => setActiveTab("cancelled")}
+            icon={<History size={16} />}
+            label="Cancelled"
+            count={cancelledList.length}
+            color="text-red-600"
+          />
         </div>
 
         <div className="relative w-full xl:w-80">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+          <Search
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+            size={18}
+          />
           <input
             type="text"
             placeholder="Search bookings..."
@@ -142,12 +191,14 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
       {/* --- Card Slider Section with Arrows --- */}
       {filteredList.length === 0 ? (
         <div className="text-center py-24 bg-white rounded-3xl border border-gray-100 shadow-sm">
-          <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-xs">No {activeTab} bookings found.</p>
+          <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-xs">
+            No {activeTab} bookings found.
+          </p>
         </div>
       ) : (
         <div className="relative group px-4">
           {/* Left Arrow */}
-          <button 
+          <button
             onClick={() => scroll("left")}
             className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-white rounded-full shadow-lg border border-gray-100 hover:bg-black hover:text-white transition-all opacity-0 group-hover:opacity-100 hidden sm:block"
           >
@@ -155,14 +206,14 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
           </button>
 
           {/* Slider Container */}
-          <div 
+          <div
             ref={scrollRef}
-            className="flex overflow-x-auto gap-6 pb-6 scrollbar-hide snap-x snap-mandatory px-1 scroll-smooth"
+            className="flex overflow-x-auto gap-4 sm:gap-6 pb-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] snap-x snap-mandatory px-2 scroll-smooth"
           >
             {filteredList.map((req) => (
-              <div 
-                key={req._id} 
-                className="flex-shrink-0 w-full sm:w-[320px] snap-center bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col"
+              <div
+                key={req._id}
+                className="flex-shrink-0 w-[85vw] sm:w-[320px] snap-center bg-white rounded-[2rem] p-5 sm:p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col"
               >
                 {/* Header: User Info & Status */}
                 <div className="flex justify-between items-start mb-5">
@@ -171,7 +222,9 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
                       <User size={24} />
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-900 text-base leading-tight uppercase tracking-tighter font-sans">{req.name}</h4>
+                      <h4 className="font-bold text-gray-900 text-base leading-tight uppercase tracking-tighter font-sans">
+                        {req.name}
+                      </h4>
                       <div className="flex items-center gap-1 text-gray-400 text-[10px] font-bold">
                         <Phone size={10} /> {req.phone}
                       </div>
@@ -183,32 +236,45 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
                 {/* Body: Room & Dates */}
                 <div className="bg-gray-50 rounded-2xl p-4 space-y-3 mb-6">
                   <div className="flex justify-between items-center">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Room Number</span>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                      Room Number
+                    </span>
                     <div className="flex items-center gap-2">
                       {req.timeSlot && (
-                        <span className={`px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-md ${
-                          req.timeSlot === "day" 
-                            ? "bg-blue-50 text-blue-500 border border-blue-100" 
-                            : "bg-purple-50 text-purple-500 border border-purple-100"
-                        }`}>
-                          {req.timeSlot === "day" ? "Mid Day Stay" : "Overnight Stay"}
+                        <span
+                          className={`px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-md ${
+                            req.timeSlot === "day"
+                              ? "bg-blue-50 text-blue-500 border border-blue-100"
+                              : "bg-purple-50 text-purple-500 border border-purple-100"
+                          }`}
+                        >
+                          {req.timeSlot === "day"
+                            ? "Mid Day Stay"
+                            : "Overnight Stay"}
                         </span>
                       )}
-                    <span className="font-mono font-bold text-black text-lg">{req.roomNumber}</span>
+                      <span className="font-mono font-bold text-black text-lg">
+                        {req.roomNumber}
+                      </span>
                     </div>
                   </div>
                   <div className="flex justify-between items-center pt-2 border-t border-gray-200/50">
                     <div className="space-y-1">
-                      <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">In</p>
-                      <p className="text-xs font-bold text-gray-700">{new Date(req.checkInDate).toLocaleDateString()}</p>
+                      <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                        In
+                      </p>
+                      <p className="text-xs font-bold text-gray-700">
+                        {new Date(req.checkInDate).toLocaleDateString()}
+                      </p>
                     </div>
                     <div className="text-right space-y-1">
-                      <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Out</p>
-                       <p className="text-xs font-bold text-gray-700">
-                        {req.timeSlot === "day" 
+                      <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                        Out
+                      </p>
+                      <p className="text-xs font-bold text-gray-700">
+                        {req.timeSlot === "day"
                           ? new Date(req.checkInDate).toLocaleDateString()
-                          : new Date(req.checkOutDate).toLocaleDateString()
-                        }
+                          : new Date(req.checkOutDate).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
@@ -220,15 +286,15 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
                     <>
                       <button
                         onClick={() => handleBookingAction(req._id, "confirm")}
-                        className="flex-1 bg-green-500 text-white py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-black transition-all shadow-lg shadow-green-500/20 active:scale-95 flex items-center justify-center gap-2"
+                        className="flex-1 bg-green-500 text-white py-2 sm:py-2.5 rounded-full font-bold text-[9px] uppercase tracking-widest hover:bg-green-600 transition-all shadow-md hover:shadow-lg hover:shadow-green-500/30 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-1.5"
                       >
-                        <Check size={14} strokeWidth={3} /> Approve
+                        <Check size={12} strokeWidth={3} /> Approve
                       </button>
                       <button
                         onClick={() => handleBookingAction(req._id, "cancel")}
-                        className="flex-1 bg-red-50 text-red-600 py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all active:scale-95 flex items-center justify-center gap-2 border border-red-100"
+                        className="flex-1 bg-red-50 text-red-500 py-2 sm:py-2.5 rounded-full font-bold text-[9px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all active:scale-95 flex items-center justify-center gap-1.5 border border-red-100/50"
                       >
-                        <X size={14} strokeWidth={3} /> Cancel
+                        <X size={12} strokeWidth={3} /> Cancel
                       </button>
                     </>
                   )}
@@ -237,15 +303,15 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
                     <>
                       <button
                         onClick={() => handleBookingAction(req._id, "complete")}
-                        className="flex-1 bg-blue-400 text-white py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-black transition-all shadow-md active:scale-95"
+                        className="flex-1 bg-blue-500 text-white py-2 sm:py-2.5 rounded-full font-bold text-[9px] uppercase tracking-widest hover:bg-blue-600 transition-all shadow-md hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-1.5"
                       >
                         Complete Stay
                       </button>
                       <button
                         onClick={() => handleBookingAction(req._id, "cancel")}
-                        className="p-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all"
+                        className="p-2 sm:p-2.5 bg-red-50 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all active:scale-95 border border-red-100/50"
                       >
-                        <XCircle size={18} />
+                        <XCircle size={16} />
                       </button>
                     </>
                   )}
@@ -264,7 +330,7 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
           </div>
 
           {/* Right Arrow */}
-          <button 
+          <button
             onClick={() => scroll("right")}
             className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-white rounded-full shadow-lg border border-gray-100 hover:bg-black hover:text-white transition-all opacity-0 group-hover:opacity-100 hidden sm:block"
           >
@@ -294,7 +360,9 @@ const StatusBadge = ({ status, tab }) => {
     cancelled: "bg-red-50 text-red-600 border-red-200",
   };
   return (
-    <span className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-[9px] font-medium uppercase border-2 shadow-sm font-sans ${styles[tab] || "bg-gray-50 text-gray-500"}`}>
+    <span
+      className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-[9px] font-medium uppercase border-2 shadow-sm font-sans ${styles[tab] || "bg-gray-50 text-gray-500"}`}
+    >
       {status}
     </span>
   );
