@@ -206,7 +206,7 @@ const NewSiriniHotel = () => {
               {filteredGalleryItems.length > 0 ? (
                 <div
                   className="pr-2 overflow-y-auto 
-                       h-[530px] 
+                       h-[300px] sm:h-[530px] 
                        scrollbar-thin 
                        scrollbar-thumb-amber-500 
                        scrollbar-track-transparent"
@@ -216,7 +216,7 @@ const NewSiriniHotel = () => {
                   }}
                 >
                   {/* Changed to grid-cols-4 */}
-                  <div className="grid grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                     {filteredGalleryItems.map((item, idx) => (
                       <div
                         key={item._id}
