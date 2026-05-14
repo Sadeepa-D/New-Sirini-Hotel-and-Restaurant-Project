@@ -1,7 +1,6 @@
 const RoomModel = require("../../models/Rooms/RoomModel");
 const cloudinary = require("cloudinary");
 
-// ── 1. Create New Room ──
 const createRoom = async (req, res) => {
   try {
     const {
@@ -37,6 +36,7 @@ const createRoom = async (req, res) => {
       bedType,
       capacity,
       image,
+
       status: status || "available",
       description,
       condition: condition || "Fan",

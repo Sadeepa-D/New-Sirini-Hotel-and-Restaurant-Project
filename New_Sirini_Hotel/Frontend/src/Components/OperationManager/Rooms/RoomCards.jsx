@@ -1,5 +1,13 @@
 import React from "react";
-import { Edit3, Trash2, Wind, Snowflake, Users, Info, ImageIcon } from "lucide-react";
+import {
+  Edit3,
+  Trash2,
+  Wind,
+  Snowflake,
+  Users,
+  Info,
+  ImageIcon,
+} from "lucide-react";
 import StatusBadge from "./StatusBadge";
 
 const RoomCards = ({ rooms, onEdit, onDelete }) => {
@@ -13,15 +21,15 @@ const RoomCards = ({ rooms, onEdit, onDelete }) => {
         /* Increased column count to decrease individual card width */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
           {rooms.map((room) => (
-            <div 
-              key={room._id} 
+            <div
+              key={room._id}
               className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300 flex flex-col group"
             >
               {/* 1. Decreased Image Height */}
               <div className="relative h-40 w-full bg-gray-100 overflow-hidden">
                 {room.image ? (
-                  <img 
-                    src={room.image} 
+                  <img
+                    src={room.image}
                     alt={room.roomType}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
@@ -30,7 +38,7 @@ const RoomCards = ({ rooms, onEdit, onDelete }) => {
                     <ImageIcon size={32} strokeWidth={1} />
                   </div>
                 )}
-                
+
                 <div className="absolute top-2 right-2 scale-90 origin-top-right">
                   <StatusBadge status={room.status} />
                 </div>
@@ -52,12 +60,18 @@ const RoomCards = ({ rooms, onEdit, onDelete }) => {
 
                 {/* Compact Features Row */}
                 <div className="flex gap-2 mb-3">
-                  <div className={`flex items-center gap-1.5 px-2 py-1 rounded-md border text-[10px] font-bold uppercase ${
-                    room.condition === "AC" 
-                      ? "bg-blue-50 border-blue-100 text-blue-600" 
-                      : "bg-orange-50 border-orange-100 text-orange-600"
-                  }`}>
-                    {room.condition === "AC" ? <Snowflake size={12} /> : <Wind size={12} />}
+                  <div
+                    className={`flex items-center gap-1.5 px-2 py-1 rounded-md border text-[10px] font-bold uppercase ${
+                      room.condition === "AC"
+                        ? "bg-blue-50 border-blue-100 text-blue-600"
+                        : "bg-orange-50 border-orange-100 text-orange-600"
+                    }`}
+                  >
+                    {room.condition === "AC" ? (
+                      <Snowflake size={12} />
+                    ) : (
+                      <Wind size={12} />
+                    )}
                     {room.condition || "Fan"}
                   </div>
 

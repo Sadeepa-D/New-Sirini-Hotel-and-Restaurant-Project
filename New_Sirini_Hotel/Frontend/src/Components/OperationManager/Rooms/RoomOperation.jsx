@@ -5,7 +5,6 @@ import RoomTableHeader from "./RoomTableHeader";
 import RoomCards from "./RoomCards";
 import RoomFormModal from "./RoomFormModal";
 import toast from "react-hot-toast";
-
 import RoomBookedDetails from "./RoomBookedDetails";
 
 const RoomOperation = () => {
@@ -132,8 +131,6 @@ const RoomOperation = () => {
 
       {/* --- Booking Requests Section --- */}
       <div className="mt-10 animate-in fade-in slide-in-from-left-4 duration-500">
-        {/* Pending Requests Header */}
-
         {/* Confirmed Bookings Header  */}
         <div className="mt-10 mb-4">
           <h2 className="text-lg font-bold text-gray-800 uppercase tracking-wider">

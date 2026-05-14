@@ -244,36 +244,36 @@ function Rooms() {
                         {room.status}
                       </span>
                     </div>
-                  <button
-  onClick={() => handleBookNow(room)}
-  disabled={room.status !== "available"}
-  className={`group relative flex items-center justify-center 
+                    <button
+                      onClick={() => handleBookNow(room)}
+                      disabled={room.status !== "available"}
+                      className={`group relative flex items-center justify-center 
     w-full sm:w-fit px-6 py-3 sm:py-2.5 
     rounded-full text-[11px] sm:text-[10px] font-black uppercase tracking-[0.15em] 
     transition-all duration-500 overflow-hidden ${
-    room.status === "available"
-      ? "bg-gray-900 text-white shadow-md hover:shadow-orange-500/20 hover:-translate-y-0.5 active:scale-95"
-      : "bg-gray-50 text-gray-300 cursor-not-allowed border border-gray-100"
-  }`}
->
-  {/* Hover Glow Effect */}
-  {room.status === "available" && (
-    <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-  )}
+      room.status === "available"
+        ? "bg-gray-900 text-white shadow-md hover:shadow-orange-500/20 hover:-translate-y-0.5 active:scale-95"
+        : "bg-gray-50 text-gray-300 cursor-not-allowed border border-gray-100"
+    }`}
+                    >
+                      {/* Hover Glow Effect */}
+                      {room.status === "available" && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      )}
 
-  <span className="relative z-10 flex items-center gap-2">
-    Book Now
-    <ArrowRight
-      size={12}
-      className="shrink-0 transition-all duration-500 group-hover:translate-x-0.5 group-hover:rotate-[-45deg]"
-    />
-  </span>
+                      <span className="relative z-10 flex items-center gap-2">
+                        Book Now
+                        <ArrowRight
+                          size={12}
+                          className="shrink-0 transition-all duration-500 group-hover:translate-x-0.5 group-hover:rotate-[-45deg]"
+                        />
+                      </span>
 
-  {/* Subtle Shine Effect */}
-  {room.status === "available" && (
-    <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-  )}
-</button>
+                      {/* Subtle Shine Effect */}
+                      {room.status === "available" && (
+                        <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                      )}
+                    </button>
                   </div>
                 </div>
               </div>
