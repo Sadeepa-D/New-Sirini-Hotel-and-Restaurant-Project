@@ -177,6 +177,11 @@ export default function OrderForm({ item, cartItems, onClose }) {
           </button>
         </div>
 
+        <div className="text-center">
+          <h3 className="font-bold text-amber-600 text-2xl ">Confirm Your Order</h3>
+          <p className="text-amber-600 italic text-sm ">Please fill the following details to confirm your order</p>
+        </div>
+
         <div className="p-6 md:p-8">
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="grid grid-cols-1 gap-4">
