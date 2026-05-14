@@ -161,7 +161,7 @@ const ReceptionHallBookMng = () => {
   };
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
+    <div className="p-2 sm:p-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -211,9 +211,7 @@ const ReceptionHallBookMng = () => {
       </div>
 
       {/* Stats */}
-      <div className="flex flex-wrap gap-3">
-        {/* Filter Tabs */}
-        <div className="flex flex-wrap gap-2">
+      <div className="flex items-center overflow-x-auto sm:flex-wrap gap-2 no-scrollbar pb-1 sm:pb-0">
           {["All", "Confirmed", "Cancelled"].map((status) => (
             <button
               key={status}
@@ -221,7 +219,7 @@ const ReceptionHallBookMng = () => {
                 setStatusFilter(status);
                 setIndex(0); // Reset carousel to the first page when changing filters
               }}
-              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-300 shadow-sm border ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-300 shadow-sm border whitespace-nowrap ${
                 statusFilter === status
                   ? "bg-slate-800 text-white border-slate-800"
                   : "bg-white text-slate-500 border-gray-100 hover:bg-gray-50"
@@ -235,7 +233,6 @@ const ReceptionHallBookMng = () => {
             </button>
           ))}
         </div>
-      </div>
 
       {/* Cards Carousel */}
       {filtered.length === 0 ? (
@@ -259,7 +256,7 @@ const ReceptionHallBookMng = () => {
           {/* Visible cards — slice-based carousel */}
           <div
             key={index}
-            className="flex items-stretch gap-6"
+            className="flex items-stretch gap-3 sm:gap-6"
             style={{ animation: "fadeIn 0.25s ease" }}
           >
             {filtered.slice(index, index + itemsPerView).map((booking) => (
@@ -267,7 +264,7 @@ const ReceptionHallBookMng = () => {
                 key={booking._id}
                 className="shrink-0"
                 style={{
-                  width: `calc((100% - ${16 * (itemsPerView - 1)}px) / ${itemsPerView})`,
+                  width: `calc((100% - ${(window.innerWidth < 640 ? 12 : 16) * (itemsPerView - 1)}px) / ${itemsPerView})`,
                 }}
               >
                 <ReceptionHallBookingCard

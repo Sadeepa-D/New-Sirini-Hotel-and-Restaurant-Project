@@ -121,7 +121,7 @@ const RoomsSection = () => {
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex bg-gray-100 p-1 rounded-xl border border-gray-200 max-w-full gap-0.5 shadow-inner">
+        <div className="flex bg-gray-100 p-1 rounded-xl border border-gray-200 w-full overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] gap-1 sm:gap-0.5 shadow-inner">
           <TabBtn
             active={activeTab === "Pending"}
             onClick={() => setActiveTab("Pending")}
@@ -203,7 +203,7 @@ const RoomsSection = () => {
                 </div>
 
                 {/* Check-in / Check-out */}
-                <div className="bg-gray-50 rounded-xl p-4 flex items-center justify-between mb-4 border border-gray-100">
+                <div className="bg-gray-50 rounded-xl p-3 sm:p-4 flex items-center justify-between mb-4 border border-gray-100 overflow-hidden">
                   <div className="flex items-center gap-2">
                     <CalendarDays
                       size={14}
