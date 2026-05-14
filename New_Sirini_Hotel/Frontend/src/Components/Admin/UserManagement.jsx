@@ -274,22 +274,20 @@ const UserManagement = () => {
             </div>
 
             {/* MIDDLE: Role & Status (Centered on desktop) */}
-            <div className="flex flex-1 items-center justify-between md:justify-center gap-4 px-2">
-              <div className="flex flex-row md:flex-col items-center md:items-center gap-2">
-                <span className="flex items-center gap-1.5 text-[10px] font-bold text-gray-600 bg-gray-50 px-3 py-1 rounded-lg border border-gray-100 whitespace-nowrap">
-                  <ShieldCheck size={12} className="text-gray-400" />
-                  {user.Role}
-                </span>
-                <span
-                  className={`text-[9px] font-black uppercase px-3 py-0.5 rounded-full border ${
-                    user.Status === "Active"
-                      ? "bg-green-50 text-green-600 border-green-100"
-                      : "bg-red-50 text-red-500 border-red-100"
-                  }`}
-                >
-                  {user.Status}
-                </span>
-              </div>
+            <div className="flex flex-col items-start md:items-center justify-center gap-2 px-2 md:flex-1">
+              <span className="flex items-center gap-1.5 text-[10px] font-bold text-gray-600 bg-gray-50 px-3 py-1 rounded-lg border border-gray-100 whitespace-nowrap">
+                <ShieldCheck size={12} className="text-gray-400" />
+                {user.Role}
+              </span>
+              <span
+                className={`text-[9px] font-black uppercase px-3 py-0.5 rounded-full border ${
+                  user.Status === "Active"
+                    ? "bg-green-50 text-green-600 border-green-100"
+                    : "bg-red-50 text-red-500 border-red-100"
+                }`}
+              >
+                {user.Status}
+              </span>
             </div>
 
             {/* RIGHT: Actions Hub (Fixed width on desktop) */}
