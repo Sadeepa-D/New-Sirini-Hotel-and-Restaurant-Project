@@ -297,8 +297,6 @@ export default function Restaurant() {
             setOpenorderform(false);
             if (success) {
               setCartItems([]);
-            } else if (cartItems.length > 0) {
-
             }
           }}
         />
