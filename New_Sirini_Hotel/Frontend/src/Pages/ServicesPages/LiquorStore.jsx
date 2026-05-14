@@ -112,7 +112,6 @@ const LiquorStore = () => {
       drink.price <= priceRange[1],
   );
 
-  // Slice-based navigation (same as CateringMng)
   const GAP = 16;
   const cardWidth = `calc((100% - ${GAP * (itemsPerView - 1)}px) / ${itemsPerView})`;
   const visibleBeerDrinks = filteredBeerDrinks.slice(
