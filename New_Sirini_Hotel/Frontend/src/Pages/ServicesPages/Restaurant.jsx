@@ -156,10 +156,10 @@ export default function Restaurant() {
       const windowHeight = window.innerHeight;
       const documentHeight = document.documentElement.scrollHeight;
 
-      // Show FAB after scrolling past hero (approx 100vh - header)
+      // Show FAB after scrolling past hero 
       setIsFabVisible(scrollY > windowHeight * 0.7);
 
-      // Detect if near footer (approx 400px from bottom)
+      // Detect if near footer 
       setIsNearFooter(scrollY + windowHeight > documentHeight - 350);
     };
 
@@ -268,10 +268,13 @@ export default function Restaurant() {
             ${isNearFooter ? 'bottom-[380px] md:bottom-[420px]' : 'bottom-8'}
             right-8`}
         >
-          <button
-            className="relative group transition-all duration-300"
-            onClick={() => setShowCart(true)}
-          >
+         <button 
+           className="relative group transition-all duration-300"
+            onClick={() => {
+            setShowCart(prev => !prev);
+            
+            }}
+        >
             <div
               className="w-16 h-16 md:w-20 md:h-20 bg-amber-500 text-white flex items-center justify-center rounded-full shadow-2xl group-hover:bg-amber-600 group-hover:scale-110 transition-all duration-300"
               style={{ boxShadow: "0 10px 25px -5px rgba(245, 158, 11, 0.4)" }}
