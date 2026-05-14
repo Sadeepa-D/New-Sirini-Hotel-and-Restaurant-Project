@@ -85,6 +85,7 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
       return;
     }
 
+    onClose(); // Hide the form instantly upon clicking the button
     onSubmit({ ...form, imageFile });
   };
 
