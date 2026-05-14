@@ -6,6 +6,10 @@ const cateringItemsSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    description: {
+      type: String,
+      default: "",
+    },
     ingredients: {
       type: [String],
       required: true,

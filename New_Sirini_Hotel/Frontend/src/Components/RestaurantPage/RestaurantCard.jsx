@@ -1,16 +1,16 @@
 import React from "react";
 
 export default function RestaurantCard({ item, itemsPerView, onOrder }) {
+  const widthPercentage = 100 / itemsPerView;
+  const gap = itemsPerView === 1 ? 16 : 24;
+  const width = `calc(${widthPercentage}% - ${(gap * (itemsPerView - 1)) / itemsPerView}px)`;
+
   return (
     <div
       className="flex-shrink-0"
       style={{
-        width: `calc(${100 / itemsPerView}% - ${
-          ((itemsPerView - 1) * (itemsPerView === 1 ? 16 : 24)) /
-          itemsPerView
-        }px)`,
-      }}
-    >
+        width,
+      }}>
       <div className="bg-white rounded-xl shadow-md overflow-hidden border border-neutral-100 h-full flex flex-col hover:shadow-lg transition-shadow">
 
         <div className="relative h-48">

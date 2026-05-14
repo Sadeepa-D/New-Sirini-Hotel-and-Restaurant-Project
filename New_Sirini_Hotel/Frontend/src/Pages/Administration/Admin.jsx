@@ -16,11 +16,13 @@ import {
   ArrowUpRight,
   Home,
   User,
+  Camera,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
 import UserManagement from "../../Components/Admin/UserManagement";
+import GalleryManagementHub from "../../Components/Admin/GalleryManagementHub";
 
 // --- PLACEHOLDER COMPONENTS FOR TABS ---
 const AdminDashboard = () => (
@@ -96,6 +98,7 @@ const Admin = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [adminData, setAdminData] = useState([]);
   const [managerpagesselection, setManagerpagesselection] = useState(false);
+  const [galleryselection, setGalleryselection] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -268,10 +271,16 @@ const Admin = () => {
           {/* Right: Logout + Profile */}
           <div className="flex items-center justify-end gap-3 w-1/4">
             <div className="relative">
+              <button onClick={() => setGalleryselection(!galleryselection)}>
+                <Camera
+                  size={26}
+                  className="text-gray-500 hover:text-gray-700 transition-colors"
+                />
+              </button>
               <button
                 onClick={() => setManagerpagesselection(!managerpagesselection)}
                 title="Manager Portals"
-                className={`p-2 rounded-lg transition-colors ${managerpagesselection ? 'bg-amber-100 text-amber-600' : 'text-gray-500 hover:bg-gray-100'}`}
+                className={`p-2 rounded-lg transition-colors ${managerpagesselection ? "bg-amber-100 text-amber-600" : "text-gray-500 hover:bg-gray-100"}`}
               >
                 <User size={26} />
               </button>
@@ -279,31 +288,41 @@ const Admin = () => {
               {/* Dropdown Menu */}
               {managerpagesselection && (
                 <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100 p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                  <button 
+                  <button
                     onClick={() => {
                       setManagerpagesselection(false);
                       navigate("/operationmanager");
                     }}
                     className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors font-medium flex items-center gap-3 group"
                   >
-                    <Store size={18} className="text-gray-400 group-hover:text-amber-500 transition-colors shrink-0" />
+                    <Store
+                      size={18}
+                      className="text-gray-400 group-hover:text-amber-500 transition-colors shrink-0"
+                    />
                     <div>
                       Operation Manager 1
-                      <span className="block text-[10px] text-gray-400 font-normal mt-0.5 group-hover:text-amber-500/70">Restaurant, Liquor</span>
+                      <span className="block text-[10px] text-gray-400 font-normal mt-0.5 group-hover:text-amber-500/70">
+                        Restaurant, Liquor
+                      </span>
                     </div>
                   </button>
                   <div className="h-px bg-gray-100 my-1"></div>
-                  <button 
+                  <button
                     onClick={() => {
                       setManagerpagesselection(false);
                       navigate("/manager");
                     }}
                     className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors font-medium flex items-center gap-3 group"
                   >
-                    <Hotel size={18} className="text-gray-400 group-hover:text-amber-500 transition-colors shrink-0" />
+                    <Hotel
+                      size={18}
+                      className="text-gray-400 group-hover:text-amber-500 transition-colors shrink-0"
+                    />
                     <div>
                       Operation Manager 2
-                      <span className="block text-[10px] text-gray-400 font-normal mt-0.5 group-hover:text-amber-500/70">Reception, Rooms</span>
+                      <span className="block text-[10px] text-gray-400 font-normal mt-0.5 group-hover:text-amber-500/70">
+                        Reception, Rooms
+                      </span>
                     </div>
                   </button>
                 </div>
@@ -358,6 +377,13 @@ const Admin = () => {
           scrollbar-width: none;
         }
       `}</style>
+      {galleryselection && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-lg w-full max-w-4xl p-6 relative">
+            <GalleryManagementHub onClose={() => setGalleryselection(false)} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
