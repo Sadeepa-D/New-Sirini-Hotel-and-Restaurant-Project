@@ -9,8 +9,6 @@ import ProcessFlow from "../../Components/RestaurantPage/processflow";
 import { ShoppingCart } from "lucide-react";
 import CartComp from "../../Components/RestaurantPage/CartComp";
 
-// Initial hardcoded data removed. Data is now fetched from the backend API.
-
 const CATEGORIES = [
   "Chopsy Rice",
   "Rice & Nasi Goreng",
