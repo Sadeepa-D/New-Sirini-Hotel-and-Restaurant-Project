@@ -323,7 +323,7 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
               onClick={onClose}
               className="flex-1 py-3 bg-linear-to-r from-amber-500 to-amber-600 text-white rounded-xl hover:from-amber-600 hover:to-amber-700 transition-all font-bold text-sm md:text-base shadow-md"
             >
-              Continue Shopping
+              Find more dishes
             </button>
           </div>
         )}
