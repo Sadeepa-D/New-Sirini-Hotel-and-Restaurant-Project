@@ -15,7 +15,7 @@ const createRoom = async (req, res) => {
       condition,
     } = req.body;
 
-    //check if all required fields are provided
+
     if (!roomNumber || !roomType || !price || !bedType || !capacity) {
       return res
         .status(400)
@@ -53,7 +53,7 @@ const createRoom = async (req, res) => {
   }
 };
 
-// ── 2. Get All Rooms ──
+
 const getAllRooms = async (req, res) => {
   try {
     const rooms = await RoomModel.find().sort({ createdAt: -1 });
@@ -68,7 +68,7 @@ const getAllRooms = async (req, res) => {
   }
 };
 
-// ── 3. Update Room ──
+
 const updateRoom = async (req, res) => {
   try {
     const { id } = req.params;
@@ -108,7 +108,7 @@ const updateRoom = async (req, res) => {
   }
 };
 
-// ── 4. Delete Room ──
+
 const deleteRoom = async (req, res) => {
   try {
     const { id } = req.params;
@@ -124,7 +124,6 @@ const deleteRoom = async (req, res) => {
         await cloudinary.v2.uploader.destroy(room.imagePublicId);
       } catch (cloudinaryError) {
         console.error("Error deleting image from Cloudinary:", cloudinaryError);
-        // Continue with database deletion even if Cloudinary deletion fails
       }
     }
     await RoomModel.findByIdAndDelete(id);

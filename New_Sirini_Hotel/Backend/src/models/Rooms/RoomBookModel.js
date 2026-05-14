@@ -5,8 +5,8 @@ const roomBookSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      // required: true,
     },
+
     name: {
       type: String,
       required: true,
@@ -18,7 +18,7 @@ const roomBookSchema = new mongoose.Schema(
       lowercase: true,
       match: [
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-        "Please enter a valid email address", 
+        "Please enter a valid email address",
       ],
     },
     phone: {
@@ -57,7 +57,7 @@ const roomBookSchema = new mongoose.Schema(
     totalAmount: {
       type: Number,
       required: true,
-      default: 0
+      default: 0,
     },
   },
   {
