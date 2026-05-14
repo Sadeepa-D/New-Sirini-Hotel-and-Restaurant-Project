@@ -53,5 +53,4 @@ const advertisingSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-
 module.exports = mongoose.model("Advertising", advertisingSchema);
