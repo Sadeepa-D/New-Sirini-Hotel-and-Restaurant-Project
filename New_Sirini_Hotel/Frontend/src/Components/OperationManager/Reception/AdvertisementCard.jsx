@@ -79,7 +79,7 @@ const AdvertisementCard = ({
       </div>
 
       {/* ── Info ── */}
-      <div className="p-4 flex flex-col flex-1 gap-2">
+      <div className="p-3 sm:p-4 flex flex-col flex-1 gap-2">
         {/* Category */}
         <span className="self-start text-[10px] font-bold text-amber-600 bg-amber-50 border border-amber-100 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
           {ad.category}

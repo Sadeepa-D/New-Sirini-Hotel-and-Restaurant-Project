@@ -227,7 +227,7 @@ const AdvertismentMng = () => {
 
   if (loading)
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-6">
         <p className="text-center text-gray-400 text-sm py-10 animate-pulse">
           Loading advertisements...
         </p>
@@ -235,7 +235,7 @@ const AdvertismentMng = () => {
     );
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
@@ -264,7 +264,7 @@ const AdvertismentMng = () => {
       </div>
 
       {/* Status summary pills */}
-      <div className="flex flex-wrap gap-2 mb-5">
+      <div className="flex items-center overflow-x-auto sm:flex-wrap gap-2 mb-5 pb-1 sm:pb-0 no-scrollbar">
         <button
           onClick={() => {
             setSelectedStatus(null);
@@ -272,7 +272,7 @@ const AdvertismentMng = () => {
             setSearch("");
             setIndex(0);
           }}
-          className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full transition-colors cursor-pointer ${
+          className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full transition-colors cursor-pointer whitespace-nowrap ${
             selectedStatus === null
               ? "bg-blue-100 text-blue-700 border-2 border-blue-400"
               : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -289,7 +289,7 @@ const AdvertismentMng = () => {
                 selectedStatus === key
                   ? `${bg} ${text} border-2 border-current shadow-md`
                   : `${bg} ${text} opacity-60 hover:opacity-100`
-              } text-xs font-semibold px-3 py-1.5 rounded-full transition-all cursor-pointer`}
+              } text-xs font-semibold px-3 py-1.5 rounded-full transition-all cursor-pointer whitespace-nowrap`}
             >
               <Icon size={12} />
               {label}: {allAds.filter((a) => a.status === key).length}
@@ -318,14 +318,14 @@ const AdvertismentMng = () => {
           {/* Visible cards — slice-based, no translateX */}
           <div
             key={index}
-            className="flex gap-4"
+            className="flex gap-3 sm:gap-4"
             style={{ animation: "fadeIn 0.25s ease" }}
           >
             {filtered.slice(index, index + itemsPerView).map((ad) => (
               <div
                 key={ad._id}
                 style={{
-                  width: `calc((100% - ${16 * (itemsPerView - 1)}px) / ${itemsPerView})`,
+                  width: `calc((100% - ${(window.innerWidth < 640 ? 12 : 16) * (itemsPerView - 1)}px) / ${itemsPerView})`,
                 }}
                 className="shrink-0"
               >
