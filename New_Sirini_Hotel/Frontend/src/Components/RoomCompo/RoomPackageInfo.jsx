@@ -47,7 +47,7 @@ const RoomPackageInfo = () => {
             <Sparkles size={18} className="text-orange-400" />
           </h2>
           <p className="text-[10px] text-orange-500 uppercase tracking-[0.2em] font-bold mt-1">
-            Available booking options
+            Available booking options in our hotel
           </p>
         </div>
       </div>

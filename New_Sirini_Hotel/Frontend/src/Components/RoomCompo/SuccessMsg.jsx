@@ -127,7 +127,7 @@ function BookingSuccess({ selectedRoom, onClose, totalPrice }) {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes bounce-short {
           0%,
           100% {

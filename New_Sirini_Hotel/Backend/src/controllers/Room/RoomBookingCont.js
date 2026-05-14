@@ -57,11 +57,10 @@ const createRoomBooking = async (req, res) => {
     });
 
     if (hasConflict) {
-      const slotLabel = timeSlot === "day"
-        ? "Day Package (12:00 PM – 3:00 PM)"
-        : "Full Day";
+      const slotLabel =
+        timeSlot === "day" ? "Day Package (12:00 PM – 3:00 PM)" : "Full Day";
       return res.status(400).json({
-         error: `Sorry! The ${slotLabel} is not available for one or more of those dates. Please choose different dates.`,
+        error: `Sorry! The ${slotLabel} is not available for one or more of those dates. Please choose different dates.`,
       });
     }
 
@@ -76,7 +75,7 @@ const createRoomBooking = async (req, res) => {
       numberOfGuests,
       status: "Pending",
       totalAmount,
-      bookingType:"day-use",
+      bookingType: "day-use",
       timeSlot,
     });
 
