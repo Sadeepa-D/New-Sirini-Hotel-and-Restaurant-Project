@@ -62,6 +62,7 @@ const getAdvertisments = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 const deleteAdvertisment = async (req, res) => {
   try {
     const { id } = req.params;
