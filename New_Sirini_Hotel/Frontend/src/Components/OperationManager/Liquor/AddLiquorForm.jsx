@@ -6,7 +6,10 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
   const [imagePreview, setImagePreview] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
-    price: "",
+    // price: "",
+    buyingPrice: "",
+    discount: "",
+    sellingPrice: "",
     alcoholPercentage: "",
     category: "Beer",
     image: "",
@@ -169,11 +172,39 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-xs font-black uppercase text-gray-400 ml-2">
-                  Price (LKR)
+                 Buying Price (LKR)
                 </label>
                 <input
-                  name="price"
-                  value={formData.price}
+                  name="buyingPrice"
+                  value={formData.buyingPrice}
+                  onChange={handleChange}
+                  type="number"
+                  required
+                  className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00]"
+                  placeholder="0.00"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-black uppercase text-gray-400 ml-2">
+                  discount (%)
+                </label>
+                <input
+                  name="discount"
+                  value={formData.discount}
+                  onChange={handleChange}
+                  type="number"
+                  required
+                  className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00]"
+                  placeholder="0.00"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-black uppercase text-gray-400 ml-2">
+                  selling price (LKR)
+                </label>
+                <input
+                  name="sellingPrice"
+                  value={formData.sellingPrice}
                   onChange={handleChange}
                   type="number"
                   required

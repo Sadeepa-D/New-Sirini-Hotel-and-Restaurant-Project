@@ -7,12 +7,22 @@ const LiquorSchema = mongoose.Schema(
       required: true,
       trim: true,
     },
-
     price: {
+      type: Number,
+      // required: true,
+    },
+    buyingPrice: {
       type: Number,
       required: true,
     },
-
+    discount: {
+      type: Number,
+      default: 0,
+    },
+    sellingPrice: {
+      type: Number,
+      required: true,
+    },
     category: {
       type: String,
       required: true,

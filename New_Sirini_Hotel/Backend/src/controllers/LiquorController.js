@@ -5,7 +5,10 @@ const addLiquor = async (req, res) => {
   try {
     const {
       name,
-      price,
+      // price,
+      buyingPrice,
+      discount,
+      sellingPrice,
       category,
       alcoholPercentage,
       description,
@@ -14,15 +17,20 @@ const addLiquor = async (req, res) => {
       brand,
     } = req.body;
 
-    if (!name || !price || !category) {
+    if (!name || !buyingPrice || !sellingPrice || !category) {
       return res
         .status(400)
-        .json({ message: "Name, Price, and Category are required" });
+        .json({ message: "Name, Buying Price, Selling Price, and Category are required" });
     }
-    if (isNaN(price) || price <= 0) {
+    if (isNaN(buyingPrice) || buyingPrice <= 0) {
       return res
         .status(400)
-        .json({ message: "Price must be a positive number" });
+        .json({ message: "Buying Price must be a positive number" });
+    }
+    if (isNaN(sellingPrice) || sellingPrice <= 0) {
+      return res
+        .status(400)
+        .json({ message: "Selling Price must be a positive number" });
     }
 
     if (!req.file) {
@@ -34,7 +42,10 @@ const addLiquor = async (req, res) => {
 
     const newLiquor = new Liquor({
       name,
-      price,
+      // price,
+      buyingPrice,
+      discount,
+      sellingPrice,
       category,
       alcoholPercentage,
       image,
@@ -60,6 +71,11 @@ const getAllLiquor = async (req, res) => {
     const liquor = await Liquor.find().sort({ createdAt: -1 });
     if (liquor.length === 0) {
       return res.status(404).json({ message: "No liquor found" });
+    }
+    if(liquor.discount!==0){
+      liquor.forEach((item) => {
+        item.price = item.sellingPrice - (item.sellingPrice * item.discount) / 100;
+      });
     }
     res.status(200).json(liquor);
   } catch (error) {
