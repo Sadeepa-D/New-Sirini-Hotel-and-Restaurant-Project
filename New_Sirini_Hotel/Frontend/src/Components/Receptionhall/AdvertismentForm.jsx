@@ -12,6 +12,8 @@ import {
   Music,
   Sparkles,
   Upload,
+  User,
+  IdCard,
 } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -22,6 +24,8 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
   const API_URL = import.meta.env.VITE_API_URL;
   const [formData, setFormData] = useState({
     BuissnesName: "",
+    BuissnessOwnerName: "",
+    NIC: "",
     category: "",
     description: "",
     portfolio: "",
@@ -36,6 +40,8 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
     if (editData) {
       setFormData({
         BuissnesName: editData.BuissnesName || "",
+        BuissnessOwnerName: editData.BuissnessOwnerName || "",
+        NIC: editData.NIC || "",
         category: editData.category || "",
         description: editData.description || "",
         portfolio: editData.portfolio || "",
@@ -72,6 +78,8 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
     try {
       const submitData = new FormData();
       submitData.append("BuissnesName", formData.BuissnesName);
+      submitData.append("BuissnessOwnerName", formData.BuissnessOwnerName);
+      submitData.append("NIC", formData.NIC);
       submitData.append("category", formData.category);
       submitData.append("description", formData.description);
       submitData.append("portfolio", formData.portfolio);
@@ -166,6 +174,40 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
                 value={formData.BuissnesName}
                 onChange={handleChange}
                 placeholder="e.g. Lens & Light Studio"
+                required
+                className="w-full text-sm text-gray-700 outline-none placeholder-gray-300"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs text-gray-400 uppercase tracking-widest mb-1.5 font-medium">
+              Business Owner Name
+            </label>
+            <div className="flex items-center gap-3 border border-gray-200 rounded-2xl px-4 py-3 focus-within:border-amber-400 transition-colors">
+              <User size={15} className="text-amber-400 shrink-0" />
+              <input
+                type="text"
+                name="BuissnessOwnerName"
+                value={formData.BuissnessOwnerName}
+                onChange={handleChange}
+                placeholder="e.g. John Doe"
+                required
+                className="w-full text-sm text-gray-700 outline-none placeholder-gray-300"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs text-gray-400 uppercase tracking-widest mb-1.5 font-medium">
+              NIC Number
+            </label>
+            <div className="flex items-center gap-3 border border-gray-200 rounded-2xl px-4 py-3 focus-within:border-amber-400 transition-colors">
+              <IdCard size={15} className="text-amber-400 shrink-0" />
+              <input
+                type="text"
+                name="NIC"
+                value={formData.NIC}
+                onChange={handleChange}
+                placeholder="e.g. 951234567V"
                 required
                 className="w-full text-sm text-gray-700 outline-none placeholder-gray-300"
               />
