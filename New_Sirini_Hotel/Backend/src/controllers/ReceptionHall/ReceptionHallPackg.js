@@ -96,7 +96,6 @@ const deleteReceptionHallPackage = async (req, res) => {
         await cloudinary.v2.uploader.destroy(item.imagePublicId);
       } catch (cloudinaryError) {
         console.error("Error deleting image from Cloudinary:", cloudinaryError);
-        // Continue with database deletion even if Cloudinary deletion fails
       }
     }
 

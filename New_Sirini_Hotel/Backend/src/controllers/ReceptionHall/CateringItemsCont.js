@@ -52,8 +52,8 @@ const updateCateringItem = async (req, res) => {
       if (existingItem.imagePublicId) {
         await cloudinary.v2.uploader.destroy(existingItem.imagePublicId);
       }
-      updates.image = req.file.secure_url; // New URL
-      updates.imagePublicId = req.file.public_id; // New Public ID
+      updates.image = req.file.secure_url;
+      updates.imagePublicId = req.file.public_id;
     }
     const updatedItem = await CateringItems.findByIdAndUpdate(
       id,
@@ -83,7 +83,6 @@ const deleteCateringItem = async (req, res) => {
         await cloudinary.v2.uploader.destroy(item.imagePublicId);
       } catch (cloudinaryError) {
         console.error("Error deleting image from Cloudinary:", cloudinaryError);
-        // Continue with database deletion even if Cloudinary deletion fails
       }
     }
     const deletedItem = await CateringItems.findByIdAndDelete(id);

@@ -138,8 +138,6 @@ const deleteFoodOrder = async (req, res) => {
       return res.status(404).json({ message: "Food order not found" });
     }
 
-    // Simplified deletion logic: allow for all active orders
-
     order.status = "delete";
     await order.save();
     
@@ -260,13 +258,12 @@ const getPendingFoodOrders = async (req, res) => {
       .json({ message: "Failed to retrieve pending food orders", error });
   }
 };
-// GET /api/restaurant/orders/userspecific
 const getUserOrders = async (req, res) => {
   try {
-    const userId = req.userData.id; // comes from JWT payload
+    const userId = req.userData.id;
 
     const orders = await FoodOrder.find({ userId })
-      .sort({ createdAt: -1 }); // newest first
+      .sort({ createdAt: -1 }); 
 
     res.status(200).json(orders);
   } catch (error) {

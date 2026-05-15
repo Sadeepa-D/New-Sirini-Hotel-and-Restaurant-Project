@@ -167,7 +167,7 @@ const PackagesMng = () => {
 
   if (loading)
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-6">
         <p className="text-center text-gray-400 text-sm py-10 animate-pulse">
           Loading packages...
         </p>
@@ -175,7 +175,7 @@ const PackagesMng = () => {
     );
   if (error)
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-6">
         <p className="text-center text-red-400 text-sm py-10">{error}</p>
       </div>
     );
@@ -187,7 +187,7 @@ const PackagesMng = () => {
   const cardWidth = `calc((100% - ${GAP * (itemsPerView - 1)}px) / ${itemsPerView})`;
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
@@ -248,7 +248,7 @@ const PackagesMng = () => {
           {/* Visible cards — slice-based, no translateX */}
           <div
             key={index}
-            className="flex gap-4"
+            className="flex gap-3 sm:gap-4"
             style={{ animation: "fadeIn 0.25s ease" }}
           >
             {visibleItems.map((item) => (
@@ -287,8 +287,8 @@ const PackagesMng = () => {
                 />
 
                 {/* Info */}
-                <div className="p-3 bg-white">
-                  <h3 className="font-semibold text-gray-800 text-sm truncate">
+                <div className="p-2 sm:p-3 bg-white">
+                  <h3 className="font-semibold text-gray-800 text-sm truncate pb-2">
                     {item.name}
                   </h3>
                   <p

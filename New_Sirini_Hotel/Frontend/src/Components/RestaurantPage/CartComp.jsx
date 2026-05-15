@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Trash2, Plus, Minus } from "lucide-react";
+import { X, Trash2, Plus, Minus, TriangleAlert } from "lucide-react";
 import toast from "react-hot-toast";
 
 
@@ -14,7 +14,7 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
               ...item,
               quantity: Math.max(
                 1,
-                Math.min(999, (item.quantity || 1) + delta),
+                Math.min(100, (item.quantity || 1) + delta),
               ),
             }
           : item,
@@ -25,7 +25,6 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
   const removeItem = (cartId) => {
     setCartItems((prev) => prev.filter((item) => item.cartId !== cartId));
   };
-
 
 
   const getItemPrice = (item) => {
@@ -281,7 +280,7 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
             {/* Session Warning Message */}
             <div className="mb-4 flex items-center gap-3 p-3 bg-amber-100/50 border border-amber-200 rounded-xl text-amber-800 animate-in fade-in slide-in-from-top-1 duration-500">
               <div className="bg-amber-500 text-white rounded-full p-1 shadow-sm shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m12 9 4 7H8l4-7Z"/><path d="M12 3a9 9 0 1 0 9 9 9 9 0 0 0-9-9Z"/><path d="M12 17v.01"/></svg>
+             <TriangleAlert size={14} />
               </div>
               <p className="text-md font-medium">
                 Your cart is saved for this session, but it will be cleared if you log out before checking out.
@@ -301,7 +300,7 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
                 onClick={onClose}
                 className="flex-1 py-3 bg-gray-300 text-gray-700 rounded-xl hover:bg-gray-400 transition-colors font-bold text-sm md:text-base shadow-md"
               >
-                Continue Shopping
+                Find more dishes
               </button>
 
               <button
@@ -324,7 +323,7 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
               onClick={onClose}
               className="flex-1 py-3 bg-linear-to-r from-amber-500 to-amber-600 text-white rounded-xl hover:from-amber-600 hover:to-amber-700 transition-all font-bold text-sm md:text-base shadow-md"
             >
-              Continue Shopping
+              Find more dishes
             </button>
           </div>
         )}

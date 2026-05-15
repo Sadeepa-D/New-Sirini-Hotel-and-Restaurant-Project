@@ -44,7 +44,7 @@ const AppointmentCard = ({
       {/* Top accent bar */}
       <div className="h-1 w-full bg-gradient-to-r from-amber-400 to-amber-300" />
 
-      <div className="p-5">
+      <div className="p-3 sm:p-5">
         {/* Status + Date row */}
         <div className="flex justify-between items-center mb-4">
           <span

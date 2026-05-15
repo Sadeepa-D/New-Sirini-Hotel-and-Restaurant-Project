@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 
 function RoomBookedDetails({ refreshKey, onActionCompleted }) {
+  const VITE_URL = import.meta.env.VITE_API_URL;
   const [pendingList, setPendingList] = useState([]);
   const [confirmedList, setConfirmedList] = useState([]);
   const [cancelledList, setCancelledList] = useState([]);
@@ -34,10 +35,10 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
     try {
       setLoading(true);
       const responses = await Promise.allSettled([
-        axios.get("http://localhost:5000/api/rooms/viewpendingbookings"),
-        axios.get("http://localhost:5000/api/rooms/viewconfirmedbookings"),
-        axios.get("http://localhost:5000/api/rooms/viewcancelledbookings"),
-        axios.get("http://localhost:5000/api/rooms/viewcompletedbookings"),
+        axios.get(`${VITE_URL}/api/rooms/viewpendingbookings`),
+        axios.get(`${VITE_URL}/api/rooms/viewconfirmedbookings`),
+        axios.get(`${VITE_URL}/api/rooms/viewcancelledbookings`),
+        axios.get(`${VITE_URL}/api/rooms/viewcompletedbookings`),
       ]);
 
       setPendingList(
@@ -79,11 +80,11 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
     try {
       let endpoint = "";
       if (actionType === "confirm")
-        endpoint = `http://localhost:5000/api/rooms/confirmbooking/${id}`;
+        endpoint = `${VITE_URL}/api/rooms/confirmbooking/${id}`;
       else if (actionType === "cancel")
-        endpoint = `http://localhost:5000/api/rooms/cancelbooking/${id}`;
+        endpoint = `${VITE_URL}/api/rooms/cancelbooking/${id}`;
       else if (actionType === "complete")
-        endpoint = `http://localhost:5000/api/rooms/completebooking/${id}`;
+        endpoint = `${VITE_URL}/api/rooms/completebooking/${id}`;
 
       await axios.put(endpoint);
       toast.success(`Status Updated`, { id: actionToast });
@@ -98,7 +99,7 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
     if (!window.confirm("Permanently delete this record?")) return;
     const actionToast = toast.loading("Deleting...");
     try {
-      await axios.delete(`http://localhost:5000/api/rooms/deletebooking/${id}`);
+      await axios.delete(`${VITE_URL}/api/rooms/deletebooking/${id}`);
       toast.success("Deleted Successfully", { id: actionToast });
       fetchAllData();
       if (onActionCompleted) onActionCompleted();
