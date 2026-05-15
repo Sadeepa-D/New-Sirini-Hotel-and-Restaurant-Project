@@ -114,7 +114,7 @@ const RoomCards = ({ rooms, onEdit, onDelete }) => {
                       )}
                       {room.facilities.includes("Mini Fridge") && (
                         <div className="flex items-center gap-0.5 bg-green-50 px-1.5 py-0.5 rounded border border-green-100">
-                          <Refrigerator size={10} className="text-green-500" />
+                          <Refrigerator size={10} className="text-green-550" />
                           <span className="text-[8px] font-bold text-green-700">Fridge</span>
                         </div>
                       )}
