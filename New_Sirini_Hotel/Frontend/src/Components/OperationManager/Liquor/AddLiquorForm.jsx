@@ -193,7 +193,6 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
                   value={formData.discount}
                   onChange={handleChange}
                   type="number"
-                  required
                   className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00]"
                   placeholder="0.00"
                 />

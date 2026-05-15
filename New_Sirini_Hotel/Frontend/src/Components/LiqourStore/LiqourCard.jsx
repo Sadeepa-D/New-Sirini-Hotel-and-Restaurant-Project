@@ -71,23 +71,22 @@ const DrinkCard = ({ drink, onClick }) => {
 
           {/* Price */}
           <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/15 border border-amber-500/25 rounded-xl backdrop-blur-sm">
-            <BadgeDollarSign size={13} className="text-amber-400 shrink-0" />
             <div className="flex flex-col gap-1">
-              {drink.sellingPrice && (
-                <p className="text-[10px] text-gray-400 leading-none">
-                  Original:
+              {drink.sellingPrice && drink.discount && (
+                <p className="text-[15px] text-gray-400 leading-none">
+                  Selling Price:
                   <span className="text-amber-400 line-through">
-                    LKR {drink.sellingPrice}
+                    LKR: {drink.sellingPrice}
                   </span>
                 </p>
               )}
               {drink.discount && (
-                <p className="text-[10px] text-green-400 font-semibold leading-none">
-                  Discount: {drink.discount}
+                <p className="text-[13px] text-green-400 font-semibold leading-none">
+                  Discount: {drink.discount}%
                 </p>
               )}
               <p className="text-sm font-bold text-amber-300 leading-none">
-                Final: LKR {drink.price}
+                Price: LKR {drink.price}
               </p>
             </div>
           </div>
