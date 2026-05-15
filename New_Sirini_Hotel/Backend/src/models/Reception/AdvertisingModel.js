@@ -11,6 +11,15 @@ const advertisingSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    BuissnessOwnerName: {
+      type: String,
+      required: true,
+    },
+    NIC: {
+      type: String,
+      required: true,
+      match: [/^[0-9]{9}[0-9X]$/, "Please enter a valid 9-digit NIC number"],
+    },
     category: {
       type: String,
       enum: ["Photography", "Audio & Musical", "Decoration"],
