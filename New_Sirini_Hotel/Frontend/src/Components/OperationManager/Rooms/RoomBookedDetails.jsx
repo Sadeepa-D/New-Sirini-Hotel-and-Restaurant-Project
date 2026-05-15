@@ -189,7 +189,7 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
         </div>
       </div>
 
-      {/* --- Card Slider Section with Arrows --- */}
+      {/*Card Slider Section with Arrows*/}
       {filteredList.length === 0 ? (
         <div className="text-center py-24 bg-white rounded-3xl border border-gray-100 shadow-sm">
           <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-xs">
@@ -216,7 +216,7 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
                 key={req._id}
                 className="flex-shrink-0 w-[85vw] sm:w-[320px] snap-center bg-white rounded-[2rem] p-5 sm:p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col"
               >
-                {/* Header: User Info & Status */}
+                {/*User Info & Status */}
                 <div className="flex justify-between items-start mb-5">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 border border-gray-100">
@@ -234,7 +234,7 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
                   <StatusBadge status={req.status} tab={activeTab} />
                 </div>
 
-                {/* Body: Room & Dates */}
+                {/*Room & Dates details */}
                 <div className="bg-gray-50 rounded-2xl p-4 space-y-3 mb-6">
                   <div className="flex justify-between items-center">
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">

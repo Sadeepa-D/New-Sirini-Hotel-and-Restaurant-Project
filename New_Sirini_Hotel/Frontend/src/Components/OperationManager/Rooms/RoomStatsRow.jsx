@@ -29,7 +29,7 @@ const RoomStatsRow = ({ stats }) => {
           key={item.label}
           className={`rounded-2xl p-3 sm:p-5 ${item.color} flex items-center gap-3 sm:gap-4 transition-all duration-300 hover:shadow-md`}
         >
-          {/* Status Dot with Pulse Effect for Available */}
+          {/* Status Dot*/}
           <div className="relative flex items-center justify-center">
             {item.label === "Available" && (
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-20"></span>
