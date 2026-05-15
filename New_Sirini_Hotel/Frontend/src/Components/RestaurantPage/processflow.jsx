@@ -23,8 +23,8 @@ export default function ProcessFlow() {
     },
     {
       id: 4,
-      title: 'Ready for Pickup',
-      subtitle: 'Prepared',
+      title: 'Time to Prepare',
+      subtitle: 'Preparing',
       icon: Package,
     },
     {
@@ -51,58 +51,69 @@ export default function ProcessFlow() {
           <p className="text-gray-500 text-sm">Simple 6-step process to enjoy your meal</p>
         </div>
 
-        {/* Desktop Layout */}
-        <div className="hidden md:flex items-start justify-center gap-0">
+        {/* Unified Responsive Horizontal Layout */}
+        <div className="flex items-start justify-between w-full max-w-5xl mx-auto transition-all duration-300">
           {steps.map((step, index) => {
             const Icon = step.icon;
             return (
-              <div key={step.id} className="flex items-center">
-                {/* Step */}
-                <div className="flex flex-col items-center w-20">
+              <React.Fragment key={step.id}>
+                {/* Step Item */}
+                <div className="flex flex-col items-center flex-1 min-w-0 group">
                   {/* Circle */}
-                  <div className="w-14 h-14 rounded-full bg-amber-400 flex items-center justify-center shadow-md hover:scale-105 transition-transform duration-200 cursor-pointer">
-                    <Icon className="w-6 h-6 text-white" strokeWidth={2} />
+                  <div className="
+                    w-8 h-8 
+                    sm:w-10 sm:h-10 
+                    md:w-12 md:h-12 
+                    lg:w-14 lg:h-14 
+                    rounded-full bg-amber-400 
+                    flex items-center justify-center 
+                    shadow-md hover:scale-110 
+                    transition-all duration-300 cursor-pointer 
+                    flex-shrink-0
+                  ">
+                    <Icon className="
+                      w-4 h-4 
+                      sm:w-5 sm:h-5 
+                      md:w-5 md:h-5 
+                      lg:w-6 lg:h-6 
+                      text-white transition-all duration-300" 
+                      strokeWidth={2} 
+                    />
                   </div>
-                  {/* Labels */}
-                  <p className="mt-2 text-xs font-semibold text-gray-800 text-center leading-tight">{step.title}</p>
-                  <p className="text-xs text-gray-400 text-center leading-tight">{step.subtitle}</p>
+                  
+                  {/* Labels Container */}
+                  <div className="mt-2 flex flex-col items-center w-full px-0.5">
+                    <p className="
+                      text-[7px] sm:text-[9px] md:text-[10px] lg:text-xs 
+                      font-bold text-gray-800 text-center leading-tight 
+                      transition-all duration-300 break-words w-full"
+                    >
+                      {step.title}
+                    </p>
+                    <p className="
+                      text-[6px] sm:text-[8px] md:text-[9px] lg:text-[10px] 
+                      text-gray-400 text-center leading-tight 
+                      transition-all duration-300 mt-0.5"
+                    >
+                      {step.subtitle}
+                    </p>
+                  </div>
                 </div>
 
-                {/* Arrow between steps */}
+                {/* Arrow Connector */}
                 {index < steps.length - 1 && (
-                  <ArrowRight className="w-5 h-5 text-amber-400 mx-1 mt-[-28px] flex-shrink-0" strokeWidth={2} />
-                )}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Mobile Layout */}
-        <div className="md:hidden flex flex-col items-center gap-0">
-          {steps.map((step, index) => {
-            const Icon = step.icon;
-            return (
-              <div key={step.id} className="flex flex-col items-center">
-                {/* Step Row */}
-                <div className="flex items-center gap-4 w-full max-w-xs">
-                  {/* Circle */}
-                  <div className="w-12 h-12 rounded-full bg-amber-400 flex items-center justify-center shadow-md flex-shrink-0">
-                    <Icon className="w-5 h-5 text-white" strokeWidth={2} />
-                  </div>
-                  {/* Labels */}
-                  <div>
-                    <p className="text-sm font-semibold text-gray-800 leading-tight">{step.title}</p>
-                    <p className="text-xs text-gray-400 leading-tight">{step.subtitle}</p>
-                  </div>
-                </div>
-
-                {/* Down Arrow */}
-                {index < steps.length - 1 && (
-                  <div className="my-1">
-                    <ArrowRight className="w-4 h-4 text-amber-400 rotate-90" strokeWidth={2} />
+                  <div className="flex items-center justify-center h-8 sm:h-10 md:h-12 lg:h-14 flex-shrink-0 px-0.5 sm:px-1">
+                    <ArrowRight className="
+                      w-3 h-3 
+                      sm:w-4 sm:h-4 
+                      md:w-4 md:h-4 
+                      lg:w-5 lg:h-5 
+                      text-amber-400 transition-all duration-300" 
+                      strokeWidth={2.5} 
+                    />
                   </div>
                 )}
-              </div>
+              </React.Fragment>
             );
           })}
         </div>

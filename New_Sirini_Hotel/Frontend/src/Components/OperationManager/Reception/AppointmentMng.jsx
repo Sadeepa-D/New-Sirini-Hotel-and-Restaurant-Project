@@ -71,14 +71,14 @@ const AppointmentMng = () => {
 
   const tabs = ["Pending", "Completed", "Canceled", "Overdue"];
 
-  const GAP = 24;
+  const GAP = window.innerWidth < 640 ? 12 : 24;
   const cardWidth = `calc((100% - ${GAP * (itemsPerView - 1)}px) / ${itemsPerView})`;
   const visibleAppointments = appointments.slice(index, index + itemsPerView);
   const canGoBack = index > 0;
   const canGoNext = index + itemsPerView < appointments.length;
 
   return (
-    <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 sm:p-8">
+    <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-3 sm:p-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
@@ -89,7 +89,7 @@ const AppointmentMng = () => {
             Appointment Requests
           </h2>
         </div>
-        <div className="flex items-center gap-2 bg-gray-50 p-1.5 rounded-2xl flex-wrap">
+        <div className="flex items-center gap-2 bg-gray-50 p-1.5 rounded-2xl overflow-x-auto no-scrollbar">
           {tabs.map((tab) => (
             <button
               key={tab}
@@ -133,7 +133,7 @@ const AppointmentMng = () => {
           {/* Visible cards — slice-based, no translateX */}
           <div
             key={index}
-            className="flex gap-6"
+            className="flex gap-3 sm:gap-6"
             style={{ animation: "fadeIn 0.25s ease" }}
           >
             {visibleAppointments.map((app) => (

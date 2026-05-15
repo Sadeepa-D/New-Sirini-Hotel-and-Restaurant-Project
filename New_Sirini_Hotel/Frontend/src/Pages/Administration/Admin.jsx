@@ -196,45 +196,52 @@ const Admin = () => {
                 <User size={16} className="sm:w-5 sm:h-5" />
               </button>
               {managerpagesselection && (
-                <div className="absolute right-3 top-14 sm:right-4 sm:top-16 w-52 bg-white rounded-xl shadow-xl border border-gray-100 p-2 z-50 animate-in fade-in duration-200">
-                  <button
-                    onClick={() => {
-                      setManagerpagesselection(false);
-                      navigate("/operationmanager");
-                    }}
-                    className="w-full text-left px-2 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs text-gray-700 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors font-medium flex items-center gap-2 group"
-                  >
-                    <Store
-                      size={13}
-                      className="sm:w-4 sm:h-4 text-gray-400 group-hover:text-amber-500 shrink-0"
-                    />
-                    <div>
-                      <div className="font-semibold">Manager 1</div>
-                      <span className="text-[8px] sm:text-[9px] text-gray-400 group-hover:text-amber-500/70">
-                        Restaurant, Liquor
-                      </span>
-                    </div>
-                  </button>
-                  <div className="h-px bg-gray-100 my-1"></div>
-                  <button
-                    onClick={() => {
-                      setManagerpagesselection(false);
-                      navigate("/manager");
-                    }}
-                    className="w-full text-left px-2 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs text-gray-700 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors font-medium flex items-center gap-2 group"
-                  >
-                    <Hotel
-                      size={13}
-                      className="sm:w-4 sm:h-4 text-gray-400 group-hover:text-amber-500 shrink-0"
-                    />
-                    <div>
-                      <div className="font-semibold">Manager 2</div>
-                      <span className="text-[8px] sm:text-[9px] text-gray-400 group-hover:text-amber-500/70">
-                        Reception, Rooms
-                      </span>
-                    </div>
-                  </button>
-                </div>
+                <>
+                  {/* Backdrop for click-away */}
+                  <div
+                    className="fixed inset-0 z-40 bg-transparent"
+                    onClick={() => setManagerpagesselection(false)}
+                  />
+                  <div className="absolute right-3 top-14 sm:right-4 sm:top-16 w-52 bg-white rounded-xl shadow-xl border border-gray-100 p-2 z-50 animate-in fade-in duration-200">
+                    <button
+                      onClick={() => {
+                        setManagerpagesselection(false);
+                        navigate("/operationmanager");
+                      }}
+                      className="w-full text-left px-2 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs text-gray-700 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors font-medium flex items-center gap-2 group"
+                    >
+                      <Store
+                        size={13}
+                        className="sm:w-4 sm:h-4 text-gray-400 group-hover:text-amber-500 shrink-0"
+                      />
+                      <div>
+                        <div className="font-semibold">Manager 1</div>
+                        <span className="text-[8px] sm:text-[9px] text-gray-400 group-hover:text-amber-500/70">
+                          Restaurant, Liquor
+                        </span>
+                      </div>
+                    </button>
+                    <div className="h-px bg-gray-100 my-1"></div>
+                    <button
+                      onClick={() => {
+                        setManagerpagesselection(false);
+                        navigate("/manager");
+                      }}
+                      className="w-full text-left px-2 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs text-gray-700 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors font-medium flex items-center gap-2 group"
+                    >
+                      <Hotel
+                        size={13}
+                        className="sm:w-4 sm:h-4 text-gray-400 group-hover:text-amber-500 shrink-0"
+                      />
+                      <div>
+                        <div className="font-semibold">Manager 2</div>
+                        <span className="text-[8px] sm:text-[9px] text-gray-400 group-hover:text-amber-500/70">
+                          Reception, Rooms
+                        </span>
+                      </div>
+                    </button>
+                  </div>
+                </>
               )}
               <button
                 onClick={handleLogout}
@@ -348,45 +355,52 @@ const Admin = () => {
 
               {/* Dropdown Menu */}
               {managerpagesselection && (
-                <div className="absolute right-20 top-20 w-56 bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100 p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                  <button
-                    onClick={() => {
-                      setManagerpagesselection(false);
-                      navigate("/operationmanager");
-                    }}
-                    className="w-full text-left px-3 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors font-medium flex items-center gap-3 group"
-                  >
-                    <Store
-                      size={18}
-                      className="text-gray-400 group-hover:text-amber-500 transition-colors shrink-0"
-                    />
-                    <div>
-                      <div className="font-semibold">Manager 1</div>
-                      <span className="text-xs text-gray-400 group-hover:text-amber-500/70">
-                        Restaurant, Liquor
-                      </span>
-                    </div>
-                  </button>
-                  <div className="h-px bg-gray-100 my-1.5"></div>
-                  <button
-                    onClick={() => {
-                      setManagerpagesselection(false);
-                      navigate("/manager");
-                    }}
-                    className="w-full text-left px-3 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors font-medium flex items-center gap-3 group"
-                  >
-                    <Hotel
-                      size={18}
-                      className="text-gray-400 group-hover:text-amber-500 transition-colors shrink-0"
-                    />
-                    <div>
-                      <div className="font-semibold">Manager 2</div>
-                      <span className="text-xs text-gray-400 group-hover:text-amber-500/70">
-                        Reception, Rooms
-                      </span>
-                    </div>
-                  </button>
-                </div>
+                <>
+                  {/* Backdrop for click-away */}
+                  <div
+                    className="fixed inset-0 z-40 bg-transparent"
+                    onClick={() => setManagerpagesselection(false)}
+                  />
+                  <div className="absolute right-20 top-20 w-56 bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100 p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <button
+                      onClick={() => {
+                        setManagerpagesselection(false);
+                        navigate("/operationmanager");
+                      }}
+                      className="w-full text-left px-3 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors font-medium flex items-center gap-3 group"
+                    >
+                      <Store
+                        size={18}
+                        className="text-gray-400 group-hover:text-amber-500 transition-colors shrink-0"
+                      />
+                      <div>
+                        <div className="font-semibold">Manager 1</div>
+                        <span className="text-xs text-gray-400 group-hover:text-amber-500/70">
+                          Restaurant, Liquor
+                        </span>
+                      </div>
+                    </button>
+                    <div className="h-px bg-gray-100 my-1.5"></div>
+                    <button
+                      onClick={() => {
+                        setManagerpagesselection(false);
+                        navigate("/manager");
+                      }}
+                      className="w-full text-left px-3 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors font-medium flex items-center gap-3 group"
+                    >
+                      <Hotel
+                        size={18}
+                        className="text-gray-400 group-hover:text-amber-500 transition-colors shrink-0"
+                      />
+                      <div>
+                        <div className="font-semibold">Manager 2</div>
+                        <span className="text-xs text-gray-400 group-hover:text-amber-500/70">
+                          Reception, Rooms
+                        </span>
+                      </div>
+                    </button>
+                  </div>
+                </>
               )}
 
               <div className="w-px h-6 bg-gray-200"></div>
@@ -444,8 +458,14 @@ const Admin = () => {
         }
       `}</style>
       {galleryselection && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-lg w-full max-w-4xl p-6 relative">
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setGalleryselection(false)}
+        >
+          <div
+            className="bg-white rounded-xl shadow-lg w-full max-w-4xl p-6 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
             <GalleryManagementHub onClose={() => setGalleryselection(false)} />
           </div>
         </div>

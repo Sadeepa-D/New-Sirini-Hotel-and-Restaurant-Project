@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import RoomBookedDetails from "./RoomBookedDetails";
 
 const RoomOperation = () => {
+  const VITE_URL = import.meta.env.VITE_API_URL;
   const [rooms, setRooms] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingRoom, setEditingRoom] = useState(null);
@@ -20,7 +21,7 @@ const RoomOperation = () => {
 
   const fetchRooms = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/rooms/viewrooms");
+      const res = await axios.get(`${VITE_URL}/api/rooms/viewrooms`);
       setRooms(res.data);
     } catch (err) {
       console.error("Error fetching rooms:", err);
@@ -56,7 +57,7 @@ const RoomOperation = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this room?")) {
       try {
-        await axios.delete(`http://localhost:5000/api/rooms/deleteroom/${id}`);
+        await axios.delete(`${VITE_URL}/api/rooms/deleteroom/${id}`);
         fetchRooms();
       } catch (err) {
         alert("Delete failed");
@@ -88,12 +89,12 @@ const RoomOperation = () => {
 
       if (editingRoom) {
         await axios.put(
-          `http://localhost:5000/api/rooms/updateroom/${editingRoom._id}`,
+          `${VITE_URL}/api/rooms/updateroom/${editingRoom._id}`,
           data,
           config,
         );
       } else {
-        await axios.post("http://localhost:5000/api/rooms/add", data, config);
+        await axios.post(`${VITE_URL}/api/rooms/add`, data, config);
       }
       toast.dismiss(loadingtoast);
       fetchRooms();
