@@ -21,7 +21,6 @@ const createRoomBooking = async (req, res) => {
         .json({ error: "A valid time slot (day or fullday) is required." });
     }
 
-    // Parse date string (YYYY-MM-DD) as UTC midnight, not local timezone
     const parseUTC = (dateStr) => {
       const [y, m, d] = dateStr.split("-").map(Number);
       return new Date(Date.UTC(y, m - 1, d));
@@ -30,7 +29,6 @@ const createRoomBooking = async (req, res) => {
     const newIn = parseUTC(checkInDate);
     const newOut = parseUTC(checkOutDate);
 
-    // Calculate precise start and end times in milliseconds based on time slot
     const newStart =
       timeSlot === "day"
         ? newIn.getTime() + 12 * 3600000

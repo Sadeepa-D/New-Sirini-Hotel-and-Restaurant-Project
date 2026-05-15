@@ -22,7 +22,7 @@ const PACKAGES = [
   },
 ];
 
-// Add N calendar days using pure UTC math (no timezone issues)
+
 const addDays = (dateStr, n) => {
   const [y, m, d] = dateStr.split("-").map(Number);
   const next = new Date(Date.UTC(y, m - 1, d + n));
@@ -46,7 +46,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed, isLoggedIn, onRequire
     checkOutDate: "",
   });
 
-  // Recalculate price whenever mode or dates change
+  
   useEffect(() => {
     if (!bookingMode) return;
     const pkg = PACKAGES.find((p) => p.id === bookingMode);
@@ -78,7 +78,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed, isLoggedIn, onRequire
     selectedRoom.shortStayPrice,
   ]);
 
-  // ----- Handlers -----
+ 
   const handleSelectMode = (mode) => {
     setBookingMode(mode);
     setFormData({
@@ -94,7 +94,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed, isLoggedIn, onRequire
 
   const handleDateSelect = (dateStr) => {
     if (bookingMode === "fullday") {
-      // Range picker: 1st click = check-in, 2nd click = check-out
+      
       if (
         !formData.checkInDate ||
         (formData.checkInDate && formData.checkOutDate)
@@ -104,12 +104,12 @@ function BookingForm({ selectedRoom, onClose, onConfirmed, isLoggedIn, onRequire
         if (dateStr > formData.checkInDate) {
           setFormData({ ...formData, checkOutDate: dateStr });
         } else {
-          // Clicked before check-in — restart
+          
           setFormData({ ...formData, checkInDate: dateStr, checkOutDate: "" });
         }
       }
     } else {
-      // Day Package: checkout = checkin + 1 day
+      
       setFormData({
         ...formData,
         checkInDate: dateStr,
@@ -171,7 +171,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed, isLoggedIn, onRequire
         onClick={onClose}
       />
 
-      {/* ─── Step 0: Package Selector ─── */}
+      {/*Package Selector*/}
       {step === 0 && (
         <div className="relative w-full max-w-[380px] bg-white/95 backdrop-blur-2xl rounded-[2rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] shadow-orange-500/5 p-6 border border-white/50 animate-in fade-in zoom-in duration-300">
           <button
@@ -233,7 +233,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed, isLoggedIn, onRequire
         </div>
       )}
 
-      {/* ─── Step 1: Date Picker ─── */}
+      {/*Date Picker*/}
       {step === 1 && selectedPkg && (
         <DayUseCalender
           selectedDate={formData.checkInDate}
@@ -255,7 +255,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed, isLoggedIn, onRequire
         />
       )}
 
-      {/* ─── Step 2: Guest Details ─── */}
+      {/* Guest Details*/}
       {step === 2 && (
         <GuestDetail
           formData={formData}
