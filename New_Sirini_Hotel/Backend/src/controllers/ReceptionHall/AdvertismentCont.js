@@ -153,6 +153,7 @@ const toggleAdvertismentStatustoApproved = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 const toggleAdvertismentStatustoRejected = async (req, res) => {
   try {
     const { id } = req.params;
