@@ -119,7 +119,6 @@ const updateUserProfile = async (req, res) => {
     const { name, email, Phone } = req.body;
     const updates = { name, email, Phone };
     if (req.file) {
-      // Delete old image from Cloudinary if exists
       const existingUser = await User.findById(userId);
       if (existingUser.imagePublicId) {
         try {

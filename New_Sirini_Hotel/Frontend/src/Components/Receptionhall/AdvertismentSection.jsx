@@ -129,11 +129,11 @@ const AdvertisementSection = () => {
         <p className="text-gray-400 text-sm sm:text-base mt-3 max-w-xl mx-auto">
           Discover trusted service providers for your special event
         </p>
-        <div className="flex items-center justify-center gap-3 mt-4">
+        {/* <div className="flex items-center justify-center gap-3 mt-4">
           <div className="h-px w-16 bg-amber-300" />
           <div className="w-1.5 h-1.5 rounded-full bg-amber-400" />
           <div className="h-px w-16 bg-amber-300" />
-        </div>
+        </div> */}
       </div>
 
       {/* Request Button */}

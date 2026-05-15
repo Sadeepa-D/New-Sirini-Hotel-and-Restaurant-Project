@@ -14,19 +14,21 @@ const addLiquor = async (req, res) => {
       brand,
     } = req.body;
 
-    // 1. Validation check for body fields
     if (!name || !price || !category) {
       return res
         .status(400)
         .json({ message: "Name, Price, and Category are required" });
     }
+    if (isNaN(price) || price <= 0) {
+      return res
+        .status(400)
+        .json({ message: "Price must be a positive number" });
+    }
 
-    // 2. SAFETY CHECK: Ensure req.file exists before accessing properties
     if (!req.file) {
       return res.status(400).json({ message: "Please upload an image" });
     }
 
-    // Note: If using cloudinary-multer, the path is usually req.file.path or req.file.secure_url
     const image = req.file.path || req.file.secure_url;
     const imagePublicId = req.file.filename || req.file.public_id;
 
@@ -61,7 +63,7 @@ const getAllLiquor = async (req, res) => {
     }
     res.status(200).json(liquor);
   } catch (error) {
-    console.error("DETAILED BACKEND ERROR:", error);
+    console.error("error:", error);
     res
       .status(500)
       .json({ message: "Error fetching liquor", error: error.message });
@@ -83,7 +85,6 @@ const deleteLiquor = async (req, res) => {
         await cloudinary.v2.uploader.destroy(liquor.imagePublicId);
       } catch (cloudinaryError) {
         console.error("Error deleting image from Cloudinary:", cloudinaryError);
-        // Continue with database deletion even if Cloudinary deletion fails
       }
     }
     await Liquor.findByIdAndDelete(id);

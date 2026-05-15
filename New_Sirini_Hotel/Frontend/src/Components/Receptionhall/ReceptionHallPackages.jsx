@@ -97,10 +97,10 @@ export default function ReceptionHallPackages() {
               Special Offer on Hall Charges
             </h4>
             <p className="text-xs text-amber-700">
-              Book for **100+ guests** and get the **Reception Hall for FREE!**{" "}
+              Book for <b>100+ guests</b> and get the <b>Reception Hall for FREE!</b>
               <br />
               <span className="italic text-[10px]">
-                *Less than 100 guests, they charge Rs. 8,000 for Hall.*
+                Less than 100 guests will incur a additional hall fee
               </span>
             </p>
           </div>

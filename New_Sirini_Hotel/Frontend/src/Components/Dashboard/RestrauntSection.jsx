@@ -79,7 +79,6 @@ const RestaurantSection = ({ data }) => {
   }, []);
 
   const handleDelete = (order) => {
-    // Simplified deletion logic: allow for all active orders
 
     setConfirmDialog({
       isOpen: true,
@@ -243,14 +242,8 @@ const RestaurantSection = ({ data }) => {
                         : "bg-white border-gray-100 hover:shadow-xl hover:border-amber-200/50"
                     }`}
                   >
-                    {/* Overdue Badge */}
-                    {order.status === "Overdue" && (
-                      <div className="absolute top-4 right-4 z-10">
-                        <span className="bg-orange-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg shadow-orange-500/20 uppercase tracking-wider animate-pulse">
-                          Overdue
-                        </span>
-                      </div>
-                    )}
+        
+                  
                     {/* Card Header */}
                     <div className="flex items-start mb-4">
                       <div className="flex items-center gap-3">
@@ -259,7 +252,7 @@ const RestaurantSection = ({ data }) => {
                             {order.foodName}
                           </h5>
                           <span className="text-[10px] font-mono font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded-md w-fit mt-1">
-                            #{order.orderCode}
+                            {order.orderCode}
                           </span>
                         </div>
                       </div>

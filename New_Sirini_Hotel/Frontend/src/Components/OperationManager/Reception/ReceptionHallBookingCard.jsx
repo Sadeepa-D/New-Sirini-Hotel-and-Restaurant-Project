@@ -5,7 +5,6 @@ import {
   Phone,
   CalendarDays,
   Users,
-  UtensilsCrossed,
   MessageSquare,
   Pencil,
   X,
@@ -39,7 +38,7 @@ const ReceptionHallBookingCard = ({ booking, onEdit, onCancel, onConfirm }) => {
       {/* Top color bar by event type */}
       <div className="h-1.5 w-full rounded-t-2xl bg-amber-400" />
 
-      <div className="p-4 sm:p-5 flex flex-col flex-1 gap-3 relative h-full">
+      <div className="p-3 sm:p-5 flex flex-col flex-1 gap-3 relative h-full">
         {/* Status badge - positioned top right */}
         {/* Header section */}
         <div className="flex flex-col gap-2">
