@@ -53,7 +53,7 @@ const addLiquor = async (req, res) => {
     const newLiquor = new Liquor({
       name,
       buyingPrice,
-      discount,
+      discount: 0,
       sellingPrice,
       category,
       alcoholPercentage,
