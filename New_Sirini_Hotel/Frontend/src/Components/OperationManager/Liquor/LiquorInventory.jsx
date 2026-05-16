@@ -16,7 +16,7 @@ const LiquorInventoryCard = ({ item, onSelect, isSelected }) => {
   return (
     <div
       onClick={() => onSelect(item)}
-      className={`relative overflow-hidden rounded-2xl border transition-all duration-300 group cursor-pointer flex flex-col justify-between h-full ${
+      className={`relative overflow-hidden rounded-2xl border transition-all duration-300 group cursor-pointer flex flex-col justify-between min-h-[200px] ${
         isSelected
           ? "border-amber-500 shadow-xl shadow-amber-500/30 scale-[0.98]"
           : "border-gray-200 hover:border-amber-400 hover:-translate-y-1 shadow-md hover:shadow-xl"
@@ -33,7 +33,7 @@ const LiquorInventoryCard = ({ item, onSelect, isSelected }) => {
       />
 
       {/* Dark gradient overlay for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10" />
+      <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/40 to-black/10" />
 
       {/* Selected ring highlight */}
       {isSelected && (
@@ -186,7 +186,7 @@ const LiquorInventory = () => {
 
         {/* Header Title Section */}
         <div className="bg-white rounded-xl p-4 shadow-xl border border-gray-100 flex items-center gap-3">
-          <div className="bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-amber-500 flex-shrink-0">
+          <div className="bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-amber-500 shrink-0">
             <Wine size={22} />
           </div>
           <div>
@@ -200,10 +200,10 @@ const LiquorInventory = () => {
         </div>
 
         {/* Global Structural Layout Wrapper */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
 
           {/* LEFT/MAIN CONTAINER: Category & Explorer Panel */}
-          <div className="lg:col-span-2 bg-white rounded-xl p-4 sm:p-6 border border-gray-100 shadow-xl flex flex-col gap-6 overflow-hidden">
+          <div className="lg:col-span-2 bg-white rounded-xl p-4 sm:p-6 border border-gray-100 shadow-xl flex flex-col gap-6">
 
             {/* Category Tab Layout & Search */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
@@ -254,7 +254,7 @@ const LiquorInventory = () => {
             </div>
 
             {/* Liquor Brand Cards Grid */}
-            <div className="flex-1 min-h-0 grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4 auto-rows-fr">
+            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {filteredItems.map((item) => (
                 <LiquorInventoryCard
                   key={item._id}
@@ -285,9 +285,9 @@ const LiquorInventory = () => {
           </div>
 
           {/* RIGHT SIDEBAR PANEL: Quick Stock Adjustments */}
-          <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-100 shadow-xl flex flex-col gap-6 overflow-y-auto">
+          <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-100 shadow-xl flex flex-col gap-6 lg:sticky lg:top-6">
             <div className="flex items-center gap-2 border-b border-gray-100 pb-4">
-              <PackageCheck size={18} className="text-amber-500 flex-shrink-0" />
+              <PackageCheck size={18} className="text-amber-500 shrink-0" />
               <h3 className="text-sm font-black text-neutral-900 uppercase tracking-wide">
                 Quick Stock Adjuster
               </h3>
@@ -299,7 +299,7 @@ const LiquorInventory = () => {
                 <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 flex items-center gap-4">
                   <img
                     src={selectedItem.image}
-                    className="w-14 h-14 rounded-xl object-cover border border-gray-200 shadow-sm flex-shrink-0"
+                    className="w-14 h-14 rounded-xl object-cover border border-gray-200 shadow-sm shrink-0"
                     alt="Active"
                   />
                   <div className="min-w-0 flex-1">
@@ -370,7 +370,7 @@ const LiquorInventory = () => {
                 <h4 className="text-sm font-bold text-neutral-700">
                   No Brand Selected
                 </h4>
-                <p className="text-xs text-gray-400 max-w-[200px] mt-1 leading-normal">
+                <p className="text-xs text-gray-400 max-w-50 mt-1 leading-normal">
                   Tap an inventory asset card on the left container to execute
                   fast adjustments.
                 </p>
