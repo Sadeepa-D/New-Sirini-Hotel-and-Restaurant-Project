@@ -355,7 +355,7 @@ const LiquorInventory = ({
                       type="number"
                       value={adjustQty}
                       onChange={(e) => setAdjustQty(Number(e.target.value))}
-                      className={`w-16 text-2xl font-black text-center tracking-tight bg-transparent border-b-2 outline-none transition-colors appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ${
+                      className={`w-16 h-11 text-2xl font-black text-center tracking-tight bg-transparent border-b-2 outline-none transition-colors appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ${
                         adjustQty > 0
                           ? "text-green-600 border-green-400"
                           : adjustQty < 0
