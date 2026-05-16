@@ -11,6 +11,8 @@ const createFoodItem = async (req, res) => {
       description,
       category,
       has_portions,
+      productionPrice,
+      discount,
     } = req.body;
 
     // Convert strings from FormData
@@ -51,6 +53,16 @@ const createFoodItem = async (req, res) => {
       full_price = null;
     }
 
+    // Process New Pricing Fields
+    productionPrice = isNaN(Number(productionPrice)) ? 0 : Number(productionPrice);
+    discount = isNaN(Number(discount)) ? 0 : Number(discount);
+    
+    // Calculate Selling Price
+    const sellingPrice = productionPrice - (productionPrice * discount / 100);
+    
+    // Ensure normal_price matches sellingPrice for compatibility
+    normal_price = sellingPrice;
+
     const image = req.file ? req.file.secure_url || req.file.path : null;
     const imagePublicId = req.file
       ? req.file.public_id || req.file.filename
@@ -69,6 +81,9 @@ const createFoodItem = async (req, res) => {
       has_portions,
       normal_price,
       full_price,
+      productionPrice,
+      discount,
+      sellingPrice,
       status: "available",
       availability: true,
     });
@@ -151,6 +166,16 @@ const updateFoodItem = async (req, res) => {
       }
     } else {
       updates.full_price = null;
+    }
+
+    // Handle Production Price and Discount updates
+    const pPrice = updates.productionPrice !== undefined ? Number(updates.productionPrice) : existingFoodItem.productionPrice;
+    const dPct = updates.discount !== undefined ? Number(updates.discount) : existingFoodItem.discount;
+    
+    if (updates.productionPrice !== undefined || updates.discount !== undefined) {
+        const sPrice = pPrice - (pPrice * dPct / 100);
+        updates.sellingPrice = sPrice;
+        updates.normal_price = sPrice; 
     }
 
     const updatedFoodItem = await FoodItems.findByIdAndUpdate(

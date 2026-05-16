@@ -11,6 +11,9 @@ const AddRestrauntItemForm = ({ onClose, initialData, onSubmit }) => {
         description: "",
         category: "Chopsy Rice",
         has_portions: false,
+        productionPrice: "",
+        discount: "",
+        sellingPrice: "",
     });
 
     useEffect(() => {
@@ -20,6 +23,9 @@ const AddRestrauntItemForm = ({ onClose, initialData, onSubmit }) => {
                 normal_price: initialData.normal_price || "",
                 full_price: initialData.full_price || "",
                 has_portions: initialData.has_portions || false,
+                productionPrice: initialData.productionPrice || "",
+                discount: initialData.discount || "",
+                sellingPrice: initialData.sellingPrice || "",
             });
             if (typeof initialData.image === "string" && initialData.image) {
                 setImagePreview(initialData.image);
@@ -44,8 +50,8 @@ const AddRestrauntItemForm = ({ onClose, initialData, onSubmit }) => {
             return;
         }
 
-        if (!formData.normal_price) {
-            toast.error("Normal price is required");
+        if (!formData.productionPrice) {
+            toast.error("Production price is required");
             return;
         }
 
@@ -61,7 +67,10 @@ const AddRestrauntItemForm = ({ onClose, initialData, onSubmit }) => {
         data.append("category", formData.category);
         data.append("description", formData.description);
         data.append("has_portions", String(formData.has_portions));
-        data.append("normal_price", formData.normal_price);
+        data.append("productionPrice", formData.productionPrice);
+        data.append("discount", formData.discount || 0);
+        data.append("sellingPrice", formData.sellingPrice);
+        data.append("normal_price", formData.sellingPrice); // Keep for compatibility
         data.append("full_price", formData.has_portions ? formData.full_price : "");
 
         if (formData.image instanceof File) {
@@ -83,7 +92,26 @@ const AddRestrauntItemForm = ({ onClose, initialData, onSubmit }) => {
         } else if (type === "checkbox") {
             setFormData((prev) => ({ ...prev, [name]: checked }));
         } else {
-            setFormData((prev) => ({ ...prev, [name]: value }));
+            setFormData((prev) => {
+                const updatedData = { ...prev, [name]: value };
+                
+                // Calculate selling price if productionPrice or discount changes
+                if (name === "productionPrice" || name === "discount") {
+                    const pPrice = name === "productionPrice" ? parseFloat(value) : parseFloat(prev.productionPrice);
+                    const dPct = name === "discount" ? parseFloat(value) : parseFloat(prev.discount);
+                    
+                    if (!isNaN(pPrice)) {
+                        const discountValue = isNaN(dPct) ? 0 : dPct;
+                        const sPrice = pPrice - (pPrice * discountValue / 100);
+                        updatedData.sellingPrice = sPrice.toFixed(2);
+                        updatedData.normal_price = sPrice.toFixed(2);
+                    } else {
+                        updatedData.sellingPrice = "";
+                    }
+                }
+                
+                return updatedData;
+            });
         }
     };
 
@@ -213,14 +241,14 @@ const AddRestrauntItemForm = ({ onClose, initialData, onSubmit }) => {
                             </label>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className={`space-y-1 ${!formData.has_portions ? "md:col-span-2" : ""}`}>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="space-y-1">
                                 <label className="text-xs font-black uppercase text-gray-400 ml-2">
-                                    Normal Price (LKR)
+                                    Production Price (LKR)
                                 </label>
                                 <input
-                                    name="normal_price"
-                                    value={formData.normal_price}
+                                    name="productionPrice"
+                                    value={formData.productionPrice}
                                     onChange={handleChange}
                                     type="number"
                                     required
@@ -229,8 +257,38 @@ const AddRestrauntItemForm = ({ onClose, initialData, onSubmit }) => {
                                 />
                             </div>
 
+                            <div className="space-y-1">
+                                <label className="text-xs font-black uppercase text-gray-400 ml-2">
+                                    Discount (%)
+                                </label>
+                                <input
+                                    name="discount"
+                                    value={formData.discount}
+                                    onChange={handleChange}
+                                    type="number"
+                                    className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00]"
+                                    placeholder="0"
+                                />
+                            </div>
+
+                            <div className="space-y-1">
+                                <label className="text-xs font-black uppercase text-gray-400 ml-2">
+                                    Selling Price (LKR)
+                                </label>
+                                <input
+                                    name="sellingPrice"
+                                    value={formData.sellingPrice}
+                                    readOnly
+                                    type="number"
+                                    className="w-full px-5 py-3 rounded-2xl bg-amber-50 border border-amber-100 text-amber-700 font-bold outline-none cursor-not-allowed"
+                                    placeholder="Calculated"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {formData.has_portions && (
-                                <div className="space-y-1 animate-in fade-in slide-in-from-left-2 duration-300">
+                                <div className="space-y-1 animate-in fade-in slide-in-from-left-2 duration-300 md:col-start-2">
                                     <label className="text-xs font-black uppercase text-gray-400 ml-2">
                                         Full Price (LKR)
                                     </label>
