@@ -29,8 +29,8 @@ const RoomOperation = () => {
   };
 
   const handleActionCompleted = () => {
-    fetchRooms(); 
-    setRefreshKey((prev) => prev + 1); 
+    fetchRooms();
+    setRefreshKey((prev) => prev + 1);
   };
 
   useEffect(() => {
@@ -77,6 +77,13 @@ const RoomOperation = () => {
     data.append("status", formData.status);
     data.append("description", formData.description || "");
     data.append("condition", formData.condition || "Fan");
+
+    // Append facilities as JSON string
+    if (formData.facilities && formData.facilities.length > 0) {
+      data.append("facilities", JSON.stringify(formData.facilities));
+    } else {
+      data.append("facilities", JSON.stringify([]));
+    }
 
     if (formData.imageFile) {
       data.append("image", formData.imageFile);
@@ -130,9 +137,7 @@ const RoomOperation = () => {
         onDelete={handleDelete}
       />
 
-      
       <div className="mt-10 animate-in fade-in slide-in-from-left-4 duration-500">
-       
         <div className="mt-10 mb-4">
           <h2 className="text-lg font-bold text-gray-800 uppercase tracking-wider">
             Manage Booking Details

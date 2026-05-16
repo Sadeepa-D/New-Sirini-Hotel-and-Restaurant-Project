@@ -6,6 +6,8 @@ const createAdvertisment = async (req, res) => {
     const userId = req.userData.id;
     const {
       BuissnesName,
+      BuissnessOwnerName,
+      NIC,
       category,
       description,
       portfolio,
@@ -15,6 +17,8 @@ const createAdvertisment = async (req, res) => {
     } = req.body;
     if (
       !BuissnesName ||
+      !BuissnessOwnerName ||
+      !NIC ||
       !category ||
       !description ||
       !price ||
@@ -31,6 +35,8 @@ const createAdvertisment = async (req, res) => {
     const newAdvertisment = new Adevertisment({
       userId,
       BuissnesName,
+      BuissnessOwnerName,
+      NIC,
       category,
       description,
       image,
