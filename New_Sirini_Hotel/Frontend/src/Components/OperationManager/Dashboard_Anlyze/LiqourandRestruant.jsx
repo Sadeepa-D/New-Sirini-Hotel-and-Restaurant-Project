@@ -187,7 +187,7 @@ const LiqourandRestruant = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           {/* Pending Card */}
-          <div className="group bg-gradient-to-br from-amber-50 to-white rounded-[2rem] p-5 border border-amber-100/50 hover:shadow-lg transition-all">
+          <div className="group bg-linear-to-br from-amber-50 to-white rounded-4xl p-5 border border-amber-100/50 hover:shadow-lg transition-all">
             <div className="flex items-center justify-between mb-3">
               <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-amber-500">
                 <Clock size={20} />
@@ -205,7 +205,7 @@ const LiqourandRestruant = () => {
           </div>
 
           {/* Accepted Card */}
-          <div className="group bg-gradient-to-br from-blue-50 to-white rounded-[2rem] p-5 border border-blue-100/50 hover:shadow-lg transition-all">
+          <div className="group bg-linear-to-br from-blue-50 to-white rounded-4xl p-5 border border-blue-100/50 hover:shadow-lg transition-all">
             <div className="flex items-center justify-between mb-3">
               <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-blue-500">
                 <CheckCircle size={20} />
@@ -223,7 +223,7 @@ const LiqourandRestruant = () => {
           </div>
 
           {/* Preparing Card */}
-          <div className="group bg-gradient-to-br from-purple-50 to-white rounded-[2rem] p-5 border border-purple-100/50 hover:shadow-lg transition-all">
+          <div className="group bg-linear-to-br from-purple-50 to-white rounded-4xl p-5 border border-purple-100/50 hover:shadow-lg transition-all">
             <div className="flex items-center justify-between mb-3">
               <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-purple-500">
                 <Utensils size={20} className="animate-pulse" />
@@ -241,7 +241,7 @@ const LiqourandRestruant = () => {
           </div>
 
           {/* Complete Card */}
-          <div className="group bg-gradient-to-br from-emerald-50 to-white rounded-[2rem] p-5 border border-emerald-100/50 hover:shadow-lg transition-all">
+          <div className="group bg-linear-to-br from-emerald-50 to-white rounded-4xl p-5 border border-emerald-100/50 hover:shadow-lg transition-all">
             <div className="flex items-center justify-between mb-3">
               <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-emerald-500">
                 <CheckCircle size={20} />
@@ -259,7 +259,7 @@ const LiqourandRestruant = () => {
           </div>
 
           {/* Overdue Card */}
-          <div className="group bg-gradient-to-br from-red-50 to-white rounded-[2rem] p-5 border border-red-100/50 hover:shadow-lg transition-all">
+          <div className="group bg-linear-to-br from-red-50 to-white rounded-4xl p-5 border border-red-100/50 hover:shadow-lg transition-all">
             <div className="flex items-center justify-between mb-3">
               <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-red-500">
                 <XCircle size={20} />

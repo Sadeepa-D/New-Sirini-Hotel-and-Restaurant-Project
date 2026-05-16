@@ -23,6 +23,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import UserManagement from "../../Components/Admin/UserManagement";
 import GalleryManagementHub from "../../Components/Admin/GalleryManagementHub";
+import LiquorManagment from "../../Components/Admin/LiquorManagment";
 
 // --- PLACEHOLDER COMPONENTS FOR TABS ---
 const AdminDashboard = () => (
@@ -64,7 +65,7 @@ const AdminDashboard = () => (
         </div>
       ))}
     </div>
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 min-h-[300px] flex items-center justify-center text-gray-400 italic">
+    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 min-h-75 flex items-center justify-center text-gray-400 italic">
       System Performance & Activity Chart Placeholder
     </div>
   </div>
@@ -82,11 +83,6 @@ const ReceptionHallAnalysis = () => (
 const RoomAnalysis = () => (
   <div className="p-8 text-center text-gray-500">
     Occupancy Rates & Room Category Performance
-  </div>
-);
-const LiquorAnalysis = () => (
-  <div className="p-8 text-center text-gray-500">
-    Stock Levels & Top Selling Spirits
   </div>
 );
 
@@ -144,7 +140,7 @@ const Admin = () => {
       case "rooms":
         return <RoomAnalysis />;
       case "liquor":
-        return <LiquorAnalysis />;
+        return <LiquorManagment />;
       default:
         return <AdminDashboard />;
     }
@@ -422,7 +418,7 @@ const Admin = () => {
 
             {/* Profile Avatar - Standalone */}
             <div
-              className="w-14 h-14 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full overflow-hidden hover:scale-110 transition-transform cursor-pointer flex items-center justify-center shadow-lg border-2 border-amber-600 ml-2"
+              className="w-14 h-14 bg-linear-to-br from-amber-400 to-amber-600 rounded-full overflow-hidden hover:scale-110 transition-transform cursor-pointer flex items-center justify-center shadow-lg border-2 border-amber-600 ml-2"
               onClick={() => navigate("/dashboard")}
               title={adminData.name}
             >

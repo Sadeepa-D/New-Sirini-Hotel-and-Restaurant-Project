@@ -78,7 +78,7 @@ const Manager = () => {
       <header className="bg-white mx-2 mt-3 mb-2 rounded-2xl shadow-md px-3 sm:px-4 py-2 sm:py-3 shrink-0">
         {/* MOBILE layout */}
         <div className="md:hidden">
-          {/* Row 1: Logo + Profile */}
+          {/*Logo + Profile */}
           <div className="flex items-center justify-between gap-2 mb-2.5 sm:mb-3">
             <div className="flex items-center gap-2 min-w-0">
               <img
@@ -133,7 +133,7 @@ const Manager = () => {
             </div>
           </div>
 
-          {/* Row 2: Navigation tabs */}
+          {/* Navigation tabs */}
           <div className="flex items-center gap-1 bg-gray-50 rounded-xl p-1 shadow-inner overflow-x-auto no-scrollbar border border-gray-100">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -217,7 +217,7 @@ const Manager = () => {
             </div>
           </div>
 
-          {/* Right: Admin Portal + Home + Avatar + Name */}
+          
           <div className="flex items-center justify-end gap-3">
             {userdata.Role === "Admin" && (
               <button

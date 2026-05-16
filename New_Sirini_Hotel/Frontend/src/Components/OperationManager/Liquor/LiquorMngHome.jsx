@@ -14,6 +14,7 @@ import AddLiquorForm from "../Liquor/AddLiquorForm";
 import DrinkCard from "../../LiqourStore/LiqourCard";
 import LiquorDetailsComp from "../../LiqourStore/LIquorDetailsComp";
 import ConfirmDialog from "../../ConfrimDialog";
+import LiquorInventory from "./LiquorInventory";
 
 const LiquorManager = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -206,63 +207,67 @@ const LiquorManager = () => {
     return (
       <div className="mb-12">
         <h3 className="text-2xl font-bold text-neutral-900 mb-6">{title}</h3>
-        <div className="relative">
-          {canGoBack && (
-            <button
-              onClick={() => setIndex(Math.max(0, index - itemsPerView))}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
-            >
-              <ChevronLeft className="w-6 h-6 text-neutral-900" />
-            </button>
-          )}
 
-          <div
-            key={index}
-            className="flex gap-4"
-            style={{ animation: "fadeIn 0.25s ease" }}
-          >
-            {visibleItems.map((item) => (
-              <div
-                key={item._id}
-                className="shrink-0"
-                style={{ width: cardWidth }}
+        {liquorItems.length > 0 ? (
+          <div className="relative">
+            {canGoBack && (
+              <button
+                onClick={() => setIndex(Math.max(0, index - itemsPerView))}
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
               >
-                {renderCarouselCard(item)}
-              </div>
-            ))}
-          </div>
-
-          {canGoNext && (
-            <button
-              onClick={() =>
-                setIndex(
-                  Math.min(items.length - itemsPerView, index + itemsPerView),
-                )
-              }
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
+                <ChevronLeft className="w-6 h-6 text-neutral-900" />
+              </button>
+            )}
+            <div
+              key={index}
+              className="flex gap-4"
+              style={{ animation: "fadeIn 0.25s ease" }}
             >
-              <ChevronRight className="w-6 h-6 text-neutral-900" />
-            </button>
-          )}
-
-          {items.length > itemsPerView && (
-            <div className="flex justify-center gap-1.5 mt-4">
-              {Array.from({
-                length: Math.ceil(items.length / itemsPerView),
-              }).map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setIndex(i * itemsPerView)}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    Math.floor(index / itemsPerView) === i
-                      ? "bg-amber-500"
-                      : "bg-gray-300 hover:bg-gray-400"
-                  }`}
-                />
+              {visibleItems.map((item) => (
+                <div
+                  key={item._id}
+                  className="shrink-0"
+                  style={{ width: cardWidth }}
+                >
+                  {renderCarouselCard(item)}
+                </div>
               ))}
             </div>
-          )}
-        </div>
+            {canGoNext && (
+              <button
+                onClick={() =>
+                  setIndex(
+                    Math.min(items.length - itemsPerView, index + itemsPerView),
+                  )
+                }
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
+              >
+                <ChevronRight className="w-6 h-6 text-neutral-900" />
+              </button>
+            )}
+            {items.length > itemsPerView && (
+              <div className="flex justify-center gap-1.5 mt-4">
+                {Array.from({
+                  length: Math.ceil(items.length / itemsPerView),
+                }).map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setIndex(i * itemsPerView)}
+                    className={`w-2 h-2 rounded-full transition-colors ${
+                      Math.floor(index / itemsPerView) === i
+                        ? "bg-amber-500"
+                        : "bg-gray-300 hover:bg-gray-400"
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <h3 className="text-2xl font-bold text-neutral-900 mb-6">
+            No Liquor Items Found
+          </h3>
+        )}
       </div>
     );
   };
@@ -302,6 +307,12 @@ const LiquorManager = () => {
           setOthersIndex,
         )}
       </div>
+
+      <LiquorInventory
+        liquorItems={liquorItems}
+        fetchLiquorItems={fetchLiquorItems}
+        toogleavailability={handleToggleAvailability}
+      />
 
       {/* Form Modal */}
       {isFormOpen && (

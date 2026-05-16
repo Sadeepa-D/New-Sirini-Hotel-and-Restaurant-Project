@@ -13,10 +13,13 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
       description: "",
       condition: "Fan",
       status: "available",
+      facilities: [],
     },
   );
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(initialData?.image || null);
+
+  const facilitiesOptions = ["WiFi", "Hot Water", "TV", "Mini Fridge"];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,6 +43,14 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
     }
 
     setForm(updatedForm);
+  };
+
+  const handleFacilityChange = (facility) => {
+    const currentFacilities = form.facilities || [];
+    const updatedFacilities = currentFacilities.includes(facility)
+      ? currentFacilities.filter((f) => f !== facility)
+      : [...currentFacilities, facility];
+    setForm({ ...form, facilities: updatedFacilities });
   };
 
   const handleFileChange = (e) => {
@@ -85,7 +96,7 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
       return;
     }
 
-    onClose(); // Hide the form instantly upon clicking the button
+    onClose(); // Hide the form when click the button
     onSubmit({ ...form, imageFile });
   };
 
@@ -152,6 +163,7 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
                 className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
               />
             </div>
+
             <div>
               <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
                 Room Type
@@ -263,6 +275,31 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
               <option value="reserved">Reserved</option>
               <option value="maintenance">Maintenance</option>
             </select>
+          </div>
+
+          
+          <div>
+            <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 block">
+              Additional Room Facilities
+            </label>
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              {facilitiesOptions.map((facility) => (
+                <label
+                  key={facility}
+                  className="flex items-center gap-2 p-3 border border-gray-200 rounded-lg hover:border-yellow-400 hover:bg-yellow-50/50 cursor-pointer transition"
+                >
+                  <input
+                    type="checkbox"
+                    checked={(form.facilities || []).includes(facility)}
+                    onChange={() => handleFacilityChange(facility)}
+                    className="w-4 h-4 text-yellow-500 rounded border-gray-300 focus:ring-yellow-400"
+                  />
+                  <span className="text-xs sm:text-sm text-gray-700 font-medium">
+                    {facility}
+                  </span>
+                </label>
+              ))}
+            </div>
           </div>
 
           {/* Description */}

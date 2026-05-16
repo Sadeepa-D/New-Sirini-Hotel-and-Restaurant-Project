@@ -335,4 +335,5 @@ const CateringSelectionHub = ({ onClose, selectedPackage, isAdd = true }) => {
   );
 };
 
+
 export default CateringSelectionHub;

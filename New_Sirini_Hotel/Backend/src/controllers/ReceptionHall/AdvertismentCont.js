@@ -6,6 +6,8 @@ const createAdvertisment = async (req, res) => {
     const userId = req.userData.id;
     const {
       BuissnesName,
+      BuissnessOwnerName,
+      NIC,
       category,
       description,
       portfolio,
@@ -15,6 +17,8 @@ const createAdvertisment = async (req, res) => {
     } = req.body;
     if (
       !BuissnesName ||
+      !BuissnessOwnerName ||
+      !NIC ||
       !category ||
       !description ||
       !price ||
@@ -31,6 +35,8 @@ const createAdvertisment = async (req, res) => {
     const newAdvertisment = new Adevertisment({
       userId,
       BuissnesName,
+      BuissnessOwnerName,
+      NIC,
       category,
       description,
       image,
@@ -62,6 +68,7 @@ const getAdvertisments = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 const deleteAdvertisment = async (req, res) => {
   try {
     const { id } = req.params;
@@ -77,7 +84,6 @@ const deleteAdvertisment = async (req, res) => {
         await cloudinary.v2.uploader.destroy(advertisment.imagePublicId);
       } catch (cloudinaryError) {
         console.error("Error deleting image from Cloudinary:", cloudinaryError);
-        // Continue with database deletion even if Cloudinary deletion fails
       }
     }
     const deletedAdvertisment = await Adevertisment.findByIdAndDelete(id);
@@ -90,6 +96,7 @@ const deleteAdvertisment = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 const updateAdvertisment = async (req, res) => {
   try {
     const { id } = req.params;
@@ -153,6 +160,7 @@ const toggleAdvertismentStatustoApproved = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 const toggleAdvertismentStatustoRejected = async (req, res) => {
   try {
     const { id } = req.params;
@@ -247,8 +255,7 @@ const getSpecificUserAdvertisments = async (req, res) => {
     console.error("Error fetching user advertisments:", error);
     res.status(500).json({ message: "Server error" });
   }
-};
-
+};    
 module.exports = {
   createAdvertisment,
   getAdvertisments,

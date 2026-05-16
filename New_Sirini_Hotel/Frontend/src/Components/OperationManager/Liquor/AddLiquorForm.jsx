@@ -6,7 +6,9 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
   const [imagePreview, setImagePreview] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
-    price: "",
+    buyingPrice: "",
+    discount: "",
+    sellingPrice: "",
     alcoholPercentage: "",
     category: "Beer",
     image: "",
@@ -14,11 +16,21 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
     volume: "",
     origin: "",
     brand: "",
+    stockType: "Bottles",
+    bottlesPerCase: "",
+    currentQuantityInBottles: "",
+    currentQuantityInCases: "",
+    lowStockThreshold: "",
   });
 
   useEffect(() => {
     if (initialData) {
-      setFormData(initialData);
+      // Ensure all values are strings, never null or undefined
+      const cleanedData = Object.keys(initialData).reduce((acc, key) => {
+        acc[key] = initialData[key] ?? "";
+        return acc;
+      }, {});
+      setFormData({ ...formData, ...cleanedData });
       if (typeof initialData.image === "string" && initialData.image) {
         setImagePreview(initialData.image);
       }
@@ -61,7 +73,7 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl relative animate-in fade-in zoom-in duration-300 max-h-[90vh] overflow-y-auto">
         {/* Close Button */}
         <button
@@ -98,7 +110,10 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
                       />
                       <div className="absolute inset-0 bg-black/20 flex items-end p-2">
                         <span className="bg-white/90 backdrop-blur text-[9px] font-bold px-2 py-1 rounded-lg uppercase text-amber-600 shadow-sm">
-                          {typeof formData.image === "object" && formData.image !== null ? "New Selection" : "Current View"}
+                          {typeof formData.image === "object" &&
+                          formData.image !== null
+                            ? "New Selection"
+                            : "Current View"}
                         </span>
                       </div>
                     </>
@@ -114,7 +129,8 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
                     className="text-amber-500 group-hover:-translate-y-1 transition-transform mb-2"
                   />
                   <span className="text-sm font-bold text-gray-700">
-                    {typeof formData.image === "object" && formData.image !== null
+                    {typeof formData.image === "object" &&
+                    formData.image !== null
                       ? formData.image.name
                       : "Select Product Photo"}
                   </span>
@@ -169,11 +185,38 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-xs font-black uppercase text-gray-400 ml-2">
-                  Price (LKR)
+                  Buying Price (LKR)
                 </label>
                 <input
-                  name="price"
-                  value={formData.price}
+                  name="buyingPrice"
+                  value={formData.buyingPrice}
+                  onChange={handleChange}
+                  type="number"
+                  required
+                  className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00]"
+                  placeholder="0.00"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-black uppercase text-gray-400 ml-2">
+                  discount (%)
+                </label>
+                <input
+                  name="discount"
+                  value={formData.discount}
+                  onChange={handleChange}
+                  type="number"
+                  className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00]"
+                  placeholder="0.00%"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-black uppercase text-gray-400 ml-2">
+                  selling price (LKR)
+                </label>
+                <input
+                  name="sellingPrice"
+                  value={formData.sellingPrice}
                   onChange={handleChange}
                   type="number"
                   required
@@ -193,6 +236,87 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
                   required
                   className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00]"
                   placeholder="4.5%"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              {!initialData && (
+                <div className="space-y-1">
+                  <label className="text-xs font-black uppercase text-gray-400 ml-2">
+                    Stock Type
+                  </label>
+                  <select
+                    name="stockType"
+                    value={formData.stockType}
+                    onChange={handleChange}
+                    type="number"
+                    className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00]"
+                    placeholder="0.00"
+                  >
+                    <option value="Bottles">Bottles</option>
+                    <option value="Cases">Cases</option>
+                  </select>
+                </div>
+              )}
+
+              {formData.stockType === "Bottles" && !initialData && (
+                <>
+                  <div className="space-y-1">
+                    <label className="text-xs font-black uppercase text-gray-400 ml-2">
+                      Current Quantity In Bottles
+                    </label>
+                    <input
+                      name="currentQuantityInBottles"
+                      value={formData.currentQuantityInBottles}
+                      onChange={handleChange}
+                      type="number"
+                      className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00]"
+                      placeholder="0"
+                    />
+                  </div>
+                </>
+              )}
+              {formData.stockType === "Cases" && !initialData && (
+                <>
+                  <div className="space-y-1">
+                    <label className="text-xs font-black uppercase text-gray-400 ml-2">
+                      Current Quantity In Cases
+                    </label>
+                    <input
+                      name="currentQuantityInCases"
+                      value={formData.currentQuantityInCases}
+                      onChange={handleChange}
+                      type="number"
+                      className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00]"
+                      placeholder="0"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-black uppercase text-gray-400 ml-2">
+                      Bottles PerCase
+                    </label>
+                    <input
+                      name="bottlesPerCase"
+                      value={formData.bottlesPerCase}
+                      onChange={handleChange}
+                      type="number"
+                      className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00]"
+                      placeholder="0"
+                    />
+                  </div>
+                </>
+              )}
+              <div className="space-y-1">
+                <label className="text-xs font-black uppercase text-gray-400 ml-2">
+                  Low Stock Threshold
+                </label>
+                <input
+                  name="lowStockThreshold"
+                  value={formData.lowStockThreshold}
+                  onChange={handleChange}
+                  type="number"
+                  className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00]"
+                  placeholder="10"
                 />
               </div>
             </div>

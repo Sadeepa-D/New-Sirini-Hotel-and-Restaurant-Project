@@ -147,7 +147,7 @@ const RoomandReception = () => {
   ).length;
   const monthlyRoomRevenue = currentmonthbookings.reduce((total, booking) => {
     if (total === null) total = 0;
-    return booking.status === "Confirmed"
+    return booking.status === "Confirmed" || booking.status === "Completed"
       ? total + (booking.totalAmount || 0)
       : total;
   }, 0);
@@ -400,7 +400,7 @@ const RoomandReception = () => {
             <div className="h-full bg-amber-500 w-[65%]" />
           </div>
           <p className="text-[9px] text-gray-500 mt-2 italic">
-            Calculated from confirmed monthly stays
+            Calculated from confirmed and completed stays
           </p>
         </div>
       </div>

@@ -4,34 +4,70 @@ const cloudinary = require("cloudinary");
 const createFoodItem = async (req, res) => {
   try {
     console.log("Creating food item, body:", req.body);
-    let { name, normal_price, full_price, description, category, has_portions } = req.body;
+    let {
+      name,
+      normal_price,
+      full_price,
+      description,
+      category,
+      has_portions,
+      productionPrice,
+      discount,
+    } = req.body;
 
     // Convert strings from FormData
     has_portions = has_portions === "true" || has_portions === true;
-    
+
     // Comprehensive Validation
-    if (!name) return res.status(400).json({ message: "Food name is required" });
-    if (!description) return res.status(400).json({ message: "Description is required" });
-    if (!category) return res.status(400).json({ message: "Category is required" });
+    if (!name)
+      return res.status(400).json({ message: "Food name is required" });
+    if (!description)
+      return res.status(400).json({ message: "Description is required" });
+    if (!category)
+      return res.status(400).json({ message: "Category is required" });
 
     // Validate Prices
-    if (normal_price === undefined || normal_price === null || normal_price === "") {
+    if (
+      normal_price === undefined ||
+      normal_price === null ||
+      normal_price === ""
+    ) {
       return res.status(400).json({ message: "Normal price is required" });
     }
     normal_price = isNaN(Number(normal_price)) ? 0 : Number(normal_price);
 
     if (has_portions) {
-      if (full_price === undefined || full_price === null || full_price === "") {
-        return res.status(400).json({ message: "Full price is required when portions are enabled" });
+      if (
+        full_price === undefined ||
+        full_price === null ||
+        full_price === ""
+      ) {
+        return res
+          .status(400)
+          .json({
+            message: "Full price is required when portions are enabled",
+          });
       }
       full_price = isNaN(Number(full_price)) ? 0 : Number(full_price);
     } else {
       full_price = null;
     }
 
-    const image = req.file ? (req.file.secure_url || req.file.path) : null;
-    const imagePublicId = req.file ? (req.file.public_id || req.file.filename) : null;
+    // Process New Pricing Fields
+    productionPrice = isNaN(Number(productionPrice)) ? 0 : Number(productionPrice);
+    discount = isNaN(Number(discount)) ? 0 : Number(discount);
     
+    // Calculate Selling Price
+    const sellingPrice = productionPrice - (productionPrice * discount / 100);
+    
+    // Ensure normal_price matches sellingPrice for compatibility
+    normal_price = sellingPrice;
+
+    const image = req.file ? req.file.secure_url || req.file.path : null;
+    const imagePublicId = req.file
+      ? req.file.public_id || req.file.filename
+      : null;
+
     if (!image) {
       return res.status(400).json({ message: "Product image is required" });
     }
@@ -45,15 +81,23 @@ const createFoodItem = async (req, res) => {
       has_portions,
       normal_price,
       full_price,
+      productionPrice,
+      discount,
+      sellingPrice,
       status: "available",
       availability: true,
     });
-    
+
     await newFoodItem.save();
     res.status(201).json(newFoodItem);
   } catch (error) {
     console.error("CRITICAL: Error in createFoodItem:", error);
-    res.status(500).json({ message: "Internal Server Error during creation", error: error.message });
+    res
+      .status(500)
+      .json({
+        message: "Internal Server Error during creation",
+        error: error.message,
+      });
   }
 };
 
@@ -79,7 +123,8 @@ const updateFoodItem = async (req, res) => {
 
     // Convert strings from FormData
     if (updates.has_portions !== undefined) {
-      updates.has_portions = updates.has_portions === "true" || updates.has_portions === true;
+      updates.has_portions =
+        updates.has_portions === "true" || updates.has_portions === true;
     }
 
     const existingFoodItem = await FoodItems.findById(id);
@@ -102,33 +147,55 @@ const updateFoodItem = async (req, res) => {
     }
 
     // Logic for normal vs full price
-    const hasPortionsFlag = updates.has_portions !== undefined ? updates.has_portions : existingFoodItem.has_portions;
+    const hasPortionsFlag =
+      updates.has_portions !== undefined
+        ? updates.has_portions
+        : existingFoodItem.has_portions;
 
     if (updates.normal_price !== undefined) {
-      updates.normal_price = isNaN(Number(updates.normal_price)) ? 0 : Number(updates.normal_price);
+      updates.normal_price = isNaN(Number(updates.normal_price))
+        ? 0
+        : Number(updates.normal_price);
     }
 
     if (hasPortionsFlag) {
       if (updates.full_price !== undefined) {
-        updates.full_price = isNaN(Number(updates.full_price)) ? 0 : Number(updates.full_price);
+        updates.full_price = isNaN(Number(updates.full_price))
+          ? 0
+          : Number(updates.full_price);
       }
     } else {
       updates.full_price = null;
     }
 
+    // Handle Production Price and Discount updates
+    const pPrice = updates.productionPrice !== undefined ? Number(updates.productionPrice) : existingFoodItem.productionPrice;
+    const dPct = updates.discount !== undefined ? Number(updates.discount) : existingFoodItem.discount;
+    
+    if (updates.productionPrice !== undefined || updates.discount !== undefined) {
+        const sPrice = pPrice - (pPrice * dPct / 100);
+        updates.sellingPrice = sPrice;
+        updates.normal_price = sPrice; 
+    }
+
     const updatedFoodItem = await FoodItems.findByIdAndUpdate(
       id,
       { $set: updates },
-      { new: true }
+      { new: true },
     );
-    
+
     if (!updatedFoodItem) {
       return res.status(404).json({ message: "Food item not found" });
     }
     res.status(200).json(updatedFoodItem);
   } catch (error) {
     console.error("CRITICAL: Error in updateFoodItem:", error);
-    res.status(500).json({ message: "Internal Server Error during update", error: error.message });
+    res
+      .status(500)
+      .json({
+        message: "Internal Server Error during update",
+        error: error.message,
+      });
   }
 };
 
@@ -152,7 +219,9 @@ const deleteFoodItem = async (req, res) => {
     await FoodItems.findByIdAndDelete(id);
     res.status(200).json({ message: "Food item deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Error deleting food item", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error deleting food item", error: error.message });
   }
 };
 
@@ -169,7 +238,7 @@ const toggleFoodItemAvailability = async (req, res) => {
     const updatedFoodItem = await FoodItems.findByIdAndUpdate(
       id,
       { $set: { availability: !foodItem.availability } },
-      { new: true }
+      { new: true },
     );
     res.status(200).json(updatedFoodItem);
   } catch (error) {
