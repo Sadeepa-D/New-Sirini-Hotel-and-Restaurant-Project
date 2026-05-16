@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import {
   Wine,
   Beer,
@@ -51,12 +52,12 @@ const LiquorInventoryCard = ({ item, onSelect, isSelected }) => {
           </span>
           <span
             className={`text-sm font-black leading-tight ${
-              item.currentQuantity <= item.lowStockThreshold
+              item.currentQuantityInBottels <= item.lowStockThreshold
                 ? "text-red-400"
                 : "text-emerald-400"
             }`}
           >
-            {item.currentQuantity} btls
+            {item.currentQuantityInBottels || 0} btls
           </span>
         </div>
       </div>
@@ -87,103 +88,19 @@ const LiquorInventoryCard = ({ item, onSelect, isSelected }) => {
   );
 };
 
-const LiquorInventory = () => {
+const LiquorInventory = ({ liquorItems = [] }) => {
   const [activeCategoryTab, setActiveCategoryTab] = useState("Beer");
   const [selectedItem, setSelectedItem] = useState(null);
   const [adjustQty, setAdjustQty] = useState(0);
 
-  // Hardcoded mock representation for inventory items view array
-  const [mockItems, setMockItems] = useState([
-    {
-      _id: "1",
-      name: "Lion Stout",
-      category: "Beer",
-      currentQuantity: 45,
-      lowStockThreshold: 15,
-      sellingPrice: 480,
-      volume: "625ml",
-      brand: "Lion",
-      image:
-        "https://images.unsplash.com/photo-1608270586620-248524c67de9?q=80&w=400",
-    },
-    {
-      _id: "2",
-      name: "Corona Extra",
-      category: "Beer",
-      currentQuantity: 12,
-      lowStockThreshold: 15,
-      sellingPrice: 850,
-      volume: "355ml",
-      brand: "Corona",
-      image:
-        "https://images.unsplash.com/photo-1532634922-8fe0b757fb13?q=80&w=400",
-    },
-    {
-      _id: "3",
-      name: "Heineken Premium",
-      category: "Beer",
-      currentQuantity: 89,
-      lowStockThreshold: 20,
-      sellingPrice: 650,
-      volume: "330ml",
-      brand: "Heineken",
-      image:
-        "https://images.unsplash.com/photo-1600788886242-5c96aabe3757?q=80&w=400",
-    },
-    {
-      _id: "4",
-      name: "Rockland Red Rum",
-      category: "Other",
-      currentQuantity: 24,
-      lowStockThreshold: 8,
-      sellingPrice: 3200,
-      volume: "750ml",
-      brand: "Rockland",
-      image:
-        "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=400",
-    },
-    {
-      _id: "5",
-      name: "V領 Old Arrack",
-      category: "Other",
-      currentQuantity: 5,
-      lowStockThreshold: 10,
-      sellingPrice: 2800,
-      volume: "750ml",
-      brand: "DCSL",
-      image:
-        "https://images.unsplash.com/photo-1527281400828-ac737c95047a?q=80&w=400",
-    },
-  ]);
-
-  const filteredItems = mockItems.filter((item) =>
+  const filteredItems = liquorItems.filter((item) =>
     activeCategoryTab === "Beer"
       ? item.category === "Beer"
       : item.category !== "Beer",
   );
-
-  const handleApplyUpdate = () => {
-    if (!selectedItem) return;
-    setMockItems((prev) =>
-      prev.map((img) => {
-        if (img._id === selectedItem._id) {
-          return {
-            ...img,
-            currentQuantity: Math.max(0, img.currentQuantity + adjustQty),
-          };
-        }
-        return img;
-      }),
-    );
-    toast.success("Stock updated locally!");
-    setAdjustQty(0);
-    setSelectedItem(null);
-  };
-
   return (
     <div className="mt-8 w-full">
       <div className="w-full flex flex-col gap-6">
-
         {/* Header Title Section */}
         <div className="bg-white rounded-xl p-4 shadow-xl border border-gray-100 flex items-center gap-3">
           <div className="bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-amber-500 shrink-0">
@@ -194,17 +111,15 @@ const LiquorInventory = () => {
               Liquor Stock Management
             </h2>
             <p className="text-xs text-gray-400 mt-0.5">
-              Real-time barrel conversions &amp; inventory levels
+              Real-time inventory &amp; stock adjustments
             </p>
           </div>
         </div>
 
         {/* Global Structural Layout Wrapper */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
           {/* LEFT/MAIN CONTAINER: Category & Explorer Panel */}
-          <div className="lg:col-span-2 bg-white rounded-xl p-4 sm:p-6 border border-gray-100 shadow-xl flex flex-col gap-6">
-
+          <div className="lg:col-span-2 bg-white rounded-xl p-4 sm:p-6 border border-gray-100 shadow-xl flex flex-col gap-6 h-full">
             {/* Category Tab Layout & Search */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
               {/* Tabs */}
@@ -213,6 +128,7 @@ const LiquorInventory = () => {
                   onClick={() => {
                     setActiveCategoryTab("Beer");
                     setSelectedItem(null);
+                    setCardIndex(0);
                   }}
                   className={`flex items-center justify-center gap-2 flex-1 sm:flex-none px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
                     activeCategoryTab === "Beer"
@@ -254,7 +170,7 @@ const LiquorInventory = () => {
             </div>
 
             {/* Liquor Brand Cards Grid */}
-            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {filteredItems.map((item) => (
                 <LiquorInventoryCard
                   key={item._id}
@@ -264,28 +180,10 @@ const LiquorInventory = () => {
                 />
               ))}
             </div>
-
-            {/* Pagination Controls */}
-            <div className="flex items-center justify-between border-t border-gray-100 pt-4 mt-2">
-              <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">
-                Showing {filteredItems.length} Brands
-              </p>
-              <div className="flex items-center gap-1.5 bg-gray-50 p-1 rounded-xl border border-gray-200">
-                <button className="p-2 text-gray-400 hover:text-neutral-900 rounded-lg hover:bg-white transition-all">
-                  <ChevronLeft size={16} />
-                </button>
-                <span className="text-xs font-black px-3 text-amber-500">
-                  1
-                </span>
-                <button className="p-2 text-gray-400 hover:text-neutral-900 rounded-lg hover:bg-white transition-all">
-                  <ChevronRight size={16} />
-                </button>
-              </div>
-            </div>
           </div>
 
           {/* RIGHT SIDEBAR PANEL: Quick Stock Adjustments */}
-          <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-100 shadow-xl flex flex-col gap-6 lg:sticky lg:top-6">
+          <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-100 shadow-xl flex flex-col gap-6 lg:sticky lg:top-6 h-full">
             <div className="flex items-center gap-2 border-b border-gray-100 pb-4">
               <PackageCheck size={18} className="text-amber-500 shrink-0" />
               <h3 className="text-sm font-black text-neutral-900 uppercase tracking-wide">
@@ -338,13 +236,13 @@ const LiquorInventory = () => {
                         adjustQty > 0
                           ? "text-green-600 border-green-400"
                           : adjustQty < 0
-                          ? "text-red-500 border-red-400"
-                          : "text-neutral-900 border-gray-300"
+                            ? "text-red-500 border-red-400"
+                            : "text-neutral-900 border-gray-300"
                       }`}
                     />
                     <button
                       onClick={() => setAdjustQty((p) => p + 1)}
-                      className="p-3 bg-white text-neutral-900 hover:text-green-600 rounded-xl border border-gray-200 transition-all hover:scale-105 active:scale-95 shadow-sm hover:shadow-md"
+                      className="p-3 bg-white text-neutral-900 hover:text-gre en-600 rounded-xl border b order-gray-200 transition-all hov  er:scale-105 active:scale-95 shadow-sm hover:shadow-md"
                     >
                       <Plus size={18} strokeWidth={3} />
                     </button>
