@@ -25,10 +25,7 @@ const LiquorInventoryCard = ({ item, onSelect, isSelected }) => {
     >
       {/* Full Background Image */}
       <img
-        src={
-          item.image ||
-          "https://images.unsplash.com/photo-1563227812-0ea4c22e6cc8?q=80&w=600"
-        }
+        src={item.image}
         alt={item.name}
         className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
       />
@@ -44,7 +41,7 @@ const LiquorInventoryCard = ({ item, onSelect, isSelected }) => {
       {/* Top Section: Badges / Current Stock */}
       <div className="relative z-10 flex items-start justify-between w-full p-4">
         <span className="text-[10px] uppercase font-black tracking-widest bg-black/40 backdrop-blur-sm text-amber-400 px-2.5 py-1 rounded-lg border border-amber-500/30">
-          {item.brand || "Premium"}
+          {item.brand}
         </span>
         <div className="flex flex-col items-end bg-black/40 backdrop-blur-sm px-2.5 py-1 rounded-lg border border-white/10">
           <span className="text-[9px] text-gray-300 font-bold uppercase tracking-wider">
@@ -73,7 +70,7 @@ const LiquorInventoryCard = ({ item, onSelect, isSelected }) => {
 
         <div className="flex items-center justify-between pt-3 border-t border-white/15">
           <span className="text-xs font-bold text-gray-200">
-            LKR {item.sellingPrice}
+            LKR {item.price}
           </span>
           <div className="bg-amber-500 text-black p-2 rounded-xl group-hover:bg-orange-500 transition-colors shadow-md">
             <RefreshCw
@@ -209,9 +206,9 @@ const LiquorInventory = ({ liquorItems = [] }) => {
                       {selectedItem.name}
                     </h4>
                     <p className="text-xs text-gray-500 font-medium mt-1">
-                      Current Base:{" "}
+                      Current Base:
                       <span className="text-neutral-900 font-bold">
-                        {selectedItem.currentQuantity} Bottles
+                        {selectedItem.currentQuantityInBottels} Bottles
                       </span>
                     </p>
                   </div>
