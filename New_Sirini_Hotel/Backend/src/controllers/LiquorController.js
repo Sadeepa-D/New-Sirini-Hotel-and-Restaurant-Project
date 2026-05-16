@@ -16,7 +16,7 @@ const addLiquor = async (req, res) => {
       brand,
       stockType,
       bottlesPerCase,
-      currentQuantityInBottels,
+      currentQuantityInBottles,
       currentQuantityInCases,
       lowStockThreshold,
     } = req.body;
@@ -47,7 +47,6 @@ const addLiquor = async (req, res) => {
 
     const newLiquor = new Liquor({
       name,
-      // price,
       buyingPrice,
       discount,
       sellingPrice,
@@ -62,7 +61,7 @@ const addLiquor = async (req, res) => {
       isAvailable: true,
       stockType,
       bottlesPerCase,
-      currentQuantityInBottels,
+      currentQuantityInBottles,
       currentQuantityInCases,
       lowStockThreshold,
     });

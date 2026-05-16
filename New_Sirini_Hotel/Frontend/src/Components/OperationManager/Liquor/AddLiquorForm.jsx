@@ -16,9 +16,9 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
     volume: "",
     origin: "",
     brand: "",
-    stockType: "bottles",
+    stockType: "Bottles",
     bottlesPerCase: "",
-    currentQuantityInBottels: "",
+    currentQuantityInBottles: "",
     currentQuantityInCases: "",
     lowStockThreshold: "",
   });
@@ -252,15 +252,15 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
                 </select>
               </div>
 
-              {formData.stockType === "bottles" && (
+              {formData.stockType === "Bottles" && (
                 <>
                   <div className="space-y-1">
                     <label className="text-xs font-black uppercase text-gray-400 ml-2">
                       Current Quantity In Bottles
                     </label>
                     <input
-                      name="currentQuantityInBottels"
-                      value={formData.currentQuantityInBottels}
+                      name="currentQuantityInBottles"
+                      value={formData.currentQuantityInBottles}
                       onChange={handleChange}
                       type="number"
                       className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00]"
@@ -269,7 +269,7 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
                   </div>
                 </>
               )}
-              {formData.stockType === "cases" && (
+              {formData.stockType === "Cases" && (
                 <>
                   <div className="space-y-1">
                     <label className="text-xs font-black uppercase text-gray-400 ml-2">

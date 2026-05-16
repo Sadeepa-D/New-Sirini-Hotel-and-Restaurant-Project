@@ -54,7 +54,7 @@ const LiquorInventoryCard = ({ item, onSelect, isSelected }) => {
                 : "text-emerald-400"
             }`}
           >
-            {item.currentQuantityInBottels} btls
+            {item.currentQuantityInBottles} btls
           </span>
         </div>
       </div>
@@ -208,7 +208,7 @@ const LiquorInventory = ({ liquorItems = [] }) => {
                     <p className="text-xs text-gray-500 font-medium mt-1">
                       Current Base:
                       <span className="text-neutral-900 font-bold">
-                        {selectedItem.currentQuantityInBottels} Bottles
+                        {selectedItem.currentQuantityInBottles} Bottles
                       </span>
                     </p>
                   </div>
