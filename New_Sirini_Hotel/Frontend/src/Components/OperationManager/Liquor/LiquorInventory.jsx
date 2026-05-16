@@ -41,11 +41,11 @@ const LiquorInventoryCard = ({ item, onSelect, isSelected }) => {
 
       {/* Top Section: Badges / Current Stock */}
       <div className="relative z-10 flex items-start justify-between w-full p-4">
-        <span className="text-[10px] uppercase font-black tracking-widest bg-black/40 backdrop-blur-sm text-amber-400 px-2.5 py-1 rounded-lg border border-amber-500/30">
+        <span className="text-[12px] uppercase font-black tracking-widest bg-black/40 backdrop-blur-sm text-amber-400 px-2.5 py-1 rounded-lg border border-amber-500/30">
           {item.brand}
         </span>
         <div className="flex flex-col items-end bg-black/40 backdrop-blur-sm px-2.5 py-1 rounded-lg border border-white/10">
-          <span className="text-[9px] text-gray-300 font-bold uppercase tracking-wider">
+          <span className="text-[12px] text-gray-300 font-bold uppercase tracking-wider">
             Stock
           </span>
           <span
@@ -62,7 +62,7 @@ const LiquorInventoryCard = ({ item, onSelect, isSelected }) => {
 
       {/* Bottom Section: Title and Action */}
       <div className="relative z-10 w-full p-4 pt-2">
-        <p className="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-0.5">
+        <p className="text-[13px] font-bold text-amber-400 uppercase tracking-wider mb-0.5">
           {item.volume}
         </p>
         <h4 className="text-sm font-black text-white leading-tight mb-3 tracking-wide truncate drop-shadow">
@@ -70,7 +70,7 @@ const LiquorInventoryCard = ({ item, onSelect, isSelected }) => {
         </h4>
 
         <div className="flex items-center justify-between pt-3 border-t border-white/15">
-          <span className="text-xs font-bold text-gray-200">
+          <span className="text-[15px] font-bold text-gray-200">
             LKR {item.price}
           </span>
           <div className="bg-amber-500 text-black p-2 rounded-xl group-hover:bg-orange-500 transition-colors shadow-md">
