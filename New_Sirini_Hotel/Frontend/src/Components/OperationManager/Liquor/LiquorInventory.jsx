@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import {
@@ -20,7 +20,7 @@ const LiquorInventoryCard = ({ item, onSelect, isSelected }) => {
       onClick={() => onSelect(item)}
       className={`relative overflow-hidden rounded-2xl border transition-all duration-300 group cursor-pointer flex flex-col justify-between min-h-80 ${
         isSelected
-          ? "border-amber-500 shadow-xl shadow-amber-500/30 scale-[0.98]"
+          ? "border-2 border-amber-500 shadow-lg scale-[0.98]"
           : "border-gray-200 hover:border-amber-400 hover:-translate-y-1 shadow-md hover:shadow-xl"
       }`}
     >
@@ -95,6 +95,17 @@ const LiquorInventory = ({
   const [activeCategoryTab, setActiveCategoryTab] = useState("Beer");
   const [selectedItem, setSelectedItem] = useState(null);
   const [adjustQty, setAdjustQty] = useState(0);
+  const sliderRef = useRef(null);
+
+  const scrollSlider = (direction) => {
+    if (!sliderRef.current) return;
+    const cardWidth =
+      sliderRef.current.querySelector("[data-slider-card]")?.offsetWidth || 320;
+    sliderRef.current.scrollBy({
+      left: direction * (cardWidth + 16),
+      behavior: "smooth",
+    });
+  };
 
   const filteredItems = liquorItems.filter((item) =>
     activeCategoryTab === "Beer"
@@ -198,17 +209,17 @@ const LiquorInventory = ({
         {/* Global Structural Layout Wrapper */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
           {/* LEFT/MAIN CONTAINER: Category & Explorer Panel */}
-          <div className="lg:col-span-2 bg-white rounded-xl p-4 sm:p-6 border border-gray-100 shadow-xl flex flex-col gap-6 h-200">
+          <div className="lg:col-span-2 bg-white rounded-xl p-4 sm:p-6 border border-gray-100 shadow-xl flex flex-col gap-6 lg:self-start">
             {/* Category Tab Layout & Search */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
+            <div className="flex overflow-x-auto gap-3 border-b border-gray-100 pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] sm:overflow-visible sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               {/* Tabs */}
-              <div className="bg-gray-50 p-1.5 rounded-xl flex gap-1 border border-gray-200 w-full sm:w-auto">
+              <div className="bg-gray-50 p-1.5 rounded-xl flex gap-1 border border-gray-200 shrink-0 sm:shrink sm:w-auto">
                 <button
                   onClick={() => {
                     setActiveCategoryTab("Beer");
                     setSelectedItem(null);
                   }}
-                  className={`flex items-center justify-center gap-2 flex-1 sm:flex-none px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
+                  className={`flex items-center justify-center gap-2 whitespace-nowrap px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
                     activeCategoryTab === "Beer"
                       ? "bg-yellow-500 text-black shadow-md"
                       : "text-gray-500 hover:text-neutral-900 hover:bg-white"
@@ -222,7 +233,7 @@ const LiquorInventory = ({
                     setActiveCategoryTab("Other");
                     setSelectedItem(null);
                   }}
-                  className={`flex items-center justify-center gap-2 flex-1 sm:flex-none px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
+                  className={`flex items-center justify-center gap-2 whitespace-nowrap px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
                     activeCategoryTab === "Other"
                       ? "bg-yellow-500 text-black shadow-md"
                       : "text-gray-500 hover:text-neutral-900 hover:bg-white"
@@ -234,7 +245,7 @@ const LiquorInventory = ({
               </div>
 
               {/* Search */}
-              <div className="relative w-full sm:w-64">
+              <div className="relative shrink-0 w-56 sm:w-64 sm:shrink">
                 <Search
                   className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                   size={16}
@@ -247,22 +258,56 @@ const LiquorInventory = ({
               </div>
             </div>
 
-            {/* Liquor Brand Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {filteredItems.map((item) => (
-                <LiquorInventoryCard
-                  key={item._id}
-                  item={item}
-                  onSelect={setSelectedItem}
-                  isSelected={selectedItem?._id === item._id}
-                />
-              ))}
+            {/* Liquor Brand Cards Slider */}
+            <div className="relative">
+              {/* Prev Button — desktop only */}
+              <button
+                onClick={() => scrollSlider(-1)}
+                aria-label="Scroll left"
+                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 hover:shadow-amber-100 transition-all active:scale-90"
+              >
+                <ChevronLeft size={18} strokeWidth={2.5} />
+              </button>
+
+              {/* Scroll container */}
+              <div
+                ref={sliderRef}
+                className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-1"
+              >
+                {filteredItems.map((item) => (
+                  <div
+                    key={item._id}
+                    data-slider-card
+                    className="w-full shrink-0 snap-start md:w-[calc(33.333%-11px)]"
+                  >
+                    <LiquorInventoryCard
+                      item={item}
+                      onSelect={setSelectedItem}
+                      isSelected={selectedItem?._id === item._id}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Next Button — desktop only */}
+              <button
+                onClick={() => scrollSlider(1)}
+                aria-label="Scroll right"
+                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 hover:shadow-amber-100 transition-all active:scale-90"
+              >
+                <ChevronRight size={18} strokeWidth={2.5} />
+              </button>
+
+              {/* Mobile dot / swipe hint */}
+              <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
+                ← Swipe to browse inventory →
+              </p>
             </div>
           </div>
 
           {/* RIGHT SIDEBAR PANEL: Quick Stock Adjustments */}
-          <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-100 shadow-xl flex flex-col gap-6 lg:sticky lg:top-6 h-full">
-            <div className="flex items-center gap-2 border-b border-gray-100 pb-4">
+          <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-100 shadow-xl flex flex-col gap-4 h-full">
+            <div className="flex items-center gap-2 border-b border-gray-100 pb-2">
               <PackageCheck size={18} className="text-amber-500 shrink-0" />
               <h3 className="text-sm font-black text-neutral-900 uppercase tracking-wide">
                 Quick Stock Adjuster
@@ -270,9 +315,9 @@ const LiquorInventory = ({
             </div>
 
             {selectedItem ? (
-              <div className="flex flex-col gap-5">
+              <div className="flex flex-col gap-3">
                 {/* Selected Item Details */}
-                <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 flex items-center gap-4">
+                <div className="h-28 bg-gray-50 p-4 rounded-xl border border-gray-200 flex items-center gap-4">
                   <img
                     src={selectedItem.image}
                     className="w-14 h-14 rounded-xl object-cover border border-gray-200 shadow-sm shrink-0"
@@ -295,7 +340,7 @@ const LiquorInventory = ({
                 </div>
 
                 {/* Quantity Adjuster */}
-                <div className="flex flex-col items-center gap-3 bg-gray-50 p-5 rounded-xl border border-gray-200">
+                <div className="flex flex-col items-center gap-1.5 bg-gray-50 p-3 rounded-xl border border-gray-200">
                   <span className="text-[10px] text-gray-400 font-black uppercase tracking-widest">
                     Adjust Quantity Offset
                   </span>
@@ -310,7 +355,7 @@ const LiquorInventory = ({
                       type="number"
                       value={adjustQty}
                       onChange={(e) => setAdjustQty(Number(e.target.value))}
-                      className={`w-16 text-2xl font-black text-center tracking-tight bg-transparent border-b-2 outline-none transition-colors appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ${
+                      className={`w-16 h-11 text-2xl font-black text-center tracking-tight bg-transparent border-b-2 outline-none transition-colors appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ${
                         adjustQty > 0
                           ? "text-green-600 border-green-400"
                           : adjustQty < 0
@@ -320,7 +365,7 @@ const LiquorInventory = ({
                     />
                     <button
                       onClick={() => setAdjustQty((p) => p + 1)}
-                      className="p-3 bg-white text-neutral-900 hover:text-gre en-600 rounded-xl border b order-gray-200 transition-all hov  er:scale-105 active:scale-95 shadow-sm hover:shadow-md"
+                      className="p-3 bg-white text-neutral-900 hover:text-green-600 rounded-xl border border-gray-200 transition-all hover:scale-105 active:scale-95 shadow-sm hover:shadow-md"
                     >
                       <Plus size={18} strokeWidth={3} />
                     </button>

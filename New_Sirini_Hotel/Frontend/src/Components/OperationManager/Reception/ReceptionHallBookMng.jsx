@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Plus,
   Search,
@@ -22,16 +22,6 @@ const ReceptionHallBookMng = () => {
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [editData, setEditData] = useState(null);
-  const [index, setIndex] = useState(0);
-  const [itemsPerView, setItemsPerView] = useState(
-    typeof window !== "undefined"
-      ? window.innerWidth < 640
-        ? 1
-        : window.innerWidth < 1024
-          ? 2
-          : 4
-      : 4,
-  );
 
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
@@ -89,16 +79,16 @@ const ReceptionHallBookMng = () => {
     fetchBookedDates();
   }, []);
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 640) setItemsPerView(1);
-      else if (window.innerWidth < 1024) setItemsPerView(2);
-      else setItemsPerView(4);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const sliderRef = useRef(null);
+  const scrollSlider = (direction) => {
+    if (!sliderRef.current) return;
+    const cardWidth =
+      sliderRef.current.querySelector("[data-slider-card]")?.offsetWidth || 320;
+    sliderRef.current.scrollBy({
+      left: direction * (cardWidth + 16),
+      behavior: "smooth",
+    });
+  };
 
   const filtered = bookings.filter((b) => {
     const matchesSearch =
@@ -109,12 +99,6 @@ const ReceptionHallBookMng = () => {
 
     return matchesSearch && matchesStatus;
   });
-
-  useEffect(() => {
-    setIndex((prev) =>
-      Math.min(prev, Math.max(0, filtered.length - itemsPerView)),
-    );
-  }, [filtered.length, itemsPerView]);
 
   const handleEdit = (booking) => {
     setEditData(booking);
@@ -212,27 +196,26 @@ const ReceptionHallBookMng = () => {
 
       {/* Stats */}
       <div className="flex items-center overflow-x-auto sm:flex-wrap gap-2 no-scrollbar pb-1 sm:pb-0">
-          {["All", "Confirmed", "Cancelled"].map((status) => (
-            <button
-              key={status}
-              onClick={() => {
-                setStatusFilter(status);
-                setIndex(0); // Reset carousel to the first page when changing filters
-              }}
-              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-300 shadow-sm border whitespace-nowrap ${
-                statusFilter === status
-                  ? "bg-slate-800 text-white border-slate-800"
-                  : "bg-white text-slate-500 border-gray-100 hover:bg-gray-50"
-              }`}
-            >
-              {status} (
-              {status === "All"
-                ? bookings.length
-                : bookings.filter((b) => b.status === status).length}
-              )
-            </button>
-          ))}
-        </div>
+        {["All", "Confirmed", "Cancelled"].map((status) => (
+          <button
+            key={status}
+            onClick={() => {
+              setStatusFilter(status);
+            }}
+            className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-300 shadow-sm border whitespace-nowrap ${
+              statusFilter === status
+                ? "bg-slate-800 text-white border-slate-800"
+                : "bg-white text-slate-500 border-gray-100 hover:bg-gray-50"
+            }`}
+          >
+            {status} (
+            {status === "All"
+              ? bookings.length
+              : bookings.filter((b) => b.status === status).length}
+            )
+          </button>
+        ))}
+      </div>
 
       {/* Cards Carousel */}
       {filtered.length === 0 ? (
@@ -244,28 +227,24 @@ const ReceptionHallBookMng = () => {
       ) : (
         <div className="relative">
           {/* Left arrow */}
-          {index > 0 && (
-            <button
-              onClick={() => setIndex((i) => Math.max(0, i - itemsPerView))}
-              className="absolute -left-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow flex items-center justify-center hover:bg-gray-50"
-            >
-              <ChevronLeft size={16} className="text-gray-600" />
-            </button>
-          )}
-
-          {/* Visible cards — slice-based carousel */}
-          <div
-            key={index}
-            className="flex items-stretch gap-3 sm:gap-6"
-            style={{ animation: "fadeIn 0.25s ease" }}
+          <button
+            onClick={() => scrollSlider(-1)}
+            aria-label="Scroll left"
+            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
           >
-            {filtered.slice(index, index + itemsPerView).map((booking) => (
+            <ChevronLeft size={18} strokeWidth={2.5} />
+          </button>
+
+          {/* Scroll container */}
+          <div
+            ref={sliderRef}
+            className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-1"
+          >
+            {filtered.map((booking) => (
               <div
                 key={booking._id}
-                className="shrink-0"
-                style={{
-                  width: `calc((100% - ${(window.innerWidth < 640 ? 12 : 16) * (itemsPerView - 1)}px) / ${itemsPerView})`,
-                }}
+                data-slider-card
+                className="w-full shrink-0 snap-start md:w-[calc(25%-12px)]"
               >
                 <ReceptionHallBookingCard
                   booking={booking}
@@ -278,37 +257,18 @@ const ReceptionHallBookMng = () => {
           </div>
 
           {/* Right arrow */}
-          {index + itemsPerView < filtered.length && (
-            <button
-              onClick={() =>
-                setIndex((i) =>
-                  Math.min(filtered.length - itemsPerView, i + itemsPerView),
-                )
-              }
-              className="absolute -right-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow flex items-center justify-center hover:bg-gray-50"
-            >
-              <ChevronRight size={16} className="text-gray-600" />
-            </button>
-          )}
+          <button
+            onClick={() => scrollSlider(1)}
+            aria-label="Scroll right"
+            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
+          >
+            <ChevronRight size={18} strokeWidth={2.5} />
+          </button>
 
-          {/* Page dots */}
-          {filtered.length > itemsPerView && (
-            <div className="flex justify-center gap-1.5 mt-6">
-              {Array.from({
-                length: Math.ceil(filtered.length / itemsPerView),
-              }).map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setIndex(i * itemsPerView)}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    Math.floor(index / itemsPerView) === i
-                      ? "bg-amber-500"
-                      : "bg-gray-200 hover:bg-gray-300"
-                  }`}
-                />
-              ))}
-            </div>
-          )}
+          {/* Mobile swipe hint */}
+          <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
+            ← Swipe to browse →
+          </p>
         </div>
       )}
 
@@ -325,12 +285,6 @@ const ReceptionHallBookMng = () => {
         />
       )}
 
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(6px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
       <ConfirmDialog
         isOpen={confirmDialog.isOpen}
         type={confirmDialog.type}
