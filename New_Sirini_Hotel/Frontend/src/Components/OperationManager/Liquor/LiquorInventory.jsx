@@ -132,6 +132,7 @@ const LiquorInventory = ({
   };
 
   const increaseLiquorInventory = async (id, quantity) => {
+    const loadingtoast = toast.loading("Updating inventory, please wait...");
     try {
       const response = await axios.put(
         `${VITE_URL}/api/liquor/increaseinventory/`,
@@ -141,16 +142,20 @@ const LiquorInventory = ({
         },
       );
       if (response.status === 200) {
+        toast.dismiss(loadingtoast);
         toast.success("Liquor inventory increased successfully");
       } else {
+        toast.dismiss(loadingtoast);
         toast.error("Failed to increase liquor inventory");
       }
     } catch (error) {
+      toast.dismiss(loadingtoast);
       console.error("Error increasing liquor inventory:", error);
     }
   };
 
   const decreaseLiquorInventory = async (id, quantity) => {
+    const loadingtoast = toast.loading("Updating inventory, please wait...");
     try {
       const response = await axios.put(
         `${VITE_URL}/api/liquor/decreaseinventory/`,
@@ -160,11 +165,14 @@ const LiquorInventory = ({
         },
       );
       if (response.status === 200) {
+        toast.dismiss(loadingtoast);
         toast.success("Liquor inventory decreased successfully");
       } else {
+        toast.dismiss(loadingtoast);
         toast.error("Failed to decrease liquor inventory");
       }
     } catch (error) {
+      toast.dismiss(loadingtoast);
       console.error("Error decreasing liquor inventory:", error);
     }
   };
