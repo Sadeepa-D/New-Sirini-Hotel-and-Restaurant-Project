@@ -14,6 +14,7 @@ import AddLiquorForm from "../Liquor/AddLiquorForm";
 import DrinkCard from "../../LiqourStore/LiqourCard";
 import LiquorDetailsComp from "../../LiqourStore/LIquorDetailsComp";
 import ConfirmDialog from "../../ConfrimDialog";
+import LiquorInventory from "./LiquorInventory";
 
 const LiquorManager = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -306,6 +307,8 @@ const LiquorManager = () => {
           setOthersIndex,
         )}
       </div>
+
+      <LiquorInventory liqouritems={liquorItems} />
 
       {/* Form Modal */}
       {isFormOpen && (
