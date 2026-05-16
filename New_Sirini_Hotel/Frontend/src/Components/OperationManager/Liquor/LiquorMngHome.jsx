@@ -308,7 +308,7 @@ const LiquorManager = () => {
         )}
       </div>
 
-      <LiquorInventory liqouritems={liquorItems} />
+      <LiquorInventory liquorItems={liquorItems} />
 
       {/* Form Modal */}
       {isFormOpen && (
