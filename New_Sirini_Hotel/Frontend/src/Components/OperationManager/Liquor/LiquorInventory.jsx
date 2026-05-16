@@ -54,7 +54,7 @@ const LiquorInventoryCard = ({ item, onSelect, isSelected }) => {
                 : "text-emerald-400"
             }`}
           >
-            {item.currentQuantityInBottels || 0} btls
+            {item.currentQuantityInBottels} btls
           </span>
         </div>
       </div>

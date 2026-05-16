@@ -64,6 +64,27 @@ const LiquorSchema = mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    stockType: {
+      type: String,
+      enum: ["Bottles", "Cases"],
+      required: true,
+    },
+    bottlesPerCase: {
+      type: Number,
+      default: 0,
+    },
+    currentQuantityInBottels: {
+      type: Number,
+      default: 0,
+    },
+    currentQuantityInCases: {
+      type: Number,
+      default: 0,
+    },
+    lowStockThreshold: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,
