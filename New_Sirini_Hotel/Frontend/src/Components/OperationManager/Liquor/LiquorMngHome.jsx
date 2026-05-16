@@ -7,6 +7,7 @@ import {
   Power,
   ChevronLeft,
   ChevronRight,
+  PackageX,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
@@ -23,9 +24,6 @@ const LiquorManager = () => {
   const [selectedDrink, setSelectedDrink] = useState(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [liquorItems, setLiquorItems] = useState([]);
-  const [beerIndex, setBeerIndex] = useState(0);
-  const [othersIndex, setOthersIndex] = useState(0);
-  const [itemsPerView, setItemsPerView] = useState(4);
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
     id: null,
@@ -201,7 +199,7 @@ const LiquorManager = () => {
       <div className="mb-12">
         <h3 className="text-2xl font-bold text-neutral-900 mb-6">{title}</h3>
 
-        {liquorItems.length > 0 ? (
+        {items.length > 0 ? (
           <div className="relative">
             {/* Prev Button — desktop only */}
             <button
@@ -243,9 +241,17 @@ const LiquorManager = () => {
             </p>
           </div>
         ) : (
-          <h3 className="text-2xl font-bold text-neutral-900 mb-6">
-            No Liquor Items Found
-          </h3>
+          <div className="flex flex-col items-center justify-center gap-2 py-10 px-6 bg-gray-50 border border-gray-200 rounded-2xl text-center">
+            <div className="w-11 h-11 rounded-xl bg-white border border-gray-200 shadow-sm flex items-center justify-center mb-1">
+              <PackageX size={22} className="text-gray-400" strokeWidth={1.5} />
+            </div>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+              No {title} Available
+            </p>
+            <p className="text-[11px] text-gray-400">
+              No items found in this section
+            </p>
+          </div>
         )}
       </div>
     );
