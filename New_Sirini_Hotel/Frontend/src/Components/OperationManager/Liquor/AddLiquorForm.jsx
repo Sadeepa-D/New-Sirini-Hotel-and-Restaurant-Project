@@ -247,8 +247,8 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
                   className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00]"
                   placeholder="0.00"
                 >
-                  <option value="bottles">Bottles</option>
-                  <option value="cases">Cases</option>
+                  <option value="Bottles">Bottles</option>
+                  <option value="Cases">Cases</option>
                 </select>
               </div>
 

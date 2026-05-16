@@ -45,6 +45,10 @@ const addLiquor = async (req, res) => {
     const image = req.file.path || req.file.secure_url;
     const imagePublicId = req.file.filename || req.file.public_id;
 
+    if (currentQuantityInBottles == undefined || currentQuantityInBottles < 0) {
+      currentQuantityInBottles = currentQuantityInCases * bottlesPerCase;
+    }
+
     const newLiquor = new Liquor({
       name,
       buyingPrice,
@@ -59,11 +63,11 @@ const addLiquor = async (req, res) => {
       origin,
       brand,
       isAvailable: true,
-      stockType,
-      bottlesPerCase,
-      currentQuantityInBottles,
-      currentQuantityInCases,
-      lowStockThreshold,
+      stockType: stockType || "Bottles",
+      bottlesPerCase: bottlesPerCase || 0,
+      currentQuantityInBottles: currentQuantityInBottles || 0,
+      currentQuantityInCases: currentQuantityInCases || 0,
+      lowStockThreshold: lowStockThreshold || 0,
     });
 
     await newLiquor.save();
