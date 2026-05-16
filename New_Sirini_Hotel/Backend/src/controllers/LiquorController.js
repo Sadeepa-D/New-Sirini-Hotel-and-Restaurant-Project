@@ -5,7 +5,6 @@ const addLiquor = async (req, res) => {
   try {
     const {
       name,
-      // price,
       buyingPrice,
       discount,
       sellingPrice,
@@ -15,12 +14,18 @@ const addLiquor = async (req, res) => {
       volume,
       origin,
       brand,
+      stockType,
+      bottlesPerCase,
+      currentQuantityInBottels,
+      currentQuantityInCases,
+      lowStockThreshold,
     } = req.body;
 
-    if (!name || !buyingPrice || !sellingPrice || !category) {
-      return res
-        .status(400)
-        .json({ message: "Name, Buying Price, Selling Price, and Category are required" });
+    if (!name || !buyingPrice || !sellingPrice || !category || !stockType) {
+      return res.status(400).json({
+        message:
+          "Name, Buying Price, Selling Price, Category, and Stock Type are required",
+      });
     }
     if (isNaN(buyingPrice) || buyingPrice <= 0) {
       return res
@@ -55,6 +60,11 @@ const addLiquor = async (req, res) => {
       origin,
       brand,
       isAvailable: true,
+      stockType,
+      bottlesPerCase,
+      currentQuantityInBottels,
+      currentQuantityInCases,
+      lowStockThreshold,
     });
 
     await newLiquor.save();
@@ -72,9 +82,10 @@ const getAllLiquor = async (req, res) => {
     if (liquor.length === 0) {
       return res.status(404).json({ message: "No liquor found" });
     }
-    if(liquor.discount!==0){
+    if (liquor.discount !== 0) {
       liquor.forEach((item) => {
-        item.price = item.sellingPrice - (item.sellingPrice * item.discount) / 100;
+        item.price =
+          item.sellingPrice - (item.sellingPrice * item.discount) / 100;
       });
     }
     res.status(200).json(liquor);

@@ -23,6 +23,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import UserManagement from "../../Components/Admin/UserManagement";
 import GalleryManagementHub from "../../Components/Admin/GalleryManagementHub";
+import LiquorManagment from "../../Components/Admin/LiquorManagment";
 
 // --- PLACEHOLDER COMPONENTS FOR TABS ---
 const AdminDashboard = () => (
@@ -84,11 +85,6 @@ const RoomAnalysis = () => (
     Occupancy Rates & Room Category Performance
   </div>
 );
-const LiquorAnalysis = () => (
-  <div className="p-8 text-center text-gray-500">
-    Stock Levels & Top Selling Spirits
-  </div>
-);
 
 // --- MAIN ADMIN COMPONENT ---
 const Admin = () => {
@@ -144,7 +140,7 @@ const Admin = () => {
       case "rooms":
         return <RoomAnalysis />;
       case "liquor":
-        return <LiquorAnalysis />;
+        return <LiquorManagment />;
       default:
         return <AdminDashboard />;
     }
