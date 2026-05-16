@@ -240,24 +240,26 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-xs font-black uppercase text-gray-400 ml-2">
-                  Stock Type
-                </label>
-                <select
-                  name="stockType"
-                  value={formData.stockType}
-                  onChange={handleChange}
-                  type="number"
-                  className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00]"
-                  placeholder="0.00"
-                >
-                  <option value="Bottles">Bottles</option>
-                  <option value="Cases">Cases</option>
-                </select>
-              </div>
+              {!initialData && (
+                <div className="space-y-1">
+                  <label className="text-xs font-black uppercase text-gray-400 ml-2">
+                    Stock Type
+                  </label>
+                  <select
+                    name="stockType"
+                    value={formData.stockType}
+                    onChange={handleChange}
+                    type="number"
+                    className="w-full px-5 py-3 rounded-2xl bg-gray-100 border-none focus:ring-2 focus:ring-[#FFAB00]"
+                    placeholder="0.00"
+                  >
+                    <option value="Bottles">Bottles</option>
+                    <option value="Cases">Cases</option>
+                  </select>
+                </div>
+              )}
 
-              {formData.stockType === "Bottles" && (
+              {formData.stockType === "Bottles" && !initialData && (
                 <>
                   <div className="space-y-1">
                     <label className="text-xs font-black uppercase text-gray-400 ml-2">
@@ -274,7 +276,7 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
                   </div>
                 </>
               )}
-              {formData.stockType === "Cases" && (
+              {formData.stockType === "Cases" && !initialData && (
                 <>
                   <div className="space-y-1">
                     <label className="text-xs font-black uppercase text-gray-400 ml-2">
