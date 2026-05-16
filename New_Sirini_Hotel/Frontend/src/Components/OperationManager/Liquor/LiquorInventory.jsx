@@ -18,7 +18,7 @@ const LiquorInventoryCard = ({ item, onSelect, isSelected }) => {
   return (
     <div
       onClick={() => onSelect(item)}
-      className={`relative overflow-hidden rounded-2xl border transition-all duration-300 group cursor-pointer flex flex-col justify-between min-h-50 ${
+      className={`relative overflow-hidden rounded-2xl border transition-all duration-300 group cursor-pointer flex flex-col justify-between min-h-80 ${
         isSelected
           ? "border-amber-500 shadow-xl shadow-amber-500/30 scale-[0.98]"
           : "border-gray-200 hover:border-amber-400 hover:-translate-y-1 shadow-md hover:shadow-xl"
@@ -190,7 +190,7 @@ const LiquorInventory = ({
         {/* Global Structural Layout Wrapper */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
           {/* LEFT/MAIN CONTAINER: Category & Explorer Panel */}
-          <div className="lg:col-span-2 bg-white rounded-xl p-4 sm:p-6 border border-gray-100 shadow-xl flex flex-col gap-6 h-full">
+          <div className="lg:col-span-2 bg-white rounded-xl p-4 sm:p-6 border border-gray-100 shadow-xl flex flex-col gap-6 h-200">
             {/* Category Tab Layout & Search */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
               {/* Tabs */}
