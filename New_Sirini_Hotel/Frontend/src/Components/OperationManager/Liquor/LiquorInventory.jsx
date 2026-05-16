@@ -98,6 +98,8 @@ const LiquorInventory = ({ liquorItems = [] }) => {
       ? item.category === "Beer"
       : item.category !== "Beer",
   );
+
+  const handleApplyUpdate = () => {};
   return (
     <div className="mt-8 w-full">
       <div className="w-full flex flex-col gap-6">
@@ -128,7 +130,6 @@ const LiquorInventory = ({ liquorItems = [] }) => {
                   onClick={() => {
                     setActiveCategoryTab("Beer");
                     setSelectedItem(null);
-                    setCardIndex(0);
                   }}
                   className={`flex items-center justify-center gap-2 flex-1 sm:flex-none px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
                     activeCategoryTab === "Beer"
