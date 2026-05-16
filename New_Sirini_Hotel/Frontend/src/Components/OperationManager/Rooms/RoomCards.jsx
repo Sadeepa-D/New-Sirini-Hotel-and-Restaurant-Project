@@ -7,6 +7,10 @@ import {
   Users,
   Info,
   ImageIcon,
+  Wifi,
+  Droplets,
+  Monitor,
+  Refrigerator,
 } from "lucide-react";
 import StatusBadge from "./StatusBadge";
 
@@ -85,6 +89,38 @@ const RoomCards = ({ rooms, onEdit, onDelete }) => {
                 <p className="text-[11px] text-gray-400 line-clamp-1 italic mb-4">
                   {room.description || "No description provided."}
                 </p>
+
+                {/* Facilities */}
+                {room.facilities && room.facilities.length > 0 && (
+                  <div className="mb-3 pb-3 border-b border-gray-100">
+                    <div className="flex flex-wrap gap-1.5">
+                      {room.facilities.includes("WiFi") && (
+                        <div className="flex items-center gap-0.5 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">
+                          <Wifi size={10} className="text-blue-500" />
+                          <span className="text-[8px] font-bold text-blue-700">WiFi</span>
+                        </div>
+                      )}
+                      {room.facilities.includes("Hot Water") && (
+                        <div className="flex items-center gap-0.5 bg-red-50 px-1.5 py-0.5 rounded border border-red-100">
+                          <Droplets size={10} className="text-red-500" />
+                          <span className="text-[8px] font-bold text-red-700">H2O</span>
+                        </div>
+                      )}
+                      {room.facilities.includes("TV") && (
+                        <div className="flex items-center gap-0.5 bg-purple-50 px-1.5 py-0.5 rounded border border-purple-100">
+                          <Monitor size={10} className="text-purple-500" />
+                          <span className="text-[8px] font-bold text-purple-700">TV</span>
+                        </div>
+                      )}
+                      {room.facilities.includes("Mini Fridge") && (
+                        <div className="flex items-center gap-0.5 bg-green-50 px-1.5 py-0.5 rounded border border-green-100">
+                          <Refrigerator size={10} className="text-green-550" />
+                          <span className="text-[8px] font-bold text-green-700">Fridge</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 {/*Small Action Buttons */}
                 <div className="flex gap-2 pt-3 border-t border-gray-50">
