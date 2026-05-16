@@ -185,10 +185,65 @@ const toggleAvailability = async (req, res) => {
   }
 };
 
+const decreaseLiquorInventory = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const { quantity } = req.body;
+
+    if (!id || !quantity) {
+      return res
+        .status(400)
+        .json({ message: "Liquor ID and quantity are required" });
+    }
+    const liquor = await Liquor.findById(id);
+    if (!liquor) {
+      return res.status(404).json({ message: "Liquor not found" });
+    }
+    if (liquor.currentQuantityInBottles < quantity) {
+      return res.status(400).json({ message: "Not enough stock to decrease" });
+    }
+    liquor.currentQuantityInBottles -= quantity;
+    await liquor.save();
+    res.status(200).json(liquor);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error decreasing liquor inventory",
+      error: error.message,
+    });
+  }
+};
+
+const increaseLiquorInventory = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const { quantity } = req.body;
+
+    if (!id || !quantity) {
+      return res
+        .status(400)
+        .json({ message: "Liquor ID and quantity are required" });
+    }
+    const liquor = await Liquor.findById(id);
+    if (!liquor) {
+      return res.status(404).json({ message: "Liquor not found" });
+    }
+    liquor.currentQuantityInBottles += quantity;
+    await liquor.save();
+    res.status(200).json(liquor);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error increasing liquor inventory",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   addLiquor,
   getAllLiquor,
   deleteLiquor,
   updateLiquor,
   toggleAvailability,
+  decreaseLiquorInventory,
+  increaseLiquorInventory,
 };

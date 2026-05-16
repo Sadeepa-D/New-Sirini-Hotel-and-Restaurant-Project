@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import axios from "axios";
 import {
   Wine,
   Beer,
@@ -85,7 +86,8 @@ const LiquorInventoryCard = ({ item, onSelect, isSelected }) => {
   );
 };
 
-const LiquorInventory = ({ liquorItems = [] }) => {
+const LiquorInventory = ({ liquorItems = [], fetchLiquorItems }) => {
+  const VITE_URL = import.meta.env.VITE_API_URL;
   const [activeCategoryTab, setActiveCategoryTab] = useState("Beer");
   const [selectedItem, setSelectedItem] = useState(null);
   const [adjustQty, setAdjustQty] = useState(0);
@@ -96,7 +98,68 @@ const LiquorInventory = ({ liquorItems = [] }) => {
       : item.category !== "Beer",
   );
 
-  const handleApplyUpdate = () => {};
+  const handleApplyUpdate = async () => {
+    if (!selectedItem || adjustQty === 0) {
+      toast.error("Please specify a valid quantity change first");
+      return;
+    }
+
+    const absoluteQty = Math.abs(adjustQty);
+
+    if (adjustQty > 0) {
+      await increaseLiquorInventory(selectedItem._id, absoluteQty);
+    } else {
+      if (selectedItem.currentQuantityInBottles + adjustQty < 0) {
+        toast.error(
+          `Cannot decrease past 0. Current stock is only ${selectedItem.currentQuantityInBottles} bottles.`,
+        );
+        return;
+      }
+      await decreaseLiquorInventory(selectedItem._id, absoluteQty);
+    }
+    setAdjustQty(0);
+    setSelectedItem(null);
+    fetchLiquorItems();
+  };
+
+  const increaseLiquorInventory = async (id, quantity) => {
+    try {
+      const response = await axios.put(
+        `${VITE_URL}/api/liquor/increaseinventory/`,
+        {
+          id,
+          quantity,
+        },
+      );
+      if (response.status === 200) {
+        toast.success("Liquor inventory increased successfully");
+      } else {
+        toast.error("Failed to increase liquor inventory");
+      }
+    } catch (error) {
+      console.error("Error increasing liquor inventory:", error);
+    }
+  };
+
+  const decreaseLiquorInventory = async (id, quantity) => {
+    try {
+      const response = await axios.put(
+        `${VITE_URL}/api/liquor/decreaseinventory/`,
+        {
+          id,
+          quantity,
+        },
+      );
+      if (response.status === 200) {
+        toast.success("Liquor inventory decreased successfully");
+      } else {
+        toast.error("Failed to decrease liquor inventory");
+      }
+    } catch (error) {
+      console.error("Error decreasing liquor inventory:", error);
+    }
+  };
+
   return (
     <div className="mt-8 w-full">
       <div className="w-full flex flex-col gap-6">

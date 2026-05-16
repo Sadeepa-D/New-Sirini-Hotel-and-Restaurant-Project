@@ -308,7 +308,10 @@ const LiquorManager = () => {
         )}
       </div>
 
-      <LiquorInventory liquorItems={liquorItems} />
+      <LiquorInventory
+        liquorItems={liquorItems}
+        fetchLiquorItems={fetchLiquorItems}
+      />
 
       {/* Form Modal */}
       {isFormOpen && (

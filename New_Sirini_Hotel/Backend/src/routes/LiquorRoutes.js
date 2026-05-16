@@ -12,5 +12,7 @@ router.put(
   liquorController.updateLiquor,
 );
 router.put("/toggle/:id", liquorController.toggleAvailability);
+router.put("/decreaseinventory/", liquorController.decreaseLiquorInventory);
+router.put("/increaseinventory/", liquorController.increaseLiquorInventory);
 
 module.exports = router;
