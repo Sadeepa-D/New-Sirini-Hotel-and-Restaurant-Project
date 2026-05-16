@@ -16,7 +16,7 @@ const LiquorInventoryCard = ({ item, onSelect, isSelected }) => {
   return (
     <div
       onClick={() => onSelect(item)}
-      className={`relative overflow-hidden rounded-2xl border transition-all duration-300 group cursor-pointer flex flex-col justify-between min-h-[200px] ${
+      className={`relative overflow-hidden rounded-2xl border transition-all duration-300 group cursor-pointer flex flex-col justify-between min-h-50 ${
         isSelected
           ? "border-amber-500 shadow-xl shadow-amber-500/30 scale-[0.98]"
           : "border-gray-200 hover:border-amber-400 hover:-translate-y-1 shadow-md hover:shadow-xl"
