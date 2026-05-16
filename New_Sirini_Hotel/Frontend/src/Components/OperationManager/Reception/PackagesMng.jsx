@@ -137,6 +137,17 @@ const PackagesMng = () => {
     setShowForm(true);
   };
 
+  const sliderRef = useRef(null);
+  const scrollSlider = (direction) => {
+    if (!sliderRef.current) return;
+    const cardWidth =
+      sliderRef.current.querySelector("[data-slider-card]")?.offsetWidth || 320;
+    sliderRef.current.scrollBy({
+      left: direction * (cardWidth + 16),
+      behavior: "smooth",
+    });
+  };
+
   if (loading)
     return (
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-6">
@@ -152,16 +163,6 @@ const PackagesMng = () => {
       </div>
     );
 
-  const sliderRef = useRef(null);
-  const scrollSlider = (direction) => {
-    if (!sliderRef.current) return;
-    const cardWidth =
-      sliderRef.current.querySelector("[data-slider-card]")?.offsetWidth || 320;
-    sliderRef.current.scrollBy({
-      left: direction * (cardWidth + 16),
-      behavior: "smooth",
-    });
-  };
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-6">
