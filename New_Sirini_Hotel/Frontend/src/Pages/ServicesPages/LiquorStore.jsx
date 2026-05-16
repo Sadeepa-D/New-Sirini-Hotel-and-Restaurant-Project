@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import {
-  BarChart3,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsDown,
-} from "lucide-react";
+import { BarChart3, ChevronLeft, ChevronRight, PackageX } from "lucide-react";
 import LiqourCard from "../../Components/LiqourStore/LiqourCard";
 import LiquorComparisonComp from "../../Components/LiqourStore/LiquorComparisonComp";
 import LiquorDetailsComp from "../../Components/LiqourStore/LIquorDetailsComp";
@@ -175,6 +170,23 @@ const LiquorStore = () => {
                 ref={beerSliderRef}
                 className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-1"
               >
+                {filteredBeerDrinks.length === 0 && (
+                  <div className="flex flex-col items-center justify-center gap-2 py-10 px-6 bg-gray-50 border border-gray-200 rounded-2xl text-center w-full">
+                    <div className="w-11 h-11 rounded-xl bg-white border border-gray-200 shadow-sm flex items-center justify-center mb-1">
+                      <PackageX
+                        size={22}
+                        className="text-gray-400"
+                        strokeWidth={1.5}
+                      />
+                    </div>
+                    <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                      No Beer Available
+                    </p>
+                    <p className="text-[11px] text-gray-400">
+                      No items found in this section
+                    </p>
+                  </div>
+                )}
                 {filteredBeerDrinks.map((drink) => (
                   <div
                     key={drink._id}
@@ -212,6 +224,23 @@ const LiquorStore = () => {
                 ref={othersSliderRef}
                 className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-1"
               >
+                {filteredOtherDrinks.length === 0 && (
+                  <div className="flex flex-col items-center justify-center gap-2 py-10 px-6 bg-gray-50 border border-gray-200 rounded-2xl text-center w-full">
+                    <div className="w-11 h-11 rounded-xl bg-white border border-gray-200 shadow-sm flex items-center justify-center mb-1">
+                      <PackageX
+                        size={22}
+                        className="text-gray-400"
+                        strokeWidth={1.5}
+                      />
+                    </div>
+                    <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                      No Others Available
+                    </p>
+                    <p className="text-[11px] text-gray-400">
+                      No items found in this section
+                    </p>
+                  </div>
+                )}
                 {filteredOtherDrinks.map((drink) => (
                   <div
                     key={drink._id}

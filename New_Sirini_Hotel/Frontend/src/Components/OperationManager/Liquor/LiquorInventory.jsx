@@ -274,19 +274,25 @@ const LiquorInventory = ({
                 ref={sliderRef}
                 className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-1"
               >
-                {filteredItems.map((item) => (
-                  <div
-                    key={item._id}
-                    data-slider-card
-                    className="w-full shrink-0 snap-start md:w-[calc(33.333%-11px)]"
-                  >
-                    <LiquorInventoryCard
-                      item={item}
-                      onSelect={setSelectedItem}
-                      isSelected={selectedItem?._id === item._id}
-                    />
+                {filteredItems.length === 0 ? (
+                  <div className="w-full flex items-center justify-center py-12">
+                    <p className="text-sm text-gray-400">No items found.</p>
                   </div>
-                ))}
+                ) : (
+                  filteredItems.map((item) => (
+                    <div
+                      key={item._id}
+                      data-slider-card
+                      className="w-full shrink-0 snap-start md:w-[calc(33.333%-11px)]"
+                    >
+                      <LiquorInventoryCard
+                        item={item}
+                        onSelect={setSelectedItem}
+                        isSelected={selectedItem?._id === item._id}
+                      />
+                    </div>
+                  ))
+                )}
               </div>
 
               {/* Next Button — desktop only */}
