@@ -311,6 +311,7 @@ const LiquorManager = () => {
       <LiquorInventory
         liquorItems={liquorItems}
         fetchLiquorItems={fetchLiquorItems}
+        toogleavailability={handleToggleAvailability}
       />
 
       {/* Form Modal */}

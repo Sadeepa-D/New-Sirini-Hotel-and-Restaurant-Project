@@ -50,7 +50,7 @@ const LiquorInventoryCard = ({ item, onSelect, isSelected }) => {
           </span>
           <span
             className={`text-sm font-black leading-tight ${
-              item.currentQuantityInBottels <= item.lowStockThreshold
+              item.currentQuantityInBottles <= item.lowStockThreshold
                 ? "text-red-400"
                 : "text-emerald-400"
             }`}
@@ -86,7 +86,11 @@ const LiquorInventoryCard = ({ item, onSelect, isSelected }) => {
   );
 };
 
-const LiquorInventory = ({ liquorItems = [], fetchLiquorItems }) => {
+const LiquorInventory = ({
+  liquorItems = [],
+  fetchLiquorItems,
+  toogleavailability,
+}) => {
   const VITE_URL = import.meta.env.VITE_API_URL;
   const [activeCategoryTab, setActiveCategoryTab] = useState("Beer");
   const [selectedItem, setSelectedItem] = useState(null);
@@ -119,6 +123,11 @@ const LiquorInventory = ({ liquorItems = [], fetchLiquorItems }) => {
     }
     setAdjustQty(0);
     setSelectedItem(null);
+    if (
+      selectedItem.currentQuantityInBottles <= selectedItem.lowStockThreshold
+    ) {
+      toogleavailability(selectedItem._id);
+    }
     fetchLiquorItems();
   };
 
