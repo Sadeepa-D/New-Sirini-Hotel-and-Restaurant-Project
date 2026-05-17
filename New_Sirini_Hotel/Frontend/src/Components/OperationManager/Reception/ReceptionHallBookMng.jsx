@@ -252,7 +252,6 @@ const ReceptionHallBookMng = () => {
                   booking={booking}
                   onEdit={handleEdit}
                   onCancel={handleconfirmCancel}
-                  onConfirm={handleconfirmConfrim}
                 />
               </div>
             ))}
