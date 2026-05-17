@@ -118,17 +118,6 @@ const ReceptionHallBookMng = () => {
     });
   };
 
-  const handleconfirmConfrim = (id) => {
-    setConfirmDialog({
-      isOpen: true,
-      id,
-      type: "Confirm",
-      title: "Confirm Booking",
-      message: "Are you sure you want to confirm this booking?",
-      status: "Confirmed",
-    });
-  };
-
   const handlebookingstatus = async () => {
     const { id, status } = confirmDialog;
     setConfirmDialog({ isOpen: false, id: null });
