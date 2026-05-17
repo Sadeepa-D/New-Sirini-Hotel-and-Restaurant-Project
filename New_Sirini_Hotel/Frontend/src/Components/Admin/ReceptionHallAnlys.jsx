@@ -64,7 +64,7 @@ const AppointmentAnalysis = () => {
       {/* Top Header Layer: Compact Icon & Month Dropdown Select */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-3">
-          <h3 className="text-[8x] font-black text-gray-400 uppercase tracking-wider whitespace-nowrap">
+          <h3 className="text-[8x] font-black uppercase tracking-wider whitespace-nowrap">
             Appointments
           </h3>
         </div>
