@@ -14,7 +14,7 @@ import {
   DollarSign,
 } from "lucide-react";
 
-const ReceptionHallBookingCard = ({ booking, onEdit, onCancel, onConfirm }) => {
+const ReceptionHallBookingCard = ({ booking, onEdit, onCancel }) => {
   const statusConfig = {
     Booked: {
       bg: "bg-green-100",
@@ -140,27 +140,24 @@ const ReceptionHallBookingCard = ({ booking, onEdit, onCancel, onConfirm }) => {
 
         {/* Action buttons */}
         <div className="flex gap-2 mt-auto pt-2 border-t border-gray-100">
-          <button
-            onClick={() => onEdit(booking)}
-            className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 text-xs font-semibold transition-colors"
-          >
-            <Pencil size={13} /> Edit
-          </button>
-          {booking.status === "Confirmed" || booking.status === "Booked" ? (
-            <button
-              onClick={() => onCancel(booking._id)}
-              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 text-xs font-semibold transition-colors"
-            >
-              <X size={13} /> Cancel
-            </button>
-          ) : (
-            <button
-              onClick={() => onConfirm(booking._id)}
-              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-green-50 text-green-500 hover:bg-green-100 text-xs font-semibold transition-colors"
-            >
-              <Check size={13} /> Confirm
-            </button>
-          )}
+          {booking.status === "Confirmed" ||
+            (booking.status === "Booked" && (
+              <button
+                onClick={() => onEdit(booking)}
+                className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 text-xs font-semibold transition-colors"
+              >
+                <Pencil size={13} /> Edit
+              </button>
+            ))}
+          {booking.status === "Confirmed" ||
+            (booking.status === "Booked" && (
+              <button
+                onClick={() => onCancel(booking._id)}
+                className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 text-xs font-semibold transition-colors"
+              >
+                <X size={13} /> Cancel
+              </button>
+            ))}
         </div>
       </div>
     </div>
