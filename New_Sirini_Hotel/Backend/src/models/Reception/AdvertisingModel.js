@@ -18,7 +18,10 @@ const advertisingSchema = new mongoose.Schema(
     NIC: {
       type: String,
       required: true,
-      match: [/^[0-9]{9}[0-9X]$/, "Please enter a valid 9-digit NIC number"],
+      match: [
+      /^([0-9]{9}[vVxX]|[0-9]{12})$/,
+      "Please enter a valid NIC number",
+    ],
     },
     category: {
       type: String,
