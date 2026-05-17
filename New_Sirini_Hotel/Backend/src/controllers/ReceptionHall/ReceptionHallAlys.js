@@ -1,5 +1,9 @@
 const ReceptionAppointModel = require("../../models/Reception/ReciptionAppointModel");
 const ReceptionHallBookingModel = require("../../models/Reception/ReceptionHallBookings");
+const ReceptionHallPackageModel = require("../../models/Reception/ReceptionHallPackages");
+const CateringitemsModel = require("../../models/Reception/CateringItems");
+const AdvertisementModel = require("../../models/Reception/AdvertisingModel");
+const { array } = require("../../config/CloudinaryConfig");
 
 const getmonthlyappointmentdetails = async (req, res) => {
   try {
@@ -127,8 +131,79 @@ const getYearlyReceptionHallIncome = async (req, res) => {
   }
 };
 
+const getreceptionhallcommondetails = async (req, res) => {
+  try {
+    const activePackagesCount = await ReceptionHallPackageModel.countDocuments({
+      status: true,
+    });
+    const inactivePackagesCount =
+      await ReceptionHallPackageModel.countDocuments({ status: false });
+    const ActiveCateringItemsCount = await CateringitemsModel.countDocuments({
+      status: true,
+    });
+    const InactiveCateringItemsCount = await CateringitemsModel.countDocuments({
+      status: false,
+    });
+    const ActiveAdvertismentsCount = await AdvertisementModel.countDocuments({
+      status: "approved",
+    });
+    const PendingAdvertismentsCount = await AdvertisementModel.countDocuments({
+      status: "pending",
+    });
+    const RejectedAdvertismentsCount = await AdvertisementModel.countDocuments({
+      status: "rejected",
+    });
+
+    res.json({
+      activePackages: activePackagesCount,
+      inactivePackages: inactivePackagesCount,
+      activeCateringItems: ActiveCateringItemsCount,
+      inactiveCateringItems: InactiveCateringItemsCount,
+      activeAdvertisments: ActiveAdvertismentsCount,
+      pendingAdvertisments: PendingAdvertismentsCount,
+      rejectedAdvertisments: RejectedAdvertismentsCount,
+    });
+  } catch (error) {
+    console.error("Error fetching reception hall common details:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const getreceptionhallpackagesbookedcount = async (req, res) => {
+  try {
+    const packages = await ReceptionHallPackageModel.find();
+    const bookings = await ReceptionHallBookingModel.find({
+      status: { $in: ["Confirmed", "Booked"] },
+    });
+
+    const packagesandcount = packages.map((pkg) => ({
+      packageName: pkg.name,
+      count: 0,
+    }));
+
+    bookings.forEach((booking) => {
+      const matchedPackage = packagesandcount.find(
+        (p) => p.packageName === booking.selectedPackage,
+      );
+      if (matchedPackage) {
+        matchedPackage.count += 1;
+      }
+    });
+
+    res.json(packagesandcount);
+  } catch (error) {
+    console.error(
+      "Error fetching reception hall package booking counts:",
+      error,
+    );
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 module.exports = {
   getmonthlyappointmentdetails,
   getmonthlyReceptionHallBookingDetails,
+  getreceptionhallcommondetails,
   getYearlyReceptionHallIncome,
+  getreceptionhallpackagesbookedcount,
 };

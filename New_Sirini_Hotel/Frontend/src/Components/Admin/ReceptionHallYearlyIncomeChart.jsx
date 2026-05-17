@@ -35,7 +35,6 @@ const ReceptionHallYearlyIncomeChart = () => {
     fetchChartData();
   }, []);
 
-  // Custom tooltips popup modifier logic mapping clean Sri Lankan currency units
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       return (
@@ -111,7 +110,7 @@ const ReceptionHallYearlyIncomeChart = () => {
             />
             <Bar
               dataKey="income"
-              fill="#F59E0B" // Rich Amber Base Color
+              fill="#F59E0B"
               radius={[6, 6, 0, 0]}
               maxBarSize={32}
               className="hover:fill-amber-500 transition-colors duration-200"

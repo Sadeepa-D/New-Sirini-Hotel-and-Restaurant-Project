@@ -1,5 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { CalendarDays, ChevronDown, XCircle, Sun, Moon } from "lucide-react";
+import {
+  XCircle,
+  Sun,
+  Moon,
+  CalendarDays,
+  ChevronDown,
+  Layers,
+  UtensilsCrossed,
+  Megaphone,
+  Eye,
+  EyeOff,
+  Clock,
+  CheckCircle,
+} from "lucide-react";
 import axios from "axios";
 import ReceptionHallYearlyIncomeChart from "./ReceptionHallYearlyIncomeChart";
 
@@ -61,14 +74,12 @@ const AppointmentAnalysis = () => {
   }, [selectedMonth]);
 
   return (
-    <div className="bg-white w-full max-w-sm rounded-3xl p-4 shadow-xl border border-gray-100 flex flex-col gap-3">
+    <div className="bg-white w-full h-full rounded-3xl p-4 shadow-xl border border-gray-100 flex flex-col gap-3">
       {/* Top Header Layer: Compact Icon & Month Dropdown Select */}
       <div className="flex flex-col gap-3">
-        <div className="flex items-center gap-3">
-          <h3 className="text-[8x] font-black uppercase tracking-wider whitespace-nowrap">
-            Appointments
-          </h3>
-        </div>
+        <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-wider">
+          Appointments
+        </h3>
         {/* Right Side: High-End Minimalist Custom Dropdown */}
         <div className="relative inline-block self-end group">
           <select
@@ -226,10 +237,10 @@ const ReceptionHallBookingAnalysis = () => {
   }, [selectedMonth]);
 
   return (
-    <div className="bg-white w-full max-w-sm rounded-3xl p-4 shadow-xl border border-gray-100 flex flex-col gap-3">
+    <div className="bg-white w-full h-full rounded-3xl p-4 shadow-xl border border-gray-100 flex flex-col gap-3">
       {/* Top Header Layer */}
       <div className="flex flex-col gap-3">
-        <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-wider whitespace-nowrap">
+        <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-wider">
           Hall Bookings
         </h3>
 
@@ -327,15 +338,223 @@ const ReceptionHallBookingAnalysis = () => {
   );
 };
 
+const Receptionhallcommonalysis = () => {
+  const VITE_URL = import.meta.env.VITE_API_URL;
+
+  const [commonStats, setCommonStats] = useState({
+    activePackages: 0,
+    inactivePackages: 0,
+    activeCateringItems: 0,
+    inactiveCateringItems: 0,
+    activeAdvertisments: 0,
+    pendingAdvertisments: 0,
+    rejectedAdvertisments: 0,
+  });
+
+  const fetchCommonAnalysisData = async () => {
+    try {
+      const response = await axios.get(
+        `${VITE_URL}/api/receptionhall/common/details`,
+      );
+      setCommonStats(response.data);
+    } catch (error) {
+      console.error("Error loading common asset summary metadata:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCommonAnalysisData();
+  }, []);
+  return (
+    <div className="bg-white w-full h-full rounded-3xl p-4 shadow-xl border border-gray-100 flex flex-col gap-3">
+      {/* Top Header Layer */}
+      <div className="flex flex-col gap-3">
+        <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-wider">
+          System Assets Overview
+        </h3>
+      </div>
+
+      {/* Main Structural Content Segment Rows (Matches Image Sketch Layout) */}
+      <div className="flex flex-col gap-3.5">
+        {/* ROW 1: HOTEL PACKAGES ROW SECTION */}
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2 px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 bg-amber-50 text-amber-500 rounded-xl border border-amber-100/40 shrink-0">
+              <Layers size={15} strokeWidth={2.5} />
+            </div>
+            <span className="text-[11px] sm:text-xs font-black text-[#2D3748] tracking-wider uppercase">
+              Hotel Packages
+            </span>
+          </div>
+          {/* Inner Counter Sub-Grids */}
+          <div className="flex items-center gap-2 self-end sm:self-auto">
+            <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2 py-1 rounded-lg border border-emerald-100/50 text-[10px] font-black uppercase">
+              <Eye size={12} /> {commonStats.activePackages} Active
+            </div>
+            <div className="flex items-center gap-1.5 bg-gray-100 text-gray-500 px-2 py-1 rounded-lg text-[10px] font-black uppercase">
+              <EyeOff size={12} /> {commonStats.inactivePackages} Inactive
+            </div>
+          </div>
+        </div>
+
+        {/* ROW 2: CATERING ITEMS ROW SECTION */}
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2 px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 bg-rose-50 text-rose-500 rounded-xl border border-rose-100/40 shrink-0">
+              <UtensilsCrossed size={15} strokeWidth={2.5} />
+            </div>
+            <span className="text-[11px] sm:text-xs font-black text-[#2D3748] tracking-wider uppercase">
+              Catering Items
+            </span>
+          </div>
+          <div className="flex items-center gap-2 App selection self-end sm:self-auto">
+            <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2 py-1 rounded-lg border border-emerald-100/50 text-[10px] font-black uppercase">
+              <Eye size={12} /> {commonStats.activeCateringItems} Active
+            </div>
+            <div className="flex items-center gap-1.5 bg-gray-100 text-gray-500 px-2 py-1 rounded-lg text-[10px] font-black uppercase">
+              <EyeOff size={12} /> {commonStats.inactiveCateringItems} Inactive
+            </div>
+          </div>
+        </div>
+
+        {/* ROW 3: ADVERTISEMENTS ROW SECTION */}
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2 px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 bg-indigo-50 text-indigo-500 rounded-xl border border-indigo-100/40 shrink-0">
+              <Megaphone size={15} strokeWidth={2.5} />
+            </div>
+            <span className="text-[11px] sm:text-xs font-black text-[#2D3748] tracking-wider uppercase">
+              Advertisements
+            </span>
+          </div>
+          <div className="flex items-center flex-wrap gap-1.5 self-end sm:self-auto justify-end">
+            <div className="flex items-center gap-1 bg-emerald-50 text-emerald-700 px-1.5 py-1 rounded-lg border border-emerald-100/50 text-[9px] font-black uppercase">
+              <Eye size={11} /> {commonStats.activeAdvertisments} Act
+            </div>
+            <div className="flex items-center gap-1 bg-gray-100 text-gray-500 px-1.5 py-1 rounded-lg text-[9px] font-black uppercase">
+              <EyeOff size={11} /> {commonStats.inactiveAdvertisments} Inact
+            </div>
+            <div className="flex items-center gap-1 bg-amber-50 text-amber-700 px-1.5 py-1 rounded-lg border border-amber-200/60 text-[9px] font-black uppercase animate-pulse">
+              <Clock size={11} /> {commonStats.pendingAdvertisments} Pend
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const PackageBookedCount = () => {
+  const VITE_URL = import.meta.env.VITE_API_URL;
+  const currentYear = new Date().getFullYear();
+
+  const [packageStats, setPackageStats] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchPackageBookingCounts = async () => {
+    try {
+      const response = await axios.get(
+        `${VITE_URL}/api/receptionhall/packages/booked/count`,
+      );
+      setPackageStats(response.data || []);
+    } catch (error) {
+      console.error("Error loading package analysis statistics:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPackageBookingCounts();
+  }, []);
+
+  // Style array matrix to give auto-generated rows unique theme variations automatically
+  const badgeStyles = [
+    { bg: "bg-amber-50 text-amber-500 border-amber-100/50" },
+    { bg: "bg-emerald-50 text-emerald-500 border-emerald-100/50" },
+    { bg: "bg-indigo-50 text-indigo-500 border-indigo-100/50" },
+    { bg: "bg-rose-50 text-rose-500 border-rose-100/50" },
+  ];
+
+  return (
+    <div className="bg-white w-full max-w-sm rounded-3xl p-5 shadow-xl border border-gray-100 flex flex-col gap-4">
+      {/* Top Header Layer: Bold Title & Year Display Indicator Badge */}
+      <div className="flex flex-col gap-3">
+        <h3 className="text-xl font-black text-slate-800 uppercase tracking-wide font-sans">
+          Package Bookings
+        </h3>
+
+        {/* High-End Mock Selector Container (Displays current active year space) */}
+        <div className="relative inline-block self-end">
+          <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl pl-3 pr-6 py-2 text-xs font-bold text-gray-700 select-none">
+            <CalendarDays size={14} className="text-gray-400" />
+            <span>Year {currentYear}</span>
+            <ChevronDown
+              size={14}
+              className="absolute right-2 text-gray-400 pointer-events-none"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Dynamic List Content Rows Container */}
+      <div className="flex flex-col gap-2">
+        {loading ? (
+          // Skeletons loader state tracker text
+          <p className="text-xs font-bold text-center text-gray-400 uppercase tracking-widest py-6 animate-pulse">
+            Loading packages...
+          </p>
+        ) : packageStats.length === 0 ? (
+          <p className="text-xs font-bold text-center text-gray-400 uppercase tracking-widest py-6">
+            No active packages found
+          </p>
+        ) : (
+          // AUTO-GENERATE ROWS: Loops through array returned from your backend controller
+          packageStats.map((item, index) => {
+            // Pick a unique badge background style using index remainder rotation math
+            const currentStyle = badgeStyles[index % badgeStyles.length];
+
+            return (
+              <div
+                key={item.packageName || index}
+                className="flex items-center justify-between px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200"
+              >
+                {/* Left Section: Icon and Title mapping fields */}
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`p-1.5 rounded-lg border ${currentStyle.bg} shrink-0 flex items-center justify-center`}
+                  >
+                    <Layers size={13} strokeWidth={2.5} />
+                  </div>
+                  <span className="text-[11px] sm:text-xs font-black text-[#2D3748] tracking-wider uppercase truncate max-w-[180px]">
+                    {item.packageName}
+                  </span>
+                </div>
+
+                {/* Right Section: Real-time Database Counts field output */}
+                <span className="text-sm font-black text-neutral-900 pr-1">
+                  {item.count}
+                </span>
+              </div>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+};
+
 const ReceptionHallAnlys = () => {
   return (
     <div>
-      <div className="p-4 flex flex-wrap gap-4">
+      <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
         <AppointmentAnalysis />
         <ReceptionHallBookingAnalysis />
+        <Receptionhallcommonalysis />
       </div>
-      <div className="p-4">
+      <div className="p-4 grid grid-cols-2 gap-4">
         <ReceptionHallYearlyIncomeChart />
+        <PackageBookedCount />
       </div>
     </div>
   );
