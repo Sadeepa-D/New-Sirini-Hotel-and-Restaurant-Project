@@ -4,41 +4,49 @@ import axios from "axios";
 
 const AppointmentAnalysis = () => {
   const VITE_URL = import.meta.env.VITE_API_URL;
-  const [selectedMonth, setSelectedMonth] = useState("May 2026");
+  const currentYear = new Date().getFullYear();
+
+  const currentmonthname = new Date().toLocaleString("en-US", {
+    month: "long",
+  });
+  const [selectedMonth, setSelectedMonth] = useState(
+    `${currentmonthname} ${currentYear}`,
+  );
   const [currentStats, setCurrentStats] = useState({
     Pending: 0,
     Completed: 0,
     Cancelled: 0,
     Overdue: 0,
   });
-
-  const MonthAndYearMap = {
-    "December 2026": { month: 12, year: 2026 },
-    "November 2026": { month: 11, year: 2026 },
-    "October 2026": { month: 10, year: 2026 },
-    "September 2026": { month: 9, year: 2026 },
-    "August 2026": { month: 8, year: 2026 },
-    "July 2026": { month: 7, year: 2026 },
-    "June 2026": { month: 6, year: 2026 },
-    "May 2026": { month: 5, year: 2026 },
-    "April 2026": { month: 4, year: 2026 },
-    "March 2026": { month: 3, year: 2026 },
-    "February 2026": { month: 2, year: 2026 },
-    "January 2026": { month: 1, year: 2026 },
-  };
+  const monthsArray = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
   const fetchAppointmentData = async () => {
     try {
-      const config = MonthAndYearMap[selectedMonth];
-      if (!config.month || !config.year) {
-        console.error("Invalid month or year selected");
+      const [monthName, year] = selectedMonth.split(" ");
+      const MonthNumber = monthsArray.indexOf(monthName) + 1;
+      const Year = Number(year);
+      if (!MonthNumber || !Year) {
+        console.error("Invalid month or year format");
         return;
       }
       const response = await axios.post(
         `${VITE_URL}/api/receptionhall/appointments/stats`,
         {
-          month: config.month,
-          year: config.year,
+          month: MonthNumber,
+          year: Year,
         },
       );
       setCurrentStats(response.data);
@@ -65,20 +73,17 @@ const AppointmentAnalysis = () => {
           <select
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(e.target.value)}
-            className="appearance-none bg-gray-50 hover:bg-gray-100/70 border border-gray-200 rounded-xl pl-9 pr-8 py-2 text-xs font-bold text-gray-700 outline-none cursor-pointer transition-all shadow-xs"
+            className="appearance-none bg-gray-50 hover:bg-gray-100/70 border border-gray-200 rounded-xl pl-9 pr-8 py-2 text-xs font-bold text-gray-700 outline-none cursor-pointer transition-all shadow-xs overflow-y-auto max-h-40"
           >
-            <option value="December 2026">December 2026</option>
-            <option value="November 2026">November 2026</option>
-            <option value="October 2026">October 2026</option>
-            <option value="September 2026">September 2026</option>
-            <option value="August 2026">August 2026</option>
-            <option value="July 2026">July 2026</option>
-            <option value="June 2026">June 2026</option>
-            <option value="May 2026">May 2026</option>
-            <option value="April 2026">April 2026</option>
-            <option value="March 2026">March 2026</option>
-            <option value="February 2026">February 2026</option>
-            <option value="January 2026">January 2026</option>
+            {monthsArray.map((month) => (
+              <option
+                className="bg-white text-neutral-800 font-medium py-2"
+                key={month}
+                value={`${month} ${currentYear}`}
+              >
+                {month} {currentYear}
+              </option>
+            ))}
           </select>
           <CalendarDays
             className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-amber-500 transition-colors"
