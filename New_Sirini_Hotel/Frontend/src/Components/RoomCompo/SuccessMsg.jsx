@@ -8,6 +8,10 @@ import {
   X,
   ArrowRight,
   Star,
+  Wifi,
+  Droplets,
+  Monitor,
+  Refrigerator,
 } from "lucide-react";
 
 function BookingSuccess({ selectedRoom, onClose, totalPrice }) {
@@ -94,6 +98,41 @@ function BookingSuccess({ selectedRoom, onClose, totalPrice }) {
                 Rs.{totalPrice?.toLocaleString()}
               </span>
             </div>
+
+            {/* Facilities */}
+            {selectedRoom.facilities && selectedRoom.facilities.length > 0 && (
+              <div className="mt-3 pt-3 border-t border-white/5">
+                <p className="text-[8px] font-black uppercase text-gray-600 tracking-widest mb-1.5 text-left">
+                  Facilities
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {selectedRoom.facilities.includes("WiFi") && (
+                    <div className="flex items-center gap-0.5 bg-blue-500/10 border border-blue-500/20 px-1.5 py-0.5 rounded">
+                      <Wifi size={10} className="text-blue-400" />
+                      <span className="text-[8px] font-bold text-blue-300">WiFi</span>
+                    </div>
+                  )}
+                  {selectedRoom.facilities.includes("Hot Water") && (
+                    <div className="flex items-center gap-0.5 bg-red-500/10 border border-red-500/20 px-1.5 py-0.5 rounded">
+                      <Droplets size={10} className="text-red-400" />
+                      <span className="text-[8px] font-bold text-red-300">H2O</span>
+                    </div>
+                  )}
+                  {selectedRoom.facilities.includes("TV") && (
+                    <div className="flex items-center gap-0.5 bg-purple-500/10 border border-purple-500/20 px-1.5 py-0.5 rounded">
+                      <Monitor size={10} className="text-purple-400" />
+                      <span className="text-[8px] font-bold text-purple-300">TV</span>
+                    </div>
+                  )}
+                  {selectedRoom.facilities.includes("Mini Fridge") && (
+                    <div className="flex items-center gap-0.5 bg-green-500/10 border border-green-500/20 px-1.5 py-0.5 rounded">
+                      <Refrigerator size={10} className="text-green-400" />
+                      <span className="text-[8px] font-bold text-green-300">Fridge</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           

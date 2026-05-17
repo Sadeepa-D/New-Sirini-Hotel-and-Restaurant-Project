@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Camera,
   Music,
@@ -26,10 +26,6 @@ const AdvertisementSection = () => {
   const [activeCategory, setActiveCategory] = useState("Photography");
   const [showForm, setShowForm] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
-  const [index, setIndex] = useState(0);
-  const [itemsPerView, setItemsPerView] = useState(
-    typeof window !== "undefined" && window.innerWidth < 640 ? 1 : 3,
-  );
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   const VITE_URL = import.meta.env.VITE_API_URL;
@@ -53,28 +49,16 @@ const AdvertisementSection = () => {
     fetchAds();
   }, []);
 
-  useEffect(() => {
-    // Add fade animation styles
-    const style = document.createElement("style");
-    style.textContent = `
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(6px); }
-        to   { opacity: 1; transform: translateY(0); }
-      }
-    `;
-    document.head.appendChild(style);
-    return () => document.head.removeChild(style);
-  }, []);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setItemsPerView(window.innerWidth < 640 ? 1 : 3);
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const sliderRef = useRef(null);
+  const scrollSlider = (direction) => {
+    if (!sliderRef.current) return;
+    const cardWidth =
+      sliderRef.current.querySelector("[data-slider-card]")?.offsetWidth || 320;
+    sliderRef.current.scrollBy({
+      left: direction * (cardWidth + 16),
+      behavior: "smooth",
+    });
+  };
 
   const handleadrequest = () => {
     if (!isLoggedIn) {
@@ -87,22 +71,6 @@ const AdvertisementSection = () => {
   };
 
   const filtered = ads.filter((ad) => ad.category === activeCategory);
-
-  useEffect(() => {
-    setIndex((prev) =>
-      Math.min(
-        prev,
-        Math.max(
-          0,
-          Math.floor((filtered.length - 1) / itemsPerView) * itemsPerView,
-        ),
-      ),
-    );
-  }, [filtered.length, itemsPerView]);
-
-  const visibleAds = filtered.slice(index, index + itemsPerView);
-  const canGoBack = index > 0;
-  const canGoNext = index + itemsPerView < filtered.length;
 
   if (loading)
     return (
@@ -184,58 +152,43 @@ const AdvertisementSection = () => {
         {filtered.length > 0 ? (
           <div className="relative">
             {/* Left arrow */}
-            {canGoBack && (
-              <button
-                onClick={() => setIndex((i) => Math.max(0, i - itemsPerView))}
-                className="absolute -left-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow flex items-center justify-center hover:bg-gray-50"
-              >
-                <ChevronLeft size={16} className="text-gray-600" />
-              </button>
-            )}
-
-            {/* Visible cards */}
-            <div
-              key={index}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-              style={{ animation: "fadeIn 0.25s ease" }}
+            <button
+              onClick={() => scrollSlider(-1)}
+              aria-label="Scroll left"
+              className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
             >
-              {visibleAds.map((ad) => (
-                <AdvertisementCard key={ad._id} ad={ad} />
+              <ChevronLeft size={18} strokeWidth={2.5} />
+            </button>
+
+            {/* Scroll container */}
+            <div
+              ref={sliderRef}
+              className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-1"
+            >
+              {filtered.map((ad) => (
+                <div
+                  key={ad._id}
+                  data-slider-card
+                  className="w-full shrink-0 snap-start md:w-[calc(33.333%-11px)]"
+                >
+                  <AdvertisementCard ad={ad} />
+                </div>
               ))}
             </div>
 
             {/* Right arrow */}
-            {canGoNext && (
-              <button
-                onClick={() =>
-                  setIndex((i) =>
-                    Math.min(filtered.length - itemsPerView, i + itemsPerView),
-                  )
-                }
-                className="absolute -right-6 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow flex items-center justify-center hover:bg-gray-50"
-              >
-                <ChevronRight size={16} className="text-gray-600" />
-              </button>
-            )}
+            <button
+              onClick={() => scrollSlider(1)}
+              aria-label="Scroll right"
+              className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
+            >
+              <ChevronRight size={18} strokeWidth={2.5} />
+            </button>
 
-            {/* Page dots */}
-            {filtered.length > itemsPerView && (
-              <div className="flex justify-center gap-1.5 mt-6">
-                {Array.from({
-                  length: Math.ceil(filtered.length / itemsPerView),
-                }).map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setIndex(i * itemsPerView)}
-                    className={`w-2 h-2 rounded-full transition-colors ${
-                      Math.floor(index / itemsPerView) === i
-                        ? "bg-amber-500"
-                        : "bg-gray-200 hover:bg-gray-300"
-                    }`}
-                  />
-                ))}
-              </div>
-            )}
+            {/* Mobile swipe hint */}
+            <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
+              ← Swipe to browse →
+            </p>
           </div>
         ) : (
           <div className="text-center py-16">

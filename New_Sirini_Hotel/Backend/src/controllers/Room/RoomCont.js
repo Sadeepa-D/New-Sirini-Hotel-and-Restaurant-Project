@@ -3,7 +3,7 @@ const cloudinary = require("cloudinary");
 
 const createRoom = async (req, res) => {
   try {
-    const {
+    let {
       roomNumber,
       roomType,
       price,
@@ -13,8 +13,17 @@ const createRoom = async (req, res) => {
       status,
       description,
       condition,
+      facilities,
     } = req.body;
 
+    // Parse facilities if it's a JSON string
+    if (typeof facilities === "string") {
+      try {
+        facilities = JSON.parse(facilities);
+      } catch (e) {
+        facilities = [];
+      }
+    }
 
     if (!roomNumber || !roomType || !price || !bedType || !capacity) {
       return res
@@ -40,6 +49,7 @@ const createRoom = async (req, res) => {
       description,
       condition: condition || "Fan",
       imagePublicId,
+      facilities: facilities || [],
       availability: true,
     });
 
@@ -51,7 +61,6 @@ const createRoom = async (req, res) => {
       .json({ message: "Error creating room", error: error.message });
   }
 };
-
 
 const getAllRooms = async (req, res) => {
   try {
@@ -67,7 +76,6 @@ const getAllRooms = async (req, res) => {
   }
 };
 
-
 const updateRoom = async (req, res) => {
   try {
     const { id } = req.params;
@@ -75,7 +83,16 @@ const updateRoom = async (req, res) => {
       return res.status(400).json({ message: "Room ID is required" });
     }
 
-    const updates = req.body;
+    let updates = req.body;
+
+    
+    if (updates.facilities && typeof updates.facilities === "string") {
+      try {
+        updates.facilities = JSON.parse(updates.facilities);
+      } catch (e) {
+        updates.facilities = [];
+      }
+    }
 
     const existingRoom = await RoomModel.findById(id);
     if (!existingRoom) {
@@ -106,7 +123,6 @@ const updateRoom = async (req, res) => {
       .json({ message: "Error updating room", error: error.message });
   }
 };
-
 
 const deleteRoom = async (req, res) => {
   try {

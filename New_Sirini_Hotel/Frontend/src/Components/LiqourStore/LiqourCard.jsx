@@ -1,5 +1,11 @@
 import React from "react";
-import { Percent, BadgeDollarSign, CheckCircle2, XCircle, Wine } from "lucide-react";
+import {
+  Percent,
+  BadgeDollarSign,
+  CheckCircle2,
+  XCircle,
+  Wine,
+} from "lucide-react";
 
 const DrinkCard = ({ drink, onClick }) => {
   return (
@@ -54,17 +60,34 @@ const DrinkCard = ({ drink, onClick }) => {
           <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 border border-white/15 rounded-xl backdrop-blur-sm">
             <Percent size={13} className="text-amber-400 shrink-0" />
             <div>
-              <p className="text-[10px] text-gray-400 leading-none mb-0.5">ABV</p>
-              <p className="text-white text-sm font-bold leading-none">{drink.alcoholPercentage}%</p>
+              <p className="text-[10px] text-gray-400 leading-none mb-0.5">
+                ABV
+              </p>
+              <p className="text-white text-sm font-bold leading-none">
+                {drink.alcoholPercentage}%
+              </p>
             </div>
           </div>
 
           {/* Price */}
           <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/15 border border-amber-500/25 rounded-xl backdrop-blur-sm">
-            <BadgeDollarSign size={13} className="text-amber-400 shrink-0" />
-            <div>
-              <p className="text-[10px] text-gray-400 leading-none mb-0.5">Price</p>
-              <p className="text-amber-400 text-sm font-bold leading-none">LKR {drink.price}</p>
+            <div className="flex flex-col gap-1">
+              {drink.sellingPrice && drink.discount && (
+                <p className="text-[15px] text-gray-400 leading-none">
+                  Selling Price:
+                  <span className="text-amber-400 line-through">
+                    LKR: {drink.sellingPrice}
+                  </span>
+                </p>
+              )}
+              {drink.discount && (
+                <p className="text-[13px] text-green-400 font-semibold leading-none">
+                  Discount: {drink.discount}%
+                </p>
+              )}
+              <p className="text-sm font-bold text-amber-300 leading-none">
+                Price: LKR {drink.price}
+              </p>
             </div>
           </div>
         </div>

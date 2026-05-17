@@ -33,14 +33,14 @@ const LiquorDetailsComp = ({ drink, isOpen, onClose }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2">
           {/* ── Left: Image ── */}
-          <div className="relative h-64 md:h-full min-h-[260px] rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none overflow-hidden">
+          <div className="relative h-64 md:h-full min-h-65 rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none overflow-hidden">
             <img
               src={drink.image}
               alt={drink.name}
               className="absolute inset-0 w-full h-full object-cover"
             />
             {/* gradient */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent md:bg-gradient-to-r" />
+            <div className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent md:bg-linear-to-r" />
 
             {/* Availability badge on image */}
             <div className="absolute bottom-4 left-4">
