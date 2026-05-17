@@ -29,13 +29,14 @@ const createAdvertisment = async (req, res) => {
     }
 
     // Validate NIC format (should be 9 digits followed by a digit or X)
-    const nicRegex = /^[0-9]{9}[0-9X]$/;
-    if (!nicRegex.test(NIC)) {
-      return res.status(400).json({
-        message: "Invalid NIC format. Should be 9 digits followed by a digit or X",
-        example: "123456789X or 1234567890",
-      });
-    }
+    const nicRegex = /^([0-9]{9}[vVxX]|[0-9]{12})$/;
+
+if (!nicRegex.test(NIC)) {
+  return res.status(400).json({
+    message: "Invalid NIC format.",
+    example: "Old: 123456789V | New: 200012345678",
+  });
+}
 
     // Validate TPNumber format (should be 10 digits)
     const phoneRegex = /^[0-9]{10}$/;
