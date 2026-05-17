@@ -79,13 +79,15 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
       const submitData = new FormData();
       submitData.append("BuissnesName", formData.BuissnesName);
       submitData.append("BuissnessOwnerName", formData.BuissnessOwnerName);
-      submitData.append("NIC", formData.NIC);
+      // Normalize NIC - remove spaces and convert to uppercase
+      submitData.append("NIC", formData.NIC.replace(/\s+/g, "").toUpperCase());
       submitData.append("category", formData.category);
       submitData.append("description", formData.description);
       submitData.append("portfolio", formData.portfolio);
       submitData.append("price", formData.price);
       submitData.append("location", formData.location);
-      submitData.append("TPNumber", formData.TPNumber);
+      // Normalize TPNumber - remove spaces and dashes
+      submitData.append("TPNumber", formData.TPNumber.replace(/[\s\-]/g, ""));
       if (formData.image) {
         submitData.append("image", formData.image);
       }
@@ -97,7 +99,6 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
           submitData,
           {
             headers: {
-              "Content-Type": "multipart/form-data",
               Authorization: `Bearer ${token}`,
             },
           },
@@ -120,7 +121,6 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
           submitData,
           {
             headers: {
-              "Content-Type": "multipart/form-data",
               Authorization: `Bearer ${token}`,
             },
           },
@@ -132,7 +132,23 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
       if (onSuccess) onSuccess(); // Refresh the parent list
     } catch (error) {
       toast.dismiss(loadingtoast);
-      toast.error("Failed to submit advertisement. Please try again.");
+      console.error("Advertisement submission error:", error);
+      
+      // Log detailed error information
+      if (error.response) {
+        console.error("Error response data:", error.response.data);
+        console.error("Error status:", error.response.status);
+        const errorMessage = error.response.data?.error || error.response.data?.message || "Server error occurred";
+        const errorDetails = error.response.data?.details ? JSON.stringify(error.response.data.details, null, 2) : "";
+        
+        toast.error(`Failed: ${errorMessage}${errorDetails ? `\n${errorDetails}` : ""}`);
+      } else if (error.request) {
+        console.error("No response received:", error.request);
+        toast.error("No response from server. Check your connection.");
+      } else {
+        console.error("Error message:", error.message);
+        toast.error(error.message || "Failed to submit advertisement. Please try again.");
+      }
     } finally {
       toast.dismiss(loadingtoast);
     }
@@ -207,7 +223,7 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
                 name="NIC"
                 value={formData.NIC}
                 onChange={handleChange}
-                placeholder="e.g. 951234567V"
+                placeholder="e.g. 951234567V (10 characters)"
                 required
                 className="w-full text-sm text-gray-700 outline-none placeholder-gray-300"
               />
@@ -330,7 +346,7 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
                 name="TPNumber"
                 value={formData.TPNumber}
                 onChange={handleChange}
-                placeholder="e.g. 071 448 0408"
+                placeholder="e.g. 0714480408 (10 digits)"
                 required
                 className="w-full text-sm text-gray-700 outline-none placeholder-gray-300"
               />
