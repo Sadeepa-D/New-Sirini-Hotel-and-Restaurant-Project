@@ -10,14 +10,21 @@ import {
   X,
   Clock,
   Check,
+  Package,
+  DollarSign,
 } from "lucide-react";
 
 const ReceptionHallBookingCard = ({ booking, onEdit, onCancel, onConfirm }) => {
   const statusConfig = {
-    Confirmed: {
+    Booked: {
       bg: "bg-green-100",
       text: "text-green-700",
       dot: "bg-green-400",
+    },
+    Confirmed: {
+      bg: "bg-yellow-100",
+      text: "text-yellow-700",
+      dot: "bg-yellow-400",
     },
     Cancelled: { bg: "bg-red-100", text: "text-red-600", dot: "bg-red-400" },
   };
@@ -98,10 +105,22 @@ const ReceptionHallBookingCard = ({ booking, onEdit, onCancel, onConfirm }) => {
             <Clock size={13} className="text-gray-400 shrink-0" />
             <span className="text-xs text-gray-500">{booking.eventTime}</span>
           </div>
+          <div className="flex items-center gap-2">
+            <Package size={13} className="text-gray-400 shrink-0" />
+            <span className="text-xs text-gray-500">
+              {booking.selectedPackage}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <DollarSign size={13} className="text-gray-400 shrink-0" />
+            <span className="text-xs text-gray-500">
+              Rs: {booking.amountPayed}
+            </span>
+          </div>
         </div>
 
         {/* Special requests - Now with a min-height and consistent spacing */}
-        <div className="min-h-[64px] mb-2">
+        <div className="min-h-16 mb-2">
           {/* Wraps the requests in a fixed-height container */}
           {booking.specialRequests ? (
             <div className="flex items-start gap-2 bg-gray-50 rounded-xl p-3 h-full">
@@ -127,7 +146,7 @@ const ReceptionHallBookingCard = ({ booking, onEdit, onCancel, onConfirm }) => {
           >
             <Pencil size={13} /> Edit
           </button>
-          {booking.status === "Confirmed" ? (
+          {booking.status === "Confirmed" || booking.status === "Booked" ? (
             <button
               onClick={() => onCancel(booking._id)}
               className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 text-xs font-semibold transition-colors"

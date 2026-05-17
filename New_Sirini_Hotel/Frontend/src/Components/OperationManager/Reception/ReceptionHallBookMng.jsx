@@ -34,6 +34,7 @@ const ReceptionHallBookMng = () => {
   const [bookedDates, setBookedDates] = useState([]);
   const [loadingDates, setLoadingDates] = useState(true);
   const [statusFilter, setStatusFilter] = useState("All");
+  const [packages, setPackages] = useState([]);
 
   const fetchBookedDates = async () => {
     try {
@@ -59,6 +60,7 @@ const ReceptionHallBookMng = () => {
   };
   useEffect(() => {
     fetchBookedDates();
+    fetchpackages();
   }, []);
 
   const fetchBookings = async () => {
@@ -143,6 +145,17 @@ const ReceptionHallBookMng = () => {
       toast.error("Failed to update booking status");
     }
   };
+  const fetchpackages = async () => {
+    try {
+      const response = await axios.get(
+        `${VITE_URL}/api/receptionhall/package/view`,
+      );
+      setPackages(response.data);
+    } catch (error) {
+      console.error("Error fetching packages:", error);
+      setPackages([]);
+    }
+  };
 
   return (
     <div className="p-2 sm:p-6 space-y-6">
@@ -196,7 +209,7 @@ const ReceptionHallBookMng = () => {
 
       {/* Stats */}
       <div className="flex items-center overflow-x-auto sm:flex-wrap gap-2 no-scrollbar pb-1 sm:pb-0">
-        {["All", "Confirmed", "Cancelled"].map((status) => (
+        {["All", "Confirmed", "Booked", "Cancelled"].map((status) => (
           <button
             key={status}
             onClick={() => {
@@ -282,6 +295,7 @@ const ReceptionHallBookMng = () => {
           editData={editData}
           fetchBookings={fetchBookings}
           AllBookings={bookings}
+          packages={packages}
         />
       )}
 
@@ -294,7 +308,7 @@ const ReceptionHallBookMng = () => {
         onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
       />
       {showcalander && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center">
+        <div className="fixed inset-0 z-100 flex items-center justify-center">
           {/* Dark Background */}
           <div
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
@@ -302,7 +316,7 @@ const ReceptionHallBookMng = () => {
           />
 
           {/* Popup Calendar */}
-          <div className="relative z-[101] animate-in fade-in zoom-in-95 duration-300">
+          <div className="relative z-101 animate-in fade-in zoom-in-95 duration-300">
             <Calander BookedDates={bookedDates} loading={loadingDates} />
           </div>
         </div>
