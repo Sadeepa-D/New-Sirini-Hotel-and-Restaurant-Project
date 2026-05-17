@@ -24,69 +24,10 @@ import axios from "axios";
 import UserManagement from "../../Components/Admin/UserManagement";
 import GalleryManagementHub from "../../Components/Admin/GalleryManagementHub";
 import LiquorManagment from "../../Components/Admin/LiquorManagment";
+import ReceptionHallAnlys from "../../Components/Admin/ReceptionHallAnlys";
+import RestrauntAnlys from "../../Components/Admin/RestrauntAnlys";
+import RoomsAnlys from "../../Components/Admin/RoomsAnlys";
 
-// --- PLACEHOLDER COMPONENTS FOR TABS ---
-const AdminDashboard = () => (
-  <div className="p-4 md:p-8 space-y-6">
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {[
-        {
-          label: "Total Revenue",
-          val: "Rs. 2.4M",
-          icon: DollarSign,
-          color: "text-green-500",
-        },
-        {
-          label: "New Users",
-          val: "+12",
-          icon: UserPlus,
-          color: "text-blue-500",
-        },
-        {
-          label: "Overall Growth",
-          val: "+18%",
-          icon: TrendingUp,
-          color: "text-yellow-500",
-        },
-      ].map((card, i) => (
-        <div
-          key={i}
-          className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between"
-        >
-          <div>
-            <p className="text-gray-500 text-sm font-medium">{card.label}</p>
-            <h3 className="text-2xl font-black mt-1 text-gray-900">
-              {card.val}
-            </h3>
-          </div>
-          <div className={`p-3 bg-gray-50 rounded-xl ${card.color}`}>
-            <card.icon size={24} />
-          </div>
-        </div>
-      ))}
-    </div>
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 min-h-75 flex items-center justify-center text-gray-400 italic">
-      System Performance & Activity Chart Placeholder
-    </div>
-  </div>
-);
-const RestaurantAnalysis = () => (
-  <div className="p-8 text-center text-gray-500">
-    Restaurant Sales & Inventory Analysis
-  </div>
-);
-const ReceptionHallAnalysis = () => (
-  <div className="p-8 text-center text-gray-500">
-    Hall Bookings & Event Trends
-  </div>
-);
-const RoomAnalysis = () => (
-  <div className="p-8 text-center text-gray-500">
-    Occupancy Rates & Room Category Performance
-  </div>
-);
-
-// --- MAIN ADMIN COMPONENT ---
 const Admin = () => {
   const token = localStorage.getItem("token");
   const VITE_URL = import.meta.env.VITE_API_URL;
@@ -119,30 +60,27 @@ const Admin = () => {
   }, []);
 
   const menuItems = [
-    { id: "dashboard", label: "Overview", icon: LayoutDashboard },
-    { id: "users", label: "Users", icon: Users },
     { id: "restaurant", label: "Restaurant", icon: Utensils },
     { id: "reception", label: "Reception", icon: Palmtree },
     { id: "rooms", label: "Rooms", icon: Hotel },
     { id: "liquor", label: "Liquor", icon: Store },
+    { id: "users", label: "Users", icon: Users },
   ];
 
   const renderContent = () => {
     switch (activeTab) {
-      case "dashboard":
-        return <AdminDashboard />;
-      case "users":
-        return <UserManagement />;
       case "restaurant":
-        return <RestaurantAnalysis />;
+        return <RestrauntAnlys />;
       case "reception":
-        return <ReceptionHallAnalysis />;
+        return <ReceptionHallAnlys />;
       case "rooms":
-        return <RoomAnalysis />;
+        return <RoomsAnlys />;
       case "liquor":
         return <LiquorManagment />;
+      case "users":
+        return <UserManagement />;
       default:
-        return <AdminDashboard />;
+        return <RestrauntAnlys />;
     }
   };
 

@@ -35,8 +35,16 @@ const receptionHallBookingSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Confirmed", "Cancelled"],
+      enum: ["Confirmed", "Booked", "Cancelled"],
       default: "Confirmed",
+    },
+    amountPayed: {
+      type: Number,
+      required: true,
+    },
+    selectedPackage: {
+      type: String,
+      required: true,
     },
   },
   { timestamps: true },

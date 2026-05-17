@@ -22,6 +22,7 @@ const ReceptionHallBookForm = ({
   onClose,
   editData = null,
   AllBookings = [],
+  packages = [],
 }) => {
   const VITE_URL = import.meta.env.VITE_API_URL;
   const [formData, setFormData] = useState({
@@ -33,11 +34,15 @@ const ReceptionHallBookForm = ({
     eventType: "",
     numberOfGuests: "",
     specialRequests: "",
+    amountPayed: "",
+    selectedPackage: "",
+    status: "Confirmed",
   });
 
   const handlesubmit = async (e) => {
     e.preventDefault();
     const isconflict = AllBookings.some((booking) => {
+      if (booking.status === "Cancelled") return false;
       if (editData && booking._id === editData._id) return false;
       const bookingdate = new Date(booking.eventDate)
         .toISOString()
@@ -86,18 +91,34 @@ const ReceptionHallBookForm = ({
         eventType: editData.eventType,
         numberOfGuests: editData.numberOfGuests,
         specialRequests: editData.specialRequests,
+        amountPayed: editData.amountPayed,
+        selectedPackage: editData.selectedPackage,
+        status: editData.status,
       });
     }
   }, [editData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name === "selectedPackage") {
+      const matchedPackage = packages.find((pkg) => pkg.name === value);
+      setFormData((prev) => ({
+        ...prev,
+        selectedPackage: value,
+        amountPayed: matchedPackage
+          ? matchedPackage.price * formData.numberOfGuests
+          : "",
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const checkavailability = () => {
     if (!formData.eventDate || !formData.eventTime) return true;
+
     return !AllBookings.some((booking) => {
+      if (booking.status === "Cancelled") return false;
       if (editData && booking._id === editData._id) return false;
       const bookingdate = new Date(booking.eventDate)
         .toISOString()
@@ -288,6 +309,59 @@ const ReceptionHallBookForm = ({
                   className={inputClass}
                 />
               </div>
+            </div>
+            <div className={wrapClass}>
+              <Tag size={15} className="text-amber-400 shrink-0" />
+              <select
+                name="selectedPackage"
+                value={formData.selectedPackage}
+                onChange={handleChange}
+                required
+                className={`${inputClass} appearance-none`}
+              >
+                <option value="" disabled>
+                  Select Package
+                </option>
+                {packages.map((pkg) => (
+                  <option key={pkg._id} value={pkg.name}>
+                    {pkg.name} - Rs: {pkg.price}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs text-gray-400 uppercase tracking-widest mb-1.5 font-medium">
+                Amount payed:
+              </label>
+              <div className={wrapClass}>
+                <Users size={15} className="text-amber-400 shrink-0" />
+                <input
+                  type="number"
+                  name="amountPayed"
+                  value={formData.amountPayed}
+                  onChange={handleChange}
+                  placeholder="Rs: 50000"
+                  required
+                  className={inputClass}
+                />
+              </div>
+            </div>
+            <div className={wrapClass}>
+              <Tag size={15} className="text-amber-400 shrink-0" />
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                required
+                className={`${inputClass} appearance-none`}
+              >
+                <option value="" disabled>
+                  Request Status
+                </option>
+                <option value="Confirmed">Confirmed</option>
+                <option value="Booked">Booked</option>{" "}
+                <option value="Cancelled">Cancelled</option>
+              </select>
             </div>
           </div>
 

@@ -7,6 +7,7 @@ const ReceptionHallPackg = require("../controllers/ReceptionHall/ReceptionHallPa
 const CateringItemsCont = require("../controllers/ReceptionHall/CateringItemsCont");
 const AdvertismentCont = require("../controllers/ReceptionHall/AdvertismentCont");
 const ReceptionHallBookCont = require("../controllers/ReceptionHall/ReceptionHallBookCont");
+const ReceptionHallAlys = require("../controllers/ReceptionHall/ReceptionHallAlys");
 
 router.post(
   "/appointment/add",
@@ -67,10 +68,7 @@ router.delete(
   ReceptionHallPackg.deleteReceptionHallPackage,
 );
 router.put("/package/toggle/:id", ReceptionHallPackg.toggleAvailability);
-router.get(
-  "/package/:id/items",
-  ReceptionHallPackg.getPackageCateringItems,
-);
+router.get("/package/:id/items", ReceptionHallPackg.getPackageCateringItems);
 router.post(
   "/package/:id/add-catering",
   ReceptionHallPackg.addCateringToPackage,
@@ -142,8 +140,26 @@ router.get(
 router.get("/booking/dates", ReceptionHallBookCont.GetBookingDates);
 router.post("/booking/add", ReceptionHallBookCont.createReceptionHallBooking);
 router.get("/booking/view", ReceptionHallBookCont.getReceptionHallBookings);
-router.delete("/booking/delete/:id", ReceptionHallBookCont.deleteReceptionHallBooking);
-router.put("/booking/update/:id", ReceptionHallBookCont.editReceptionHallBooking);
-router.put("/booking/update/status/:id/:status", ReceptionHallBookCont.updateBookingStatus);
+router.delete(
+  "/booking/delete/:id",
+  ReceptionHallBookCont.deleteReceptionHallBooking,
+);
+router.put(
+  "/booking/update/:id",
+  ReceptionHallBookCont.editReceptionHallBooking,
+);
+router.put(
+  "/booking/update/status/:id/:status",
+  ReceptionHallBookCont.updateBookingStatus,
+);
+router.post(
+  "/appointments/stats",
+  ReceptionHallAlys.getmonthlyappointmentdetails,
+);
+router.post(
+  "/bookings/stats",
+  ReceptionHallAlys.getmonthlyReceptionHallBookingDetails,
+);
+router.get("/income/yearly", ReceptionHallAlys.getYearlyReceptionHallIncome);
 
 module.exports = router;
