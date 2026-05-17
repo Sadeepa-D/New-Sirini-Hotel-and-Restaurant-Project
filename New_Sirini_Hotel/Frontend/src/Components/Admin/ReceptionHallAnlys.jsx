@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { CalendarDays, ChevronDown, XCircle, Sun, Moon } from "lucide-react";
 import axios from "axios";
+import ReceptionHallYearlyIncomeChart from "./ReceptionHallYearlyIncomeChart";
 
 const AppointmentAnalysis = () => {
   const VITE_URL = import.meta.env.VITE_API_URL;
@@ -332,6 +333,9 @@ const ReceptionHallAnlys = () => {
       <div className="p-4 flex flex-wrap gap-4">
         <AppointmentAnalysis />
         <ReceptionHallBookingAnalysis />
+      </div>
+      <div className="p-4">
+        <ReceptionHallYearlyIncomeChart />
       </div>
     </div>
   );

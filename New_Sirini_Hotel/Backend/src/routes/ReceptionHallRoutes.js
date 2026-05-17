@@ -160,5 +160,6 @@ router.post(
   "/bookings/stats",
   ReceptionHallAlys.getmonthlyReceptionHallBookingDetails,
 );
+router.get("/income/yearly", ReceptionHallAlys.getYearlyReceptionHallIncome);
 
 module.exports = router;

@@ -84,7 +84,51 @@ const getmonthlyReceptionHallBookingDetails = async (req, res) => {
   }
 };
 
+const getYearlyReceptionHallIncome = async (req, res) => {
+  try {
+    const currentYear = new Date().getFullYear();
+    const startOfYear = new Date(Date.UTC(currentYear, 0, 1, 0, 0, 0));
+    const endOfYear = new Date(Date.UTC(currentYear + 1, 0, 1, 0, 0, 0));
+
+    const bookings = await ReceptionHallBookingModel.find({
+      eventDate: { $gte: startOfYear, $lt: endOfYear },
+      status: { $in: ["Confirmed", "Booked"] },
+    });
+    const monthlyIncome = Array(12).fill(0);
+
+    bookings.forEach((booking) => {
+      if (booking.eventDate) {
+        const month = booking.eventDate.getUTCMonth();
+        monthlyIncome[month] += Number(booking.amountPayed);
+      }
+    });
+    const MonthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const Incomewithmonths = monthlyIncome.map((income, index) => ({
+      month: MonthNames[index],
+      income,
+    }));
+    res.json(Incomewithmonths);
+  } catch (error) {
+    console.error("Error fetching yearly reception hall income:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 module.exports = {
   getmonthlyappointmentdetails,
   getmonthlyReceptionHallBookingDetails,
+  getYearlyReceptionHallIncome,
 };

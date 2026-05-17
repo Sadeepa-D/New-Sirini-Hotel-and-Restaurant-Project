@@ -42,6 +42,7 @@ const ReceptionHallBookForm = ({
   const handlesubmit = async (e) => {
     e.preventDefault();
     const isconflict = AllBookings.some((booking) => {
+      if (booking.status === "Cancelled") return false;
       if (editData && booking._id === editData._id) return false;
       const bookingdate = new Date(booking.eventDate)
         .toISOString()
@@ -115,7 +116,9 @@ const ReceptionHallBookForm = ({
 
   const checkavailability = () => {
     if (!formData.eventDate || !formData.eventTime) return true;
+
     return !AllBookings.some((booking) => {
+      if (booking.status === "Cancelled") return false;
       if (editData && booking._id === editData._id) return false;
       const bookingdate = new Date(booking.eventDate)
         .toISOString()
