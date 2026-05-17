@@ -156,5 +156,9 @@ router.post(
   "/appointments/stats",
   ReceptionHallAlys.getmonthlyappointmentdetails,
 );
+router.post(
+  "/bookings/stats",
+  ReceptionHallAlys.getmonthlyReceptionHallBookingDetails,
+);
 
 module.exports = router;
