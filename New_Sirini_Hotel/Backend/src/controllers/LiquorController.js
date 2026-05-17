@@ -5,24 +5,37 @@ const addLiquor = async (req, res) => {
   try {
     const {
       name,
-      price,
+      buyingPrice,
+      discount,
+      sellingPrice,
       category,
       alcoholPercentage,
       description,
       volume,
       origin,
       brand,
+      stockType,
+      bottlesPerCase,
+      currentQuantityInBottles,
+      currentQuantityInCases,
+      lowStockThreshold,
     } = req.body;
 
-    if (!name || !price || !category) {
-      return res
-        .status(400)
-        .json({ message: "Name, Price, and Category are required" });
+    if (!name || !buyingPrice || !sellingPrice || !category || !stockType) {
+      return res.status(400).json({
+        message:
+          "Name, Buying Price, Selling Price, Category, and Stock Type are required",
+      });
     }
-    if (isNaN(price) || price <= 0) {
+    if (isNaN(buyingPrice) || buyingPrice <= 0) {
       return res
         .status(400)
-        .json({ message: "Price must be a positive number" });
+        .json({ message: "Buying Price must be a positive number" });
+    }
+    if (isNaN(sellingPrice) || sellingPrice <= 0) {
+      return res
+        .status(400)
+        .json({ message: "Selling Price must be a positive number" });
     }
 
     if (!req.file) {
@@ -32,9 +45,20 @@ const addLiquor = async (req, res) => {
     const image = req.file.path || req.file.secure_url;
     const imagePublicId = req.file.filename || req.file.public_id;
 
+    const casesQty = Number(currentQuantityInCases) || 0;
+    const bpcNum = Number(bottlesPerCase) || 0;
+    const bottlesQty = Number(currentQuantityInBottles) || 0;
+
+    let calculatedBottles = bottlesQty;
+    if (stockType === "Cases" && bottlesQty === 0) {
+      calculatedBottles = casesQty * bpcNum;
+    }
+
     const newLiquor = new Liquor({
       name,
-      price,
+      buyingPrice,
+      discount: 0,
+      sellingPrice,
       category,
       alcoholPercentage,
       image,
@@ -44,6 +68,11 @@ const addLiquor = async (req, res) => {
       origin,
       brand,
       isAvailable: true,
+      stockType: stockType || "Bottles",
+      bottlesPerCase: bpcNum,
+      currentQuantityInBottles: calculatedBottles,
+      currentQuantityInCases: casesQty,
+      lowStockThreshold: Number(lowStockThreshold) || 0,
     });
 
     await newLiquor.save();
@@ -60,6 +89,12 @@ const getAllLiquor = async (req, res) => {
     const liquor = await Liquor.find().sort({ createdAt: -1 });
     if (liquor.length === 0) {
       return res.status(404).json({ message: "No liquor found" });
+    }
+    if (liquor.discount !== 0) {
+      liquor.forEach((item) => {
+        item.price =
+          item.sellingPrice - (item.sellingPrice * item.discount) / 100;
+      });
     }
     res.status(200).json(liquor);
   } catch (error) {
@@ -154,10 +189,65 @@ const toggleAvailability = async (req, res) => {
   }
 };
 
+const decreaseLiquorInventory = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const { quantity } = req.body;
+
+    if (!id || !quantity) {
+      return res
+        .status(400)
+        .json({ message: "Liquor ID and quantity are required" });
+    }
+    const liquor = await Liquor.findById(id);
+    if (!liquor) {
+      return res.status(404).json({ message: "Liquor not found" });
+    }
+    if (liquor.currentQuantityInBottles < quantity) {
+      return res.status(400).json({ message: "Not enough stock to decrease" });
+    }
+    liquor.currentQuantityInBottles -= quantity;
+    await liquor.save();
+    res.status(200).json(liquor);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error decreasing liquor inventory",
+      error: error.message,
+    });
+  }
+};
+
+const increaseLiquorInventory = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const { quantity } = req.body;
+
+    if (!id || !quantity) {
+      return res
+        .status(400)
+        .json({ message: "Liquor ID and quantity are required" });
+    }
+    const liquor = await Liquor.findById(id);
+    if (!liquor) {
+      return res.status(404).json({ message: "Liquor not found" });
+    }
+    liquor.currentQuantityInBottles += quantity;
+    await liquor.save();
+    res.status(200).json(liquor);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error increasing liquor inventory",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   addLiquor,
   getAllLiquor,
   deleteLiquor,
   updateLiquor,
   toggleAvailability,
+  decreaseLiquorInventory,
+  increaseLiquorInventory,
 };

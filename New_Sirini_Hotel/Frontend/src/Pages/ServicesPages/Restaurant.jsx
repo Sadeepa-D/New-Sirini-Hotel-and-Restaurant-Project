@@ -60,6 +60,9 @@ export default function Restaurant() {
         category: item.category,
         availability: item.availability,
         label: item.availability ? "Available" : "Unavailable",
+        productionPrice: item.productionPrice,
+        discount: item.discount,
+        sellingPrice: item.sellingPrice,
       }));
       setMealData(mappedData);
     } catch (error) {

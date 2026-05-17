@@ -10,7 +10,17 @@ import Exploreindicator from "../../Components/Exploreindicator";
 import Calander from "../../Components/Calander";
 import toast from "react-hot-toast";
 import LoginMessage from "../../Components/LoginMessage";
-import { Bed, Users, Wind, Star, ArrowRight } from "lucide-react";
+import {
+  Bed,
+  Users,
+  Wind,
+  Star,
+  ArrowRight,
+  Wifi,
+  Droplets,
+  Monitor,
+  Refrigerator,
+} from "lucide-react";
 
 function Rooms() {
   const VITE_URL = import.meta.env.VITE_API_URL;
@@ -229,6 +239,52 @@ function Rooms() {
                       </span>
                     </div>
                   </div>
+
+                  
+                  {room.facilities && room.facilities.length > 0 && (
+                    <div className="mb-6 pb-6 border-b border-gray-100">
+                      <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2.5">
+                        Facilities
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {room.facilities.includes("WiFi") && (
+                          <div className="flex items-center gap-1 bg-blue-50 px-2.5 py-1.5 rounded-lg border border-blue-100">
+                            <Wifi size={12} className="text-blue-500" />
+                            <span className="text-[10px] font-medium text-blue-700">
+                              WiFi
+                            </span>
+                          </div>
+                        )}
+                        {room.facilities.includes("Hot Water") && (
+                          <div className="flex items-center gap-1 bg-red-50 px-2.5 py-1.5 rounded-lg border border-red-100">
+                            <Droplets size={12} className="text-red-500" />
+                            <span className="text-[10px] font-medium text-red-700">
+                              Hot Water
+                            </span>
+                          </div>
+                        )}
+                        {room.facilities.includes("TV") && (
+                          <div className="flex items-center gap-1 bg-purple-50 px-2.5 py-1.5 rounded-lg border border-purple-100">
+                            <Monitor size={12} className="text-purple-500" />
+                            <span className="text-[10px] font-medium text-purple-700">
+                              TV
+                            </span>
+                          </div>
+                        )}
+                        {room.facilities.includes("Mini Fridge") && (
+                          <div className="flex items-center gap-1 bg-green-50 px-2.5 py-1.5 rounded-lg border border-green-100">
+                            <Refrigerator
+                              size={12}
+                              className="text-green-500"
+                            />
+                            <span className="text-[10px] font-medium text-green-700">
+                              Mini Fridge
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
                   <div className="mt-auto pt-5 border-t border-gray-50 flex flex-wrap items-center justify-between gap-y-4">
                     <div className="flex items-center gap-2">

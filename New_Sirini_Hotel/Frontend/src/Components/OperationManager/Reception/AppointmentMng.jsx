@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Filter, ChevronLeft, ChevronRight } from "lucide-react";
@@ -9,16 +9,6 @@ const AppointmentMng = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [index, setIndex] = useState(0);
-  const [itemsPerView, setItemsPerView] = useState(
-    typeof window !== "undefined"
-      ? window.innerWidth < 640
-        ? 1
-        : window.innerWidth < 1024
-          ? 2
-          : 4
-      : 4,
-  );
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -38,19 +28,18 @@ const AppointmentMng = () => {
 
   useEffect(() => {
     fetchAppointments();
-    setIndex(0);
   }, [activeTab]);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setItemsPerView(
-        window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : 4,
-      );
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const sliderRef = useRef(null);
+  const scrollSlider = (direction) => {
+    if (!sliderRef.current) return;
+    const cardWidth =
+      sliderRef.current.querySelector("[data-slider-card]")?.offsetWidth || 320;
+    sliderRef.current.scrollBy({
+      left: direction * (cardWidth + 16),
+      behavior: "smooth",
+    });
+  };
 
   const handlestatuseChange = async (id, newStatus) => {
     const loadingtoast = toast.loading("Updating status to ${newStatus}...");
@@ -70,12 +59,6 @@ const AppointmentMng = () => {
   };
 
   const tabs = ["Pending", "Completed", "Canceled", "Overdue"];
-
-  const GAP = window.innerWidth < 640 ? 12 : 24;
-  const cardWidth = `calc((100% - ${GAP * (itemsPerView - 1)}px) / ${itemsPerView})`;
-  const visibleAppointments = appointments.slice(index, index + itemsPerView);
-  const canGoBack = index > 0;
-  const canGoNext = index + itemsPerView < appointments.length;
 
   return (
     <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-3 sm:p-8">
@@ -121,26 +104,24 @@ const AppointmentMng = () => {
       ) : (
         <div className="relative">
           {/* Left arrow */}
-          {canGoBack && (
-            <button
-              onClick={() => setIndex((i) => Math.max(0, i - itemsPerView))}
-              className="absolute -left-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow flex items-center justify-center hover:bg-gray-50"
-            >
-              <ChevronLeft size={16} className="text-gray-600" />
-            </button>
-          )}
-
-          {/* Visible cards — slice-based, no translateX */}
-          <div
-            key={index}
-            className="flex gap-3 sm:gap-6"
-            style={{ animation: "fadeIn 0.25s ease" }}
+          <button
+            onClick={() => scrollSlider(-1)}
+            aria-label="Scroll left"
+            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
           >
-            {visibleAppointments.map((app) => (
+            <ChevronLeft size={18} strokeWidth={2.5} />
+          </button>
+
+          {/* Scroll container */}
+          <div
+            ref={sliderRef}
+            className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-1"
+          >
+            {appointments.map((app) => (
               <div
                 key={app._id}
-                className="shrink-0"
-                style={{ width: cardWidth }}
+                data-slider-card
+                className="w-full shrink-0 snap-start md:w-[calc(25%-12px)]"
               >
                 <AppointmentCard
                   appointment={app}
@@ -152,49 +133,20 @@ const AppointmentMng = () => {
           </div>
 
           {/* Right arrow */}
-          {canGoNext && (
-            <button
-              onClick={() =>
-                setIndex((i) =>
-                  Math.min(
-                    appointments.length - itemsPerView,
-                    i + itemsPerView,
-                  ),
-                )
-              }
-              className="absolute -right-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow flex items-center justify-center hover:bg-gray-50"
-            >
-              <ChevronRight size={16} className="text-gray-600" />
-            </button>
-          )}
+          <button
+            onClick={() => scrollSlider(1)}
+            aria-label="Scroll right"
+            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
+          >
+            <ChevronRight size={18} strokeWidth={2.5} />
+          </button>
 
-          {/* Page dots */}
-          {appointments.length > itemsPerView && (
-            <div className="flex justify-center gap-1.5 mt-6">
-              {Array.from({
-                length: Math.ceil(appointments.length / itemsPerView),
-              }).map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setIndex(i * itemsPerView)}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    Math.floor(index / itemsPerView) === i
-                      ? "bg-amber-500"
-                      : "bg-gray-200 hover:bg-gray-300"
-                  }`}
-                />
-              ))}
-            </div>
-          )}
+          {/* Mobile swipe hint */}
+          <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
+            ← Swipe to browse →
+          </p>
         </div>
       )}
-
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(6px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </div>
   );
 };
