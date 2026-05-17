@@ -80,7 +80,7 @@ const ReceptionHallYearlyIncomeChart = () => {
       </div>
 
       {/* Chart Layout Layer */}
-      <div className="w-full h-64 min-h-[260px] text-xs font-bold text-gray-400">
+      <div className="w-full h-64 min-h-65 text-xs font-bold text-gray-400">
         <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <BarChart
             data={chartData}
