@@ -7,31 +7,67 @@ const getRestaurantOrderStats = async (req, res) => {
     if (!month || !year) {
       return res.status(400).json({ error: "Month and year are required" });
     }
+
     const startofmonth = new Date(
       Date.UTC(Number(year), Number(month) - 1, 1, 0, 0, 0),
     );
     const endofmonth = new Date(
       Date.UTC(Number(year), Number(month), 1, 0, 0, 0),
     );
+
     const slStartBoundary = new Date(
       startofmonth.getTime() - 5.5 * 60 * 60 * 1000,
     );
     const slEndBoundary = new Date(endofmonth.getTime() - 5.5 * 60 * 60 * 1000);
+
     const orderscount = await FoodItemsBookModel.find({
       pickupDate: { $gte: slStartBoundary, $lt: slEndBoundary },
     });
+
     const status = {
       Accepted: 0,
       Complete: 0,
       delete: 0,
       Overdue: 0,
     };
+
+    const dailyMap = {};
+
     orderscount.forEach((order) => {
-      if (order.status in status) {
-        status[order.status] += 1;
+      const currentstatus = order.status;
+
+      if (currentstatus in status) {
+        status[currentstatus] += 1;
+      }
+
+      if (order.pickupDate) {
+        const dateobj = new Date(order.pickupDate);
+        const sldateobj = new Date(dateobj.getTime() + 5.5 * 60 * 60 * 1000);
+        const dateKey = sldateobj.toISOString().split("T")[0];
+
+        if (!dailyMap[dateKey]) {
+          dailyMap[dateKey] = {
+            date: dateKey,
+            Accepted: 0,
+            Complete: 0,
+            delete: 0,
+            Overdue: 0,
+          };
+        }
+        if (currentstatus in dailyMap[dateKey]) {
+          dailyMap[dateKey][currentstatus] += 1;
+        }
       }
     });
-    res.json(status);
+
+    const dailyarray = Object.values(dailyMap).sort((a, b) =>
+      a.date.localeCompare(b.date),
+    );
+
+    res.json({
+      summary: status,
+      daily: dailyarray,
+    });
   } catch (error) {
     console.error("Error fetching restaurant order stats:", error);
     res.status(500).json({ error: "Internal server error" });

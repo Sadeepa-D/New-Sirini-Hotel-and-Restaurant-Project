@@ -7,7 +7,16 @@ import {
   Trash2,
   AlertTriangle,
   Utensils,
+  PieChart as PieIcon,
 } from "lucide-react";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 import axios from "axios";
 
 const RestaurantOrderAnalysis = () => {
@@ -59,7 +68,12 @@ const RestaurantOrderAnalysis = () => {
       );
 
       setOrderStats(
-        response.data || { Accepted: 0, Completed: 0, Deleted: 0, Overdue: 0 },
+        response.data.summary || {
+          Accepted: 0,
+          Completed: 0,
+          Deleted: 0,
+          Overdue: 0,
+        },
       );
     } catch (error) {
       console.error(
@@ -205,10 +219,186 @@ const RestaurantOrderAnalysis = () => {
   );
 };
 
+const RestaurantOrderPieChart = () => {
+  const VITE_URL = import.meta.env.VITE_API_URL;
+  const currentYear = new Date().getFullYear();
+  const currentMonthName = new Date().toLocaleString("en-US", {
+    month: "long",
+  });
+
+  const [selectedMonth, setSelectedMonth] = useState(
+    `${currentMonthName} ${currentYear}`,
+  );
+  const [selectedDate, setSelectedDate] = useState("Whole Month");
+
+  const [monthlyData, setMonthlyData] = useState({ summary: {}, daily: [] });
+  const [loading, setLoading] = useState(true);
+
+  const monthsArray = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        setLoading(true);
+        const [monthName, year] = selectedMonth.split(" ");
+        const monthNumber = monthsArray.indexOf(monthName) + 1;
+
+        const response = await axios.post(
+          `${VITE_URL}/api/restraunt/orders/stats`,
+          {
+            month: monthNumber,
+            year: Number(year),
+          },
+        );
+
+        setMonthlyData(response.data);
+        setSelectedDate("Whole Month");
+      } catch (error) {
+        console.error("Error loading pie chart data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStats();
+  }, [selectedMonth]);
+
+  const getChartData = () => {
+    let source = { Accepted: 0, Complete: 0, delete: 0, Overdue: 0 };
+
+    if (selectedDate === "Whole Month") {
+      source = monthlyData.summary || source;
+    } else {
+      const dayRecord = monthlyData.daily?.find((d) => d.date === selectedDate);
+      if (dayRecord) source = dayRecord;
+    }
+
+    return [
+      { name: "Accepted", value: source.Accepted || 0, color: "#3B82F6" }, // Blue
+      { name: "Completed", value: source.Complete || 0, color: "#10B981" }, // Emerald
+      { name: "Deleted", value: source.delete || 0, color: "#F87171" }, // Rose
+      { name: "Overdue", value: source.Overdue || 0, color: "#EF4444" }, // Strong Red
+    ].filter((item) => item.value > 0);
+  };
+
+  const activeChartData = getChartData();
+
+  return (
+    <div className="bg-white w-full max-w-sm rounded-3xl p-5 shadow-xl border border-gray-100 flex flex-col gap-4">
+      {/* Title Header Section */}
+      <div className="flex items-center gap-2 border-b border-gray-50 pb-2">
+        <div className="p-1.5 bg-amber-500 text-white rounded-lg">
+          <PieIcon size={14} />
+        </div>
+        <h3 className="text-sm font-black text-slate-800 uppercase tracking-wide">
+          Order Share
+        </h3>
+      </div>
+
+      {/* Selector Options Layer: Side-by-Side Dual Dropdowns */}
+      <div className="grid grid-cols-2 gap-2">
+        {/* Month Selector Dropdown */}
+        <div className="relative">
+          <select
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+            className="w-full appearance-none bg-gray-50 border border-gray-200 rounded-xl pl-7 pr-6 py-2 text-[11px] font-bold text-gray-700 outline-none cursor-pointer truncate"
+          >
+            {monthsArray.map((m) => (
+              <option key={m} value={`${m} ${currentYear}`}>
+                {m}
+              </option>
+            ))}
+          </select>
+          <CalendarDays
+            className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+            size={12}
+          />
+          <ChevronDown
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+            size={12}
+          />
+        </div>
+
+        {/* Date Selector Dropdown */}
+        <div className="relative">
+          <select
+            value={selectedDate}
+            disabled={loading}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className="w-full appearance-none bg-gray-50 border border-gray-200 rounded-xl pl-3 pr-6 py-2 text-[11px] font-bold text-gray-700 outline-none cursor-pointer disabled:opacity-50"
+          >
+            <option value="Whole Month">Whole Month</option>
+            {monthlyData.daily?.map((day) => (
+              <option key={day.date} value={day.date}>
+                Day {day.date.split("-")[2]}{" "}
+              </option>
+            ))}
+          </select>
+          <ChevronDown
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+            size={12}
+          />
+        </div>
+      </div>
+
+      {/* Pie Chart Display Layer */}
+      <div className="w-full h-48 min-h-47.5 flex items-center justify-center relative text-xs">
+        {loading ? (
+          <p className="font-bold text-gray-400 uppercase tracking-wider animate-pulse">
+            Loading Chart...
+          </p>
+        ) : activeChartData.length === 0 ? (
+          <p className="font-bold text-gray-400 uppercase tracking-wider">
+            No Orders Data
+          </p>
+        ) : (
+          <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+            <PieChart>
+              <Pie
+                data={activeChartData}
+                cx="50%"
+                cy="50%"
+                innerRadius={45}
+                outerRadius={65}
+                paddingAngle={4}
+                dataKey="value"
+              >
+                {activeChartData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(value) => [`${value} Orders`]} />
+              <Legend
+                iconSize={8}
+                iconType="circle"
+                wrapperStyle={{ fontSize: "10px", fontWeight: "bold" }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const RestrauntAnlys = () => {
   return (
     <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
       <RestaurantOrderAnalysis />
+      <RestaurantOrderPieChart />
     </div>
   );
 };
