@@ -240,9 +240,8 @@ function Rooms() {
                     </div>
                   </div>
 
-                  
                   {room.facilities && room.facilities.length > 0 && (
-                    <div className="mb-6 pb-6 border-b border-gray-100">
+                    <div className="mb-4 pb-4">
                       <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2.5">
                         Facilities
                       </p>
@@ -286,7 +285,7 @@ function Rooms() {
                     </div>
                   )}
 
-                  <div className="mt-auto pt-5 border-t border-gray-50 flex flex-wrap items-center justify-between gap-y-4">
+                  <div className="flex flex-wrap items-center justify-between gap-y-3">
                     <div className="flex items-center gap-2">
                       <div
                         className={`w-1.5 h-1.5 rounded-full ${room.status === "available" ? "bg-green-500 animate-pulse" : "bg-red-400"}`}
