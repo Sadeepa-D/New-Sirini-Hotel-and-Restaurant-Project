@@ -547,12 +547,12 @@ const PackageBookedCount = () => {
 const ReceptionHallAnlys = () => {
   return (
     <div>
-      <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-2">
         <AppointmentAnalysis />
         <ReceptionHallBookingAnalysis />
         <Receptionhallcommonalysis />
       </div>
-      <div className="p-4 grid grid-cols-2 gap-4">
+      <div className="p-4 pt-0 grid grid-cols-1 lg:grid-cols-2 gap-4">
         <ReceptionHallYearlyIncomeChart />
         <PackageBookedCount />
       </div>

@@ -52,9 +52,9 @@ const ReceptionHallYearlyIncomeChart = () => {
   };
 
   return (
-    <div className="bg-white w-full max-w-xl rounded-4xl p-6 shadow-xl border border-gray-100 flex flex-col gap-6">
+    <div className="bg-white w-full h-full rounded-3xl p-5 shadow-xl border border-gray-100 flex flex-col gap-4">
       {/* Header Info Layer */}
-      <div className="flex items-center justify-between border-b border-gray-50 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-50 pb-4 gap-4 sm:gap-0">
         <div className="flex items-center gap-3">
           <div className="p-2.5 bg-emerald-50 text-emerald-500 rounded-2xl border border-emerald-100/40">
             <Wallet size={20} strokeWidth={2.5} />
@@ -68,8 +68,8 @@ const ReceptionHallYearlyIncomeChart = () => {
             </p>
           </div>
         </div>
-        <div className="text-right">
-          <span className="text-xs font-black text-gray-400 uppercase tracking-wider block">
+        <div className="text-left sm:text-right">
+          <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">
             Total
           </span>
           <span className="text-base font-black text-emerald-600">
