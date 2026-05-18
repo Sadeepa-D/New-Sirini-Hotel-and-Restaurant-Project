@@ -42,7 +42,7 @@ const ReceptionHallYearlyIncomeChart = () => {
           <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
             {payload[0].payload.month} Revenue
           </p>
-          <p className="text-sm font-black text-amber-400 mt-0.5">
+          <p className="text-sm font-black text-emerald-400 mt-0.5">
             LKR {payload[0].value.toLocaleString()}
           </p>
         </div>
@@ -110,10 +110,10 @@ const ReceptionHallYearlyIncomeChart = () => {
             />
             <Bar
               dataKey="income"
-              fill="#F59E0B"
+              fill="#10B981"
               radius={[6, 6, 0, 0]}
               maxBarSize={32}
-              className="hover:fill-amber-500 transition-colors duration-200"
+              className="hover:fill-emerald-400 transition-colors duration-200"
             />
           </BarChart>
         </ResponsiveContainer>
