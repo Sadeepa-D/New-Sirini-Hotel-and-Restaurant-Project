@@ -12,6 +12,8 @@ import {
   Music,
   Sparkles,
   Upload,
+  User,
+  IdCard,
 } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -22,6 +24,8 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
   const API_URL = import.meta.env.VITE_API_URL;
   const [formData, setFormData] = useState({
     BuissnesName: "",
+    BuissnessOwnerName: "",
+    NIC: "",
     category: "",
     description: "",
     portfolio: "",
@@ -36,6 +40,8 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
     if (editData) {
       setFormData({
         BuissnesName: editData.BuissnesName || "",
+        BuissnessOwnerName: editData.BuissnessOwnerName || "",
+        NIC: editData.NIC || "",
         category: editData.category || "",
         description: editData.description || "",
         portfolio: editData.portfolio || "",
@@ -72,12 +78,16 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
     try {
       const submitData = new FormData();
       submitData.append("BuissnesName", formData.BuissnesName);
+      submitData.append("BuissnessOwnerName", formData.BuissnessOwnerName);
+      // Normalize NIC - remove spaces and convert to uppercase
+      submitData.append("NIC", formData.NIC.replace(/\s+/g, "").toUpperCase());
       submitData.append("category", formData.category);
       submitData.append("description", formData.description);
       submitData.append("portfolio", formData.portfolio);
       submitData.append("price", formData.price);
       submitData.append("location", formData.location);
-      submitData.append("TPNumber", formData.TPNumber);
+      // Normalize TPNumber - remove spaces and dashes
+      submitData.append("TPNumber", formData.TPNumber.replace(/[\s\-]/g, ""));
       if (formData.image) {
         submitData.append("image", formData.image);
       }
@@ -89,7 +99,6 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
           submitData,
           {
             headers: {
-              "Content-Type": "multipart/form-data",
               Authorization: `Bearer ${token}`,
             },
           },
@@ -112,7 +121,6 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
           submitData,
           {
             headers: {
-              "Content-Type": "multipart/form-data",
               Authorization: `Bearer ${token}`,
             },
           },
@@ -124,7 +132,23 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
       if (onSuccess) onSuccess(); // Refresh the parent list
     } catch (error) {
       toast.dismiss(loadingtoast);
-      toast.error("Failed to submit advertisement. Please try again.");
+      console.error("Advertisement submission error:", error);
+      
+      // Log detailed error information
+      if (error.response) {
+        console.error("Error response data:", error.response.data);
+        console.error("Error status:", error.response.status);
+        const errorMessage = error.response.data?.error || error.response.data?.message || "Server error occurred";
+        const errorDetails = error.response.data?.details ? JSON.stringify(error.response.data.details, null, 2) : "";
+        
+        toast.error(`Failed: ${errorMessage}${errorDetails ? `\n${errorDetails}` : ""}`);
+      } else if (error.request) {
+        console.error("No response received:", error.request);
+        toast.error("No response from server. Check your connection.");
+      } else {
+        console.error("Error message:", error.message);
+        toast.error(error.message || "Failed to submit advertisement. Please try again.");
+      }
     } finally {
       toast.dismiss(loadingtoast);
     }
@@ -166,6 +190,40 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
                 value={formData.BuissnesName}
                 onChange={handleChange}
                 placeholder="e.g. Lens & Light Studio"
+                required
+                className="w-full text-sm text-gray-700 outline-none placeholder-gray-300"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs text-gray-400 uppercase tracking-widest mb-1.5 font-medium">
+              Business Owner Name
+            </label>
+            <div className="flex items-center gap-3 border border-gray-200 rounded-2xl px-4 py-3 focus-within:border-amber-400 transition-colors">
+              <User size={15} className="text-amber-400 shrink-0" />
+              <input
+                type="text"
+                name="BuissnessOwnerName"
+                value={formData.BuissnessOwnerName}
+                onChange={handleChange}
+                placeholder="e.g. John Doe"
+                required
+                className="w-full text-sm text-gray-700 outline-none placeholder-gray-300"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs text-gray-400 uppercase tracking-widest mb-1.5 font-medium">
+              NIC Number
+            </label>
+            <div className="flex items-center gap-3 border border-gray-200 rounded-2xl px-4 py-3 focus-within:border-amber-400 transition-colors">
+              <IdCard size={15} className="text-amber-400 shrink-0" />
+              <input
+                type="text"
+                name="NIC"
+                value={formData.NIC}
+                onChange={handleChange}
+                placeholder="e.g. 951234567V (10 characters)"
                 required
                 className="w-full text-sm text-gray-700 outline-none placeholder-gray-300"
               />
@@ -288,7 +346,7 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
                 name="TPNumber"
                 value={formData.TPNumber}
                 onChange={handleChange}
-                placeholder="e.g. 071 448 0408"
+                placeholder="e.g. 0714480408 (10 digits)"
                 required
                 className="w-full text-sm text-gray-700 outline-none placeholder-gray-300"
               />

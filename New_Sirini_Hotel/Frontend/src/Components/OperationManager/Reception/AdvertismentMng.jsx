@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Search,
   Trash2,
@@ -42,19 +42,9 @@ const AdvertismentMng = () => {
   const [ads, setAds] = useState([]);
   const [allAds, setAllAds] = useState([]);
   const [search, setSearch] = useState("");
-  const [index, setIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState(null);
-  const [itemsPerView, setItemsPerView] = useState(
-    typeof window !== "undefined"
-      ? window.innerWidth < 640
-        ? 1
-        : window.innerWidth < 1024
-          ? 2
-          : 4
-      : 4,
-  );
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
     id: null,
@@ -100,7 +90,6 @@ const AdvertismentMng = () => {
       setAds(Array.isArray(data) ? data : []);
       setSelectedStatus(status);
       setSearch("");
-      setIndex(0);
     } catch (err) {
       setAds([]);
     } finally {
@@ -111,24 +100,6 @@ const AdvertismentMng = () => {
   useEffect(() => {
     fetchAds();
   }, []);
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 640) setItemsPerView(1);
-      else if (window.innerWidth < 1024) setItemsPerView(2);
-      else setItemsPerView(4);
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    setIndex((prev) =>
-      Math.min(prev, Math.max(0, filtered.length - itemsPerView)),
-    );
-  }, [filtered.length, itemsPerView]);
 
   const handleApprove = async (id) => {
     try {
@@ -225,6 +196,17 @@ const AdvertismentMng = () => {
     }
   };
 
+  const sliderRef = useRef(null);
+  const scrollSlider = (direction) => {
+    if (!sliderRef.current) return;
+    const cardWidth =
+      sliderRef.current.querySelector("[data-slider-card]")?.offsetWidth || 320;
+    sliderRef.current.scrollBy({
+      left: direction * (cardWidth + 16),
+      behavior: "smooth",
+    });
+  };
+
   if (loading)
     return (
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-6">
@@ -270,7 +252,6 @@ const AdvertismentMng = () => {
             setSelectedStatus(null);
             setAds(allAds);
             setSearch("");
-            setIndex(0);
           }}
           className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full transition-colors cursor-pointer whitespace-nowrap ${
             selectedStatus === null
@@ -306,28 +287,24 @@ const AdvertismentMng = () => {
       ) : (
         <div className="relative">
           {/* Left arrow */}
-          {index > 0 && (
-            <button
-              onClick={() => setIndex((i) => Math.max(0, i - itemsPerView))}
-              className="absolute -left-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow flex items-center justify-center hover:bg-gray-50"
-            >
-              <ChevronLeft size={16} className="text-gray-600" />
-            </button>
-          )}
-
-          {/* Visible cards — slice-based, no translateX */}
-          <div
-            key={index}
-            className="flex gap-3 sm:gap-4"
-            style={{ animation: "fadeIn 0.25s ease" }}
+          <button
+            onClick={() => scrollSlider(-1)}
+            aria-label="Scroll left"
+            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
           >
-            {filtered.slice(index, index + itemsPerView).map((ad) => (
+            <ChevronLeft size={18} strokeWidth={2.5} />
+          </button>
+
+          {/* Scroll container */}
+          <div
+            ref={sliderRef}
+            className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-1"
+          >
+            {filtered.map((ad) => (
               <div
                 key={ad._id}
-                style={{
-                  width: `calc((100% - ${(window.innerWidth < 640 ? 12 : 16) * (itemsPerView - 1)}px) / ${itemsPerView})`,
-                }}
-                className="shrink-0"
+                data-slider-card
+                className="w-full shrink-0 snap-start md:w-[calc(25%-12px)]"
               >
                 <AdvertisementCard
                   ad={ad}
@@ -343,37 +320,18 @@ const AdvertismentMng = () => {
           </div>
 
           {/* Right arrow */}
-          {index + itemsPerView < filtered.length && (
-            <button
-              onClick={() =>
-                setIndex((i) =>
-                  Math.min(filtered.length - itemsPerView, i + itemsPerView),
-                )
-              }
-              className="absolute -right-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow flex items-center justify-center hover:bg-gray-50"
-            >
-              <ChevronRight size={16} className="text-gray-600" />
-            </button>
-          )}
+          <button
+            onClick={() => scrollSlider(1)}
+            aria-label="Scroll right"
+            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
+          >
+            <ChevronRight size={18} strokeWidth={2.5} />
+          </button>
 
-          {/* Page dots */}
-          {filtered.length > itemsPerView && (
-            <div className="flex justify-center gap-1.5 mt-4">
-              {Array.from({
-                length: Math.ceil(filtered.length / itemsPerView),
-              }).map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setIndex(i * itemsPerView)}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    Math.floor(index / itemsPerView) === i
-                      ? "bg-amber-500"
-                      : "bg-gray-200 hover:bg-gray-300"
-                  }`}
-                />
-              ))}
-            </div>
-          )}
+          {/* Mobile swipe hint */}
+          <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
+            ← Swipe to browse →
+          </p>
         </div>
       )}
 
@@ -400,12 +358,7 @@ const AdvertismentMng = () => {
           </strong>
         </span>
       </div>
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(6px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
+
       <ConfirmDialog
         isOpen={confirmDialog.isOpen}
         type={confirmDialog.type}

@@ -1,11 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import {
-  BarChart3,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsDown,
-} from "lucide-react";
+import { BarChart3, ChevronLeft, ChevronRight, PackageX } from "lucide-react";
 import LiqourCard from "../../Components/LiqourStore/LiqourCard";
 import LiquorComparisonComp from "../../Components/LiqourStore/LiquorComparisonComp";
 import LiquorDetailsComp from "../../Components/LiqourStore/LIquorDetailsComp";
@@ -18,11 +13,20 @@ const LiquorStore = () => {
   const [priceRange, setPriceRange] = useState([0, 1000]);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000);
-  const [beerIndex, setBeerIndex] = useState(0);
-  const [othersIndex, setOthersIndex] = useState(0);
   const [liquorItems, setLiquorItems] = useState([]);
 
-  const [itemsPerView, setItemsPerView] = useState(4);
+  const beerSliderRef = useRef(null);
+  const othersSliderRef = useRef(null);
+
+  const scrollSection = (ref, direction) => {
+    if (!ref.current) return;
+    const cardWidth =
+      ref.current.querySelector("[data-slider-card]")?.offsetWidth || 320;
+    ref.current.scrollBy({
+      left: direction * (cardWidth + 16),
+      behavior: "smooth",
+    });
+  };
 
   const fetchliquor = async () => {
     try {
@@ -49,55 +53,13 @@ const LiquorStore = () => {
 
   useEffect(() => {
     fetchliquor();
-    const handleResize = () => {
-      if (window.innerWidth < 640) {
-        setItemsPerView(1);
-      } else if (window.innerWidth < 1024) {
-        setItemsPerView(2);
-      } else if (window.innerWidth < 1280) {
-        setItemsPerView(3);
-      } else {
-        setItemsPerView(4);
-      }
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  useEffect(() => {
-    setBeerIndex(0);
-    setOthersIndex(0);
-  }, [priceRange]);
 
   const handleDrinkClick = (drink) => {
     setSelectedDrink(drink);
     setIsModalOpen(true);
   };
 
-  const handlePrevBeer = () => {
-    setBeerIndex(Math.max(0, beerIndex - itemsPerView));
-  };
-
-  const handleNextBeer = () => {
-    setBeerIndex((prev) =>
-      Math.min(filteredBeerDrinks.length - itemsPerView, prev + itemsPerView),
-    );
-  };
-
-  const handlePrevOthers = () => {
-    setOthersIndex(Math.max(0, othersIndex - itemsPerView));
-  };
-
-  const handleNextOthers = () => {
-    setOthersIndex(
-      Math.min(
-        filteredOtherDrinks.length - itemsPerView,
-        othersIndex + itemsPerView,
-      ),
-    );
-  };
   const filteredBeerDrinks = liquorItems.filter(
     (drink) =>
       drink.category === "Beer" &&
@@ -111,22 +73,6 @@ const LiquorStore = () => {
       drink.price >= priceRange[0] &&
       drink.price <= priceRange[1],
   );
-
-  const GAP = 16;
-  const cardWidth = `calc((100% - ${GAP * (itemsPerView - 1)}px) / ${itemsPerView})`;
-  const visibleBeerDrinks = filteredBeerDrinks.slice(
-    beerIndex,
-    beerIndex + itemsPerView,
-  );
-  const canGoBackBeer = beerIndex > 0;
-  const canGoNextBeer = beerIndex + itemsPerView < filteredBeerDrinks.length;
-  const visibleOtherDrinks = filteredOtherDrinks.slice(
-    othersIndex,
-    othersIndex + itemsPerView,
-  );
-  const canGoBackOthers = othersIndex > 0;
-  const canGoNextOthers =
-    othersIndex + itemsPerView < filteredOtherDrinks.length;
 
   return (
     <div className="min-h-screen bg-neutral-50">
@@ -212,119 +158,109 @@ const LiquorStore = () => {
 
           <div className="mb-16">
             <h3 className="text-2xl font-bold text-neutral-900 mb-6">Beer</h3>
-
             <div className="relative">
-              {canGoBackBeer && (
-                <button
-                  onClick={handlePrevBeer}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
-                >
-                  <ChevronLeft className="w-6 h-6 text-neutral-900" />
-                </button>
-              )}
-
-              <div
-                key={beerIndex}
-                className="flex gap-4"
-                style={{ animation: "fadeIn 0.25s ease" }}
+              <button
+                onClick={() => scrollSection(beerSliderRef, -1)}
+                aria-label="Scroll left"
+                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
               >
-                {visibleBeerDrinks.map((drink) => (
+                <ChevronLeft size={18} strokeWidth={2.5} />
+              </button>
+              <div
+                ref={beerSliderRef}
+                className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-1"
+              >
+                {filteredBeerDrinks.length === 0 && (
+                  <div className="flex flex-col items-center justify-center gap-2 py-10 px-6 bg-gray-50 border border-gray-200 rounded-2xl text-center w-full">
+                    <div className="w-11 h-11 rounded-xl bg-white border border-gray-200 shadow-sm flex items-center justify-center mb-1">
+                      <PackageX
+                        size={22}
+                        className="text-gray-400"
+                        strokeWidth={1.5}
+                      />
+                    </div>
+                    <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                      No Beer Available
+                    </p>
+                    <p className="text-[11px] text-gray-400">
+                      No items found in this section
+                    </p>
+                  </div>
+                )}
+                {filteredBeerDrinks.map((drink) => (
                   <div
                     key={drink._id}
-                    className="shrink-0"
-                    style={{ width: cardWidth }}
+                    data-slider-card
+                    className="w-[85%] shrink-0 snap-start md:w-64"
                   >
                     <LiqourCard drink={drink} onClick={handleDrinkClick} />
                   </div>
                 ))}
               </div>
-
-              {canGoNextBeer && (
-                <button
-                  onClick={handleNextBeer}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
-                >
-                  <ChevronRight className="w-6 h-6 text-neutral-900" />
-                </button>
-              )}
-
-              {filteredBeerDrinks.length > itemsPerView && (
-                <div className="flex justify-center gap-1.5 mt-4">
-                  {Array.from({
-                    length: Math.ceil(filteredBeerDrinks.length / itemsPerView),
-                  }).map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setBeerIndex(i * itemsPerView)}
-                      className={`w-2 h-2 rounded-full transition-colors ${
-                        Math.floor(beerIndex / itemsPerView) === i
-                          ? "bg-amber-500"
-                          : "bg-gray-300 hover:bg-gray-400"
-                      }`}
-                    />
-                  ))}
-                </div>
-              )}
+              <button
+                onClick={() => scrollSection(beerSliderRef, 1)}
+                aria-label="Scroll right"
+                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
+              >
+                <ChevronRight size={18} strokeWidth={2.5} />
+              </button>
+              <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
+                ← Swipe to browse →
+              </p>
             </div>
           </div>
 
           <div>
             <h3 className="text-2xl font-bold text-neutral-900 mb-6">Others</h3>
-
             <div className="relative">
-              {canGoBackOthers && (
-                <button
-                  onClick={handlePrevOthers}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
-                >
-                  <ChevronLeft className="w-6 h-6 text-neutral-900" />
-                </button>
-              )}
-
-              <div
-                key={othersIndex}
-                className="flex gap-4"
-                style={{ animation: "fadeIn 0.25s ease" }}
+              <button
+                onClick={() => scrollSection(othersSliderRef, -1)}
+                aria-label="Scroll left"
+                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
               >
-                {visibleOtherDrinks.map((drink) => (
+                <ChevronLeft size={18} strokeWidth={2.5} />
+              </button>
+              <div
+                ref={othersSliderRef}
+                className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-1"
+              >
+                {filteredOtherDrinks.length === 0 && (
+                  <div className="flex flex-col items-center justify-center gap-2 py-10 px-6 bg-gray-50 border border-gray-200 rounded-2xl text-center w-full">
+                    <div className="w-11 h-11 rounded-xl bg-white border border-gray-200 shadow-sm flex items-center justify-center mb-1">
+                      <PackageX
+                        size={22}
+                        className="text-gray-400"
+                        strokeWidth={1.5}
+                      />
+                    </div>
+                    <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                      No Others Available
+                    </p>
+                    <p className="text-[11px] text-gray-400">
+                      No items found in this section
+                    </p>
+                  </div>
+                )}
+                {filteredOtherDrinks.map((drink) => (
                   <div
                     key={drink._id}
-                    className="shrink-0"
-                    style={{ width: cardWidth }}
+                    data-slider-card
+                    className="w-[85%] shrink-0 snap-start md:w-64"
                   >
                     <LiqourCard drink={drink} onClick={handleDrinkClick} />
                   </div>
                 ))}
               </div>
-
-              {canGoNextOthers && (
-                <button
-                  onClick={handleNextOthers}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
-                >
-                  <ChevronRight className="w-6 h-6 text-neutral-900" />
-                </button>
-              )}
-
-              {filteredOtherDrinks.length > itemsPerView && (
-                <div className="flex justify-center gap-1.5 mt-4">
-                  {Array.from({
-                    length: Math.ceil(
-                      filteredOtherDrinks.length / itemsPerView,
-                    ),
-                  }).map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setOthersIndex(i * itemsPerView)}
-                      className={`w-2 h-2 rounded-full transition-colors ${
-                        Math.floor(othersIndex / itemsPerView) === i
-                          ? "bg-amber-500"
-                          : "bg-gray-300 hover:bg-gray-400"
-                      }`}
-                    />
-                  ))}
-                </div>
-              )}
+              <button
+                onClick={() => scrollSection(othersSliderRef, 1)}
+                aria-label="Scroll right"
+                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
+              >
+                <ChevronRight size={18} strokeWidth={2.5} />
+              </button>
+              <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
+                ← Swipe to browse →
+              </p>
             </div>
           </div>
         </div>
@@ -341,12 +277,6 @@ const LiquorStore = () => {
         onClose={() => setIsComparisonOpen(false)}
         allDrinks={liquorItems}
       />
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(6px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </div>
   );
 };

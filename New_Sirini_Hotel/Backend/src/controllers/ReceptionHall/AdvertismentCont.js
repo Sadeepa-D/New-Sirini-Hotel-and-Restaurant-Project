@@ -3,9 +3,11 @@ const cloudinary = require("cloudinary");
 
 const createAdvertisment = async (req, res) => {
   try {
-    const userId = req.userData.id;
+    const userId = req.userData?.id;
     const {
       BuissnesName,
+      BuissnessOwnerName,
+      NIC,
       category,
       description,
       portfolio,
@@ -15,6 +17,8 @@ const createAdvertisment = async (req, res) => {
     } = req.body;
     if (
       !BuissnesName ||
+      !BuissnessOwnerName ||
+      !NIC ||
       !category ||
       !description ||
       !price ||
@@ -23,6 +27,26 @@ const createAdvertisment = async (req, res) => {
     ) {
       return res.status(400).json({ message: "All fields are required" });
     }
+
+    // Validate NIC format (should be 9 digits followed by a digit or X)
+    const nicRegex = /^([0-9]{9}[vVxX]|[0-9]{12})$/;
+
+if (!nicRegex.test(NIC)) {
+  return res.status(400).json({
+    message: "Invalid NIC format.",
+    example: "Old: 123456789V | New: 200012345678",
+  });
+}
+
+    // Validate TPNumber format (should be 10 digits)
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(TPNumber)) {
+      return res.status(400).json({
+        message: "Invalid phone number format. Should be exactly 10 digits",
+        example: "0712345678",
+      });
+    }
+
     const image = req.file ? req.file.secure_url : null;
     const imagePublicId = req.file ? req.file.public_id : null;
     if (!image) {
@@ -31,6 +55,8 @@ const createAdvertisment = async (req, res) => {
     const newAdvertisment = new Adevertisment({
       userId,
       BuissnesName,
+      BuissnessOwnerName,
+      NIC,
       category,
       description,
       image,
@@ -47,7 +73,14 @@ const createAdvertisment = async (req, res) => {
     });
   } catch (error) {
     console.error("Error creating advertisment:", error);
-    res.status(500).json({ message: "Server error" });
+    // Return detailed error information for debugging
+    const errorMessage = error.message || "Server error";
+    const statusCode = error.name === "ValidationError" ? 400 : 500;
+    res.status(statusCode).json({
+      message: "Failed to create advertisement",
+      error: errorMessage,
+      details: error.errors || undefined,
+    });
   }
 };
 const getAdvertisments = async (req, res) => {
@@ -59,7 +92,10 @@ const getAdvertisments = async (req, res) => {
     res.status(200).json(advertisments);
   } catch (error) {
     console.error("Error fetching advertisments:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({
+      message: "Failed to fetch advertisements",
+      error: error.message,
+    });
   }
 };
 
@@ -87,7 +123,10 @@ const deleteAdvertisment = async (req, res) => {
     res.status(200).json({ message: "Advertisment deleted successfully" });
   } catch (error) {
     console.error("Error deleting advertisment:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({
+      message: "Failed to delete advertisement",
+      error: error.message,
+    });
   }
 };
 
@@ -128,7 +167,12 @@ const updateAdvertisment = async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating advertisment:", error);
-    res.status(500).json({ message: "Server error" });
+    const statusCode = error.name === "ValidationError" ? 400 : 500;
+    res.status(statusCode).json({
+      message: "Failed to update advertisement",
+      error: error.message,
+      details: error.errors || undefined,
+    });
   }
 };
 const toggleAdvertismentStatustoApproved = async (req, res) => {
@@ -151,7 +195,10 @@ const toggleAdvertismentStatustoApproved = async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating advertisment status:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({
+      message: "Failed to update advertisement status",
+      error: error.message,
+    });
   }
 };
 
@@ -175,7 +222,10 @@ const toggleAdvertismentStatustoRejected = async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating advertisment status:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({
+      message: "Failed to update advertisement status",
+      error: error.message,
+    });
   }
 };
 
@@ -199,7 +249,10 @@ const toggleAdvertismentStatustoPending = async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating advertisment status:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({
+      message: "Failed to update advertisement status",
+      error: error.message,
+    });
   }
 };
 
@@ -211,7 +264,10 @@ const getPendingAdvertisments = async (req, res) => {
     res.status(200).json(pendingAdvertisments);
   } catch (error) {
     console.error("Error fetching pending advertisments:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({
+      message: "Failed to fetch pending advertisements",
+      error: error.message,
+    });
   }
 };
 const getApprovedAdvertisments = async (req, res) => {
@@ -222,7 +278,10 @@ const getApprovedAdvertisments = async (req, res) => {
     res.status(200).json(approvedAdvertisments);
   } catch (error) {
     console.error("Error fetching approved advertisments:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({
+      message: "Failed to fetch approved advertisements",
+      error: error.message,
+    });
   }
 };
 const getRejectedAdvertisments = async (req, res) => {
@@ -233,13 +292,16 @@ const getRejectedAdvertisments = async (req, res) => {
     res.status(200).json(rejectedAdvertisments);
   } catch (error) {
     console.error("Error fetching rejected advertisments:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({
+      message: "Failed to fetch rejected advertisements",
+      error: error.message,
+    });
   }
 };
 
 const getSpecificUserAdvertisments = async (req, res) => {
   try {
-    const userId = req.userData.id;
+    const userId = req.userData?.id;
     if (!userId) {
       return res.status(400).json({ message: "User ID is required" });
     }
@@ -247,7 +309,10 @@ const getSpecificUserAdvertisments = async (req, res) => {
     res.status(200).json(userAdvertisments);
   } catch (error) {
     console.error("Error fetching user advertisments:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({
+      message: "Failed to fetch user advertisements",
+      error: error.message,
+    });
   }
 };    
 module.exports = {
