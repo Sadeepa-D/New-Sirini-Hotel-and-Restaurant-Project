@@ -16,6 +16,7 @@ import {
   Pizza,
   Egg,
   Cake,
+  Wallet,
 } from "lucide-react";
 import {
   PieChart,
@@ -24,6 +25,11 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
 } from "recharts";
 import axios from "axios";
 
@@ -498,12 +504,182 @@ const Fooditemstatus = () => {
   );
 };
 
+const RestaurantRevenueChart = () => {
+  const VITE_URL = import.meta.env.VITE_API_URL;
+  const currentYear = new Date().getFullYear();
+  const currentMonthName = new Date().toLocaleString("en-US", {
+    month: "long",
+  });
+
+  const [selectedMonth, setSelectedMonth] = useState(
+    `${currentMonthName} ${currentYear}`,
+  );
+  const [chartData, setChartData] = useState([]);
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  const monthsArray = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
+  ];
+
+  const fetchRevenueData = async () => {
+    try {
+      setLoading(true);
+      const [monthName, year] = selectedMonth.split(" ");
+      const monthNumber = monthsArray.indexOf(monthName) + 1;
+
+      const response = await axios.post(
+        `${VITE_URL}/api/restraunt/orders/stats`,
+        { month: monthNumber, year: Number(year) },
+      );
+
+      const dailyData = response.data.daily || [];
+      const formattedData = dailyData.map((d) => ({
+        day: d.date.split("-")[2],
+        income: d.Revenue || 0,
+      }));
+
+      setChartData(formattedData);
+      setTotalRevenue(response.data.summary?.Revenue || 0);
+    } catch (error) {
+      console.error("Error loading revenue chart data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRevenueData();
+  }, [selectedMonth]);
+
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-slate-900 border border-slate-800 p-3 rounded-xl shadow-2xl text-white">
+          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
+            Day {payload[0].payload.day} Revenue
+          </p>
+          <p className="text-sm font-black text-emerald-400 mt-0.5">
+            LKR {payload[0].value.toLocaleString()}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <div className="bg-white w-full rounded-3xl p-5 shadow-xl border border-gray-100 flex flex-col gap-4">
+      {/* Header Info Layer */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-50 pb-4 gap-4 sm:gap-0">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 bg-emerald-50 text-emerald-500 rounded-2xl border border-emerald-100/40 shrink-0">
+            <Wallet size={20} strokeWidth={2.5} />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-black text-neutral-800 uppercase tracking-wide">
+                Revenue
+              </h3>
+              <div className="relative">
+                <select
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(e.target.value)}
+                  className="appearance-none bg-gray-50 hover:bg-gray-100/70 border border-gray-200 rounded-lg pl-3 pr-6 py-1 text-[10px] font-bold text-gray-700 outline-none cursor-pointer truncate"
+                >
+                  {monthsArray.map((m) => (
+                    <option key={m} value={`${m} ${currentYear}`}>
+                      {m} {currentYear}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                  size={10}
+                />
+              </div>
+            </div>
+            <p className="text-[11px] text-gray-400 font-medium mt-0.5">
+              Daily completed order revenue
+            </p>
+          </div>
+        </div>
+        <div className="text-left sm:text-right">
+          <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">
+            Total
+          </span>
+          <span className="text-base font-black text-emerald-600">
+            LKR {totalRevenue.toLocaleString()}
+          </span>
+        </div>
+      </div>
+
+      {/* Chart Layout Layer */}
+      <div className="w-full h-64 min-h-[250px] text-xs font-bold text-gray-400">
+        {loading ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <p className="animate-pulse tracking-wider">Loading Chart...</p>
+          </div>
+        ) : chartData.length === 0 ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <p className="tracking-wider">No Revenue Data</p>
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+            <BarChart
+              data={chartData}
+              margin={{ top: 10, right: 5, left: -20, bottom: 0 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                vertical={false}
+                stroke="#F1F5F9"
+              />
+              <XAxis
+                dataKey="day"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "#94A3B8", fontSize: 10, fontWeight: 700 }}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "#94A3B8", fontSize: 10 }}
+                tickFormatter={(value) =>
+                  value >= 1000 ? `${value / 1000}k` : value
+                }
+              />
+              <Tooltip
+                content={<CustomTooltip />}
+                cursor={{ fill: "#F8FAFC", radius: 8 }}
+              />
+              <Bar
+                dataKey="income"
+                fill="#10B981"
+                radius={[4, 4, 0, 0]}
+                maxBarSize={32}
+                className="hover:fill-emerald-400 transition-colors duration-200"
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const RestrauntAnlys = () => {
   return (
-    <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-2">
-      <RestaurantOrderAnalysis />
-      <RestaurantOrderPieChart />
-      <Fooditemstatus />
+    <div>
+      <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-2">
+        <RestaurantOrderAnalysis />
+        <RestaurantOrderPieChart />
+        <Fooditemstatus />
+      </div>
+      <div className="p-4 pt-0 grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <RestaurantRevenueChart />
+      </div>
     </div>
   );
 };

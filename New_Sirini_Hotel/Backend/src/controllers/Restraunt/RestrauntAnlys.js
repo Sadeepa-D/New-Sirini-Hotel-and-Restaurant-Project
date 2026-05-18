@@ -30,6 +30,7 @@ const getRestaurantOrderStats = async (req, res) => {
       Complete: 0,
       delete: 0,
       Overdue: 0,
+      Revenue: 0,
     };
 
     const dailyMap = {};
@@ -39,6 +40,9 @@ const getRestaurantOrderStats = async (req, res) => {
 
       if (currentstatus in status) {
         status[currentstatus] += 1;
+        if (currentstatus === "Complete" && order.Price) {
+          status.Revenue += order.Price;
+        }
       }
 
       if (order.pickupDate) {
@@ -53,10 +57,14 @@ const getRestaurantOrderStats = async (req, res) => {
             Complete: 0,
             delete: 0,
             Overdue: 0,
+            Revenue: 0,
           };
         }
         if (currentstatus in dailyMap[dateKey]) {
           dailyMap[dateKey][currentstatus] += 1;
+          if (currentstatus === "Complete" && order.Price) {
+            dailyMap[dateKey].Revenue += order.Price;
+          }
         }
       }
     });
