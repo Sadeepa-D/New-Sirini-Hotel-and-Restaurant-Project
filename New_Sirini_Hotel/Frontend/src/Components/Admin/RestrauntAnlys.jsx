@@ -317,7 +317,7 @@ const RestaurantOrderPieChart = () => {
           <PieIcon size={14} />
         </div>
         <h3 className="text-sm font-black text-slate-800 uppercase tracking-wide">
-         Daily Order Distribution
+          Daily Order Distribution
         </h3>
       </div>
 
@@ -400,7 +400,11 @@ const RestaurantOrderPieChart = () => {
                 height={36}
                 iconSize={8}
                 iconType="circle"
-                wrapperStyle={{ fontSize: "10px", fontWeight: "bold", paddingTop: "10px" }}
+                wrapperStyle={{
+                  fontSize: "10px",
+                  fontWeight: "bold",
+                  paddingTop: "10px",
+                }}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -519,8 +523,18 @@ const RestaurantRevenueChart = () => {
   const [loading, setLoading] = useState(true);
 
   const monthsArray = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December",
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
   const fetchRevenueData = async () => {
