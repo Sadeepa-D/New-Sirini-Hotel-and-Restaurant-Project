@@ -363,7 +363,7 @@ const RestaurantOrderPieChart = () => {
       </div>
 
       {/* Pie Chart Display Layer */}
-      <div className="flex-1 w-full min-h-[200px] flex items-center justify-center relative text-xs">
+      <div className="flex-1 w-full min-h-[250px] flex items-center justify-center relative text-xs mt-2">
         {loading ? (
           <p className="font-bold text-gray-400 uppercase tracking-wider animate-pulse">
             Loading Chart...
@@ -378,7 +378,7 @@ const RestaurantOrderPieChart = () => {
               <Pie
                 data={activeChartData}
                 cx="50%"
-                cy="50%"
+                cy="45%"
                 innerRadius={65}
                 outerRadius={95}
                 paddingAngle={4}
@@ -390,9 +390,11 @@ const RestaurantOrderPieChart = () => {
               </Pie>
               <Tooltip formatter={(value) => [`${value} Orders`]} />
               <Legend
+                verticalAlign="bottom"
+                height={36}
                 iconSize={8}
                 iconType="circle"
-                wrapperStyle={{ fontSize: "10px", fontWeight: "bold" }}
+                wrapperStyle={{ fontSize: "10px", fontWeight: "bold", paddingTop: "10px" }}
               />
             </PieChart>
           </ResponsiveContainer>
