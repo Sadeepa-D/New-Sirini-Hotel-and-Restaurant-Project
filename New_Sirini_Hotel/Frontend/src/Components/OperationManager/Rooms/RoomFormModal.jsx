@@ -212,18 +212,35 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
             </div>
           </div>
 
-          {/* Capacity */}
-          <div>
-            <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
-              Capacity (Auto)
-            </label>
-            <input
-              name="capacity"
-              type="number"
-              value={form.capacity}
-              readOnly
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm bg-gray-50 text-gray-500 outline-none"
-            />
+          {/* Capacity & Status */}
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            <div>
+              <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
+                Capacity (Auto)
+              </label>
+              <input
+                name="capacity"
+                type="number"
+                value={form.capacity}
+                readOnly
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm bg-gray-50 text-gray-500 outline-none"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
+                Room Status
+              </label>
+              <select
+                name="status"
+                value={form.status}
+                onChange={handleChange}
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
+              >
+                <option value="available">Available</option>
+                <option value="reserved">Reserved</option>
+                <option value="maintenance">Maintenance</option>
+              </select>
+            </div>
           </div>
 
           {/* Condition & Bed Type */}
@@ -260,24 +277,6 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
             </div>
           </div>
 
-          {/* Status */}
-          <div>
-            <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
-              Room Status
-            </label>
-            <select
-              name="status"
-              value={form.status}
-              onChange={handleChange}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
-            >
-              <option value="available">Available</option>
-              <option value="reserved">Reserved</option>
-              <option value="maintenance">Maintenance</option>
-            </select>
-          </div>
-
-          
           <div>
             <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 block">
               Additional Room Facilities
