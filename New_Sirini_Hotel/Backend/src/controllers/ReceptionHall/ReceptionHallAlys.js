@@ -3,7 +3,19 @@ const ReceptionHallBookingModel = require("../../models/Reception/ReceptionHallB
 const ReceptionHallPackageModel = require("../../models/Reception/ReceptionHallPackages");
 const CateringitemsModel = require("../../models/Reception/CateringItems");
 const AdvertisementModel = require("../../models/Reception/AdvertisingModel");
-const { array } = require("../../config/CloudinaryConfig");
+
+const getSLMonthRange = (month, year) => {
+  const startUTC = new Date(
+    Date.UTC(Number(year), Number(month) - 1, 1, 0, 0, 0),
+  );
+
+  const endUTC = new Date(Date.UTC(Number(year), Number(month), 1, 0, 0, 0));
+
+  return {
+    start: new Date(startUTC.getTime() - 5.5 * 60 * 60 * 1000),
+    end: new Date(endUTC.getTime() - 5.5 * 60 * 60 * 1000),
+  };
+};
 
 const getmonthlyappointmentdetails = async (req, res) => {
   try {
@@ -11,14 +23,9 @@ const getmonthlyappointmentdetails = async (req, res) => {
     if (!month || !year) {
       return res.status(400).json({ error: "Month and year are required" });
     }
-    const startofmonth = new Date(
-      Date.UTC(Number(year), Number(month) - 1, 1, 0, 0, 0),
-    );
-    const endofmonth = new Date(
-      Date.UTC(Number(year), Number(month), 1, 0, 0, 0),
-    );
+    const { start, end } = getSLMonthRange(month, year);
     const appointments = await ReceptionAppointModel.find({
-      date: { $gte: startofmonth, $lt: endofmonth },
+      date: { $gte: start, $lt: end },
     });
     const stats = {
       Pending: 0,
@@ -46,15 +53,10 @@ const getmonthlyReceptionHallBookingDetails = async (req, res) => {
       return res.status(400).json({ error: "Month and year are required" });
     }
 
-    const startofmonth = new Date(
-      Date.UTC(Number(year), Number(month) - 1, 1, 0, 0, 0),
-    );
-    const endofmonth = new Date(
-      Date.UTC(Number(year), Number(month), 1, 0, 0, 0),
-    );
+    const { start, end } = getSLMonthRange(month, year);
 
     const bookings = await ReceptionHallBookingModel.find({
-      eventDate: { $gte: startofmonth, $lt: endofmonth },
+      eventDate: { $gte: start, $lt: end },
     });
 
     const stats = {
@@ -93,16 +95,23 @@ const getYearlyReceptionHallIncome = async (req, res) => {
     const currentYear = new Date().getFullYear();
     const startOfYear = new Date(Date.UTC(currentYear, 0, 1, 0, 0, 0));
     const endOfYear = new Date(Date.UTC(currentYear + 1, 0, 1, 0, 0, 0));
+    const slStartOfYear = new Date(
+      startOfYear.getTime() - 5.5 * 60 * 60 * 1000,
+    );
+    const slEndOfYear = new Date(endOfYear.getTime() - 5.5 * 60 * 60 * 1000);
 
     const bookings = await ReceptionHallBookingModel.find({
-      eventDate: { $gte: startOfYear, $lt: endOfYear },
+      eventDate: { $gte: slStartOfYear, $lt: slEndOfYear },
       status: { $in: ["Confirmed", "Booked"] },
     });
     const monthlyIncome = Array(12).fill(0);
 
     bookings.forEach((booking) => {
       if (booking.eventDate) {
-        const month = booking.eventDate.getUTCMonth();
+        const slDate = new Date(
+          booking.eventDate.getTime() + 5.5 * 60 * 60 * 1000,
+        );
+        const month = slDate.getUTCMonth();
         monthlyIncome[month] += Number(booking.amountPayed);
       }
     });
