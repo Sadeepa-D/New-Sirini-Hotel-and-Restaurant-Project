@@ -1,4 +1,5 @@
 const FoodItemsBookModel = require("../../models/Restraunt/FoodItemBookModel");
+const FoodItemModel = require("../../models/Restraunt/FoodItemModel");
 
 const getRestaurantOrderStats = async (req, res) => {
   try {
@@ -74,6 +75,45 @@ const getRestaurantOrderStats = async (req, res) => {
   }
 };
 
+const getrestrauntfooditemsstatus = async (req, res) => {
+  try {
+    const foodItems = await FoodItemModel.find();
+    const Categories = [
+      "Chopsy Rice",
+      "Rice & Nasi Goreng",
+      "Kottu",
+      "Noodles",
+      "Bites",
+      "Side Dishes",
+      "Snacks",
+    ];
+    const catgoryStatus = {};
+    Categories.forEach((category) => {
+      catgoryStatus[category] = {
+        category: category,
+        Available: 0,
+        Unavailable: 0,
+      };
+    });
+
+    foodItems.forEach((item) => {
+      if (item.category in catgoryStatus) {
+        if (item.availability) {
+          catgoryStatus[item.category].Available += 1;
+        } else {
+          catgoryStatus[item.category].Unavailable += 1;
+        }
+      }
+    });
+    const statusobj = Object.values(catgoryStatus);
+    res.json(statusobj);
+  } catch (error) {
+    console.error("Error fetching restaurant food items status:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 module.exports = {
   getRestaurantOrderStats,
+  getrestrauntfooditemsstatus,
 };

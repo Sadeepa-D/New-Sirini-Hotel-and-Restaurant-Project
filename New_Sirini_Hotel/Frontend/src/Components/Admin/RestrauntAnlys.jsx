@@ -8,6 +8,14 @@ import {
   AlertTriangle,
   Utensils,
   PieChart as PieIcon,
+  Eye,
+  EyeOff,
+  Soup,
+  Flame,
+  FlameKindling,
+  Pizza,
+  Egg,
+  Cake,
 } from "lucide-react";
 import {
   PieChart,
@@ -88,7 +96,7 @@ const RestaurantOrderAnalysis = () => {
   }, [selectedMonth]);
 
   return (
-    <div className="bg-white w-full max-w-sm rounded-3xl p-4 shadow-xl border border-gray-100 flex flex-col gap-3 select-none">
+    <div className="bg-white w-full h-full rounded-3xl p-4 shadow-xl border border-gray-100 flex flex-col gap-3 select-none">
       {/* Top Header Layer: Section Title, Icon & Month Dropdown Select */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-2.5">
@@ -296,14 +304,14 @@ const RestaurantOrderPieChart = () => {
   const activeChartData = getChartData();
 
   return (
-    <div className="bg-white w-full max-w-sm rounded-3xl p-5 shadow-xl border border-gray-100 flex flex-col gap-4">
+    <div className="bg-white w-full h-full rounded-3xl p-4 shadow-xl border border-gray-100 flex flex-col gap-2">
       {/* Title Header Section */}
-      <div className="flex items-center gap-2 border-b border-gray-50 pb-2">
+      <div className="flex items-center gap-2 border-b border-gray-50 pb-1">
         <div className="p-1.5 bg-amber-500 text-white rounded-lg">
           <PieIcon size={14} />
         </div>
         <h3 className="text-sm font-black text-slate-800 uppercase tracking-wide">
-          Order Share
+         Daily Order Distribution
         </h3>
       </div>
 
@@ -314,7 +322,7 @@ const RestaurantOrderPieChart = () => {
           <select
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(e.target.value)}
-            className="w-full appearance-none bg-gray-50 border border-gray-200 rounded-xl pl-7 pr-6 py-2 text-[11px] font-bold text-gray-700 outline-none cursor-pointer truncate"
+            className="w-full appearance-none bg-gray-50 border border-gray-200 rounded-xl pl-7 pr-6 py-1.5 text-[11px] font-bold text-gray-700 outline-none cursor-pointer truncate"
           >
             {monthsArray.map((m) => (
               <option key={m} value={`${m} ${currentYear}`}>
@@ -338,7 +346,7 @@ const RestaurantOrderPieChart = () => {
             value={selectedDate}
             disabled={loading}
             onChange={(e) => setSelectedDate(e.target.value)}
-            className="w-full appearance-none bg-gray-50 border border-gray-200 rounded-xl pl-3 pr-6 py-2 text-[11px] font-bold text-gray-700 outline-none cursor-pointer disabled:opacity-50"
+            className="w-full appearance-none bg-gray-50 border border-gray-200 rounded-xl pl-3 pr-6 py-1.5 text-[11px] font-bold text-gray-700 outline-none cursor-pointer disabled:opacity-50"
           >
             <option value="Whole Month">Whole Month</option>
             {monthlyData.daily?.map((day) => (
@@ -355,7 +363,7 @@ const RestaurantOrderPieChart = () => {
       </div>
 
       {/* Pie Chart Display Layer */}
-      <div className="w-full h-48 min-h-47.5 flex items-center justify-center relative text-xs">
+      <div className="flex-1 w-full min-h-[200px] flex items-center justify-center relative text-xs">
         {loading ? (
           <p className="font-bold text-gray-400 uppercase tracking-wider animate-pulse">
             Loading Chart...
@@ -371,8 +379,8 @@ const RestaurantOrderPieChart = () => {
                 data={activeChartData}
                 cx="50%"
                 cy="50%"
-                innerRadius={45}
-                outerRadius={65}
+                innerRadius={65}
+                outerRadius={95}
                 paddingAngle={4}
                 dataKey="value"
               >
@@ -393,12 +401,107 @@ const RestaurantOrderPieChart = () => {
     </div>
   );
 };
+const Fooditemstatus = () => {
+  const VITE_URL = import.meta.env.VITE_API_URL;
+
+  const [menuStats, setMenuStats] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchMenuOverview = async () => {
+    try {
+      const response = await axios.get(
+        `${VITE_URL}/api/restraunt/fooditems/status`,
+      );
+      setMenuStats(response.data || []);
+    } catch (error) {
+      console.error("Error loading restaurant menu summary metadata:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMenuOverview();
+  }, []);
+
+  const rowConfigs = [
+    { icon: Flame, bg: "bg-amber-50 text-amber-500 border-amber-100/40" },
+    {
+      icon: Utensils,
+      bg: "bg-emerald-50 text-emerald-500 border-emerald-100/40",
+    },
+    { icon: FlameKindling, bg: "bg-rose-50 text-rose-500 border-rose-100/40" },
+    { icon: Soup, bg: "bg-indigo-50 text-indigo-500 border-indigo-100/40" },
+    { icon: Pizza, bg: "bg-blue-50 text-blue-500 border-blue-100/40" },
+    { icon: Egg, bg: "bg-purple-50 text-purple-500 border-purple-100/40" },
+    { icon: Cake, bg: "bg-pink-50 text-pink-500 border-pink-100/40" },
+  ];
+
+  return (
+    <div className="bg-white w-full h-full rounded-3xl p-4 shadow-xl border border-gray-100 flex flex-col gap-3 select-none">
+      {/* Top Header Title */}
+      <div className="flex flex-col gap-1 border-b border-gray-50 pb-1">
+        <h3 className="text-xl font-black text-slate-800 uppercase tracking-wide font-sans">
+          Menu Assets Overview
+        </h3>
+      </div>
+
+      {/* Main Structural Content Segment Rows */}
+      <div className="flex flex-col gap-2 max-h-105 overflow-y-auto pr-1 no-scrollbar">
+        {loading ? (
+          <p className="text-xs font-bold text-center text-gray-400 uppercase tracking-widest py-8 animate-pulse">
+            Loading menu categories...
+          </p>
+        ) : menuStats.length === 0 ? (
+          <p className="text-xs font-bold text-center text-gray-400 uppercase tracking-widest py-8">
+            No categories or items found
+          </p>
+        ) : (
+          menuStats.map((item, index) => {
+            const config = rowConfigs[index % rowConfigs.length];
+            const RowIcon = config.icon;
+
+            return (
+              <div
+                key={item.category || index}
+                className="flex items-center justify-between px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200"
+              >
+                {/* Left Side: Category Icon and Name */}
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div
+                    className={`p-1.5 rounded-lg border ${config.bg} shrink-0 flex items-center justify-center`}
+                  >
+                    <RowIcon size={13} strokeWidth={2.5} />
+                  </div>
+                  <span className="text-[11px] sm:text-xs font-black text-[#2D3748] tracking-wider uppercase truncate flex-1 pr-2">
+                    {item.category}
+                  </span>
+                </div>
+
+                {/* Right Side: Available vs Unavailable Counts Indicators */}
+                <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-1 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-lg border border-emerald-100/50 text-[10px] font-black uppercase tracking-wide">
+                    <Eye size={12} /> {item.Available} Active
+                  </div>
+                  <div className="flex items-center gap-1 bg-gray-100 text-gray-500 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide">
+                    <EyeOff size={12} /> {item.Unavailable} Inactive
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+};
 
 const RestrauntAnlys = () => {
   return (
-    <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-2">
       <RestaurantOrderAnalysis />
       <RestaurantOrderPieChart />
+      <Fooditemstatus />
     </div>
   );
 };

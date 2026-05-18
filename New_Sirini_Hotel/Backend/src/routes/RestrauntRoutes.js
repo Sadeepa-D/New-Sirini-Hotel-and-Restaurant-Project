@@ -47,5 +47,6 @@ router.delete("/deletefooditem/:id", FoodItemsCont.deleteFoodItem);
 
 router.get("/orders/userspecific", authMiddleware, FoodOrderCont.getUserOrders);
 router.post("/orders/stats", RestrauntAnlysCont.getRestaurantOrderStats);
+router.get("/fooditems/status", RestrauntAnlysCont.getrestrauntfooditemsstatus);
 
 module.exports = router;
