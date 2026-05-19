@@ -1,4 +1,5 @@
 const RoomBooking = require("../../models/Rooms/RoomBookModel");
+const { sendRoomBookingEmail } = require("../EmailCont");
 
 const createRoomBooking = async (req, res) => {
   try {
@@ -78,6 +79,20 @@ const createRoomBooking = async (req, res) => {
     });
 
     await newRoomBooking.save();
+
+    await sendRoomBookingEmail({
+      name,
+      email,
+      phone,
+      checkInDate: newIn,
+      checkOutDate: newOut,
+      roomNumber,
+      numberOfGuests,
+      totalAmount,
+      timeSlot,
+      status: "Pending"
+    });
+
     res.status(201).json(newRoomBooking);
   } catch (error) {
     console.error("Booking Error:", error);
