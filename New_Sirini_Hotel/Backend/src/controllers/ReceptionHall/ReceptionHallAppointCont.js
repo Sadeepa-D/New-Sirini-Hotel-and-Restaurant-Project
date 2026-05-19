@@ -1,4 +1,5 @@
 const ReceptionAppointment = require("../../models/Reception/ReciptionAppointModel");
+const { sendAppointmentEmail } = require("../EmailCont");
 
 const createReceptionAppointment = async (req, res) => {
   try {
@@ -18,6 +19,17 @@ const createReceptionAppointment = async (req, res) => {
       status: "Pending",
     });
     await newAppointment.save();
+    
+    await sendAppointmentEmail({
+      name,
+      email,
+      phone,
+      date,
+      noOfGuests,
+      eventType,
+      status: "Pending"
+    });
+
     res
       .status(201)
       .json({ message: "Reception appointment created successfully" });
