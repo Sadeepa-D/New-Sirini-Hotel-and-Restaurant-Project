@@ -132,13 +132,17 @@ const LiquorInventory = ({
       }
       await decreaseLiquorInventory(selectedItem._id, absoluteQty);
     }
-    setAdjustQty(0);
-    setSelectedItem(null);
+    const newQuantity = selectedItem.currentQuantityInBottles + adjustQty;
+    const shouldBeAvailable = newQuantity > selectedItem.lowStockThreshold;
     if (
-      selectedItem.currentQuantityInBottles <= selectedItem.lowStockThreshold
+      (shouldBeAvailable && selectedItem.isAvailable === false) ||
+      (!shouldBeAvailable && selectedItem.isAvailable !== false)
     ) {
       toogleavailability(selectedItem._id);
     }
+
+    setAdjustQty(0);
+    setSelectedItem(null);
     fetchLiquorItems();
   };
 

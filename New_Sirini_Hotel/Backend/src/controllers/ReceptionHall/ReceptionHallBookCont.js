@@ -152,7 +152,10 @@ const updateBookingStatus = async (req, res) => {
 
 const GetBookingDates = async (req, res) => {
   try {
-    const bookings = await receptionandHallBook.find({}, "eventDate eventTime");
+    const bookings = await receptionandHallBook.find(
+      { status: { $in: ["Confirmed", "Booked"] } },
+      "eventDate eventTime",
+    );
     res.status(200).json(bookings);
   } catch (error) {
     res.status(400).json({ message: error.message });
