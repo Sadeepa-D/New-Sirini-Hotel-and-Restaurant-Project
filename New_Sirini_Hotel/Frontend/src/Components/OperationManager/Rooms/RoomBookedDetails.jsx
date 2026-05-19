@@ -24,6 +24,7 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
   const [confirmedList, setConfirmedList] = useState([]);
   const [cancelledList, setCancelledList] = useState([]);
   const [completedList, setCompletedList] = useState([]);
+  const [overdueList, setOverdueList] = useState([]);
 
   const [activeTab, setActiveTab] = useState("pending");
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,11 +35,15 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
   const fetchAllData = useCallback(async () => {
     try {
       setLoading(true);
+      // First update overdue bookings
+      await axios.put(`${VITE_URL}/api/rooms/updateoverduebookings`);
+
       const responses = await Promise.allSettled([
         axios.get(`${VITE_URL}/api/rooms/viewpendingbookings`),
         axios.get(`${VITE_URL}/api/rooms/viewconfirmedbookings`),
         axios.get(`${VITE_URL}/api/rooms/viewcancelledbookings`),
         axios.get(`${VITE_URL}/api/rooms/viewcompletedbookings`),
+        axios.get(`${VITE_URL}/api/rooms/viewoverduebookings`),
       ]);
 
       setPendingList(
@@ -52,6 +57,9 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
       );
       setCompletedList(
         responses[3].status === "fulfilled" ? responses[3].value.data : [],
+      );
+      setOverdueList(
+        responses[4].status === "fulfilled" ? responses[4].value.data : [],
       );
     } catch (err) {
       console.error("Fetch Error:", err);
@@ -118,6 +126,8 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
         return completedList;
       case "cancelled":
         return cancelledList;
+      case "overdue":
+        return overdueList;
       default:
         return [];
     }
@@ -172,6 +182,14 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
             label="Cancelled"
             count={cancelledList.length}
             color="text-red-600"
+          />
+          <TabButton
+            active={activeTab === "overdue"}
+            onClick={() => setActiveTab("overdue")}
+            icon={<Flag size={16} />}
+            label="Overdue"
+            count={overdueList.length}
+            color="text-orange-600"
           />
         </div>
 
