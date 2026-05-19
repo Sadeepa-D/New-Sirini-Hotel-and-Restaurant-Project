@@ -308,10 +308,12 @@ const Admin = () => {
                         className="text-gray-400 group-hover:text-amber-500 transition-colors shrink-0"
                       />
                       <div>
-                        <div className="font-semibold">Manager 1</div>
-                        <span className="text-xs text-gray-400 group-hover:text-amber-500/70">
+                        <div className="font-semibold">
+                          Restaurant, Liquor Management
+                        </div>
+                        {/* <span className="text-xs text-gray-400 group-hover:text-amber-500/70">
                           Restaurant, Liquor
-                        </span>
+                        </span> */}
                       </div>
                     </button>
                     <div className="h-px bg-gray-100 my-1.5"></div>
@@ -327,10 +329,12 @@ const Admin = () => {
                         className="text-gray-400 group-hover:text-amber-500 transition-colors shrink-0"
                       />
                       <div>
-                        <div className="font-semibold">Manager 2</div>
-                        <span className="text-xs text-gray-400 group-hover:text-amber-500/70">
+                        <div className="font-semibold">
+                          Reception, Rooms Management
+                        </div>
+                        {/* <span className="text-xs text-gray-400 group-hover:text-amber-500/70">
                           Reception, Rooms
-                        </span>
+                        </span> */}
                       </div>
                     </button>
                   </div>
