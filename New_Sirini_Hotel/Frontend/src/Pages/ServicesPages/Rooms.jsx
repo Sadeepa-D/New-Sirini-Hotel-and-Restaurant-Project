@@ -160,14 +160,14 @@ function Rooms() {
             <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {roomList.map((room) => (
               <div
                 key={room._id}
                 className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:scale-[1.02] transition-all duration-500 border border-gray-100 flex flex-col h-full"
               >
                 {/* Image Section */}
-                <div className="relative h-64 overflow-hidden">
+                <div className="relative h-56 overflow-hidden">
                   <img
                     src={room.image}
                     alt={room.roomType}
@@ -201,8 +201,8 @@ function Rooms() {
                   </div>
                 </div>
 
-                <div className="p-6 flex flex-col flex-grow">
-                  <div className="flex items-center gap-1 mb-2">
+                <div className="p-3 flex flex-col flex-grow">
+                  <div className="flex items-center gap-1 mb-1">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
@@ -211,15 +211,15 @@ function Rooms() {
                       />
                     ))}
                   </div>
-                  <h3 className="text-2xl font-serif italic text-gray-900 mb-3 group-hover:text-orange-600 transition-colors">
+                  <h3 className="text-lg font-serif italic text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">
                     {room.roomType} Room
                   </h3>
-                  <p className="text-gray-500 text-xs leading-relaxed mb-6 line-clamp-2">
+                  <p className="text-gray-500 text-xs leading-relaxed mb-2.5 line-clamp-2">
                     {room.description ||
                       "Elegant space designed for comfort and tranquility."}
                   </p>
 
-                  <div className="flex items-center gap-4 mb-8">
+                  <div className="flex items-center gap-3 mb-3">
                     <div className="flex items-center gap-1.5 text-gray-600">
                       <Bed size={14} className="text-orange-500" />
                       <span className="text-[11px] font-medium">
@@ -240,9 +240,8 @@ function Rooms() {
                     </div>
                   </div>
 
-                  
                   {room.facilities && room.facilities.length > 0 && (
-                    <div className="mb-6 pb-6 border-b border-gray-100">
+                    <div className="mb-2 pb-2">
                       <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2.5">
                         Facilities
                       </p>
@@ -286,7 +285,7 @@ function Rooms() {
                     </div>
                   )}
 
-                  <div className="mt-auto pt-5 border-t border-gray-50 flex flex-wrap items-center justify-between gap-y-4">
+                  <div className="flex flex-wrap items-center justify-between gap-y-3">
                     <div className="flex items-center gap-2">
                       <div
                         className={`w-1.5 h-1.5 rounded-full ${room.status === "available" ? "bg-green-500 animate-pulse" : "bg-red-400"}`}

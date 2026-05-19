@@ -31,6 +31,10 @@ router.get(
   "/viewoverduebookings",
   roomBookingController.getOverdueRoomBookings,
 );
+router.put(
+  "/updateoverduebookings",
+  roomBookingController.updateOverdueBookings,
+);
 
 router.get(
   "/viewcompletedbookings",
