@@ -53,6 +53,11 @@ const RoomSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    facilities: {
+      type: [String],
+      enum: ["WiFi", "Hot Water", "TV", "Mini Fridge"],
+      default: [],
+    },
   },
   { timestamps: true },
 );

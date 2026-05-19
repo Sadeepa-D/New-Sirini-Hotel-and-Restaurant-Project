@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Plus,
   Search,
@@ -7,6 +7,7 @@ import {
   Power,
   ChevronLeft,
   ChevronRight,
+  PackageX,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
@@ -14,6 +15,7 @@ import AddLiquorForm from "../Liquor/AddLiquorForm";
 import DrinkCard from "../../LiqourStore/LiqourCard";
 import LiquorDetailsComp from "../../LiqourStore/LIquorDetailsComp";
 import ConfirmDialog from "../../ConfrimDialog";
+import LiquorInventory from "./LiquorInventory";
 
 const LiquorManager = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -22,9 +24,6 @@ const LiquorManager = () => {
   const [selectedDrink, setSelectedDrink] = useState(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [liquorItems, setLiquorItems] = useState([]);
-  const [beerIndex, setBeerIndex] = useState(0);
-  const [othersIndex, setOthersIndex] = useState(0);
-  const [itemsPerView, setItemsPerView] = useState(4);
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
     id: null,
@@ -32,6 +31,19 @@ const LiquorManager = () => {
     title: "",
     message: "",
   });
+
+  const beerSliderRef = useRef(null);
+  const othersSliderRef = useRef(null);
+
+  const scrollSection = (ref, direction) => {
+    if (!ref.current) return;
+    const cardWidth =
+      ref.current.querySelector("[data-slider-card]")?.offsetWidth || 320;
+    ref.current.scrollBy({
+      left: direction * (cardWidth + 16),
+      behavior: "smooth",
+    });
+  };
 
   const fetchLiquorItems = async () => {
     try {
@@ -46,20 +58,6 @@ const LiquorManager = () => {
 
   useEffect(() => {
     fetchLiquorItems();
-    const handleResize = () => {
-      if (window.innerWidth < 640) {
-        setItemsPerView(1);
-      } else if (window.innerWidth < 1024) {
-        setItemsPerView(2);
-      } else if (window.innerWidth < 1280) {
-        setItemsPerView(3);
-      } else {
-        setItemsPerView(4);
-      }
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const handleEdit = (item) => {
@@ -196,73 +194,65 @@ const LiquorManager = () => {
   );
 
   // Reusable carousel section component
-  const renderCarouselSection = (title, items, index, setIndex) => {
-    const GAP = 16;
-    const cardWidth = `calc((100% - ${GAP * (itemsPerView - 1)}px) / ${itemsPerView})`;
-    const visibleItems = items.slice(index, index + itemsPerView);
-    const canGoBack = index > 0;
-    const canGoNext = index + itemsPerView < items.length;
-
+  const renderCarouselSection = (title, items, sliderRef) => {
     return (
       <div className="mb-12">
         <h3 className="text-2xl font-bold text-neutral-900 mb-6">{title}</h3>
-        <div className="relative">
-          {canGoBack && (
+
+        {items.length > 0 ? (
+          <div className="relative">
+            {/* Prev Button — desktop only */}
             <button
-              onClick={() => setIndex(Math.max(0, index - itemsPerView))}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
+              onClick={() => scrollSection(sliderRef, -1)}
+              aria-label="Scroll left"
+              className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
             >
-              <ChevronLeft className="w-6 h-6 text-neutral-900" />
+              <ChevronLeft size={18} strokeWidth={2.5} />
             </button>
-          )}
 
-          <div
-            key={index}
-            className="flex gap-4"
-            style={{ animation: "fadeIn 0.25s ease" }}
-          >
-            {visibleItems.map((item) => (
-              <div
-                key={item._id}
-                className="shrink-0"
-                style={{ width: cardWidth }}
-              >
-                {renderCarouselCard(item)}
-              </div>
-            ))}
-          </div>
-
-          {canGoNext && (
-            <button
-              onClick={() =>
-                setIndex(
-                  Math.min(items.length - itemsPerView, index + itemsPerView),
-                )
-              }
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-colors"
+            {/* Scroll container */}
+            <div
+              ref={sliderRef}
+              className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-1"
             >
-              <ChevronRight className="w-6 h-6 text-neutral-900" />
-            </button>
-          )}
-
-          {items.length > itemsPerView && (
-            <div className="flex justify-center gap-1.5 mt-4">
-              {Array.from({
-                length: Math.ceil(items.length / itemsPerView),
-              }).map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setIndex(i * itemsPerView)}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    Math.floor(index / itemsPerView) === i
-                      ? "bg-amber-500"
-                      : "bg-gray-300 hover:bg-gray-400"
-                  }`}
-                />
+              {items.map((item) => (
+                <div
+                  key={item._id}
+                  data-slider-card
+                  className="w-full shrink-0 snap-start md:w-64"
+                >
+                  {renderCarouselCard(item)}
+                </div>
               ))}
             </div>
-          )}
-        </div>
+
+            {/* Next Button — desktop only */}
+            <button
+              onClick={() => scrollSection(sliderRef, 1)}
+              aria-label="Scroll right"
+              className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
+            >
+              <ChevronRight size={18} strokeWidth={2.5} />
+            </button>
+
+            {/* Mobile swipe hint */}
+            <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
+              ← Swipe to browse ←
+            </p>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center gap-2 py-10 px-6 bg-gray-50 border border-gray-200 rounded-2xl text-center">
+            <div className="w-11 h-11 rounded-xl bg-white border border-gray-200 shadow-sm flex items-center justify-center mb-1">
+              <PackageX size={22} className="text-gray-400" strokeWidth={1.5} />
+            </div>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+              No {title} Available
+            </p>
+            <p className="text-[11px] text-gray-400">
+              No items found in this section
+            </p>
+          </div>
+        )}
       </div>
     );
   };
@@ -294,14 +284,15 @@ const LiquorManager = () => {
 
       {/* Category Sections with Carousel */}
       <div className="bg-white rounded-xl p-6 shadow-sm">
-        {renderCarouselSection("Beer", beerDrinks, beerIndex, setBeerIndex)}
-        {renderCarouselSection(
-          "Others",
-          otherDrinks,
-          othersIndex,
-          setOthersIndex,
-        )}
+        {renderCarouselSection("Beer", beerDrinks, beerSliderRef)}
+        {renderCarouselSection("Others", otherDrinks, othersSliderRef)}
       </div>
+
+      <LiquorInventory
+        liquorItems={liquorItems}
+        fetchLiquorItems={fetchLiquorItems}
+        toogleavailability={handleToggleAvailability}
+      />
 
       {/* Form Modal */}
       {isFormOpen && (
@@ -318,12 +309,7 @@ const LiquorManager = () => {
         isOpen={isDetailsOpen}
         onClose={() => setIsDetailsOpen(false)}
       />
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(6px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
+
       <ConfirmDialog
         isOpen={confirmDialog.isOpen}
         type={confirmDialog.type}

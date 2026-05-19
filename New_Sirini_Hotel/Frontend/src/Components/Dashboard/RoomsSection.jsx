@@ -9,6 +9,7 @@ import {
   CalendarDays,
   BadgeDollarSign,
   Trash2,
+  Flag,
 } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -23,6 +24,9 @@ const RoomsSection = () => {
   const fetchUserSpecificRooms = useCallback(async () => {
     try {
       setLoading(true);
+      // First update overdue bookings
+      await axios.put(`${VITE_API_URL}/api/rooms/updateoverduebookings`);
+
       const token = localStorage.getItem("token");
       const response = await axios.get(
         `${VITE_API_URL}/api/rooms/viewspecificuserbookings`,
@@ -88,6 +92,8 @@ const RoomsSection = () => {
         r.status?.toLowerCase() === "cancelled" ||
         r.status?.toLowerCase() === "canceled",
     ).length,
+    overdue: allRooms.filter((r) => r.status?.toLowerCase() === "overdue")
+      .length,
   };
 
   const filteredRooms = allRooms.filter((room) => {
@@ -96,6 +102,7 @@ const RoomsSection = () => {
     if (activeTab === "Approved") return s === "confirmed" || s === "approved";
     if (activeTab === "Completed") return s === "completed";
     if (activeTab === "Cancelled") return s === "cancelled" || s === "canceled";
+    if (activeTab === "Overdue") return s === "overdue";
     return true;
   });
 
@@ -150,6 +157,13 @@ const RoomsSection = () => {
             count={counts.cancelled}
             icon={<XCircle size={13} />}
           />
+          <TabBtn
+            active={activeTab === "Overdue"}
+            onClick={() => setActiveTab("Overdue")}
+            label="Overdue"
+            count={counts.overdue}
+            icon={<Flag size={13} />}
+          />
         </div>
       </div>
 
@@ -189,12 +203,16 @@ const RoomsSection = () => {
                         {room.roomNumber}
                       </p>
                       {room.timeSlot && (
-                        <span className={`inline-block mt-1.5 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-md ${
-                          room.timeSlot === "day" 
-                            ? "bg-blue-50 text-blue-500 border border-blue-100" 
-                            : "bg-purple-50 text-purple-500 border border-purple-100"
-                        }`}>
-                          {room.timeSlot === "day" ? "Mid Day Stay" : "Overnight Stay"}
+                        <span
+                          className={`inline-block mt-1.5 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-md ${
+                            room.timeSlot === "day"
+                              ? "bg-blue-50 text-blue-500 border border-blue-100"
+                              : "bg-purple-50 text-purple-500 border border-purple-100"
+                          }`}
+                        >
+                          {room.timeSlot === "day"
+                            ? "Mid Day Stay"
+                            : "Overnight Stay"}
                         </span>
                       )}
                     </div>
@@ -225,10 +243,13 @@ const RoomsSection = () => {
                         Check Out
                       </p>
                       <p className="text-xs font-bold text-gray-800">
-                         {room.timeSlot === "day" 
-                          ? new Date(room.checkInDate).toLocaleDateString("en-GB")
-                          : new Date(room.checkOutDate).toLocaleDateString("en-GB")
-                        }
+                        {room.timeSlot === "day"
+                          ? new Date(room.checkInDate).toLocaleDateString(
+                              "en-GB",
+                            )
+                          : new Date(room.checkOutDate).toLocaleDateString(
+                              "en-GB",
+                            )}
                       </p>
                     </div>
                     <CalendarDays

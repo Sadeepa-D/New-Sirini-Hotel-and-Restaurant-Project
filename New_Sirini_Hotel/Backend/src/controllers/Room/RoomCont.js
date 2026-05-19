@@ -1,10 +1,9 @@
 const RoomModel = require("../../models/Rooms/RoomModel");
 const cloudinary = require("cloudinary");
 
-// ── 1. Create New Room ──
 const createRoom = async (req, res) => {
   try {
-    const {
+    let {
       roomNumber,
       roomType,
       price,
@@ -14,9 +13,18 @@ const createRoom = async (req, res) => {
       status,
       description,
       condition,
+      facilities,
     } = req.body;
 
-    //check if all required fields are provided
+    // Parse facilities if it's a JSON string
+    if (typeof facilities === "string") {
+      try {
+        facilities = JSON.parse(facilities);
+      } catch (e) {
+        facilities = [];
+      }
+    }
+
     if (!roomNumber || !roomType || !price || !bedType || !capacity) {
       return res
         .status(400)
@@ -41,6 +49,7 @@ const createRoom = async (req, res) => {
       description,
       condition: condition || "Fan",
       imagePublicId,
+      facilities: facilities || [],
       availability: true,
     });
 
@@ -53,7 +62,6 @@ const createRoom = async (req, res) => {
   }
 };
 
-// ── 2. Get All Rooms ──
 const getAllRooms = async (req, res) => {
   try {
     const rooms = await RoomModel.find().sort({ createdAt: -1 });
@@ -68,7 +76,6 @@ const getAllRooms = async (req, res) => {
   }
 };
 
-// ── 3. Update Room ──
 const updateRoom = async (req, res) => {
   try {
     const { id } = req.params;
@@ -76,7 +83,16 @@ const updateRoom = async (req, res) => {
       return res.status(400).json({ message: "Room ID is required" });
     }
 
-    const updates = req.body;
+    let updates = req.body;
+
+    
+    if (updates.facilities && typeof updates.facilities === "string") {
+      try {
+        updates.facilities = JSON.parse(updates.facilities);
+      } catch (e) {
+        updates.facilities = [];
+      }
+    }
 
     const existingRoom = await RoomModel.findById(id);
     if (!existingRoom) {
@@ -108,7 +124,6 @@ const updateRoom = async (req, res) => {
   }
 };
 
-// ── 4. Delete Room ──
 const deleteRoom = async (req, res) => {
   try {
     const { id } = req.params;
@@ -124,7 +139,6 @@ const deleteRoom = async (req, res) => {
         await cloudinary.v2.uploader.destroy(room.imagePublicId);
       } catch (cloudinaryError) {
         console.error("Error deleting image from Cloudinary:", cloudinaryError);
-        // Continue with database deletion even if Cloudinary deletion fails
       }
     }
     await RoomModel.findByIdAndDelete(id);

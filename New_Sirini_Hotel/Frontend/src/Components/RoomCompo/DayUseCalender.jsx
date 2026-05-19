@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, X, Minus, Plus } from "lucide-react";
 import axios from "axios";
 
-// Add N days (pure UTC, no timezone issues)
+
 const addDays = (dateStr, n) => {
   const [y, m, d] = dateStr.split("-").map(Number);
   const next = new Date(Date.UTC(y, m - 1, d + n));
@@ -18,7 +18,7 @@ const DayUseCalender = ({
   onBack,
   roomNumber,
   pkg,
-  timeSlot, // "day" | "fullday"
+  timeSlot, 
   numberOfDays,
   onDaysChange,
   dayBasePrice,
@@ -26,9 +26,9 @@ const DayUseCalender = ({
 }) => {
   const VITE_URL = import.meta.env.VITE_API_URL;
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [activeBookings, setActiveBookings] = useState([]); // store full bookings
+  const [activeBookings, setActiveBookings] = useState([]); 
 
-  // Fetch ALL bookings for this room
+  
   useEffect(() => {
     const fetchBlockedDates = async () => {
       try {
@@ -56,7 +56,7 @@ const DayUseCalender = ({
   const toDateStr = (y, m, d) =>
     `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 
-  // Build the range of dates currently highlighted (for fullday range display)
+  
   const buildRange = () => {
     if (!selectedDate || !selectedCheckOut || timeSlot !== "fullday")
       return new Set();
@@ -103,20 +103,18 @@ const DayUseCalender = ({
       if (isConflict(start, end)) return "blocked";
     } else {
       if (!selectedDate) {
-        // Checking if we can check-in on this date.
-        // Minimum stay is 1 night: [check-in 4 PM, next day 10 AM]
+        
         const start = baseTime + 16 * 3600000;
-        const end = baseTime + 24 * 3600000 + 10 * 3600000; // next day 10 AM
+        const end = baseTime + 24 * 3600000 + 10 * 3600000; 
         if (isConflict(start, end)) return "blocked";
       } else {
         if (dateStr <= selectedDate) {
-          // Evaluated as a potential new check-in date
+          
           const start = baseTime + 16 * 3600000;
           const end = baseTime + 24 * 3600000 + 10 * 3600000;
           if (isConflict(start, end)) return "blocked";
         } else {
-          // dateStr is a future date. Can it be a check-out date?
-          // Proposed range: [selectedDate 4 PM, dateStr 10 AM]
+         
           const start = parseBaseTime(selectedDate) + 16 * 3600000;
           const end = baseTime + 10 * 3600000;
           if (isConflict(start, end)) return "span-blocked";
@@ -127,7 +125,7 @@ const DayUseCalender = ({
     if (dateStr === selectedDate) return "selected";
     if (timeSlot === "fullday" && selectedRange.has(dateStr)) return "range";
 
-    // Show day bookings on full day calendar as a special available state
+   
     if (timeSlot === "fullday") {
       const hasDayBooking = activeBookings.some(
         (b) => b.timeSlot === "day" && b.checkInDate.split("T")[0] === dateStr,
@@ -135,7 +133,7 @@ const DayUseCalender = ({
       if (hasDayBooking) return "has-day-booking";
     }
 
-    // Show full day check-in/check-out dates on day calendar as a special available state
+    
     if (timeSlot === "day") {
       const hasFullDayEdge = activeBookings.some(
         (b) =>
@@ -279,7 +277,7 @@ const DayUseCalender = ({
         })}
       </div>
 
-      {/* Legend */}
+     
       <div className="flex justify-center gap-x-3 gap-y-1 mb-3 pt-2 border-t border-gray-50 flex-wrap">
         <div className="flex items-center gap-1">
           <div className="w-1.5 h-1.5 rounded-full bg-green-500" />

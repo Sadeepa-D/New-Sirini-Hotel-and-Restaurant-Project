@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   CheckCircle2,
   ChevronRight,
@@ -13,8 +13,7 @@ export default function ReceptionHallPackages() {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [index, setIndex] = useState(0);
-  const [itemsPerView, setItemsPerView] = useState(3);
+
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [showCateringHub, setShowCateringHub] = useState(false);
 
@@ -37,24 +36,20 @@ export default function ReceptionHallPackages() {
     }
   };
 
+  const sliderRef = useRef(null);
+  const scrollSlider = (direction) => {
+    if (!sliderRef.current) return;
+    const cardWidth =
+      sliderRef.current.querySelector("[data-slider-card]")?.offsetWidth || 320;
+    sliderRef.current.scrollBy({
+      left: direction * (cardWidth + 16),
+      behavior: "smooth",
+    });
+  };
+
   useEffect(() => {
     fetchoccasionpackages();
-
-    const handleResize = () => {
-      if (window.innerWidth < 640) setItemsPerView(1);
-      else if (window.innerWidth < 1024) setItemsPerView(2);
-      else setItemsPerView(3);
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  // Sync index on resize
-  useEffect(() => {
-    setIndex(0);
-  }, [itemsPerView]);
 
   if (loading)
     return (
@@ -67,9 +62,6 @@ export default function ReceptionHallPackages() {
 
   if (error)
     return <p className="text-center py-16 text-red-400 text-sm">{error}</p>;
-
-  // Calculate visible slice
-  const visiblePackages = packages.slice(index, index + itemsPerView);
 
   return (
     <section className="bg-gray-50 py-5 px-4 sm:px-6 lg:px-8">
@@ -97,7 +89,8 @@ export default function ReceptionHallPackages() {
               Special Offer on Hall Charges
             </h4>
             <p className="text-xs text-amber-700">
-              Book for <b>100+ guests</b> and get the <b>Reception Hall for FREE!</b>
+              Book for <b>100+ guests</b> and get the{" "}
+              <b>Reception Hall for FREE!</b>
               <br />
               <span className="italic text-[10px]">
                 Less than 100 guests will incur a additional hall fee
@@ -113,39 +106,26 @@ export default function ReceptionHallPackages() {
             No packages currently available.
           </p>
         ) : (
-          <>
-            {/* Carousel Navigation Arrows - MOVED OUTSIDE MAP */}
-            {index > 0 && (
-              <button
-                onClick={() => setIndex((prev) => Math.max(0, prev - 1))}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white rounded-full shadow-xl flex items-center justify-center hover:bg-amber-500 hover:text-white transition-all border border-gray-100"
-              >
-                <ChevronLeft size={24} />
-              </button>
-            )}
-
-            {index + itemsPerView < packages.length && (
-              <button
-                onClick={() =>
-                  setIndex((prev) =>
-                    Math.min(packages.length - itemsPerView, prev + 1),
-                  )
-                }
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white rounded-full shadow-xl flex items-center justify-center hover:bg-amber-500 hover:text-white transition-all border border-gray-100"
-              >
-                <ChevronRight size={24} />
-              </button>
-            )}
-
-            {/* Grid Container */}
-            <div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-              style={{ animation: "fadeIn 0.4s ease-out" }}
+          <div className="relative">
+            {/* Left arrow */}
+            <button
+              onClick={() => scrollSlider(-1)}
+              aria-label="Scroll left"
+              className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
             >
-              {visiblePackages.map((pkg) => (
+              <ChevronLeft size={18} strokeWidth={2.5} />
+            </button>
+
+            {/* Scroll container */}
+            <div
+              ref={sliderRef}
+              className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-1"
+            >
+              {packages.map((pkg) => (
                 <div
                   key={pkg._id}
-                  className="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 group flex flex-col relative min-h-96 sm:min-h-[450px]"
+                  data-slider-card
+                  className="w-full shrink-0 snap-start md:w-[calc(33.333%-11px)] bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 group flex flex-col relative min-h-96 sm:min-h-[450px]"
                 >
                   {/* Image Section */}
                   <div className="relative h-32 sm:h-40 md:h-48 overflow-hidden">
@@ -245,33 +225,23 @@ export default function ReceptionHallPackages() {
               ))}
             </div>
 
-            {/* Pagination Dots - MOVED OUTSIDE MAP */}
-            {packages.length > itemsPerView && (
-              <div className="flex justify-center gap-3 mt-12">
-                {Array.from({ length: packages.length - itemsPerView + 1 }).map(
-                  (_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setIndex(i)}
-                      className={`h-1.5 transition-all duration-300 rounded-full ${
-                        index === i
-                          ? "w-8 bg-amber-500"
-                          : "w-2 bg-gray-300 hover:bg-amber-300"
-                      }`}
-                    />
-                  ),
-                )}
-              </div>
-            )}
-          </>
+            {/* Right arrow */}
+            <button
+              onClick={() => scrollSlider(1)}
+              aria-label="Scroll right"
+              className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
+            >
+              <ChevronRight size={18} strokeWidth={2.5} />
+            </button>
+
+            {/* Mobile swipe hint */}
+            <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
+              ← Swipe to browse →
+            </p>
+          </div>
         )}
       </div>
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
+
       {showCateringHub && (
         <CateringSelectionHub
           onClose={() => setShowCateringHub(false)}

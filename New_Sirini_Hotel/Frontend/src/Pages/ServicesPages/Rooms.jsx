@@ -10,7 +10,17 @@ import Exploreindicator from "../../Components/Exploreindicator";
 import Calander from "../../Components/Calander";
 import toast from "react-hot-toast";
 import LoginMessage from "../../Components/LoginMessage";
-import { Bed, Users, Wind, Star, ArrowRight } from "lucide-react";
+import {
+  Bed,
+  Users,
+  Wind,
+  Star,
+  ArrowRight,
+  Wifi,
+  Droplets,
+  Monitor,
+  Refrigerator,
+} from "lucide-react";
 
 function Rooms() {
   const VITE_URL = import.meta.env.VITE_API_URL;
@@ -23,7 +33,7 @@ function Rooms() {
   const [bookedDates, setBookedDates] = useState([]);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  // --- Slide Show Logic ---
+  //Slide show in main room page
   const backgroundImages = [Room_1, Room_2, Room_3];
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
 
@@ -87,7 +97,7 @@ function Rooms() {
 
   return (
     <div className="bg-[#fafafa] min-h-screen font-sans">
-      {/* --- Hero Section with Slide Show --- */}
+      {/*Slide show*/}
       <header className="relative w-full h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4 bg-black">
         <div className="absolute inset-0 z-0">
           {backgroundImages.map((img, index) => (
@@ -107,7 +117,6 @@ function Rooms() {
           ))}
         </div>
 
-        {/* Content */}
         <div className="z-20 flex flex-col items-center gap-4 bg-white px-8 md:px-12 py-8 rounded-2xl border border-gray-200 shadow-lg">
           <h1
             className="text-5xl md:text-6xl font-serif italic text-black"
@@ -144,7 +153,6 @@ function Rooms() {
         </div>
       </header>
 
-      {/* --- Main Content --- */}
       <main className="max-w-7xl mx-auto py-16 px-6">
         <RoomPackageInfo />
         {loading ? (
@@ -152,20 +160,20 @@ function Rooms() {
             <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {roomList.map((room) => (
               <div
                 key={room._id}
                 className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:scale-[1.02] transition-all duration-500 border border-gray-100 flex flex-col h-full"
               >
                 {/* Image Section */}
-                <div className="relative h-64 overflow-hidden">
+                <div className="relative h-56 overflow-hidden">
                   <img
                     src={room.image}
                     alt={room.roomType}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
-                  {/* Dark Gradient Overlay */}
+                  {/* Dark Overlay in the image*/}
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60"></div>
 
                   <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full shadow-sm">
@@ -193,9 +201,8 @@ function Rooms() {
                   </div>
                 </div>
 
-                {/* Content Section */}
-                <div className="p-6 flex flex-col flex-grow">
-                  <div className="flex items-center gap-1 mb-2">
+                <div className="p-3 flex flex-col flex-grow">
+                  <div className="flex items-center gap-1 mb-1">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
@@ -204,15 +211,15 @@ function Rooms() {
                       />
                     ))}
                   </div>
-                  <h3 className="text-2xl font-serif italic text-gray-900 mb-3 group-hover:text-orange-600 transition-colors">
+                  <h3 className="text-lg font-serif italic text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">
                     {room.roomType} Room
                   </h3>
-                  <p className="text-gray-500 text-xs leading-relaxed mb-6 line-clamp-2">
+                  <p className="text-gray-500 text-xs leading-relaxed mb-2.5 line-clamp-2">
                     {room.description ||
                       "Elegant space designed for comfort and tranquility."}
                   </p>
 
-                  <div className="flex items-center gap-4 mb-8">
+                  <div className="flex items-center gap-3 mb-3">
                     <div className="flex items-center gap-1.5 text-gray-600">
                       <Bed size={14} className="text-orange-500" />
                       <span className="text-[11px] font-medium">
@@ -233,7 +240,52 @@ function Rooms() {
                     </div>
                   </div>
 
-                  <div className="mt-auto pt-5 border-t border-gray-50 flex flex-wrap items-center justify-between gap-y-4">
+                  {room.facilities && room.facilities.length > 0 && (
+                    <div className="mb-2 pb-2">
+                      <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2.5">
+                        Facilities
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {room.facilities.includes("WiFi") && (
+                          <div className="flex items-center gap-1 bg-blue-50 px-2.5 py-1.5 rounded-lg border border-blue-100">
+                            <Wifi size={12} className="text-blue-500" />
+                            <span className="text-[10px] font-medium text-blue-700">
+                              WiFi
+                            </span>
+                          </div>
+                        )}
+                        {room.facilities.includes("Hot Water") && (
+                          <div className="flex items-center gap-1 bg-red-50 px-2.5 py-1.5 rounded-lg border border-red-100">
+                            <Droplets size={12} className="text-red-500" />
+                            <span className="text-[10px] font-medium text-red-700">
+                              Hot Water
+                            </span>
+                          </div>
+                        )}
+                        {room.facilities.includes("TV") && (
+                          <div className="flex items-center gap-1 bg-purple-50 px-2.5 py-1.5 rounded-lg border border-purple-100">
+                            <Monitor size={12} className="text-purple-500" />
+                            <span className="text-[10px] font-medium text-purple-700">
+                              TV
+                            </span>
+                          </div>
+                        )}
+                        {room.facilities.includes("Mini Fridge") && (
+                          <div className="flex items-center gap-1 bg-green-50 px-2.5 py-1.5 rounded-lg border border-green-100">
+                            <Refrigerator
+                              size={12}
+                              className="text-green-500"
+                            />
+                            <span className="text-[10px] font-medium text-green-700">
+                              Mini Fridge
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap items-center justify-between gap-y-3">
                     <div className="flex items-center gap-2">
                       <div
                         className={`w-1.5 h-1.5 rounded-full ${room.status === "available" ? "bg-green-500 animate-pulse" : "bg-red-400"}`}
@@ -244,36 +296,35 @@ function Rooms() {
                         {room.status}
                       </span>
                     </div>
-                  <button
-  onClick={() => handleBookNow(room)}
-  disabled={room.status !== "available"}
-  className={`group relative flex items-center justify-center 
+                    <button
+                      onClick={() => handleBookNow(room)}
+                      disabled={room.status !== "available"}
+                      className={`group relative flex items-center justify-center 
     w-full sm:w-fit px-6 py-3 sm:py-2.5 
     rounded-full text-[11px] sm:text-[10px] font-black uppercase tracking-[0.15em] 
     transition-all duration-500 overflow-hidden ${
-    room.status === "available"
-      ? "bg-gray-900 text-white shadow-md hover:shadow-orange-500/20 hover:-translate-y-0.5 active:scale-95"
-      : "bg-gray-50 text-gray-300 cursor-not-allowed border border-gray-100"
-  }`}
->
-  {/* Hover Glow Effect */}
-  {room.status === "available" && (
-    <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-  )}
+      room.status === "available"
+        ? "bg-gray-900 text-white shadow-md hover:shadow-orange-500/20 hover:-translate-y-0.5 active:scale-95"
+        : "bg-gray-50 text-gray-300 cursor-not-allowed border border-gray-100"
+    }`}
+                    >
+                      {/* Hover Glow Effect */}
+                      {room.status === "available" && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      )}
 
-  <span className="relative z-10 flex items-center gap-2">
-    Book Now
-    <ArrowRight
-      size={12}
-      className="shrink-0 transition-all duration-500 group-hover:translate-x-0.5 group-hover:rotate-[-45deg]"
-    />
-  </span>
+                      <span className="relative z-10 flex items-center gap-2">
+                        Book Now
+                        <ArrowRight
+                          size={12}
+                          className="shrink-0 transition-all duration-500 group-hover:translate-x-0.5 group-hover:rotate-[-45deg]"
+                        />
+                      </span>
 
-  {/* Subtle Shine Effect */}
-  {room.status === "available" && (
-    <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-  )}
-</button>
+                      {room.status === "available" && (
+                        <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                      )}
+                    </button>
                   </div>
                 </div>
               </div>

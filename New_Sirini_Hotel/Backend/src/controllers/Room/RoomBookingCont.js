@@ -21,7 +21,6 @@ const createRoomBooking = async (req, res) => {
         .json({ error: "A valid time slot (day or fullday) is required." });
     }
 
-    // Parse date string (YYYY-MM-DD) as UTC midnight, not local timezone
     const parseUTC = (dateStr) => {
       const [y, m, d] = dateStr.split("-").map(Number);
       return new Date(Date.UTC(y, m - 1, d));
@@ -30,7 +29,6 @@ const createRoomBooking = async (req, res) => {
     const newIn = parseUTC(checkInDate);
     const newOut = parseUTC(checkOutDate);
 
-    // Calculate precise start and end times in milliseconds based on time slot
     const newStart =
       timeSlot === "day"
         ? newIn.getTime() + 12 * 3600000
@@ -286,6 +284,31 @@ const getUnavilableDatesForRoom = async (req, res) => {
   }
 };
 
+const updateOverdueBookings = async (req, res) => {
+  try {
+    // Get today's date at 00:00:00
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Mark as overdue if checkOutDate is BEFORE today (i.e., day has already passed)
+    // Example: If checkOutDate is May 14, it will be overdue on May 15 onwards
+    const result = await RoomBooking.updateMany(
+      {
+        checkOutDate: { $lt: today },
+        status: { $in: ["Confirmed", "Pending"] },
+      },
+      { status: "Overdue" },
+    );
+
+    res.status(200).json({
+      message: "Overdue bookings updated successfully",
+      updatedCount: result.modifiedCount,
+    });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createRoomBooking,
   deleteRoomBooking,
@@ -301,4 +324,5 @@ module.exports = {
   getCompletedRoomBookings,
   getspecificuserbookings,
   getUnavilableDatesForRoom,
+  updateOverdueBookings,
 };
