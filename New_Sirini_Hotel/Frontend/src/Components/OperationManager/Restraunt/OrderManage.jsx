@@ -277,12 +277,12 @@ const OrderManage = () => {
         </h2>
 
         {/* Tabs */}
-        <div className="flex gap-2 mt-4 flex-wrap">
+        <div className="flex gap-2 mt-4 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth">
           {["Pending", "Accepted", "Preparing", "Complete", "Deleted", "Overdue"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeTab === tab
+              className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors whitespace-nowrap ${activeTab === tab
                 ? tab === "Deleted"
                   ? "bg-red-100 text-red-600"
                   : tab === "Overdue"
@@ -323,21 +323,28 @@ const OrderManage = () => {
         </div>
 
         {/* Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mt-6">
-          {currentOrders.length > 0 ? (
-            currentOrders.map((order) => (
-              <HistoryCard key={order._id} order={order} />
-            ))
-          ) : (
-            <div className="col-span-full flex flex-col items-center justify-center py-20 bg-gray-50/50 rounded-[2rem] border border-dashed border-gray-200">
-              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-4 border border-gray-100">
-                <ClipboardList size={32} className="text-gray-300" />
-              </div>
-              <h3 className="text-lg font-bold text-gray-700 uppercase tracking-tight">No orders available</h3>
-              <p className="text-sm text-gray-400 font-medium mt-1">No items found in this section</p>
+        {currentOrders.length > 0 ? (
+          <div className="flex flex-col">
+            <div className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 mt-6">
+              {currentOrders.map((order) => (
+                <div key={order._id} className="w-[90%] shrink-0 snap-start md:w-auto md:shrink md:snap-none">
+                  <HistoryCard order={order} />
+                </div>
+              ))}
             </div>
-          )}
-        </div>
+            <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
+              ← Swipe to browse →
+            </p>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-20 bg-gray-50/50 rounded-[2rem] border border-dashed border-gray-200 mt-6">
+            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-4 border border-gray-100">
+              <ClipboardList size={32} className="text-gray-300" />
+            </div>
+            <h3 className="text-lg font-bold text-gray-700 uppercase tracking-tight">No orders available</h3>
+            <p className="text-sm text-gray-400 font-medium mt-1">No items found in this section</p>
+          </div>
+        )}
 
         {/* Pagination */}
         {totalPages > 1 && (

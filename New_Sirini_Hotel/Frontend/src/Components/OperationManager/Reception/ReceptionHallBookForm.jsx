@@ -15,7 +15,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 
 const eventTypes = ["Wedding", "Birthday", "Corporate", "Anniversary", "Other"];
-const eventTimes = ["Day (9am - 4pm)", "Night (7pm - 1pm)"];
+const eventTimes = ["Day (9am - 4pm)", "Night (7pm - 1am)"];
 
 const ReceptionHallBookForm = ({
   fetchBookings,
