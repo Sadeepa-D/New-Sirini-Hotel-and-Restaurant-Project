@@ -197,7 +197,6 @@ const getSpecificUserReceptionAppointments = async (req, res) => {
   }
 };
 
-
 module.exports = {
   createReceptionAppointment,
   getReceptionAppointments,
