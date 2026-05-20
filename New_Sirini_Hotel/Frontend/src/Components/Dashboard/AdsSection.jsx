@@ -18,6 +18,7 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
   const [itemsPerView, setItemsPerView] = useState(
     typeof window !== "undefined" && window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : 3
   );
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" ? window.innerWidth < 768 : false);
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -56,6 +57,7 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
       setItemsPerView(
         window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : 3,
       );
+      setIsMobile(window.innerWidth < 768);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -148,7 +150,7 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
       ) : (
         <div className="relative mt-4">
           {/* Left arrow */}
-          {canGoBack && (
+          {!isMobile && canGoBack && (
             <button
               onClick={() => setIndex((i) => Math.max(0, i - itemsPerView))}
               className="absolute left-0 sm:-left-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-all"
@@ -160,11 +162,15 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
           {/* Visible cards */}
           <div
             key={index}
-            className="flex gap-4"
-            style={{ animation: "fadeIn 0.25s ease" }}
+            className={`flex gap-4 ${isMobile ? "overflow-x-auto snap-x snap-mandatory scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6" : ""}`}
+            style={isMobile ? {} : { animation: "fadeIn 0.25s ease" }}
           >
-            {visibleItems.map((ad) => (
-              <div key={ad._id} className="shrink-0" style={{ width: cardWidth }}>
+            {(isMobile ? ads : visibleItems).map((ad) => (
+              <div
+                key={ad._id}
+                className={`shrink-0 ${isMobile ? "snap-start" : ""}`}
+                style={{ width: isMobile ? "90%" : cardWidth }}
+              >
                 <AdvertisementCard
                   ad={ad}
                   onEdit={handleEdit}
@@ -177,7 +183,7 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
           </div>
 
           {/* Right arrow */}
-          {canGoNext && (
+          {!isMobile && canGoNext && (
             <button
               onClick={() =>
                 setIndex((i) =>
@@ -191,7 +197,7 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
           )}
 
           {/* Page dots */}
-          {ads.length > itemsPerView && (
+          {!isMobile && ads.length > itemsPerView && (
             <div className="flex justify-center gap-1.5 mt-6">
               {Array.from({
                 length: Math.ceil(ads.length / itemsPerView),
@@ -206,6 +212,12 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
                 />
               ))}
             </div>
+          )}
+
+          {isMobile && (
+            <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
+              ← Swipe to browse →
+            </p>
           )}
         </div>
       )}

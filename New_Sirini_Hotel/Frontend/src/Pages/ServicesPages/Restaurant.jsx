@@ -243,15 +243,24 @@ export default function Restaurant() {
         {/* Food Items Grid Section */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-[400px]">
           {filteredItems.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12">
-              {filteredItems.map((item) => (
-                <RestaurantCard
-                  key={item.id}
-                  item={item}
-                  itemsPerView={1}
-                  onOrder={handleAddToCart}
-                />
-              ))}
+            <div className="flex flex-col">
+              <div className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-x-6 md:gap-y-12 md:overflow-visible md:pb-0">
+                {filteredItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="w-[85%] shrink-0 snap-start md:w-auto md:shrink md:snap-none"
+                  >
+                    <RestaurantCard
+                      item={item}
+                      itemsPerView={1}
+                      onOrder={handleAddToCart}
+                    />
+                  </div>
+                ))}
+              </div>
+              <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
+                ← Swipe to browse →
+              </p>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-20 text-center">

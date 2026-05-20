@@ -56,10 +56,8 @@ const Calander = ({ BookedDates = [], loading = false }) => {
 
     if (dayBookings.length === 0) return null;
 
-    const hasDaySlot = dayBookings.some((b) => b.time === "Day (9am - 4pm)");
-    const hasNightSlot = dayBookings.some(
-      (b) => b.time === "Night (7pm - 1pm)",
-    );
+    const hasDaySlot = dayBookings.some((b) => b.time?.toLowerCase().includes("day"));
+    const hasNightSlot = dayBookings.some((b) => b.time?.toLowerCase().includes("night"));
 
     if (hasDaySlot && hasNightSlot) return "Full";
     if (hasDaySlot) return "DayOnly";

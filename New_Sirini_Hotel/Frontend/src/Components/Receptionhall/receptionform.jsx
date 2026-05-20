@@ -48,6 +48,7 @@ export default function BookingForm({ editData = null, onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const loadingtoast= toast.loading(editData ? "Updating booking..." : "Submitting booking...");
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -74,6 +75,7 @@ export default function BookingForm({ editData = null, onSuccess }) {
             headers: { Authorization: `Bearer ${token}` },
           },
         );
+        toast.dismiss(loadingtoast);
         toast.success("Booking updated successfully!");
         if (onSuccess) onSuccess(); // Closes the modal in the dashboard
       } else {
@@ -87,6 +89,7 @@ export default function BookingForm({ editData = null, onSuccess }) {
         );
 
         if (response.status === 201) {
+          toast.dismiss(loadingtoast);
           toast.success(
             "Booking request submitted successfully! We will contact you soon.",
           );

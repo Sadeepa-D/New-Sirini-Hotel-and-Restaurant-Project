@@ -1,4 +1,5 @@
 const RoomBooking = require("../../models/Rooms/RoomBookModel");
+const { sendRoomBookingEmail } = require("../EmailCont");
 
 const createRoomBooking = async (req, res) => {
   try {
@@ -78,6 +79,20 @@ const createRoomBooking = async (req, res) => {
     });
 
     await newRoomBooking.save();
+
+    await sendRoomBookingEmail({
+      name,
+      email,
+      phone,
+      checkInDate: newIn,
+      checkOutDate: newOut,
+      roomNumber,
+      numberOfGuests,
+      totalAmount,
+      timeSlot,
+      status: "Pending"
+    });
+
     res.status(201).json(newRoomBooking);
   } catch (error) {
     console.error("Booking Error:", error);
@@ -284,6 +299,31 @@ const getUnavilableDatesForRoom = async (req, res) => {
   }
 };
 
+const updateOverdueBookings = async (req, res) => {
+  try {
+    // Get today's date at 00:00:00
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Mark as overdue if checkOutDate is BEFORE today (i.e., day has already passed)
+    // Example: If checkOutDate is May 14, it will be overdue on May 15 onwards
+    const result = await RoomBooking.updateMany(
+      {
+        checkOutDate: { $lt: today },
+        status: { $in: ["Confirmed", "Pending"] },
+      },
+      { status: "Overdue" },
+    );
+
+    res.status(200).json({
+      message: "Overdue bookings updated successfully",
+      updatedCount: result.modifiedCount,
+    });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createRoomBooking,
   deleteRoomBooking,
@@ -299,4 +339,5 @@ module.exports = {
   getCompletedRoomBookings,
   getspecificuserbookings,
   getUnavilableDatesForRoom,
+  updateOverdueBookings,
 };

@@ -136,7 +136,15 @@ function Header() {
     <header className="bg-black/95 backdrop-blur-md sticky top-0 z-50 border-b border-white/5">
       <div className="w-full px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
         {/* ── Logo ── */}
-        <div className="flex items-center gap-3 shrink-0">
+        <button
+          onClick={() => {
+            navigate("/");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            closeMenu();
+          }}
+          className="flex items-center gap-3 shrink-0 hover:opacity-80 transition-opacity duration-200 cursor-pointer"
+          title="Go to homepage"
+        >
           <img
             src={logo}
             alt="New Sirini Hotel Logo"
@@ -145,7 +153,7 @@ function Header() {
           <span className="text-white font-serif text-lg italic hidden sm:block tracking-wide">
             New Sirini Hotel
           </span>
-        </div>
+        </button>
 
         {/* ── Desktop Nav ── */}
         <nav className="hidden md:flex items-center gap-1">

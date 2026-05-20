@@ -2,13 +2,18 @@ const express = require("express");
 const router = express.Router();
 const FoodOrderCont = require("../controllers/Restraunt/FoodOrderCont");
 const FoodItemsCont = require("../controllers/Restraunt/FoodItemsCont");
+const RestrauntAnlysCont = require("../controllers/Restraunt/RestrauntAnlys");
 const upload = require("../config/CloudinaryConfig");
 const authMiddleware = require("../middleware/AuthMiddleware");
 
-router.post("/placeorder", authMiddleware,FoodOrderCont.createFoodOrder);
+router.post("/placeorder", authMiddleware, FoodOrderCont.createFoodOrder);
 router.get("/vieworders", FoodOrderCont.getFoodOrders);
 router.put("/updateorder/:id", FoodOrderCont.editfoodOrder);
-router.delete("/deleteorder/:id", authMiddleware, FoodOrderCont.deleteFoodOrder);
+router.delete(
+  "/deleteorder/:id",
+  authMiddleware,
+  FoodOrderCont.deleteFoodOrder,
+);
 router.put(
   "/updateorderstatus/complete/:id",
   FoodOrderCont.updateFoodOrderStatusTOComplete,
@@ -40,7 +45,8 @@ router.put(
 router.put("/toggleavailability/:id", FoodItemsCont.toggleFoodItemAvailability);
 router.delete("/deletefooditem/:id", FoodItemsCont.deleteFoodItem);
 
-
 router.get("/orders/userspecific", authMiddleware, FoodOrderCont.getUserOrders);
+router.post("/orders/stats", RestrauntAnlysCont.getRestaurantOrderStats);
+router.get("/fooditems/status", RestrauntAnlysCont.getrestrauntfooditemsstatus);
 
 module.exports = router;

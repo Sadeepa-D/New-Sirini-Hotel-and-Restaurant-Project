@@ -1,21 +1,22 @@
 const FoodOrder = require("../../models/Restraunt/FoodItemBookModel");
+const { sendRestaurantOrderEmail } = require("../EmailCont");
 
 const getCurrentSLTime = () => {
   const now = new Date();
-  const slDate = new Intl.DateTimeFormat('en-CA', { 
-    timeZone: 'Asia/Colombo', 
-    year: 'numeric', 
-    month: '2-digit', 
-    day: '2-digit' 
+  const slDate = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Colombo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
   }).format(now);
-  
-  const slTime = new Intl.DateTimeFormat('en-GB', { 
-    timeZone: 'Asia/Colombo', 
-    hour: '2-digit', 
-    minute: '2-digit', 
-    hour12: false 
+
+  const slTime = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Colombo",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
   }).format(now);
-  
+
   return { slDate, slTime };
 };
 
@@ -35,20 +36,47 @@ const GenarateFoodOrderCode = async () => {
 const createFoodOrder = async (req, res) => {
   try {
     const userId = req.userData.id;
-    const { foodName, fullName, email, quantity, phoneNumber, pickupDate, pickupTime, Price, portion } =
-      req.body;
+    const {
+      foodName,
+      fullName,
+      email,
+      quantity,
+      phoneNumber,
+      pickupDate,
+      pickupTime,
+      Price,
+      portion,
+    } = req.body;
 
-    if (!fullName || !email || !quantity || !phoneNumber || !pickupDate || !pickupTime || !portion) {
+    if (
+      !fullName ||
+      !email ||
+      !quantity ||
+      !phoneNumber ||
+      !pickupDate ||
+      !pickupTime ||
+      !portion
+    ) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
     // Sri Lanka Time Validation
     const { slDate, slTime } = getCurrentSLTime();
     if (pickupDate < slDate) {
-      return res.status(400).json({ message: "Selected date is in the past. Please choose today or a future date." });
+      return res
+        .status(400)
+        .json({
+          message:
+            "Selected date is in the past. Please choose today or a future date.",
+        });
     }
     if (pickupDate === slDate && pickupTime <= slTime) {
-      return res.status(400).json({ message: "Selected time has already passed for today. Please choose a future time." });
+      return res
+        .status(400)
+        .json({
+          message:
+            "Selected time has already passed for today. Please choose a future time.",
+        });
     }
 
     const newFoodOrder = new FoodOrder({
@@ -66,6 +94,20 @@ const createFoodOrder = async (req, res) => {
       portion,
     });
     const savedOrder = await newFoodOrder.save();
+
+    await sendRestaurantOrderEmail({
+      email,
+      fullName,
+      savedOrder,
+      foodName,
+      portion,
+      quantity,
+      Price,
+      pickupDate,
+      pickupTime,
+      phoneNumber,
+    });
+
     res.status(201).json(savedOrder);
   } catch (error) {
     res.status(500).json({ message: "Failed to create food order", error });
@@ -85,22 +127,48 @@ const getFoodOrders = async (req, res) => {
 const editfoodOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const { fullName, email, quantity, phoneNumber, pickupDate, pickupTime, Price, portion } =
-      req.body;
+    const {
+      fullName,
+      email,
+      quantity,
+      phoneNumber,
+      pickupDate,
+      pickupTime,
+      Price,
+      portion,
+    } = req.body;
     if (!id) {
       return res.status(400).json({ message: "Food order ID is required" });
     }
-    if (!fullName || !email || !quantity || !phoneNumber || !pickupDate || !pickupTime || !portion) {
+    if (
+      !fullName ||
+      !email ||
+      !quantity ||
+      !phoneNumber ||
+      !pickupDate ||
+      !pickupTime ||
+      !portion
+    ) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
     // Sri Lanka Time Validation
     const { slDate, slTime } = getCurrentSLTime();
     if (pickupDate < slDate) {
-      return res.status(400).json({ message: "Selected date is in the past. Please choose today or a future date." });
+      return res
+        .status(400)
+        .json({
+          message:
+            "Selected date is in the past. Please choose today or a future date.",
+        });
     }
     if (pickupDate === slDate && pickupTime <= slTime) {
-      return res.status(400).json({ message: "Selected time has already passed for today. Please choose a future time." });
+      return res
+        .status(400)
+        .json({
+          message:
+            "Selected time has already passed for today. Please choose a future time.",
+        });
     }
     const updatedOrder = await FoodOrder.findByIdAndUpdate(
       id,
@@ -140,7 +208,7 @@ const deleteFoodOrder = async (req, res) => {
 
     order.status = "delete";
     await order.save();
-    
+
     res.status(200).json({ message: "Food order marked as deleted" });
   } catch (error) {
     res.status(500).json({ message: "Failed to delete food order", error });
@@ -185,7 +253,9 @@ const updateFoodOrderStatusToAccepted = async (req, res) => {
     }
     res.status(200).json(updatedOrder);
   } catch (error) {
-    res.status(500).json({ message: "Failed to update food order status", error });
+    res
+      .status(500)
+      .json({ message: "Failed to update food order status", error });
   }
 };
 
@@ -205,7 +275,9 @@ const updateFoodOrderStatusToPreparing = async (req, res) => {
     }
     res.status(200).json(updatedOrder);
   } catch (error) {
-    res.status(500).json({ message: "Failed to update food order status", error });
+    res
+      .status(500)
+      .json({ message: "Failed to update food order status", error });
   }
 };
 
@@ -213,9 +285,7 @@ const getCompleteFoodOrders = async (req, res) => {
   try {
     const completeOrders = await FoodOrder.find({ status: "Complete" });
     if (completeOrders.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No complete food orders found" });
+      return res.status(404).json({ message: "No complete food orders found" });
     }
     res.status(200).json(completeOrders);
   } catch (error) {
@@ -230,7 +300,9 @@ const getAcceptedFoodOrders = async (req, res) => {
     const acceptedOrders = await FoodOrder.find({ status: "Accepted" });
     res.status(200).json(acceptedOrders);
   } catch (error) {
-    res.status(500).json({ message: "Failed to retrieve accepted orders", error });
+    res
+      .status(500)
+      .json({ message: "Failed to retrieve accepted orders", error });
   }
 };
 
@@ -239,7 +311,9 @@ const getPreparingFoodOrders = async (req, res) => {
     const preparingOrders = await FoodOrder.find({ status: "Preparing" });
     res.status(200).json(preparingOrders);
   } catch (error) {
-    res.status(500).json({ message: "Failed to retrieve preparing orders", error });
+    res
+      .status(500)
+      .json({ message: "Failed to retrieve preparing orders", error });
   }
 };
 
@@ -247,9 +321,7 @@ const getPendingFoodOrders = async (req, res) => {
   try {
     const pendingOrders = await FoodOrder.find({ status: "Pending" });
     if (pendingOrders.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No pending food orders found" });
+      return res.status(404).json({ message: "No pending food orders found" });
     }
     res.status(200).json(pendingOrders);
   } catch (error) {
@@ -262,8 +334,7 @@ const getUserOrders = async (req, res) => {
   try {
     const userId = req.userData.id;
 
-    const orders = await FoodOrder.find({ userId })
-      .sort({ createdAt: -1 }); 
+    const orders = await FoodOrder.find({ userId }).sort({ createdAt: -1 });
 
     res.status(200).json(orders);
   } catch (error) {
