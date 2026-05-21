@@ -10,6 +10,7 @@ import Exploreindicator from "../../Components/Exploreindicator";
 import Calander from "../../Components/Calander";
 import toast from "react-hot-toast";
 import LoginMessage from "../../Components/LoginMessage";
+import RoomFullDetails from "../../Components/RoomCompo/RoomFullDetails";
 import {
   Bed,
   Users,
@@ -32,6 +33,8 @@ function Rooms() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [bookedDates, setBookedDates] = useState([]);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [selectedRoomForDetails, setSelectedRoomForDetails] = useState(null);
 
   //Slide show in main room page
   const backgroundImages = [Room_1, Room_2, Room_3];
@@ -93,6 +96,11 @@ function Rooms() {
 
   const handleBookingConfirmed = (roomId) => {
     console.log("Booking request received for room ID:", roomId);
+  };
+
+  const handleViewRoomDetails = (room) => {
+    setSelectedRoomForDetails(room);
+    setShowDetailsModal(true);
   };
 
   return (
@@ -165,7 +173,8 @@ function Rooms() {
               {roomList.map((room) => (
                 <div
                   key={room._id}
-                  className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:scale-[1.02] transition-all duration-500 border border-gray-100 flex flex-col h-full w-[85%] shrink-0 snap-start md:w-auto md:shrink md:snap-none"
+                  onClick={() => handleViewRoomDetails(room)}
+                  className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:scale-[1.02] transition-all duration-500 border border-gray-100 flex flex-col h-full w-[85%] shrink-0 snap-start md:w-auto md:shrink md:snap-none cursor-pointer"
                 >
                   {/* Image Section */}
                   <div className="relative h-56 overflow-hidden">
@@ -341,6 +350,12 @@ function Rooms() {
       <LoginMessage
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}
+      />
+
+      <RoomFullDetails
+        room={selectedRoomForDetails}
+        isOpen={showDetailsModal}
+        onClose={() => setShowDetailsModal(false)}
       />
 
       {isModalOpen && selectedRoom && (
