@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import ConfrimDialog from "../ConfrimDialog";
 
 const RoomsSection = () => {
   const [allRooms, setAllRooms] = useState([]);
@@ -23,6 +24,13 @@ const RoomsSection = () => {
   const [cancellationLoading, setCancellationLoading] = useState(null);
   const [sliderPosition, setSliderPosition] = useState(0);
   const scrollRef = useRef(null);
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    id: null,
+    type: "delete",
+    title: "",
+    message: "",
+  });
   const VITE_API_URL = import.meta.env.VITE_API_URL;
 
   const fetchUserSpecificRooms = useCallback(async () => {
@@ -74,17 +82,24 @@ const RoomsSection = () => {
   const handleCancelBooking = async (bookingId, roomNumber) => {
     if (
       !window.confirm(
+  const handlecancelconfrim = (id) => {
+    setConfirmDialog({
+      isOpen: true,
+      id,
+      type: "Cancel",
+      title: "Cancel Booking?",
+      message:
         "Are you sure you want to cancel this booking? The dates will become available again.",
-      )
-    ) {
-      return;
-    }
+    });
+  };
 
-    setCancellationLoading(bookingId);
+  const handleCancelBooking = async () => {
+    const { id } = confirmDialog;
+    setConfirmDialog({ isOpen: false, id: null });
+    setCancellationLoading(id);
     const toastId = toast.loading("Cancelling booking...");
-
     try {
-      await axios.put(`${VITE_API_URL}/api/rooms/cancelbooking/${bookingId}`);
+      await axios.put(`${VITE_API_URL}/api/rooms/cancelbooking/${id}`);
       toast.success(
         "Booking cancelled successfully. Dates are now available.",
         { id: toastId },
@@ -269,6 +284,21 @@ const RoomsSection = () => {
                       <div className="mb-4 flex items-center gap-2 p-2.5 bg-amber-50 rounded-lg border border-amber-100">
                         <p className="text-[8px] text-amber-600 uppercase font-bold tracking-widest leading-none flex-1">
                           Booking Ref:
+                  {/* Check-in / Check-out */}
+                  <div className="bg-gray-50 rounded-xl p-3 sm:p-4 flex items-center justify-between mb-4 border border-gray-100 overflow-hidden">
+                    <div className="flex items-center gap-2">
+                      <CalendarDays
+                        size={14}
+                        className="text-amber-500 shrink-0"
+                      />
+                      <div>
+                        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                          Check In
+                        </p>
+                        <p className="text-xs font-bold text-gray-800">
+                          {new Date(room.checkInDate).toLocaleDateString(
+                            "en-GB",
+                          )}
                         </p>
                         <span className="bg-white text-amber-700 border border-amber-200 font-mono font-black tracking-wider text-[10px] px-3 py-1 rounded-md">
                           {room.bookingCode}
@@ -340,9 +370,7 @@ const RoomsSection = () => {
                     {/* Cancel Button for Pending Bookings Only */}
                     {room.status?.toLowerCase() === "pending" && (
                       <button
-                        onClick={() =>
-                          handleCancelBooking(room._id, room.roomNumber)
-                        }
+                        onClick={() => handlecancelconfrim(room._id)}
                         disabled={cancellationLoading === room._id}
                         className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-sm transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed border border-red-200 hover:border-red-300"
                       >
@@ -407,6 +435,14 @@ const RoomsSection = () => {
           </div>
         </div>
       )}
+      <ConfrimDialog
+        isOpen={confirmDialog.isOpen}
+        type={confirmDialog.type}
+        title={confirmDialog.title}
+        message={confirmDialog.message}
+        onConfirm={handleCancelBooking}
+        onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
+      />
     </div>
   );
 };
