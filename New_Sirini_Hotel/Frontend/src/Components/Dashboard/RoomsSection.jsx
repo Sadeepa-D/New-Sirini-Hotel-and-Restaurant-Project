@@ -90,6 +90,17 @@ const RoomsSection = () => {
     });
   };
 
+  const handlecancelconfrim = (id) => {
+    setConfirmDialog({
+      isOpen: true,
+      id,
+      type: "Cancel",
+      title: "Cancel Booking?",
+      message:
+        "Are you sure you want to cancel this booking? The dates will become available again.",
+    });
+  };
+
   const handleCancelBooking = async () => {
     const { id } = confirmDialog;
     setConfirmDialog({ isOpen: false, id: null });
