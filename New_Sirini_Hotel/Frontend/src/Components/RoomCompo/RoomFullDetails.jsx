@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { X, ChevronLeft, ChevronRight, Bed, Users, Wind, Star } from "lucide-react";
+import {
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Bed,
+  Users,
+  Wind,
+  Star,
+} from "lucide-react";
 
 function RoomFullDetails({ room, isOpen, onClose }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -9,7 +17,7 @@ function RoomFullDetails({ room, isOpen, onClose }) {
   // Create array of images - main image plus placeholders for gallery
   // In future, this will include galleryImages from room data
   const images = [room.image, room.image, room.image, room.image];
-  
+
   const handlePrevImage = () => {
     setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   };
@@ -100,13 +108,19 @@ function RoomFullDetails({ room, isOpen, onClose }) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 pb-6 border-t pt-6">
             {/* Room Type */}
             <div>
-              <p className="text-gray-600 text-xs mb-2 font-semibold">ROOM TYPE</p>
-              <p className="text-base font-semibold text-gray-900">{room.roomType}</p>
+              <p className="text-gray-600 text-xs mb-2 font-semibold">
+                ROOM TYPE
+              </p>
+              <p className="text-base font-semibold text-gray-900">
+                {room.roomType}
+              </p>
             </div>
 
             {/* Price */}
             <div>
-              <p className="text-gray-600 text-xs mb-2 font-semibold">PRICE / NIGHT</p>
+              <p className="text-gray-600 text-xs mb-2 font-semibold">
+                PRICE / NIGHT
+              </p>
               <p className="text-xl font-bold text-orange-600">
                 Rs. {room.price?.toLocaleString()}
               </p>
@@ -175,14 +189,18 @@ function RoomFullDetails({ room, isOpen, onClose }) {
           {room.description && (
             <div className="mt-6 pt-6 border-t">
               <p className="text-gray-600 text-sm mb-2">Description</p>
-              <p className="text-gray-700 leading-relaxed">{room.description}</p>
+              <p className="text-gray-700 leading-relaxed">
+                {room.description}
+              </p>
             </div>
           )}
 
           {/* Facilities */}
           {room.facilities && room.facilities.length > 0 && (
             <div className="mt-6 pt-6 border-t">
-              <p className="text-gray-600 text-sm mb-3 font-semibold">Facilities</p>
+              <p className="text-gray-600 text-sm mb-3 font-semibold">
+                Facilities
+              </p>
               <div className="flex flex-wrap gap-2">
                 {room.facilities.map((facility, index) => (
                   <span
