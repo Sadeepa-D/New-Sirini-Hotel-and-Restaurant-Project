@@ -248,9 +248,9 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
                       <User size={20} />
                     </div>
                     <div className="min-w-0">
-                      <h4 className="font-bold text-gray-900 text-xs sm:text-base leading-tight uppercase tracking-tighter font-sans truncate">
+                      <h6 className="font-bold text-gray-900 text-xs sm:text-base leading-tight uppercase tracking-tighter font-sans truncate">
                         {req.name}
-                      </h4>
+                      </h6>
                       <div className="flex items-center gap-1 text-gray-400 text-[8px] sm:text-[10px] font-bold truncate">
                         <Phone size={8} /> {req.phone}
                       </div>
@@ -267,28 +267,26 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
                 </div>
                 {/*Room & Dates details */}
                 <div className="bg-gray-50 rounded-xl sm:rounded-2xl p-3 sm:p-4 space-y-2 sm:space-y-3 mb-4 sm:mb-6">
-                  <div className="flex justify-between items-center gap-2">
-                    <span className="text-[8px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-widest flex-shrink-0">
-                      Room Number
-                    </span>
-                    <div className="flex items-center gap-1 sm:gap-2 justify-end">
-                      {req.timeSlot && (
-                        <span
-                          className={`px-1.5 sm:px-2 py-0.5 text-[7px] sm:text-[8px] font-black uppercase tracking-widest rounded-md flex-shrink-0 ${
-                            req.timeSlot === "day"
-                              ? "bg-blue-50 text-blue-500 border border-blue-100"
-                              : "bg-purple-50 text-purple-500 border border-purple-100"
-                          }`}
-                        >
-                          {req.timeSlot === "day"
-                            ? "Mid Day Stay"
-                            : "Overnight Stay"}
-                        </span>
-                      )}
-                      <span className="font-mono font-bold text-black text-base sm:text-lg flex-shrink-0">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[7px] sm:text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                        Room Number
+                      </span>
+                      <span className="font-mono font-black text-black text-lg sm:text-2xl leading-none">
                         {req.roomNumber}
                       </span>
                     </div>
+                    {req.timeSlot && (
+                      <span
+                        className={`px-2 sm:px-3 py-1 sm:py-1.5 text-[7px] sm:text-[8px] font-black uppercase tracking-widest rounded-md flex-shrink-0 text-center ${
+                          req.timeSlot === "day"
+                            ? "bg-blue-50 text-blue-600 border border-blue-200"
+                            : "bg-purple-50 text-purple-600 border border-purple-200"
+                        }`}
+                      >
+                        {req.timeSlot === "day" ? "Mid Day" : "Overnight"}
+                      </span>
+                    )}
                   </div>
                   <div className="flex justify-between items-center pt-2 sm:pt-2 border-t border-gray-200/50 gap-2">
                     <div className="space-y-1">

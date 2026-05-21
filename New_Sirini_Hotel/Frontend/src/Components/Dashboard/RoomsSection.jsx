@@ -221,6 +221,18 @@ const RoomsSection = () => {
                     <StatusBadge status={room.status} />
                   </div>
 
+                  {/* Reference Number */}
+                  {room.bookingCode && (
+                    <div className="mb-4 flex items-center gap-2 p-2.5 bg-amber-50 rounded-lg border border-amber-100">
+                      <p className="text-[8px] text-amber-600 uppercase font-bold tracking-widest leading-none flex-1">
+                        Booking Ref:
+                      </p>
+                      <span className="bg-white text-amber-700 border border-amber-200 font-mono font-black tracking-wider text-[10px] px-3 py-1 rounded-md">
+                        {room.bookingCode}
+                      </span>
+                    </div>
+                  )}
+
                   {/* Check-in / Check-out */}
                   <div className="bg-gray-50 rounded-xl p-3 sm:p-4 flex items-center justify-between mb-4 border border-gray-100 overflow-hidden">
                     <div className="flex items-center gap-2">
