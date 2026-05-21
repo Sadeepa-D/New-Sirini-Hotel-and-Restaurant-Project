@@ -15,6 +15,9 @@ import { Calendar } from "lucide-react";
 export default function Reception() {
   const VITE_URL = import.meta.env.VITE_API_URL;
 
+  const containerRef = useRef(null);
+  const [fabBottomOffset, setFabBottomOffset] = useState(32);
+
   const [showcalander, setShowCalander] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
@@ -22,7 +25,6 @@ export default function Reception() {
   const [loadingDates, setLoadingDates] = useState(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isFabVisible, setIsFabVisible] = useState(false);
-  const [isNearFooter, setIsNearFooter] = useState(false);
   const formSectionRef = useRef(null);
 
   const fetchBookedDates = async () => {
@@ -75,13 +77,23 @@ export default function Reception() {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
 
       // Show FAB after scrolling past hero (approx 100vh - header)
       setIsFabVisible(scrollY > windowHeight * 0.7);
 
-      // Detect if near footer (approx 400px from bottom)
-      setIsNearFooter(scrollY + windowHeight > documentHeight - 350);
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        const containerBottom = rect.bottom;
+        const fabMargin = 32; // bottom-8 is 32px
+
+        // If bottom of reception container enters viewport, adjust position to stay above footer
+        if (containerBottom < windowHeight) {
+          const offset = windowHeight - containerBottom + fabMargin;
+          setFabBottomOffset(offset);
+        } else {
+          setFabBottomOffset(fabMargin);
+        }
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -89,34 +101,31 @@ export default function Reception() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div ref={containerRef} className="min-h-screen bg-neutral-50">
       {/* HERO SECTION - Aligned with MainPage */}
-      <header className="relative w-full h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
-        {/* Background */}
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage:
-              "url(https://images.unsplash.com/photo-1745573673583-a51f665ae48e?q=80&w=1334&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
+      <header className="relative w-full h-[320px] sm:h-[400px] md:h-[500px] lg:h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
+        {/* Background Image using img tag for maximum responsive scaling and visual quality */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1745573673583-a51f665ae48e?q=80&w=1334&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            alt="Reception Hall Hero Background"
+            className="w-full h-full object-cover"
+          />
           <div className="absolute inset-0 bg-black/50"></div>
         </div>
 
         {/* Content - centered in hero */}
-        <div className="z-10 flex flex-col items-center justify-center gap-6">
-          <h1 className="text-4xl md:text-6xl font-light">Reception Hall</h1>
-          <p className="text-lg md:text-xl italic tracking-widest border-t border-b border-white py-2 px-4">
+        <div className="z-10 flex flex-col items-center justify-center gap-3 md:gap-4 lg:gap-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light">Reception Hall</h1>
+          <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl italic tracking-widest border-t border-b border-white py-1 px-3 md:py-2 md:px-4">
             Your special moments, handled with elegance
           </p>
 
-          {/* Booking and calander Button */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-4">
+          {/* Booking and calander Button - fully responsive size */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-2 md:mt-3 lg:mt-4">
             <button
               onClick={() => handleadrequest()}
-              className="bg-yellow-500 hover:bg-amber-700 text-black px-8 py-3 rounded-full font-semibold uppercase tracking-widest text-sm transition-all duration-300 shadow-lg mt-4"
+              className="bg-yellow-500 hover:bg-amber-700 text-black px-5 py-2 text-xs md:px-7 md:py-2.5 md:text-sm lg:px-8 lg:py-3 lg:text-sm rounded-full font-semibold uppercase tracking-widest transition-all duration-300 shadow-lg mt-2 md:mt-3 lg:mt-4"
             >
               {showForm ? "Close " : "Book Your Pre-Visit"}
             </button>
@@ -124,7 +133,7 @@ export default function Reception() {
         </div>
 
         {/* Explore arrow pinned to bottom */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
+        <div className="absolute bottom-2 sm:bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 z-10">
           <Exploreindicator />
         </div>
       </header>
@@ -178,10 +187,12 @@ export default function Reception() {
 
       {/* Floating Action Button (FAB) - Smart visibility */}
       <div
-        className={`fixed transition-all duration-500 ease-in-out z-[60] 
-          ${isFabVisible ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-10 pointer-events-none"}
-          ${isNearFooter ? "bottom-[380px] md:bottom-[420px]" : "bottom-8"}
-          right-8`}
+        className={`fixed z-[60] right-8 
+          ${isFabVisible ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-10 pointer-events-none"}`}
+        style={{
+          bottom: `${fabBottomOffset}px`,
+          transition: "opacity 500ms ease-in-out, transform 500ms ease-in-out",
+        }}
       >
         <button
           className="relative group transition-all duration-300"
