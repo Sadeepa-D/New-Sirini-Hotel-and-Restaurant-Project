@@ -48,6 +48,7 @@ const sendRestaurantOrderEmail = async ({
         
         <div style="padding: 40px 30px;">
           <h2 style="color: #1a1a1a; margin-top: 0; font-size: 24px;">Order Confirmation</h2>
+           <h2 style="color: #1a1a1a; margin-top: 0; font-size: 24px;">Ref:${savedOrder.orderCode}</h2>
           <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">Dear <strong>${fullName}</strong>,</p>
           <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">Thank you for your order! Your request has been received and is currently <strong>${savedOrder.status}</strong>.</p>
           
@@ -117,6 +118,7 @@ const sendRoomBookingEmail = async ({
   totalAmount,
   timeSlot,
   status,
+  newRoomBooking,
 }) => {
   try {
     const formatDt = (dt) =>
@@ -138,6 +140,7 @@ const sendRoomBookingEmail = async ({
         
         <div style="padding: 40px 30px;">
           <h2 style="color: #1a1a1a; margin-top: 0; font-size: 24px;">Room Booking Confirmation</h2>
+          <h2>Ref: ${newRoomBooking.bookingCode}</h2>
           <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">Dear <strong>${name}</strong>,</p>
           <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">Thank you for your booking! Your request has been received and is currently <strong>${status}</strong>.</p>
           
@@ -200,6 +203,7 @@ const sendAppointmentEmail = async ({
   noOfGuests,
   eventType,
   status,
+  newAppointment,
 }) => {
   try {
     const htmlTemplate = `
@@ -208,6 +212,7 @@ const sendAppointmentEmail = async ({
         
         <div style="padding: 40px 30px;">
           <h2 style="color: #1a1a1a; margin-top: 0; font-size: 24px;">Reception Appointment Confirmation</h2>
+          <h2>Ref: ${newAppointment.appointcode}</h2>
           <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">Dear <strong>${name}</strong>,</p>
           <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">Thank you for your appointment request! We have received it and it is currently <strong>${status}</strong>.</p>
           

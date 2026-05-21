@@ -1,6 +1,18 @@
 const RoomBooking = require("../../models/Rooms/RoomBookModel");
 const { sendRoomBookingEmail } = require("../EmailCont");
 
+const genarateRoomBookingCode = async () => {
+  const prefix = "SHRB";
+  const randomNumber = Math.floor(1000 + Math.random() * 9000);
+  const existing = await RoomBooking.findOne({
+    bookingCode: `${prefix}${randomNumber}`,
+  });
+  if (!existing) {
+    return `${prefix}${randomNumber}`;
+  }
+  return await genarateRoomBookingCode();
+};
+
 const createRoomBooking = async (req, res) => {
   try {
     const userId = req.userData.id;
@@ -73,6 +85,7 @@ const createRoomBooking = async (req, res) => {
       roomNumber,
       numberOfGuests,
       status: "Pending",
+      bookingCode: await genarateRoomBookingCode(),
       totalAmount,
       bookingType: "day-use",
       timeSlot,
@@ -90,7 +103,8 @@ const createRoomBooking = async (req, res) => {
       numberOfGuests,
       totalAmount,
       timeSlot,
-      status: "Pending"
+      status: "Pending",
+      newRoomBooking,
     });
 
     res.status(201).json(newRoomBooking);
@@ -141,7 +155,7 @@ const editRoomBooking = async (req, res) => {
 
 const getAllRoomBookings = async (req, res) => {
   try {
-    const roomBookings = await RoomBooking.find();
+    const roomBookings = await RoomBooking.find().sort({ createdAt: -1 });
     if (roomBookings.length === 0) {
       return res.status(404).json({ error: "No room bookings found" });
     }
@@ -152,7 +166,9 @@ const getAllRoomBookings = async (req, res) => {
 };
 const getPendingRoomBookings = async (req, res) => {
   try {
-    const pendingRoomBookings = await RoomBooking.find({ status: "Pending" });
+    const pendingRoomBookings = await RoomBooking.find({
+      status: "Pending",
+    }).sort({ createdAt: -1 });
     if (pendingRoomBookings.length === 0) {
       return res.status(404).json({ error: "No pending room bookings found" });
     }
@@ -165,7 +181,7 @@ const getConfirmedRoomBookings = async (req, res) => {
   try {
     const confirmedRoomBookings = await RoomBooking.find({
       status: "Confirmed",
-    });
+    }).sort({ createdAt: -1 });
     if (confirmedRoomBookings.length === 0) {
       return res
         .status(404)
@@ -180,7 +196,7 @@ const getCancelledRoomBookings = async (req, res) => {
   try {
     const cancelledRoomBookings = await RoomBooking.find({
       status: "Cancelled",
-    });
+    }).sort({ createdAt: -1 });
     if (cancelledRoomBookings.length === 0) {
       return res
         .status(404)
@@ -233,7 +249,9 @@ const setRoomBookingStatustoCancelled = async (req, res) => {
 };
 const getOverdueRoomBookings = async (req, res) => {
   try {
-    const overdueRoomBookings = await RoomBooking.find({ status: "Overdue" });
+    const overdueRoomBookings = await RoomBooking.find({
+      status: "Overdue",
+    }).sort({ createdAt: -1 });
     if (overdueRoomBookings.length === 0) {
       return res.status(404).json({ error: "No overdue room bookings found" });
     }
@@ -259,7 +277,9 @@ const setRoomBookingStatustoCompleted = async (req, res) => {
 
 const getCompletedRoomBookings = async (req, res) => {
   try {
-    const completed = await RoomBooking.find({ status: "Completed" });
+    const completed = await RoomBooking.find({ status: "Completed" }).sort({
+      createdAt: -1,
+    });
     res.status(200).json(completed);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -272,7 +292,9 @@ const getspecificuserbookings = async (req, res) => {
     if (!userId) {
       return res.status(400).json({ error: "User ID is required" });
     }
-    const userBookings = await RoomBooking.find({ userId });
+    const userBookings = await RoomBooking.find({ userId }).sort({
+      createdAt: -1,
+    });
 
     if (userBookings.length === 0) {
       return res.status(404).json({ error: "No bookings found for this user" });
@@ -292,7 +314,7 @@ const getUnavilableDatesForRoom = async (req, res) => {
     const unavialbleDates = await RoomBooking.find(
       { roomNumber, status: { $in: ["Confirmed", "Pending"] } },
       "checkInDate checkOutDate timeSlot",
-    );
+    ).sort({ createdAt: -1 });
     res.status(200).json(unavialbleDates);
   } catch (error) {
     res.status(400).json({ error: error.message });
