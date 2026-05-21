@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   Clock,
   CheckCircle2,
@@ -10,6 +10,8 @@ import {
   BadgeDollarSign,
   Trash2,
   Flag,
+  MoveLeft,
+  MoveRight,
 } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -20,6 +22,8 @@ const RoomsSection = () => {
   const [activeTab, setActiveTab] = useState("Pending");
   const [loading, setLoading] = useState(true);
   const [cancellationLoading, setCancellationLoading] = useState(null);
+  const [sliderPosition, setSliderPosition] = useState(0);
+  const scrollRef = useRef(null);
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
     id: null,
@@ -56,6 +60,28 @@ const RoomsSection = () => {
     fetchUserSpecificRooms();
   }, [fetchUserSpecificRooms]);
 
+  useEffect(() => {
+    setSliderPosition(0);
+  }, [activeTab]);
+
+  const handleSliderScroll = (e) => {
+    setSliderPosition(e.target.scrollLeft);
+  };
+
+  const scroll = (direction) => {
+    if (scrollRef.current) {
+      const { scrollLeft, clientWidth } = scrollRef.current;
+      const scrollTo =
+        direction === "left"
+          ? scrollLeft - clientWidth
+          : scrollLeft + clientWidth;
+      scrollRef.current.scrollTo({ left: scrollTo, behavior: "smooth" });
+    }
+  };
+
+  const handleCancelBooking = async (bookingId, roomNumber) => {
+    if (
+      !window.confirm(
   const handlecancelconfrim = (id) => {
     setConfirmDialog({
       isOpen: true,
@@ -188,51 +214,76 @@ const RoomsSection = () => {
           </p>
         </div>
       ) : (
-        <div className="flex flex-col">
-          <div className="flex gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6 md:grid md:grid-cols-2 md:gap-5 md:overflow-visible md:pb-0">
+        <div className="relative group">
+          {/* Left Arrow - Visible on all devices
+          <button
+            onClick={() => scroll("left")}
+            className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-2.5 bg-white/90 backdrop-blur-md text-amber-600 rounded-lg shadow-xl border border-white/50 hover:bg-white hover:text-amber-700 hover:shadow-amber-500/20 transition-all duration-300 active:scale-90 group/btn"
+            title="Scroll left"
+          >
+            <MoveLeft
+              size={18}
+              strokeWidth={2.5}
+              className="group-hover/btn:scale-110 transition-transform"
+            />
+          </button>
+          */}
+
+          {/* Slider Container */}
+          <div
+            ref={scrollRef}
+            onScroll={handleSliderScroll}
+            className="flex overflow-x-auto gap-5 pb-14 sm:pb-12 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] snap-x snap-mandatory px-2 scroll-smooth"
+          >
             {filteredRooms.map((room) => (
               <div
                 key={room.id || room._id}
-                className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group w-[90%] shrink-0 snap-start md:w-auto md:shrink md:snap-none"
+                className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group shrink-0 w-[75vw] sm:w-[320px] snap-center flex flex-col"
               >
                 {/* Card top accent bar */}
-                <div className="h-1 w-full bg-gradient-to-r from-amber-400 to-amber-300" />
+                <div className="h-1 w-full bg-gradient-to-r from-amber-400 to-amber-300 flex-shrink-0" />
 
-                <div className="p-5">
-                  {/* Header: Room & Status */}
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center group-hover:bg-amber-500 transition-colors duration-300">
-                        <Bed
-                          size={20}
-                          className="text-amber-500 group-hover:text-white transition-colors duration-300"
-                        />
+                <div className="p-5 flex-1 flex flex-col justify-between">
+                  <div>
+                    {/* Header: Room & Status */}
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center group-hover:bg-amber-500 transition-colors duration-300">
+                          <Bed
+                            size={20}
+                            className="text-amber-500 group-hover:text-white transition-colors duration-300"
+                          />
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest leading-none mb-1">
+                            Room No.
+                          </p>
+                          <p className="text-xl font-black text-gray-900 leading-none">
+                            {room.roomNumber}
+                          </p>
+                          {room.timeSlot && (
+                            <span
+                              className={`inline-block mt-1.5 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-md ${
+                                room.timeSlot === "day"
+                                  ? "bg-blue-50 text-blue-500 border border-blue-100"
+                                  : "bg-purple-50 text-purple-500 border border-purple-100"
+                              }`}
+                            >
+                              {room.timeSlot === "day"
+                                ? "Mid Day Stay"
+                                : "Overnight Stay"}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest leading-none mb-1">
-                          Room No.
-                        </p>
-                        <p className="text-xl font-black text-gray-900 leading-none">
-                          {room.roomNumber}
-                        </p>
-                        {room.timeSlot && (
-                          <span
-                            className={`inline-block mt-1.5 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-md ${
-                              room.timeSlot === "day"
-                                ? "bg-blue-50 text-blue-500 border border-blue-100"
-                                : "bg-purple-50 text-purple-500 border border-purple-100"
-                            }`}
-                          >
-                            {room.timeSlot === "day"
-                              ? "Mid Day Stay"
-                              : "Overnight Stay"}
-                          </span>
-                        )}
-                      </div>
+                      <StatusBadge status={room.status} />
                     </div>
-                    <StatusBadge status={room.status} />
-                  </div>
 
+                    {/* Reference Number */}
+                    {room.bookingCode && (
+                      <div className="mb-4 flex items-center gap-2 p-2.5 bg-amber-50 rounded-lg border border-amber-100">
+                        <p className="text-[8px] text-amber-600 uppercase font-bold tracking-widest leading-none flex-1">
+                          Booking Ref:
                   {/* Check-in / Check-out */}
                   <div className="bg-gray-50 rounded-xl p-3 sm:p-4 flex items-center justify-between mb-4 border border-gray-100 overflow-hidden">
                     <div className="flex items-center gap-2">
@@ -249,33 +300,56 @@ const RoomsSection = () => {
                             "en-GB",
                           )}
                         </p>
+                        <span className="bg-white text-amber-700 border border-amber-200 font-mono font-black tracking-wider text-[10px] px-3 py-1 rounded-md">
+                          {room.bookingCode}
+                        </span>
                       </div>
-                    </div>
-                    <div className="h-8 w-px bg-gray-200" />
-                    <div className="flex items-center gap-2 text-right">
-                      <div>
-                        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
-                          Check Out
-                        </p>
-                        <p className="text-xs font-bold text-gray-800">
-                          {room.timeSlot === "day"
-                            ? new Date(room.checkInDate).toLocaleDateString(
-                                "en-GB",
-                              )
-                            : new Date(room.checkOutDate).toLocaleDateString(
-                                "en-GB",
-                              )}
-                        </p>
+                    )}
+
+                    {/* Check-in / Check-out */}
+                    <div className="bg-gray-50 rounded-xl p-3 sm:p-4 flex items-center justify-between mb-4 border border-gray-100 overflow-hidden">
+                      <div className="flex items-center gap-2">
+                        <CalendarDays
+                          size={14}
+                          className="text-amber-500 shrink-0"
+                        />
+                        <div>
+                          <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                            Check In
+                          </p>
+                          <p className="text-xs font-bold text-gray-800">
+                            {new Date(room.checkInDate).toLocaleDateString(
+                              "en-GB",
+                            )}
+                          </p>
+                        </div>
                       </div>
-                      <CalendarDays
-                        size={14}
-                        className="text-amber-500 shrink-0"
-                      />
+                      <div className="h-8 w-px bg-gray-200" />
+                      <div className="flex items-center gap-2 text-right">
+                        <div>
+                          <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                            Check Out
+                          </p>
+                          <p className="text-xs font-bold text-gray-800">
+                            {room.timeSlot === "day"
+                              ? new Date(room.checkInDate).toLocaleDateString(
+                                  "en-GB",
+                                )
+                              : new Date(room.checkOutDate).toLocaleDateString(
+                                  "en-GB",
+                                )}
+                          </p>
+                        </div>
+                        <CalendarDays
+                          size={14}
+                          className="text-amber-500 shrink-0"
+                        />
+                      </div>
                     </div>
                   </div>
 
                   {/* Footer: Price & Action Button */}
-                  <div className="flex flex-col gap-3 pt-3 border-t border-gray-100">
+                  <div className="flex flex-col gap-3 pt-3 border-t border-gray-100 mt-auto">
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2">
                         <BadgeDollarSign size={16} className="text-amber-500" />
@@ -313,9 +387,52 @@ const RoomsSection = () => {
               </div>
             ))}
           </div>
-          <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
-            ← Swipe to browse →
-          </p>
+
+          {/* Right Arrow - Visible on all devices
+          <button
+            onClick={() => scroll("right")}
+            className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-2.5 bg-white/90 backdrop-blur-md text-amber-600 rounded-lg shadow-xl border border-white/50 hover:bg-white hover:text-amber-700 hover:shadow-amber-500/20 transition-all duration-300 active:scale-90 group/btn"
+            title="Scroll right"
+          >
+            <MoveRight
+              size={18}
+              strokeWidth={2.5}
+              className="group-hover/btn:scale-110 transition-transform"
+            />
+          </button>
+          */}
+
+          {/* Pagination Dots */}
+          <div className="absolute bottom-1 sm:bottom-0 left-1/2 -translate-x-1/2 flex items-center gap-1 px-2 py-1.5 sm:py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md border border-gray-200">
+            {filteredRooms.map((_, index) => {
+              const cardWidth = 320; // sm:w-[320px]
+              const gapWidth = 20; // gap-5 = 20px
+              const itemWidth = cardWidth + gapWidth;
+              const isActive =
+                sliderPosition >= index * itemWidth - 50 &&
+                sliderPosition <= (index + 1) * itemWidth - 50;
+
+              return (
+                <button
+                  key={index}
+                  onClick={() => {
+                    if (scrollRef.current) {
+                      scrollRef.current.scrollTo({
+                        left: index * itemWidth,
+                        behavior: "smooth",
+                      });
+                    }
+                  }}
+                  className={`transition-all ${
+                    isActive
+                      ? "w-5 sm:w-6 h-1.5 sm:h-2 bg-amber-500 rounded-full"
+                      : "w-1.5 sm:w-2 h-1.5 sm:h-2 bg-gray-300 rounded-full hover:bg-gray-400"
+                  }`}
+                  aria-label={`Go to booking ${index + 1}`}
+                />
+              );
+            })}
+          </div>
         </div>
       )}
       <ConfrimDialog
