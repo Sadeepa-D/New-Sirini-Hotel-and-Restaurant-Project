@@ -79,9 +79,6 @@ const RoomsSection = () => {
     }
   };
 
-  const handleCancelBooking = async (bookingId, roomNumber) => {
-    if (
-      !window.confirm(
   const handlecancelconfrim = (id) => {
     setConfirmDialog({
       isOpen: true,
@@ -241,7 +238,7 @@ const RoomsSection = () => {
                 className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group shrink-0 w-[75vw] sm:w-[320px] snap-center flex flex-col"
               >
                 {/* Card top accent bar */}
-                <div className="h-1 w-full bg-gradient-to-r from-amber-400 to-amber-300 flex-shrink-0" />
+                <div className="h-1 w-full bg-linear-to-r from-amber-400 to-amber-300 shrink-0" />
 
                 <div className="p-5 flex-1 flex flex-col justify-between">
                   <div>
@@ -282,23 +279,8 @@ const RoomsSection = () => {
                     {/* Reference Number */}
                     {room.bookingCode && (
                       <div className="mb-4 flex items-center gap-2 p-2.5 bg-amber-50 rounded-lg border border-amber-100">
-                        <p className="text-[8px] text-amber-600 uppercase font-bold tracking-widest leading-none flex-1">
+                        <p className="text-[8px] text-amber-600 uppercase font-bold tracking-widest leading-none">
                           Booking Ref:
-                  {/* Check-in / Check-out */}
-                  <div className="bg-gray-50 rounded-xl p-3 sm:p-4 flex items-center justify-between mb-4 border border-gray-100 overflow-hidden">
-                    <div className="flex items-center gap-2">
-                      <CalendarDays
-                        size={14}
-                        className="text-amber-500 shrink-0"
-                      />
-                      <div>
-                        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
-                          Check In
-                        </p>
-                        <p className="text-xs font-bold text-gray-800">
-                          {new Date(room.checkInDate).toLocaleDateString(
-                            "en-GB",
-                          )}
                         </p>
                         <span className="bg-white text-amber-700 border border-amber-200 font-mono font-black tracking-wider text-[10px] px-3 py-1 rounded-md">
                           {room.bookingCode}
