@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-
+import axios from "axios";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Registration = () => {
@@ -15,6 +15,10 @@ const Registration = () => {
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [verify, setverfiy] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [isVerified, setIsVerified] = useState(false);
+  const [sendingOtp, setSendingOtp] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -75,6 +79,11 @@ const Registration = () => {
     if (!validateForm()) {
       return;
     }
+    if (!isVerified) {
+      setErrors({ email: "Please verify your email before registering" });
+      toast.error("Please verify your email before registering!");
+      return;
+    }
 
     setIsLoading(true);
 
@@ -103,6 +112,51 @@ const Registration = () => {
       setErrors({ submit: "Registration failed. Please try again." });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleVerify = async () => {
+    if (!formData.email.trim()) {
+      setErrors({ email: "Email is required for verification" });
+      return;
+    }
+    setSendingOtp(true);
+    try {
+      const response = await axios.post(`${API_URL}/api/users/sendotp`, {
+        email: formData.email,
+      });
+      toast.success("Verification code sent!");
+      setverfiy(true);
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+      const errMsg = error.response?.data?.message || "Failed to send OTP. Please try again.";
+      toast.error(errMsg);
+    } finally {
+      setSendingOtp(false);
+    }
+  };
+
+  const handleOTPVerify = async () => {
+    if (!otp.trim()) {
+      setErrors((prev) => ({
+        ...prev,
+        otp: "OTP is required for verification",
+      }));
+      return;
+    }
+    try {
+      const response = await axios.post(`${API_URL}/api/users/verifyotp`, {
+        email: formData.email,
+        otp,
+      });
+      toast.success("Email verified successfully!");
+      setverfiy(false);
+      setOtp("");
+      setIsVerified(true);
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+      const errMsg = error.response?.data?.message || "Failed to verify OTP. Please try again.";
+      toast.error(errMsg);
     }
   };
 
@@ -151,19 +205,84 @@ const Registration = () => {
               >
                 Email Address
               </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-white/5 border border-amber-900/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-transparent transition-all"
-                placeholder="Enter your email"
-              />
+              <div className="relative w-full">
+                <input
+                  disabled={isVerified}
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full pl-4 pr-28 py-3 bg-white/5 border border-amber-900/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-transparent transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+                  placeholder="Enter your email"
+                />
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center">
+                  {!isVerified ? (
+                    <button
+                      type="button"
+                      disabled={sendingOtp}
+                      onClick={handleVerify}
+                      className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-neutral-900 text-xs font-semibold rounded-md transition-all duration-200 active:scale-95 shadow-md shadow-amber-950/20 cursor-pointer"
+                    >
+                      {sendingOtp ? (
+                        <span className="flex items-center gap-1">
+                          <svg className="animate-spin h-3.5 w-3.5 text-neutral-900" viewBox="0 0 24 24" fill="none">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                          </svg>
+                          Sending
+                        </span>
+                      ) : (
+                        "Verify"
+                      )}
+                    </button>
+                  ) : (
+                    <span className="flex items-center gap-1 px-2.5 py-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold rounded-md">
+                      <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      Verified
+                    </span>
+                  )}
+                </div>
+              </div>
               {errors.email && (
                 <p className="mt-1 text-sm text-red-400">{errors.email}</p>
               )}
             </div>
+            {verify && (
+              <div className="transition-all duration-300 ease-out">
+                <label
+                  htmlFor="otp"
+                  className="block text-sm font-medium text-amber-100/90 mb-2"
+                >
+                  Enter Verification code
+                </label>
+                <div className="relative w-full">
+                  <input
+                    type="text"
+                    id="otp"
+                    name="otp"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    className="w-full pl-4 pr-24 py-3 bg-white/5 border border-amber-900/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-transparent transition-all"
+                    placeholder="Enter your Code"
+                  />
+                  <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center">
+                    <button
+                      type="button"
+                      onClick={handleOTPVerify}
+                      className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-md transition-all duration-200 active:scale-95 shadow-md shadow-emerald-950/20 cursor-pointer"
+                    >
+                      Confirm
+                    </button>
+                  </div>
+                </div>
+                {errors.otp && (
+                  <p className="mt-1 text-sm text-red-400">{errors.otp}</p>
+                )}
+              </div>
+            )}
 
             <div>
               <label

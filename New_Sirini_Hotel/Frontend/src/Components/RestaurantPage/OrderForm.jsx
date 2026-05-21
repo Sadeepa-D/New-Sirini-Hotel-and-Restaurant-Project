@@ -178,8 +178,12 @@ export default function OrderForm({ item, cartItems, onClose }) {
         </div>
 
         <div className="text-center">
-          <h3 className="font-bold text-amber-600 text-2xl ">Confirm Your Order</h3>
-          <p className="text-amber-600 italic text-sm ">Please fill the following details to confirm your order</p>
+          <h3 className="font-bold text-amber-600 text-2xl ">
+            Confirm Your Order
+          </h3>
+          <p className="text-amber-600 italic text-sm ">
+            Please fill the following details to confirm your order
+          </p>
         </div>
 
         <div className="p-6 md:p-8">

@@ -1,4 +1,17 @@
 const ReceptionAppointment = require("../../models/Reception/ReciptionAppointModel");
+const { sendAppointmentEmail } = require("../EmailCont");
+
+const genarateReceptionAppointmentCode = async () => {
+  const prefix = "SRHA";
+  const randomNumber = Math.floor(1000 + Math.random() * 9000);
+  const existing = await ReceptionAppointment.findOne({
+    appointcode: `${prefix}${randomNumber}`,
+  });
+  if (!existing) {
+    return `${prefix}${randomNumber}`;
+  }
+  return await genarateReceptionAppointmentCode();
+};
 
 const createReceptionAppointment = async (req, res) => {
   try {
@@ -15,9 +28,22 @@ const createReceptionAppointment = async (req, res) => {
       date,
       noOfGuests,
       eventType,
+      appointcode: await genarateReceptionAppointmentCode(),
       status: "Pending",
     });
     await newAppointment.save();
+
+    await sendAppointmentEmail({
+      name,
+      email,
+      phone,
+      date,
+      noOfGuests,
+      eventType,
+      status: "Pending",
+      newAppointment,
+    });
+
     res
       .status(201)
       .json({ message: "Reception appointment created successfully" });
@@ -28,7 +54,9 @@ const createReceptionAppointment = async (req, res) => {
 };
 const getReceptionAppointments = async (req, res) => {
   try {
-    const appointments = await ReceptionAppointment.find();
+    const appointments = await ReceptionAppointment.find().sort({
+      createdAt: -1,
+    });
     res.status(200).json(appointments);
   } catch (error) {
     console.error("Error fetching reception appointments:", error);
@@ -125,7 +153,7 @@ const getPendingReceptionAppointments = async (req, res) => {
   try {
     const pendingAppointments = await ReceptionAppointment.find({
       status: "Pending",
-    });
+    }).sort({ createdAt: -1 });
     if (pendingAppointments.length === 0) {
       return res.status(404).json({ message: "No pending appointments found" });
     }
@@ -139,7 +167,7 @@ const getCompletedReceptionAppointments = async (req, res) => {
   try {
     const completedAppointments = await ReceptionAppointment.find({
       status: "Completed",
-    });
+    }).sort({ createdAt: -1 });
     if (completedAppointments.length === 0) {
       return res
         .status(404)
@@ -155,7 +183,7 @@ const getCancelledReceptionAppointments = async (req, res) => {
   try {
     const cancelledAppointments = await ReceptionAppointment.find({
       status: "Cancelled",
-    });
+    }).sort({ createdAt: -1 });
     if (cancelledAppointments.length === 0) {
       return res
         .status(404)
@@ -171,7 +199,7 @@ const getOverdueReceptionAppointments = async (req, res) => {
   try {
     const OverdueAppointments = await ReceptionAppointment.find({
       status: "Overdue",
-    });
+    }).sort({ createdAt: -1 });
     if (OverdueAppointments.length === 0) {
       return res.status(404).json({ message: "No overdue appointments found" });
     }
@@ -189,14 +217,13 @@ const getSpecificUserReceptionAppointments = async (req, res) => {
     }
     const userAppointments = await ReceptionAppointment.find({
       userId: userId,
-    });
+    }).sort({ createdAt: -1 });
     res.status(200).json(userAppointments);
   } catch (error) {
     console.error("Error fetching user appointments:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
-
 
 module.exports = {
   createReceptionAppointment,

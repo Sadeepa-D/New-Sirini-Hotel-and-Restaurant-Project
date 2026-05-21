@@ -33,6 +33,7 @@ const RestaurantSection = ({ data }) => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [index, setIndex] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(3);
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" ? window.innerWidth < 768 : false);
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -72,6 +73,7 @@ const RestaurantSection = ({ data }) => {
     const handleResize = () => {
       const w = window.innerWidth;
       setItemsPerView(w < 640 ? 1 : w < 1024 ? 2 : 3);
+      setIsMobile(w < 768);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -205,7 +207,7 @@ const RestaurantSection = ({ data }) => {
       ) : (
         <div className="relative group/nav">
           {/* Left Arrow */}
-          {index > 0 && (
+          {!isMobile && index > 0 && (
             <button
               onClick={() => setIndex(Math.max(0, index - 1))}
               className="absolute left-2 sm:left-0 top-1/2 -translate-y-1/2 sm:-translate-x-4 z-10 w-10 h-10 sm:w-12 sm:h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 border border-gray-100 group-hover/nav:scale-110"
@@ -214,10 +216,10 @@ const RestaurantSection = ({ data }) => {
             </button>
           )}
 
-          <div className="overflow-hidden px-1 py-4">
+          <div className={`overflow-x-auto md:overflow-hidden px-1 py-4 scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isMobile ? "pb-6" : ""}`}>
             <div
-              className="flex justify-start gap-6 transition-transform duration-[1200ms] ease-in-out"
-              style={{
+              className={`flex justify-start gap-6 ${isMobile ? "snap-x snap-mandatory" : "transition-transform duration-[1200ms] ease-in-out"}`}
+              style={isMobile ? {} : {
                 transform: `translateX(calc(-${index * (100 / itemsPerView)}% - ${
                   index * (24 / itemsPerView)
                 }px))`,
@@ -226,8 +228,8 @@ const RestaurantSection = ({ data }) => {
               {filteredOrders.map((order) => (
                 <div
                   key={order._id}
-                  className="flex-shrink-0"
-                  style={{
+                  className={`flex-shrink-0 ${isMobile ? "w-[90%] snap-start" : ""}`}
+                  style={isMobile ? {} : {
                     width: `calc(${100 / itemsPerView}% - ${
                       ((itemsPerView - 1) * 24) / itemsPerView
                     }px)`,
@@ -324,13 +326,19 @@ const RestaurantSection = ({ data }) => {
           </div>
 
           {/* Right Arrow */}
-          {index < filteredOrders.length - itemsPerView && (
+          {!isMobile && index < filteredOrders.length - itemsPerView && (
             <button
               onClick={() => setIndex(Math.min(filteredOrders.length - itemsPerView, index + 1))}
               className="absolute right-2 sm:right-0 top-1/2 -translate-y-1/2 sm:translate-x-4 z-10 w-10 h-10 sm:w-12 sm:h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 border border-gray-100 group-hover/nav:scale-110"
             >
               <ChevronRight className="w-6 h-6 text-neutral-900" />
             </button>
+          )}
+
+          {isMobile && (
+            <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
+              ← Swipe to browse →
+            </p>
           )}
         </div>
       )}

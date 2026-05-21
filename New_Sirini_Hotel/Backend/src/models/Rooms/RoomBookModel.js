@@ -59,6 +59,7 @@ const roomBookSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
+    bookingCode: { type: String, unique: true },
   },
   {
     timestamps: true,
