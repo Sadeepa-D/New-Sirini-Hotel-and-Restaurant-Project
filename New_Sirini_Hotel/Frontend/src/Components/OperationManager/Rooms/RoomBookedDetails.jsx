@@ -239,40 +239,42 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
             {filteredList.map((req) => (
               <div
                 key={req._id}
-                className="shrink-0 w-[85vw] sm:w-[320px] snap-center bg-white rounded-4xl p-5 sm:p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col"
+                className="shrink-0 w-[85vw] sm:w-[320px] snap-center bg-white rounded-3xl sm:rounded-4xl p-3 sm:p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col"
               >
                 {/*User Info & Status */}
-                <div className="flex justify-between items-start mb-5">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 border border-gray-100">
-                      <User size={24} />
+                <div className="flex justify-between items-start mb-3 sm:mb-5 gap-2">
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 border border-gray-100 flex-shrink-0">
+                      <User size={20} />
                     </div>
-                    <div>
-                      <h4 className="font-bold text-gray-900 text-base leading-tight uppercase tracking-tighter font-sans">
+                    <div className="min-w-0">
+                      <h4 className="font-bold text-gray-900 text-xs sm:text-base leading-tight uppercase tracking-tighter font-sans truncate">
                         {req.name}
                       </h4>
-                      <div className="flex items-center gap-1 text-gray-400 text-[10px] font-bold">
-                        <Phone size={10} /> {req.phone}
+                      <div className="flex items-center gap-1 text-gray-400 text-[8px] sm:text-[10px] font-bold truncate">
+                        <Phone size={8} /> {req.phone}
                       </div>
                     </div>
                   </div>
-                  <StatusBadge status={req.status} tab={activeTab} />
+                  <div className="flex-shrink-0">
+                    <StatusBadge status={req.status} tab={activeTab} />
+                  </div>
                 </div>
-                <div className="mb-4 flex items-center">
-                  <span className="bg-gray-100 text-gray-700 border border-gray-200/60 font-mono font-black tracking-wider text-[11px] px-2.5 py-1 rounded-lg uppercase">
+                <div className="mb-3 sm:mb-4 flex items-center">
+                  <span className="bg-gray-100 text-gray-700 border border-gray-200/60 font-mono font-black tracking-wider text-[9px] sm:text-[11px] px-2 sm:px-2.5 py-1 rounded-lg uppercase truncate">
                     Ref: {req.bookingCode || "NA"}
                   </span>
                 </div>
                 {/*Room & Dates details */}
-                <div className="bg-gray-50 rounded-2xl p-4 space-y-3 mb-6">
-                  <div className="flex justify-between items-center">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                <div className="bg-gray-50 rounded-xl sm:rounded-2xl p-3 sm:p-4 space-y-2 sm:space-y-3 mb-4 sm:mb-6">
+                  <div className="flex justify-between items-center gap-2">
+                    <span className="text-[8px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-widest flex-shrink-0">
                       Room Number
                     </span>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1 sm:gap-2 justify-end">
                       {req.timeSlot && (
                         <span
-                          className={`px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-md ${
+                          className={`px-1.5 sm:px-2 py-0.5 text-[7px] sm:text-[8px] font-black uppercase tracking-widest rounded-md flex-shrink-0 ${
                             req.timeSlot === "day"
                               ? "bg-blue-50 text-blue-500 border border-blue-100"
                               : "bg-purple-50 text-purple-500 border border-purple-100"
@@ -283,25 +285,25 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
                             : "Overnight Stay"}
                         </span>
                       )}
-                      <span className="font-mono font-bold text-black text-lg">
+                      <span className="font-mono font-bold text-black text-base sm:text-lg flex-shrink-0">
                         {req.roomNumber}
                       </span>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center pt-2 border-t border-gray-200/50">
+                  <div className="flex justify-between items-center pt-2 sm:pt-2 border-t border-gray-200/50 gap-2">
                     <div className="space-y-1">
-                      <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                      <p className="text-[7px] sm:text-[9px] font-bold text-gray-400 uppercase tracking-widest">
                         In
                       </p>
-                      <p className="text-xs font-bold text-gray-700">
+                      <p className="text-[10px] sm:text-xs font-bold text-gray-700">
                         {new Date(req.checkInDate).toLocaleDateString()}
                       </p>
                     </div>
                     <div className="text-right space-y-1">
-                      <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                      <p className="text-[7px] sm:text-[9px] font-bold text-gray-400 uppercase tracking-widest">
                         Out
                       </p>
-                      <p className="text-xs font-bold text-gray-700">
+                      <p className="text-[10px] sm:text-xs font-bold text-gray-700">
                         {req.timeSlot === "day"
                           ? new Date(req.checkInDate).toLocaleDateString()
                           : new Date(req.checkOutDate).toLocaleDateString()}
@@ -311,20 +313,20 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
                 </div>
 
                 {/* Actions Footer */}
-                <div className="mt-auto flex items-center gap-2 pt-2">
+                <div className="mt-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-2">
                   {activeTab === "pending" && (
                     <>
                       <button
                         onClick={() => handleBookingAction(req._id, "confirm")}
-                        className="flex-1 bg-green-500 text-white py-2 sm:py-2.5 rounded-full font-bold text-[9px] uppercase tracking-widest hover:bg-green-600 transition-all shadow-md hover:shadow-lg hover:shadow-green-500/30 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-1.5"
+                        className="flex-1 bg-green-500 text-white py-2 sm:py-2.5 rounded-full font-bold text-[8px] sm:text-[9px] uppercase tracking-widest hover:bg-green-600 transition-all shadow-md hover:shadow-lg hover:shadow-green-500/30 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-1 sm:gap-1.5"
                       >
-                        <Check size={12} strokeWidth={3} /> Approve
+                        <Check size={10} strokeWidth={3} /> Approve
                       </button>
                       <button
                         onClick={() => handleBookingAction(req._id, "cancel")}
-                        className="flex-1 bg-red-50 text-red-500 py-2 sm:py-2.5 rounded-full font-bold text-[9px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all active:scale-95 flex items-center justify-center gap-1.5 border border-red-100/50"
+                        className="flex-1 bg-red-50 text-red-500 py-2 sm:py-2.5 rounded-full font-bold text-[8px] sm:text-[9px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all active:scale-95 flex items-center justify-center gap-1 sm:gap-1.5 border border-red-100/50"
                       >
-                        <X size={12} strokeWidth={3} /> Cancel
+                        <X size={10} strokeWidth={3} /> Cancel
                       </button>
                     </>
                   )}
@@ -333,13 +335,13 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
                     <>
                       <button
                         onClick={() => handleBookingAction(req._id, "complete")}
-                        className="flex-1 bg-blue-500 text-white py-2 sm:py-2.5 rounded-full font-bold text-[9px] uppercase tracking-widest hover:bg-blue-600 transition-all shadow-md hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-1.5"
+                        className="flex-1 bg-blue-500 text-white py-2 sm:py-2.5 rounded-full font-bold text-[8px] sm:text-[9px] uppercase tracking-widest hover:bg-blue-600 transition-all shadow-md hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-1 sm:gap-1.5"
                       >
                         Complete Stay
                       </button>
                       <button
                         onClick={() => handleBookingAction(req._id, "cancel")}
-                        className="p-2 sm:p-2.5 bg-red-50 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all active:scale-95 border border-red-100/50"
+                        className="p-2 sm:p-2.5 bg-red-50 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all active:scale-95 border border-red-100/50 flex items-center justify-center flex-shrink-0"
                       >
                         <XCircle size={16} />
                       </button>
@@ -349,7 +351,7 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
                   {activeTab !== "pending" && activeTab !== "approved" && (
                     <button
                       onClick={() => handleDeleteRecord(req._id)}
-                      className="p-3 text-gray-300 hover:text-red-600 transition-all ml-auto"
+                      className="p-2 sm:p-3 text-gray-300 hover:text-red-600 transition-all ml-auto flex items-center justify-center flex-shrink-0"
                     >
                       <Trash2 size={18} />
                     </button>
