@@ -103,7 +103,7 @@ const NewSiriniHotel = () => {
     <>
       <div className="font-serif bg-gray-100 text-gray-900">
         {/* --- Hero Section --- */}
-        <header className="relative w-full h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
+        <header className="relative w-full h-[350px] sm:h-[450px] md:h-[600px] lg:h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
           {/* Background Slide Show Container */}
           <div className="absolute inset-0 z-0">
             {backgroundImages.map((img, index) => (
@@ -124,21 +124,21 @@ const NewSiriniHotel = () => {
             ))}
           </div>
 
-          <div className="z-10 flex flex-col items-center justify-center gap-4">
-            <h1 className="text-4xl md:text-6xl font-light">
+          <div className="z-10 flex flex-col items-center justify-center gap-2 md:gap-4">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-light">
               New Sirini Hotel
             </h1>
             <img
               src={Logo}
               alt="Logo"
-              className="w-40 h-40 mx-auto object-contain"
+              className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 mx-auto object-contain"
             />
-            <p className="text-lg md:text-xl italic tracking-widest border-t border-b border-white py-2 px-4">
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl italic tracking-widest border-t border-b border-white py-2 px-4">
               Stay, Relax, Enjoy
             </p>
           </div>
 
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
+          <div className="absolute bottom-2 sm:bottom-6 left-1/2 -translate-x-1/2 z-10">
             <Exploreindicator />
           </div>
         </header>

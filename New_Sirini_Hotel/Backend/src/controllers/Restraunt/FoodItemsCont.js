@@ -11,8 +11,6 @@ const createFoodItem = async (req, res) => {
       description,
       category,
       has_portions,
-      productionPrice,
-      discount,
     } = req.body;
 
     // Convert strings from FormData
@@ -53,14 +51,6 @@ const createFoodItem = async (req, res) => {
       full_price = null;
     }
 
-    // Process New Pricing Fields
-    productionPrice = isNaN(Number(productionPrice)) ? 0 : Number(productionPrice);
-    discount = isNaN(Number(discount)) ? 0 : Number(discount);
-    
-    // Calculate Selling Price
-    const sellingPrice = productionPrice - (productionPrice * discount / 100);
-    
-    // Ensure normal_price matches sellingPrice for compatibility
     normal_price = sellingPrice;
 
     const image = req.file ? req.file.secure_url || req.file.path : null;
@@ -81,9 +71,6 @@ const createFoodItem = async (req, res) => {
       has_portions,
       normal_price,
       full_price,
-      productionPrice,
-      discount,
-      sellingPrice,
       status: "available",
       availability: true,
     });

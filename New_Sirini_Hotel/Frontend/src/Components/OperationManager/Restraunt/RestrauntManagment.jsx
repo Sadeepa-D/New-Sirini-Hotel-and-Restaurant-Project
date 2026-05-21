@@ -41,23 +41,13 @@ const FoodCard = ({ item, onClick }) => (
       </div>
       <div className="mt-2 space-y-1 flex-1 flex flex-col justify-end">
         <div className="flex flex-col gap-0.5">
-          {item.discount > 0 ? (
-            <div className="flex items-center gap-2">
-              <span className="text-gray-500 line-through text-[10px]">
-                LKR {item.productionPrice}
-              </span>
-              <span className="bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full">
-                {item.discount}% OFF
-              </span>
-            </div>
-          ) : null}
           <p className="text-amber-500 text-sm font-bold">
-            Normal: LKR {item.sellingPrice || item.normal_price}
+            Normal Price: LKR {item.normal_price}
           </p>
         </div>
         {item.has_portions && (
           <p className="text-amber-500 text-sm font-bold">
-            Full: LKR {item.full_price}
+            Full Price: LKR {item.full_price}
           </p>
         )}
         <p
