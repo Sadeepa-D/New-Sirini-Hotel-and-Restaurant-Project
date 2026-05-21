@@ -245,7 +245,9 @@ const RoomsSection = () => {
                           Check In
                         </p>
                         <p className="text-xs font-bold text-gray-800">
-                          {new Date(room.checkInDate).toLocaleDateString("en-GB")}
+                          {new Date(room.checkInDate).toLocaleDateString(
+                            "en-GB",
+                          )}
                         </p>
                       </div>
                     </div>
