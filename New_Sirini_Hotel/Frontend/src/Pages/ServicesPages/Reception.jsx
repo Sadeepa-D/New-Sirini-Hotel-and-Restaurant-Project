@@ -15,6 +15,9 @@ import { Calendar } from "lucide-react";
 export default function Reception() {
   const VITE_URL = import.meta.env.VITE_API_URL;
 
+  const containerRef = useRef(null);
+  const [fabBottomOffset, setFabBottomOffset] = useState(32);
+
   const [showcalander, setShowCalander] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
@@ -22,7 +25,6 @@ export default function Reception() {
   const [loadingDates, setLoadingDates] = useState(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isFabVisible, setIsFabVisible] = useState(false);
-  const [isNearFooter, setIsNearFooter] = useState(false);
   const formSectionRef = useRef(null);
 
   const fetchBookedDates = async () => {
@@ -75,13 +77,23 @@ export default function Reception() {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
 
       // Show FAB after scrolling past hero (approx 100vh - header)
       setIsFabVisible(scrollY > windowHeight * 0.7);
 
-      // Detect if near footer (approx 400px from bottom)
-      setIsNearFooter(scrollY + windowHeight > documentHeight - 350);
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        const containerBottom = rect.bottom;
+        const fabMargin = 32; // bottom-8 is 32px
+
+        // If bottom of reception container enters viewport, adjust position to stay above footer
+        if (containerBottom < windowHeight) {
+          const offset = windowHeight - containerBottom + fabMargin;
+          setFabBottomOffset(offset);
+        } else {
+          setFabBottomOffset(fabMargin);
+        }
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -89,7 +101,7 @@ export default function Reception() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div ref={containerRef} className="min-h-screen bg-neutral-50">
       {/* HERO SECTION - Aligned with MainPage */}
       <header className="relative w-full h-[320px] sm:h-[400px] md:h-[500px] lg:h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
         {/* Background Image using img tag for maximum responsive scaling and visual quality */}
@@ -175,10 +187,12 @@ export default function Reception() {
 
       {/* Floating Action Button (FAB) - Smart visibility */}
       <div
-        className={`fixed transition-all duration-500 ease-in-out z-[60] 
-          ${isFabVisible ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-10 pointer-events-none"}
-          ${isNearFooter ? "bottom-[380px] md:bottom-[420px]" : "bottom-8"}
-          right-8`}
+        className={`fixed z-[60] right-8 
+          ${isFabVisible ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-10 pointer-events-none"}`}
+        style={{
+          bottom: `${fabBottomOffset}px`,
+          transition: "opacity 500ms ease-in-out, transform 500ms ease-in-out",
+        }}
       >
         <button
           className="relative group transition-all duration-300"
