@@ -77,7 +77,7 @@ const LiquorStore = () => {
   return (
     <div className="min-h-screen bg-neutral-50">
       {/* HERO SECTION - Aligned with MainPage */}
-      <header className="relative w-full h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
+      <header className="relative w-full h-[320px] sm:h-[400px] md:h-[500px] lg:h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
         {/* Background */}
         <div
           className="absolute inset-0 z-0"
@@ -92,15 +92,15 @@ const LiquorStore = () => {
         </div>
 
         {/* Content - centered in hero */}
-        <div className="z-10 flex flex-col items-center justify-center gap-4">
-          <h1 className="text-4xl md:text-6xl font-light">Our Liquor Store</h1>
-          <p className="text-lg md:text-xl italic tracking-widest border-t border-b border-white py-2 px-4">
+        <div className="z-10 flex flex-col items-center justify-center gap-1.5 sm:gap-4 max-w-[90%] sm:max-w-none">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-light">Our Liquor Store</h1>
+          <p className="text-[10px] sm:text-sm md:text-lg lg:text-xl italic tracking-wider sm:tracking-widest border-t border-b border-white py-1 px-2.5 sm:py-1.5 sm:px-3 md:py-2 md:px-4">
             A perfect drink for every celebration
           </p>
         </div>
 
         {/* Explore arrow pinned to bottom */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
+        <div className="absolute bottom-2 sm:bottom-4 md:bottom-6 lg:bottom-10 left-1/2 -translate-x-1/2 z-10">
           <Exploreindicator />
         </div>
       </header>
