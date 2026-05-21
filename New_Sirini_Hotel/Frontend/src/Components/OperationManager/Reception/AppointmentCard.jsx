@@ -42,7 +42,7 @@ const AppointmentCard = ({
   return (
     <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
       {/* Top accent bar */}
-      <div className="h-1 w-full bg-gradient-to-r from-amber-400 to-amber-300" />
+      <div className="h-1 w-full bg-linear-to-r from-amber-400 to-amber-300" />
 
       <div className="p-3 sm:p-5">
         {/* Status + Date row */}
@@ -70,6 +70,12 @@ const AppointmentCard = ({
           >
             {appointment.name}
           </h3>
+        </div>
+
+        <div className="mb-4 flex items-center">
+          <span className="bg-gray-100 text-gray-700 border border-gray-200/60 font-mono font-black tracking-wider text-[11px] px-2.5 py-1 rounded-lg uppercase">
+            Ref: {appointment.appointcode || "NA"}
+          </span>
         </div>
 
         {/* Contact details */}
