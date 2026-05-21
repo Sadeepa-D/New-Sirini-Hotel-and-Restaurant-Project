@@ -41,23 +41,13 @@ const FoodCard = ({ item, onClick }) => (
       </div>
       <div className="mt-2 space-y-1 flex-1 flex flex-col justify-end">
         <div className="flex flex-col gap-0.5">
-          {item.discount > 0 ? (
-            <div className="flex items-center gap-2">
-              <span className="text-gray-500 line-through text-[10px]">
-                LKR {item.productionPrice}
-              </span>
-              <span className="bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full">
-                {item.discount}% OFF
-              </span>
-            </div>
-          ) : null}
           <p className="text-amber-500 text-sm font-bold">
-            Normal: LKR {item.sellingPrice || item.normal_price}
+            Normal Price: LKR {item.normal_price}
           </p>
         </div>
         {item.has_portions && (
           <p className="text-amber-500 text-sm font-bold">
-            Full: LKR {item.full_price}
+            Full Price: LKR {item.full_price}
           </p>
         )}
         <p
@@ -245,50 +235,55 @@ const RestaurantManager = () => {
       {/* Food Items Grid Section */}
       <div className="bg-white rounded-xl p-6 md:p-10 shadow-sm min-h-[400px]">
         {filteredItems.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
-            {filteredItems.map((item) => (
-              <div key={item._id} className="relative group h-full">
-                <FoodCard item={item} onClick={() => { }} />
-                <div className="absolute top-4 right-4 flex flex-col gap-2 z-50">
-                  {/* Toggle Availability */}
-                  <button
-                    className={`p-2 rounded-full shadow-lg transition transform hover:scale-110 ${item.availability !== false
-                      ? "bg-green-100 text-green-600 hover:bg-green-600 hover:text-white"
-                      : "bg-red-100 text-red-600 hover:bg-red-600 hover:text-white"
-                      }`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleToggleAvailability(item._id);
-                    }}
-                    title={item.availability !== false ? "Mark as Unavailable" : "Mark as Available"}
-                  >
-                    <Power size={16} />
-                  </button>
-                  {/* Edit */}
-                  <button
-                    className="p-2 bg-white rounded-full text-blue-600 shadow-lg hover:bg-blue-600 hover:text-white transition transform hover:scale-110"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleEdit(item);
-                    }}
-                    title="Edit Item"
-                  >
-                    <Edit2 size={16} />
-                  </button>
-                  {/* Delete */}
-                  <button
-                    className="p-2 bg-white rounded-full text-red-600 shadow-lg hover:bg-red-600 hover:text-white transition transform hover:scale-110"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(item._id);
-                    }}
-                    title="Delete Item"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+          <div className="flex flex-col">
+            <div className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+              {filteredItems.map((item) => (
+                <div key={item._id} className="relative group h-full w-[90%] shrink-0 snap-start md:w-auto md:shrink md:snap-none">
+                  <FoodCard item={item} onClick={() => { }} />
+                  <div className="absolute top-4 right-4 flex flex-col gap-2 z-50">
+                    {/* Toggle Availability */}
+                    <button
+                      className={`p-2 rounded-full shadow-lg transition transform hover:scale-110 ${item.availability !== false
+                        ? "bg-green-100 text-green-600 hover:bg-green-600 hover:text-white"
+                        : "bg-red-100 text-red-600 hover:bg-red-600 hover:text-white"
+                        }`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleToggleAvailability(item._id);
+                      }}
+                      title={item.availability !== false ? "Mark as Unavailable" : "Mark as Available"}
+                    >
+                      <Power size={16} />
+                    </button>
+                    {/* Edit */}
+                    <button
+                      className="p-2 bg-white rounded-full text-blue-600 shadow-lg hover:bg-blue-600 hover:text-white transition transform hover:scale-110"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEdit(item);
+                      }}
+                      title="Edit Item"
+                    >
+                      <Edit2 size={16} />
+                    </button>
+                    {/* Delete */}
+                    <button
+                      className="p-2 bg-white rounded-full text-red-600 shadow-lg hover:bg-red-600 hover:text-white transition transform hover:scale-110"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(item._id);
+                      }}
+                      title="Delete Item"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+            <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
+              ← Swipe to browse →
+            </p>
           </div>
         ) : (
           <div className="text-center py-16 text-gray-400">

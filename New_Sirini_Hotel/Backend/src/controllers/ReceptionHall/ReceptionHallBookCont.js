@@ -1,4 +1,17 @@
 const receptionandHallBook = require("../../models/Reception/ReceptionHallBookings");
+const { sendReceptionhallBookingEmail } = require("../EmailCont");
+
+const genarateBookingCode = async () => {
+  const prefix = "RHB";
+  const randomNum = Math.floor(100000 + Math.random() * 900000);
+  const existing = await receptionandHallBook.findOne({
+    refnumber: `${prefix}${randomNum}`,
+  });
+  if (!existing) {
+    return `${prefix}${randomNum}`;
+  }
+  return genarateBookingCode();
+};
 
 const createReceptionHallBooking = async (req, res) => {
   try {
@@ -53,8 +66,12 @@ const createReceptionHallBooking = async (req, res) => {
       status: status || "Confirmed",
       selectedPackage,
       amountPayed,
+      refnumber: await genarateBookingCode(),
     });
     await newBooking.save();
+    await sendReceptionhallBookingEmail({
+      newBooking,
+    });
     res.status(201).json(newBooking);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -63,7 +80,7 @@ const createReceptionHallBooking = async (req, res) => {
 
 const getReceptionHallBookings = async (req, res) => {
   try {
-    const bookings = await receptionandHallBook.find();
+    const bookings = await receptionandHallBook.find().sort({ createdAt: -1 });
     res.status(200).json(bookings);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -152,7 +169,10 @@ const updateBookingStatus = async (req, res) => {
 
 const GetBookingDates = async (req, res) => {
   try {
-    const bookings = await receptionandHallBook.find({}, "eventDate eventTime");
+    const bookings = await receptionandHallBook.find(
+      { status: { $in: ["Confirmed", "Booked"] } },
+      "eventDate eventTime",
+    );
     res.status(200).json(bookings);
   } catch (error) {
     res.status(400).json({ message: error.message });

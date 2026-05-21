@@ -9,6 +9,7 @@ const AppointmentMng = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -60,6 +61,14 @@ const AppointmentMng = () => {
 
   const tabs = ["Pending", "Completed", "Canceled", "Overdue"];
 
+  const filteredAppointments = appointments.filter((app) => {
+    const search = searchTerm.toLowerCase();
+    return (
+      app.name?.toLowerCase().includes(search) ||
+      app.appointcode?.toLowerCase().includes(search)
+    );
+  });
+
   return (
     <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-3 sm:p-8">
       {/* Header */}
@@ -71,6 +80,15 @@ const AppointmentMng = () => {
           <h2 className="font-cinzel text-2xl sm:text-3xl text-gray-800 font-semibold whitespace-nowrap">
             Appointment Requests
           </h2>
+        </div>
+        <div className="w-full lg:w-72 md:max-w-md ml-auto">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search name or booking code..."
+            className="w-full px-4 py-2.5 bg-gray-50/50 hover:bg-gray-50 text-gray-800 border border-gray-200 rounded-xl font-medium placeholder-gray-400 focus:ring-2 focus:ring-amber-400/20 focus:border-amber-400 focus:bg-white focus:outline-none text-xs transition-all duration-200"
+          />
         </div>
         <div className="flex items-center gap-2 bg-gray-50 p-1.5 rounded-2xl overflow-x-auto no-scrollbar">
           {tabs.map((tab) => (
@@ -117,7 +135,7 @@ const AppointmentMng = () => {
             ref={sliderRef}
             className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-1"
           >
-            {appointments.map((app) => (
+            {filteredAppointments.map((app) => (
               <div
                 key={app._id}
                 data-slider-card
@@ -130,6 +148,17 @@ const AppointmentMng = () => {
                 />
               </div>
             ))}
+            {!filteredAppointments.length && (
+              <div className="w-full flex flex-col items-center justify-center py-16 px-4 bg-gray-50/40 rounded-2xl border border-dashed border-gray-200">
+                <Filter
+                  size={28}
+                  className="text-gray-300 mb-2.5 stroke-[1.5]"
+                />
+                <p className="text-gray-400 text-xs font-bold uppercase tracking-widest text-center">
+                  No record matches "{searchTerm}"
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Right arrow */}

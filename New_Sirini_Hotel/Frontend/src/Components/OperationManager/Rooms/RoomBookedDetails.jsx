@@ -16,6 +16,7 @@ import {
   Phone,
   ChevronLeft,
   ChevronRight,
+  Filter,
 } from "lucide-react";
 
 function RoomBookedDetails({ refreshKey, onActionCompleted }) {
@@ -133,11 +134,14 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
     }
   };
 
-  const filteredList = getActiveList().filter(
-    (item) =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.roomNumber.toString().includes(searchTerm),
-  );
+  const filteredList = getActiveList().filter((item) => {
+    const search = searchTerm.toLowerCase();
+    return (
+      item.name?.toLowerCase().includes(search) ||
+      item.roomNumber?.toString().includes(search) ||
+      item.bookingCode?.toLowerCase().includes(search)
+    );
+  });
 
   if (loading)
     return (
@@ -209,9 +213,12 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
 
       {/*Card Slider Section with Arrows*/}
       {filteredList.length === 0 ? (
-        <div className="text-center py-24 bg-white rounded-3xl border border-gray-100 shadow-sm">
-          <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-xs">
-            No {activeTab} bookings found.
+        <div className="w-full flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-dashed border-gray-200 shadow-xs">
+          <Filter size={32} className="text-gray-300 mb-3 stroke-[1.5]" />
+          <p className="text-gray-400 text-xs font-bold uppercase tracking-[0.2em] text-center">
+            {searchTerm
+              ? `No results match "${searchTerm}"`
+              : `No ${activeTab} bookings found.`}
           </p>
         </div>
       ) : (
@@ -232,7 +239,7 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
             {filteredList.map((req) => (
               <div
                 key={req._id}
-                className="flex-shrink-0 w-[85vw] sm:w-[320px] snap-center bg-white rounded-[2rem] p-5 sm:p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col"
+                className="shrink-0 w-[85vw] sm:w-[320px] snap-center bg-white rounded-4xl p-5 sm:p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col"
               >
                 {/*User Info & Status */}
                 <div className="flex justify-between items-start mb-5">
@@ -251,7 +258,11 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
                   </div>
                   <StatusBadge status={req.status} tab={activeTab} />
                 </div>
-
+                <div className="mb-4 flex items-center">
+                  <span className="bg-gray-100 text-gray-700 border border-gray-200/60 font-mono font-black tracking-wider text-[11px] px-2.5 py-1 rounded-lg uppercase">
+                    Ref: {req.bookingCode || "NA"}
+                  </span>
+                </div>
                 {/*Room & Dates details */}
                 <div className="bg-gray-50 rounded-2xl p-4 space-y-3 mb-6">
                   <div className="flex justify-between items-center">

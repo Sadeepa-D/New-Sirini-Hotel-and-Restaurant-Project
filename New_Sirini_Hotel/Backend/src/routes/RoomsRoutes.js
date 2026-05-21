@@ -4,6 +4,7 @@ const upload = require("../config/CloudinaryConfig");
 const authmiddleware = require("../middleware/AuthMiddleware");
 const roomBookingController = require("../controllers/Room/RoomBookingCont");
 const roomController = require("../controllers/Room/RoomCont");
+const roomAnlysController = require("../controllers/Room/RoomAnlys");
 
 router.post("/book", authmiddleware, roomBookingController.createRoomBooking);
 router.delete("/deletebooking/:id", roomBookingController.deleteRoomBooking);
@@ -69,5 +70,11 @@ router.get(
   "/unavailablerooms/dates/:roomNumber",
   roomBookingController.getUnavilableDatesForRoom,
 );
+
+router.post("/roomanlys/bookingstats", roomAnlysController.getBookingStats);
+router.post("/roomanlys/roomfrequency", roomAnlysController.getRoomFrequency);
+router.get("/roomanlys/statusoverview", roomAnlysController.getRoomStatusOverview);
+router.post("/roomanlys/revenuemnothly", roomAnlysController.getMonthlyRevenue);
+router.post("/roomanlys/revenuebyroom", roomAnlysController.getRevenueByRoom);
 
 module.exports = router;

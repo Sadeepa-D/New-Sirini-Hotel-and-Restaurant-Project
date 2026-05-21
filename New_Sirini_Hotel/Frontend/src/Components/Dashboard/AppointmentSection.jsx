@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -13,10 +13,11 @@ import {
 } from "lucide-react";
 import AppointmentCard from "../OperationManager/Reception/AppointmentCard";
 import AppointForm from "../Receptionhall/receptionform";
+import ConfrimDialog from "../ConfrimDialog";
 
 const TABS = [
   { key: "Pending", label: "Pending", icon: Clock, color: "text-amber-500" },
-  { key: "Canceled", label: "Cancelled", icon: XCircle, color: "text-red-500" },
+  { key: "Cancelled", label: "Cancelled", icon: XCircle, color: "text-red-500" },
   {
     key: "Completed",
     label: "Completed",
@@ -31,13 +32,25 @@ const AppointmentsSection = () => {
   const [loading, setLoading] = useState(true);
   const [editingAppt, setEditingAppt] = useState(null);
   const [activeTab, setActiveTab] = useState("Pending");
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    id: null,
+    type: "delete",
+    title: "",
+    message: "",
+  });
 
-  const [index, setIndex] = useState(0);
-  const [itemsPerView, setItemsPerView] = useState(
-    typeof window !== "undefined" && window.innerWidth < 640
-      ? 1
-      : 2,
-  );
+  const sliderRef = useRef(null);
+
+  const scrollSection = (direction) => {
+    if (!sliderRef.current) return;
+    const cardWidth =
+      sliderRef.current.querySelector("[data-slider-card]")?.offsetWidth || 300;
+    sliderRef.current.scrollBy({
+      left: direction * (cardWidth + 16),
+      behavior: "smooth",
+    });
+  };
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -65,44 +78,25 @@ const AppointmentsSection = () => {
     fetchappointments();
   }, []);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setItemsPerView(
-        window.innerWidth < 640 ? 1 : 2,
-      );
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const handlecancelconfrim = (id) => {
+    setConfirmDialog({
+      isOpen: true,
+      id,
+      type: "Cancel",
+      title: "Cancel Appointment?",
+      message: "Are you sure you want to cancel this appointment?",
+    });
+  };
 
-  useEffect(() => {
-    setIndex(0);
-  }, [activeTab]);
-
-  useEffect(() => {
-    setIndex((prev) =>
-      Math.min(
-        prev,
-        Math.max(
-          0,
-          appointments.filter((a) => a.status === activeTab).length -
-            itemsPerView,
-        ),
-      ),
-    );
-  }, [appointments, activeTab, itemsPerView]);
-
-  const handlecancel = async (id) => {
-    const confirmCancel = window.confirm(
-      "Are you sure you want to cancel this booking?",
-    );
-    if (!confirmCancel) return;
+  const handlecancel = async () => {
+    const { id } = confirmDialog;
+    setConfirmDialog({ isOpen: false, id: null });
     const loadingToast = toast.loading("Canceling appointment...");
     try {
       await axios.put(
         `${VITE_URL}/api/receptionhall/appointment/update/Canceled/${id}`,
       );
+      toast.dismiss(loadingToast);
       toast.success("Appointment canceled successfully.");
       fetchappointments();
     } catch (error) {
@@ -127,18 +121,12 @@ const AppointmentsSection = () => {
   // Count per tab
   const counts = {
     Pending: appointments.filter((a) => a.status === "Pending").length,
-    Canceled: appointments.filter((a) => a.status === "Canceled").length,
+    Cancelled: appointments.filter((a) => a.status === "Cancelled").length,
     Completed: appointments.filter((a) => a.status === "Completed").length,
   };
 
   // Filter to active tab
   const filtered = appointments.filter((a) => a.status === activeTab);
-
-  const visibleItems = filtered.slice(index, index + itemsPerView);
-  const canGoBack = index > 0;
-  const canGoNext = index + itemsPerView < filtered.length;
-  const GAP = 16;
-  const cardWidth = `calc((100% - ${GAP * (itemsPerView - 1)}px) / ${itemsPerView})`;
 
   return (
     <div className="space-y-6 font-sans relative">
@@ -188,68 +176,47 @@ const AppointmentsSection = () => {
       ) : (
         <div className="relative mt-4">
           {/* Left arrow */}
-          {canGoBack && (
-            <button
-              onClick={() => setIndex((i) => Math.max(0, i - itemsPerView))}
-              className="absolute left-0 sm:-left-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-all"
-            >
-              <ChevronLeft size={16} className="text-gray-600" />
-            </button>
-          )}
+          <button
+            onClick={() => scrollSection(-1)}
+            aria-label="Scroll left"
+            className={`hidden ${filtered.length > 2 ? "md:flex" : ""} absolute left-0 sm:-left-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md items-center justify-center hover:bg-gray-50 transition-all text-gray-600 active:scale-90`}
+          >
+            <ChevronLeft size={16} />
+          </button>
 
           {/* Visible cards */}
           <div
-            key={index + activeTab}
-            className="flex gap-4"
-            style={{ animation: "fadeIn 0.25s ease" }}
+            ref={sliderRef}
+            className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6"
           >
-            {visibleItems.map((app) => (
+            {filtered.map((app) => (
               <div
                 key={app._id}
-                className="shrink-0"
-                style={{ width: cardWidth }}
+                data-slider-card
+                className="shrink-0 snap-start w-[90%] md:w-[calc(50%-8px)]"
               >
                 <AppointmentCard
                   appointment={app}
                   onEdit={(d) => setEditingAppt(d)}
-                  onCancel={handlecancel}
+                  onCancel={handlecancelconfrim}
                 />
               </div>
             ))}
           </div>
 
           {/* Right arrow */}
-          {canGoNext && (
-            <button
-              onClick={() =>
-                setIndex((i) =>
-                  Math.min(filtered.length - itemsPerView, i + itemsPerView),
-                )
-              }
-              className="absolute right-0 sm:-right-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-all"
-            >
-              <ChevronRight size={16} className="text-gray-600" />
-            </button>
-          )}
+          <button
+            onClick={() => scrollSection(1)}
+            aria-label="Scroll right"
+            className={`hidden ${filtered.length > 2 ? "md:flex" : ""} absolute right-0 sm:-right-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md items-center justify-center hover:bg-gray-50 transition-all text-gray-600 active:scale-90`}
+          >
+            <ChevronRight size={16} />
+          </button>
 
-          {/* Page dots */}
-          {filtered.length > itemsPerView && (
-            <div className="flex justify-center gap-1.5 mt-6">
-              {Array.from({
-                length: Math.ceil(filtered.length / itemsPerView),
-              }).map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setIndex(i * itemsPerView)}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    Math.floor(index / itemsPerView) === i
-                      ? "bg-amber-500"
-                      : "bg-gray-200 hover:bg-gray-300"
-                  }`}
-                />
-              ))}
-            </div>
-          )}
+          {/* Swipe indicator for mobile */}
+          <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
+            ← Swipe to browse →
+          </p>
         </div>
       )}
       {/* ── Add Button ── */}
@@ -284,6 +251,14 @@ const AppointmentsSection = () => {
           </div>
         </div>
       )}
+      <ConfrimDialog
+        isOpen={confirmDialog.isOpen}
+        type={confirmDialog.type}
+        title={confirmDialog.title}
+        message={confirmDialog.message}
+        onConfirm={handlecancel}
+        onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
+      />
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(6px); }
