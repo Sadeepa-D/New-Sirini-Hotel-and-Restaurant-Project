@@ -178,16 +178,14 @@ export default function Restaurant() {
   return (
     <div className="min-h-screen bg-neutral-50 relative">
       {/* HERO SECTION */}
-      <header className="relative w-full h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
+      <header className="relative w-full h-[320px] sm:h-[400px] md:h-[500px] lg:h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
         {/* Background */}
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage: `url(${resturantImg})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
+        <div className="absolute inset-0 z-0">
+          <img
+            src={resturantImg}
+            alt="Our Restaurant"
+            className="w-full h-full object-cover"
+          />
           <div className="absolute inset-0 bg-black/50"></div>
         </div>
 
