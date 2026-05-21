@@ -78,18 +78,7 @@ const RoomsSection = () => {
       scrollRef.current.scrollTo({ left: scrollTo, behavior: "smooth" });
     }
   };
-
-  const handlecancelconfrim = (id) => {
-    setConfirmDialog({
-      isOpen: true,
-      id,
-      type: "Cancel",
-      title: "Cancel Booking?",
-      message:
-        "Are you sure you want to cancel this booking? The dates will become available again.",
-    });
-  };
-
+  
   const handlecancelconfrim = (id) => {
     setConfirmDialog({
       isOpen: true,
