@@ -13,16 +13,12 @@ import {
 } from "lucide-react";
 import AppointmentCard from "../OperationManager/Reception/AppointmentCard";
 import AppointForm from "../Receptionhall/receptionform";
+import ConfrimDialog from "../ConfrimDialog";
 
 const TABS = [
   { key: "Pending", label: "Pending", icon: Clock, color: "text-amber-500" },
-  { key: "Canceled", label: "Cancelled", icon: XCircle, color: "text-red-500" },
-  {
-    key: "Completed",
-    label: "Completed",
-    icon: CheckCircle2,
-    color: "text-green-500",
-  },
+  { key: "Cancelled", label: "Cancelled", icon: XCircle, color: "text-red-500" },
+  { key: "Completed",label: "Completed",icon: CheckCircle2,color: "text-green-500" },
 ];
 
 const AppointmentsSection = () => {
@@ -31,6 +27,13 @@ const AppointmentsSection = () => {
   const [loading, setLoading] = useState(true);
   const [editingAppt, setEditingAppt] = useState(null);
   const [activeTab, setActiveTab] = useState("Pending");
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    id: null,
+    type: "delete",
+    title: "",
+    message: "",
+  });
 
   const sliderRef = useRef(null);
 
@@ -70,16 +73,25 @@ const AppointmentsSection = () => {
     fetchappointments();
   }, []);
 
-  const handlecancel = async (id) => {
-    const confirmCancel = window.confirm(
-      "Are you sure you want to cancel this booking?",
-    );
-    if (!confirmCancel) return;
+  const handlecancelconfrim = (id) => {
+    setConfirmDialog({
+      isOpen: true,
+      id,
+      type: "Cancel",
+      title: "Cancel Appointment?",
+      message: "Are you sure you want to cancel this appointment?",
+    });
+  };
+
+  const handlecancel = async () => {
+    const { id } = confirmDialog;
+    setConfirmDialog({ isOpen: false, id: null });
     const loadingToast = toast.loading("Canceling appointment...");
     try {
       await axios.put(
         `${VITE_URL}/api/receptionhall/appointment/update/Canceled/${id}`,
       );
+      toast.dismiss(loadingToast);
       toast.success("Appointment canceled successfully.");
       fetchappointments();
     } catch (error) {
@@ -104,7 +116,7 @@ const AppointmentsSection = () => {
   // Count per tab
   const counts = {
     Pending: appointments.filter((a) => a.status === "Pending").length,
-    Canceled: appointments.filter((a) => a.status === "Canceled").length,
+    Cancelled: appointments.filter((a) => a.status === "Cancelled").length,
     Completed: appointments.filter((a) => a.status === "Completed").length,
   };
 
@@ -181,7 +193,7 @@ const AppointmentsSection = () => {
                 <AppointmentCard
                   appointment={app}
                   onEdit={(d) => setEditingAppt(d)}
-                  onCancel={handlecancel}
+                  onCancel={handlecancelconfrim}
                 />
               </div>
             ))}
@@ -234,6 +246,14 @@ const AppointmentsSection = () => {
           </div>
         </div>
       )}
+      <ConfrimDialog
+        isOpen={confirmDialog.isOpen}
+        type={confirmDialog.type}
+        title={confirmDialog.title}
+        message={confirmDialog.message}
+        onConfirm={handlecancel}
+        onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
+      />
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(6px); }
