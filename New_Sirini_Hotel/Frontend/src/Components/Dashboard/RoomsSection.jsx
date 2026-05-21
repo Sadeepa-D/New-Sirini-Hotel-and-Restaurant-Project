@@ -141,7 +141,8 @@ const RoomsSection = () => {
     if (activeTab === "Overdue") return s === "overdue";
     return true;
   });
-  const searchrooms = filteredRooms.filter((room) => {
+
+  const searchrooms = (searchTerm ? allRooms : filteredRooms).filter((room) => {
     const term = searchTerm.toLowerCase();
     return (
       room.roomNumber?.toString().includes(term) ||
