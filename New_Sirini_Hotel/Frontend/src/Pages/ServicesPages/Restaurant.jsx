@@ -60,9 +60,6 @@ export default function Restaurant() {
         category: item.category,
         availability: item.availability,
         label: item.availability ? "Available" : "Unavailable",
-        productionPrice: item.productionPrice,
-        discount: item.discount,
-        sellingPrice: item.sellingPrice,
       }));
       setMealData(mappedData);
     } catch (error) {
@@ -248,7 +245,7 @@ export default function Restaurant() {
                 {filteredItems.map((item) => (
                   <div
                     key={item.id}
-                    className="w-[85%] shrink-0 snap-start md:w-auto md:shrink md:snap-none"
+                    className="w-[85%] shrink-0 snap-start md:w-auto md:shrink md:snap-none h-full"
                   >
                     <RestaurantCard
                       item={item}

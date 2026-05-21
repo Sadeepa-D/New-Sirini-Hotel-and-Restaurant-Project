@@ -34,18 +34,7 @@ const FoodItemSchema = new mongoose.Schema(
       type: Number,
       default: null,
     },
-    productionPrice: {
-      type: Number,
-      required: true,
-    },
-    discount: {
-      type: Number,
-      default: 0,
-    },
-    sellingPrice: {
-      type: Number,
-      required: true,
-    },
+
     status: {
       type: String,
       enum: ["available", "unavailable"],
