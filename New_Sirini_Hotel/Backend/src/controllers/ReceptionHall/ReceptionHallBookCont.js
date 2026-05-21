@@ -1,4 +1,17 @@
 const receptionandHallBook = require("../../models/Reception/ReceptionHallBookings");
+const { sendReceptionhallBookingEmail } = require("../EmailCont");
+
+const genarateBookingCode = async () => {
+  const prefix = "RHB";
+  const randomNum = Math.floor(100000 + Math.random() * 900000);
+  const existing = await receptionandHallBook.findOne({
+    refnumber: `${prefix}${randomNum}`,
+  });
+  if (!existing) {
+    return `${prefix}${randomNum}`;
+  }
+  return genarateBookingCode();
+};
 
 const createReceptionHallBooking = async (req, res) => {
   try {
@@ -53,8 +66,12 @@ const createReceptionHallBooking = async (req, res) => {
       status: status || "Confirmed",
       selectedPackage,
       amountPayed,
+      refnumber: await genarateBookingCode(),
     });
     await newBooking.save();
+    await sendReceptionhallBookingEmail({
+      newBooking,
+    });
     res.status(201).json(newBooking);
   } catch (error) {
     res.status(400).json({ message: error.message });

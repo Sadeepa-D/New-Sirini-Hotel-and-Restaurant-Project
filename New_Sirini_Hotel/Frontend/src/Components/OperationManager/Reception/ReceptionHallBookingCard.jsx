@@ -74,6 +74,11 @@ const ReceptionHallBookingCard = ({ booking, onEdit, onCancel }) => {
             {booking.eventType}
           </span>
         </div>
+        <div className="mb-4 flex items-center">
+          <span className="bg-gray-100 text-gray-700 border border-gray-200/60 font-mono font-black tracking-wider text-[11px] px-2.5 py-1 rounded-lg uppercase">
+            Ref: {booking.refnumber || "NA"}
+          </span>
+        </div>
         {/* Divider */}
         <div className="h-px bg-gray-100" />
 

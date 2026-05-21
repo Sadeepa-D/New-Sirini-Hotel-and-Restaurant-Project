@@ -7,6 +7,7 @@ import {
   Calendar,
   ChevronLeft,
   ChevronRight,
+  Filter,
 } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -95,10 +96,11 @@ const ReceptionHallBookMng = () => {
   const filtered = bookings.filter((b) => {
     const matchesSearch =
       b.customerName?.toLowerCase().includes(search.toLowerCase()) ||
-      b.eventType?.toLowerCase().includes(search.toLowerCase());
+      b.eventType?.toLowerCase().includes(search.toLowerCase()) ||
+      b.refnumber?.toLowerCase().includes(search.toLowerCase()) ||
+      b._id?.toLowerCase().includes(search.toLowerCase());
 
     const matchesStatus = statusFilter === "All" || b.status === statusFilter;
-
     return matchesSearch && matchesStatus;
   });
 
@@ -221,9 +223,12 @@ const ReceptionHallBookMng = () => {
 
       {/* Cards Carousel */}
       {filtered.length === 0 ? (
-        <div className="flex items-center justify-center py-24">
-          <p className="text-gray-400 text-sm uppercase tracking-widest">
-            No bookings found
+        <div className="w-full flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-dashed border-gray-200 shadow-sm max-w-6xl mx-auto">
+          <Filter size={32} className="text-gray-300 mb-3 stroke-[1.5]" />
+          <p className="text-gray-400 text-xs font-bold uppercase tracking-[0.2em] text-center px-4">
+            {search
+              ? `No bookings match "${search}"`
+              : `No ${statusFilter.toLowerCase()} requests recorded yet`}
           </p>
         </div>
       ) : (
