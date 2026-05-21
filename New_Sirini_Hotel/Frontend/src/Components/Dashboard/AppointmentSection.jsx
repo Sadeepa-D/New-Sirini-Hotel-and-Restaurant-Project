@@ -18,12 +18,7 @@ import ConfrimDialog from "../ConfrimDialog";
 const TABS = [
   { key: "Pending", label: "Pending", icon: Clock, color: "text-amber-500" },
   { key: "Cancelled", label: "Cancelled", icon: XCircle, color: "text-red-500" },
-  {
-    key: "Completed",
-    label: "Completed",
-    icon: CheckCircle2,
-    color: "text-green-500",
-  },
+  { key: "Completed",label: "Completed",icon: CheckCircle2,color: "text-green-500" },
 ];
 
 const AppointmentsSection = () => {

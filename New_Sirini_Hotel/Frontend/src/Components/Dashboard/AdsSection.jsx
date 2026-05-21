@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AdvertisementCard from "../OperationManager/Reception/AdvertisementCard";
 import AdvertismentForm from "../Receptionhall/AdvertismentForm";
+import ConfrimDialog from "../ConfrimDialog";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Megaphone, Plus, ChevronLeft, ChevronRight } from "lucide-react";
@@ -13,12 +14,24 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
   const [loading, setLoading] = useState(true);
   const [editingAd, setEditingAd] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
-
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    id: null,
+    type: "delete",
+    title: "",
+    message: "",
+  });
   const [index, setIndex] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(
-    typeof window !== "undefined" && window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : 3
+    typeof window !== "undefined" && window.innerWidth < 640
+      ? 1
+      : window.innerWidth < 1024
+        ? 2
+        : 3,
   );
-  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" ? window.innerWidth < 768 : false);
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth < 768 : false,
+  );
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -65,9 +78,7 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
   }, []);
 
   useEffect(() => {
-    setIndex((prev) =>
-      Math.min(prev, Math.max(0, ads.length - itemsPerView))
-    );
+    setIndex((prev) => Math.min(prev, Math.max(0, ads.length - itemsPerView)));
   }, [ads.length, itemsPerView]);
 
   const handleEdit = (ad) => {
@@ -75,14 +86,24 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
     setIsFormOpen(true);
   };
 
-  const handleDelete = async (adId) => {
-    if (!window.confirm("Are you sure you want to delete this advertisement?"))
-      return;
+  const handleConfirmDelete = (id) => {
+    setConfirmDialog({
+      isOpen: true,
+      id,
+      type: "delete",
+      title: "Delete Advertisement?",
+      message: "Are you sure you want to delete this advertisement?",
+    });
+  };
+
+  const handleDelete = async () => {
+    const { id } = confirmDialog;
+    setConfirmDialog({ isOpen: false, id: null });
     const loading = toast.loading("Deleting advertisement...");
     try {
       const token = localStorage.getItem("token");
       const response = await axios.delete(
-        `${VITE_URL}/api/receptionhall/advertisment/delete/${adId}`,
+        `${VITE_URL}/api/receptionhall/advertisment/delete/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -103,7 +124,9 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
         <div className="w-10 h-10 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
-        <p className="text-gray-400 text-sm animate-pulse">Loading advertisements…</p>
+        <p className="text-gray-400 text-sm animate-pulse">
+          Loading advertisements…
+        </p>
       </div>
     );
   }
@@ -139,7 +162,9 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
       {ads.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
           <Megaphone size={36} className="text-gray-200 mb-3" />
-          <p className="text-gray-400 text-sm font-medium">You haven't placed any advertisements yet.</p>
+          <p className="text-gray-400 text-sm font-medium">
+            You haven't placed any advertisements yet.
+          </p>
           <button
             onClick={() => navigate("/reception")}
             className="mt-4 flex items-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold rounded-full transition-all duration-200"
@@ -174,7 +199,7 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
                 <AdvertisementCard
                   ad={ad}
                   onEdit={handleEdit}
-                  onDelete={handleDelete}
+                  onDelete={handleConfirmDelete}
                   showAdminActions={false}
                   showEditDelete={true}
                 />
@@ -205,10 +230,11 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
                 <button
                   key={i}
                   onClick={() => setIndex(i * itemsPerView)}
-                  className={`w-2 h-2 rounded-full transition-colors ${Math.floor(index / itemsPerView) === i
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    Math.floor(index / itemsPerView) === i
                       ? "bg-amber-500"
                       : "bg-gray-200 hover:bg-gray-300"
-                    }`}
+                  }`}
                 />
               ))}
             </div>
@@ -232,6 +258,14 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
           }}
         />
       )}
+      <ConfrimDialog
+        isOpen={confirmDialog.isOpen}
+        type={confirmDialog.type}
+        title={confirmDialog.title}
+        message={confirmDialog.message}
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
+      />
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(6px); }
