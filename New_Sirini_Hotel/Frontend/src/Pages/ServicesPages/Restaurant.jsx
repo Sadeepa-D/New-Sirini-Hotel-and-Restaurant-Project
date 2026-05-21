@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Exploreindicator from "../../Components/Exploreindicator";
@@ -155,20 +155,33 @@ export default function Restaurant() {
 
 
 
+  const foodSectionRef = useRef(null);
   const [isFabVisible, setIsFabVisible] = useState(false);
-  const [isNearFooter, setIsNearFooter] = useState(false);
+  const [fabBottomOffset, setFabBottomOffset] = useState(32);
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
 
       // Show FAB after scrolling past hero 
       setIsFabVisible(scrollY > windowHeight * 0.7);
 
-      // Detect if near footer 
-      setIsNearFooter(scrollY + windowHeight > documentHeight - 350);
+      if (foodSectionRef.current) {
+        const rect = foodSectionRef.current.getBoundingClientRect();
+        const foodBottom = rect.bottom;
+        
+        const isMobile = window.innerWidth < 768;
+        const fabMargin = 32;
+        
+        // If bottom of food items section enters viewport
+        if (foodBottom < windowHeight) {
+          const offset = windowHeight - foodBottom + fabMargin;
+          setFabBottomOffset(offset);
+        } else {
+          setFabBottomOffset(fabMargin);
+        }
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -244,7 +257,7 @@ export default function Restaurant() {
         </div>
 
         {/* Food Items Grid Section */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-[400px]">
+        <div ref={foodSectionRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-[400px]">
           {isLoading ? (
             <div className="flex flex-col">
               <div className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-x-6 md:gap-y-12 md:overflow-visible md:pb-0">
@@ -291,10 +304,12 @@ export default function Restaurant() {
 
         {/* Floating Action Button (FAB) - Smart visibility */}
         <div
-          className={`fixed transition-all duration-500 ease-in-out z-[60] 
-            ${isFabVisible ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-10 pointer-events-none'}
-            ${isNearFooter ? 'bottom-[380px] md:bottom-[420px]' : 'bottom-8'}
-            right-8`}
+          className={`fixed z-[60] right-8 
+            ${isFabVisible ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-10 pointer-events-none'}`}
+          style={{
+            bottom: `${fabBottomOffset}px`,
+            transition: 'opacity 500ms ease-in-out, transform 500ms ease-in-out',
+          }}
         >
          <button 
            className="relative group transition-all duration-300"
