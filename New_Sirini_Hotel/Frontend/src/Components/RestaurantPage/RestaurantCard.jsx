@@ -1,12 +1,54 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
-export default function RestaurantCard({ item, itemsPerView, onOrder }) {
+export default function RestaurantCard({ item, itemsPerView, onOrder, isLoading }) {
   const [selectedPortion, setSelectedPortion] = useState("Normal");
 
   const widthPercentage = 100 / itemsPerView;
   const gap = itemsPerView === 1 ? 16 : 24;
   const width = `calc(${widthPercentage}% - ${(gap * (itemsPerView - 1)) / itemsPerView}px)`;
+
+  if (isLoading) {
+    return (
+      <div
+        className="flex-shrink-0 h-full animate-pulse"
+        style={{
+          width,
+        }}
+      >
+        <div className="bg-white rounded-xl shadow-md overflow-hidden border border-neutral-100 h-full flex flex-col hover:shadow-lg transition-shadow">
+          {/* Image Skeleton */}
+          <div className="relative h-48 bg-neutral-200"></div>
+
+          {/* Body Skeleton */}
+          <div className="p-4 flex-grow flex flex-col justify-between">
+            <div className="text-center mb-3">
+              {/* Title Skeleton */}
+              <div className="h-6 bg-neutral-200 rounded-md mx-auto w-3/4 mb-3"></div>
+              {/* Divider Skeleton */}
+              <div className="w-12 h-[2px] bg-neutral-200 mx-auto rounded-full mt-2 mb-2"></div>
+              {/* Description Skeleton */}
+              <div className="h-4 bg-neutral-200 rounded-md mx-auto w-5/6 mb-2"></div>
+              <div className="h-4 bg-neutral-200 rounded-md mx-auto w-2/3"></div>
+            </div>
+
+            {/* Pricing Section Skeleton */}
+            <div className="bg-neutral-50 rounded-xl px-4 py-3 border border-neutral-100 flex flex-col gap-2 mt-auto">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-black uppercase text-neutral-300 tracking-wider">Pricing</span>
+              </div>
+              <div className="h-6 bg-neutral-200 rounded-md w-full mt-1"></div>
+            </div>
+
+            {/* Button Skeleton */}
+            <div className="mt-auto pt-6 flex justify-center">
+              <div className="h-10 bg-neutral-200 rounded-full w-[60%]"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleAddClick = () => {
     onOrder(item, selectedPortion);

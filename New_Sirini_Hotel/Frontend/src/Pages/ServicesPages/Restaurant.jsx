@@ -22,6 +22,7 @@ const CATEGORIES = [
 export default function Restaurant() {
   const [itemsPerView, setItemsPerView] = useState(4);
   const [mealData, setMealData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [showCart, setShowCart] = useState(false);
   const [cartItems, setCartItems] = useState(() => {
     try {
@@ -43,6 +44,8 @@ export default function Restaurant() {
   const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0]);
 
   const fetchFoodItems = async () => {
+    setIsLoading(true);
+    const toastId = toast.loading("Loading food items...");
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/restraunt/viewfooditems`,
@@ -62,12 +65,17 @@ export default function Restaurant() {
         label: item.availability ? "Available" : "Unavailable",
       }));
       setMealData(mappedData);
+      toast.success("Food items loaded successfully", { id: toastId });
     } catch (error) {
       if (error.response && error.response.status === 404) {
         setMealData([]);
+        toast.success("Food items loaded successfully", { id: toastId });
       } else {
         console.error("Error fetching food items:", error);
+        toast.error("Failed to load food items", { id: toastId });
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -239,7 +247,20 @@ export default function Restaurant() {
 
         {/* Food Items Grid Section */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-[400px]">
-          {filteredItems.length > 0 ? (
+          {isLoading ? (
+            <div className="flex flex-col">
+              <div className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-x-6 md:gap-y-12 md:overflow-visible md:pb-0">
+                {Array.from({ length: 8 }).map((_, index) => (
+                  <div
+                    key={`skeleton-${index}`}
+                    className="w-[85%] shrink-0 snap-start md:w-auto md:shrink md:snap-none h-full"
+                  >
+                    <RestaurantCard isLoading={true} itemsPerView={1} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : filteredItems.length > 0 ? (
             <div className="flex flex-col">
               <div className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-x-6 md:gap-y-12 md:overflow-visible md:pb-0">
                 {filteredItems.map((item) => (
