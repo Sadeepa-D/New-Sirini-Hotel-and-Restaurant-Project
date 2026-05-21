@@ -17,8 +17,18 @@ import ConfrimDialog from "../ConfrimDialog";
 
 const TABS = [
   { key: "Pending", label: "Pending", icon: Clock, color: "text-amber-500" },
-  { key: "Cancelled", label: "Cancelled", icon: XCircle, color: "text-red-500" },
-  { key: "Completed",label: "Completed",icon: CheckCircle2,color: "text-green-500" },
+  {
+    key: "Cancelled",
+    label: "Cancelled",
+    icon: XCircle,
+    color: "text-red-500",
+  },
+  {
+    key: "Completed",
+    label: "Completed",
+    icon: CheckCircle2,
+    color: "text-green-500",
+  },
 ];
 
 const AppointmentsSection = () => {
@@ -34,6 +44,7 @@ const AppointmentsSection = () => {
     title: "",
     message: "",
   });
+  const [searchTerm, setSearchTerm] = useState("");
 
   const sliderRef = useRef(null);
 
@@ -123,6 +134,15 @@ const AppointmentsSection = () => {
   // Filter to active tab
   const filtered = appointments.filter((a) => a.status === activeTab);
 
+  const searchappoint = (searchTerm ? appointments : filtered).filter((app) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      app.receptionHall?.name.toLowerCase().includes(term) ||
+      app.date.toString().toLowerCase().includes(term) ||
+      app.appointcode?.toLowerCase().includes(term)
+    );
+  });
+
   return (
     <div className="space-y-6 font-sans relative">
       {/* ── Header + Tabs ── */}
@@ -134,6 +154,15 @@ const AppointmentsSection = () => {
           <p className="text-gray-400 text-xs mt-0.5">
             View and manage your reception hall bookings
           </p>
+          <div>
+            <input
+              type="text"
+              placeholder="Search by booking ref..."
+              className="mt-2 w-full sm:w-64 px-4 py-2 bg-gray-100 placeholder:text-gray-400 text-gray-700 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-400 focus:outline-none transition-colors"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
 
         {/* Tab bar */}
@@ -161,7 +190,7 @@ const AppointmentsSection = () => {
       </div>
 
       {/* ── Slider row ── */}
-      {filtered.length === 0 ? (
+      {searchappoint.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
           <CalendarDays size={32} className="text-gray-200 mb-3" />
           <p className="text-gray-400 text-sm font-medium">
@@ -174,7 +203,7 @@ const AppointmentsSection = () => {
           <button
             onClick={() => scrollSection(-1)}
             aria-label="Scroll left"
-            className={`hidden ${filtered.length > 2 ? "md:flex" : ""} absolute left-0 sm:-left-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md items-center justify-center hover:bg-gray-50 transition-all text-gray-600 active:scale-90`}
+            className={`hidden ${searchappoint.length > 2 ? "md:flex" : ""} absolute left-0 sm:-left-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md items-center justify-center hover:bg-gray-50 transition-all text-gray-600 active:scale-90`}
           >
             <ChevronLeft size={16} />
           </button>
@@ -184,7 +213,7 @@ const AppointmentsSection = () => {
             ref={sliderRef}
             className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6"
           >
-            {filtered.map((app) => (
+            {searchappoint.map((app) => (
               <div
                 key={app._id}
                 data-slider-card
@@ -203,7 +232,7 @@ const AppointmentsSection = () => {
           <button
             onClick={() => scrollSection(1)}
             aria-label="Scroll right"
-            className={`hidden ${filtered.length > 2 ? "md:flex" : ""} absolute right-0 sm:-right-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md items-center justify-center hover:bg-gray-50 transition-all text-gray-600 active:scale-90`}
+            className={`hidden ${searchappoint.length > 2 ? "md:flex" : ""} absolute right-0 sm:-right-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md items-center justify-center hover:bg-gray-50 transition-all text-gray-600 active:scale-90`}
           >
             <ChevronRight size={16} />
           </button>
