@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { ArrowLeft } from "lucide-react";
+import GoogleLoginBtn from "../Components/GoogleLoginBtn";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Registration = () => {
@@ -391,12 +392,13 @@ const Registration = () => {
               {isLoading ? "Creating Account..." : "Create Account"}
             </button>
           </form>
+          <GoogleLoginBtn />
 
           <div className="mt-6 text-center">
             <p className="text-amber-100/60 text-sm">
               Already have an account?
               <Link
-                to="/"
+                to="/login"
                 className="text-amber-400 hover:text-amber-300 font-semibold transition-colors"
               >
                 Sign In
