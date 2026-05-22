@@ -14,9 +14,11 @@ function RoomFullDetails({ room, isOpen, onClose }) {
 
   if (!isOpen || !room) return null;
 
-  // Create array of images - main image plus placeholders for gallery
-  // In future, this will include galleryImages from room data
-  const images = [room.image, room.image, room.image, room.image];
+  // Use gallery images if available, otherwise fall back to main image repeated
+  const images = 
+    room.galleryImages && room.galleryImages.length > 0
+      ? room.galleryImages
+      : [room.image, room.image, room.image, room.image];
 
   const handlePrevImage = () => {
     setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
@@ -112,7 +114,7 @@ function RoomFullDetails({ room, isOpen, onClose }) {
                 ROOM TYPE
               </p>
               <p className="text-base font-semibold text-gray-900">
-                {room.roomType}
+                {room.roomType} Room
               </p>
             </div>
 
@@ -175,11 +177,11 @@ function RoomFullDetails({ room, isOpen, onClose }) {
               </div>
             </div>
 
-            {/* Climate Control */}
+            {/* Condition */}
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
               <Wind size={18} className="text-orange-600 flex-shrink-0" />
               <div className="min-w-0">
-                <p className="text-gray-600 text-xs font-semibold">CLIMATE</p>
+                <p className="text-gray-600 text-xs font-semibold">CONDITION</p>
                 <p className="font-medium text-sm">{room.condition}</p>
               </div>
             </div>

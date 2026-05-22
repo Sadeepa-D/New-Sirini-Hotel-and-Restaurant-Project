@@ -38,6 +38,14 @@ const RoomSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    galleryImages: {
+      type: [String],
+      default: [],
+    },
+    galleryImagePublicIds: {
+      type: [String],
+      default: [],
+    },
 
     condition: {
       type: String,
