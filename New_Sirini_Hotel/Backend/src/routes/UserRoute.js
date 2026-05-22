@@ -29,5 +29,6 @@ router.put("/update/userdetails", authMiddleware, RoleBaseMiddleware(["Admin"]),
 router.put("/reset/userpassword", authMiddleware, RoleBaseMiddleware(["Admin"]), UserController.resetuserpassword);
 router.post("/sendotp", OTPController.sendOTPEmail);
 router.post("/verifyotp", OTPController.verifyOTP);
+router.put("/deactivate/account", authMiddleware, UserController.deactivateaccount);
 
 module.exports = router;

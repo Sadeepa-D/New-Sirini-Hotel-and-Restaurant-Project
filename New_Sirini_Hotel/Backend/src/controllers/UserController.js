@@ -158,6 +158,11 @@ const UpdatePassword = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    if (user.authProvider === "google" && !user.password) {
+      return res.status(400).json({
+        message: "Password change is not available for Google accounts.",
+      });
+    }
     const isPasswordValid = await bcrypt.compare(
       currentPassword,
       user.password,
@@ -304,8 +309,7 @@ const googlelogin = async (req, res) => {
         });
       } else if (user.authProvider === "local") {
         return res.status(400).json({
-          message:
-            "Email already registered",
+          message: "Email already registered",
         });
       }
     }
@@ -348,6 +352,27 @@ const googlelogin = async (req, res) => {
   }
 };
 
+const deactivateaccount = async (req, res) => {
+  try {
+    const userId = req.userData.id;
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized User" });
+    }
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: { Status: "Deleted" } },
+      { new: true },
+    );
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({ message: "Account deactivated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -361,4 +386,5 @@ module.exports = {
   updateuserdetails,
   resetuserpassword,
   googlelogin,
+  deactivateaccount,
 };
