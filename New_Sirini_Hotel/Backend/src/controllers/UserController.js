@@ -305,7 +305,7 @@ const googlelogin = async (req, res) => {
       } else if (user.authProvider === "local") {
         return res.status(400).json({
           message:
-            "Email already registered with password login. Please use email & password login.",
+            "Email already registered",
         });
       }
     }

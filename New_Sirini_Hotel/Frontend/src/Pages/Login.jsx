@@ -134,11 +134,14 @@ const Login = () => {
         token: credentialResponse.credential,
       });
       localStorage.setItem("token", response.data.token);
-      toast.success("Google Sign-In successful. Welcome, " + response.data.user.name);
+      toast.success(
+        "Google Sign-In successful. Welcome, " + response.data.user.name,
+      );
       navigate("/");
     } catch (error) {
       console.error("Google Sign-In error:", error);
-      toast.error("Google Sign-In failed. Please try again.");
+      const message = error.response?.data?.message || "Something went wrong";
+      toast.error(message);
     }
   };
 
