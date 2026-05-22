@@ -307,7 +307,10 @@ function Rooms() {
                         </span>
                       </div>
                       <button
-                        onClick={() => handleBookNow(room)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleBookNow(room);
+                        }}
                         disabled={room.status !== "available"}
                         className={`group relative flex items-center justify-center 
       w-full sm:w-fit px-6 py-3 sm:py-2.5 
