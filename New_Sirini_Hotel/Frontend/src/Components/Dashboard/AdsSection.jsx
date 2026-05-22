@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import AdvertisementCard from "../OperationManager/Reception/AdvertisementCard";
 import AdvertismentForm from "../Receptionhall/AdvertismentForm";
@@ -9,6 +9,7 @@ import { Megaphone, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 
 const AdsSection = ({ data, onEdit, onDelete }) => {
   const navigate = useNavigate();
+  const sliderRef = useRef(null);
 
   const [ads, setAds] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,19 +22,18 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
     title: "",
     message: "",
   });
-  const [index, setIndex] = useState(0);
-  const [itemsPerView, setItemsPerView] = useState(
-    typeof window !== "undefined" && window.innerWidth < 640
-      ? 1
-      : window.innerWidth < 1024
-        ? 2
-        : 3,
-  );
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== "undefined" ? window.innerWidth < 768 : false,
-  );
 
   const VITE_URL = import.meta.env.VITE_API_URL;
+
+  const scrollSection = (direction) => {
+    if (!sliderRef.current) return;
+    const cardWidth =
+      sliderRef.current.querySelector("[data-slider-card]")?.offsetWidth || 300;
+    sliderRef.current.scrollBy({
+      left: direction * (cardWidth + 16),
+      behavior: "smooth",
+    });
+  };
 
   const fetchads = async () => {
     try {
@@ -64,22 +64,6 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
   useEffect(() => {
     fetchads();
   }, []);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setItemsPerView(
-        window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : 3,
-      );
-      setIsMobile(window.innerWidth < 768);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    setIndex((prev) => Math.min(prev, Math.max(0, ads.length - itemsPerView)));
-  }, [ads.length, itemsPerView]);
 
   const handleEdit = (ad) => {
     setEditingAd(ad);
@@ -131,12 +115,6 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
     );
   }
 
-  const visibleItems = ads.slice(index, index + itemsPerView);
-  const canGoBack = index > 0;
-  const canGoNext = index + itemsPerView < ads.length;
-  const GAP = 16;
-  const cardWidth = `calc((100% - ${GAP * (itemsPerView - 1)}px) / ${itemsPerView})`;
-
   return (
     <div className="space-y-6 font-sans">
       {/* ── Header ── */}
@@ -158,10 +136,10 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
         </button>
       </div>
 
-      {/* ── Cards / Empty ── */}
+      {/* ── Slider row ── */}
       {ads.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-          <Megaphone size={36} className="text-gray-200 mb-3" />
+        <div className="flex flex-col items-center justify-center py-16 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+          <Megaphone size={32} className="text-gray-200 mb-3" />
           <p className="text-gray-400 text-sm font-medium">
             You haven't placed any advertisements yet.
           </p>
@@ -175,26 +153,24 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
       ) : (
         <div className="relative mt-4">
           {/* Left arrow */}
-          {!isMobile && canGoBack && (
-            <button
-              onClick={() => setIndex((i) => Math.max(0, i - itemsPerView))}
-              className="absolute left-0 sm:-left-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-all"
-            >
-              <ChevronLeft size={16} className="text-gray-600" />
-            </button>
-          )}
+          <button
+            onClick={() => scrollSection(-1)}
+            aria-label="Scroll left"
+            className={`hidden ${ads.length > 1 ? "md:flex" : ""} absolute left-0 sm:-left-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md items-center justify-center hover:bg-gray-50 transition-all text-gray-600 active:scale-90`}
+          >
+            <ChevronLeft size={16} />
+          </button>
 
           {/* Visible cards */}
           <div
-            key={index}
-            className={`flex gap-4 ${isMobile ? "overflow-x-auto snap-x snap-mandatory scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6" : ""}`}
-            style={isMobile ? {} : { animation: "fadeIn 0.25s ease" }}
+            ref={sliderRef}
+            className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6"
           >
-            {(isMobile ? ads : visibleItems).map((ad) => (
+            {ads.map((ad) => (
               <div
                 key={ad._id}
-                className={`shrink-0 ${isMobile ? "snap-start" : ""}`}
-                style={{ width: isMobile ? "90%" : cardWidth }}
+                data-slider-card
+                className="shrink-0 snap-start w-[90%] md:w-[calc(33.333%-11px)]"
               >
                 <AdvertisementCard
                   ad={ad}
@@ -208,43 +184,18 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
           </div>
 
           {/* Right arrow */}
-          {!isMobile && canGoNext && (
-            <button
-              onClick={() =>
-                setIndex((i) =>
-                  Math.min(ads.length - itemsPerView, i + itemsPerView),
-                )
-              }
-              className="absolute right-0 sm:-right-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-all"
-            >
-              <ChevronRight size={16} className="text-gray-600" />
-            </button>
-          )}
+          <button
+            onClick={() => scrollSection(1)}
+            aria-label="Scroll right"
+            className={`hidden ${ads.length > 1 ? "md:flex" : ""} absolute right-0 sm:-right-5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md items-center justify-center hover:bg-gray-50 transition-all text-gray-600 active:scale-90`}
+          >
+            <ChevronRight size={16} />
+          </button>
 
-          {/* Page dots */}
-          {!isMobile && ads.length > itemsPerView && (
-            <div className="flex justify-center gap-1.5 mt-6">
-              {Array.from({
-                length: Math.ceil(ads.length / itemsPerView),
-              }).map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setIndex(i * itemsPerView)}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    Math.floor(index / itemsPerView) === i
-                      ? "bg-amber-500"
-                      : "bg-gray-200 hover:bg-gray-300"
-                  }`}
-                />
-              ))}
-            </div>
-          )}
-
-          {isMobile && (
-            <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
-              ← Swipe to browse →
-            </p>
-          )}
+          {/* Swipe indicator for mobile */}
+          <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
+            ← Swipe to browse →
+          </p>
         </div>
       )}
 

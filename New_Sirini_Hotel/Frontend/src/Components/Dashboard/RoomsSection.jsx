@@ -31,6 +31,7 @@ const RoomsSection = () => {
     title: "",
     message: "",
   });
+  const [searchTerm, setSearchTerm] = useState("");
   const VITE_API_URL = import.meta.env.VITE_API_URL;
 
   const fetchUserSpecificRooms = useCallback(async () => {
@@ -79,9 +80,6 @@ const RoomsSection = () => {
     }
   };
 
-  const handleCancelBooking = async (bookingId, roomNumber) => {
-    if (
-      !window.confirm(
   const handlecancelconfrim = (id) => {
     setConfirmDialog({
       isOpen: true,
@@ -144,6 +142,15 @@ const RoomsSection = () => {
     return true;
   });
 
+  const searchrooms = (searchTerm ? allRooms : filteredRooms).filter((room) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      room.roomNumber?.toString().includes(term) ||
+      room.bookingCode?.toLowerCase().includes(term) ||
+      new Date(room.checkInDate).toLocaleDateString("en-GB").includes(term) ||
+      new Date(room.checkOutDate).toLocaleDateString("en-GB").includes(term)
+    );
+  });
   if (loading)
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
@@ -160,9 +167,19 @@ const RoomsSection = () => {
           <h2 className="text-xl font-bold text-gray-900 tracking-tight">
             My Room Bookings
           </h2>
+
           <p className="text-gray-400 text-xs mt-0.5">
             Track all your room reservation statuses
           </p>
+          <div>
+            <input
+              type="text"
+              placeholder="Search by booking ref..."
+              className="mt-2 w-full sm:w-64 px-4 py-2 bg-gray-100 placeholder:text-gray-400 text-gray-700 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-400 focus:outline-none transition-colors"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
 
         {/* Tab Navigation */}
@@ -206,11 +223,13 @@ const RoomsSection = () => {
       </div>
 
       {/* ── Cards / Empty ── */}
-      {filteredRooms.length === 0 ? (
+      {searchrooms.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
           <Bed size={36} className="text-gray-200 mb-3" />
           <p className="text-gray-400 text-sm font-medium">
-            No {activeTab.toLowerCase()} bookings found.
+            {searchTerm
+              ? `No bookings found for "${searchTerm}"`
+              : `No ${activeTab.toLowerCase()} bookings found.`}
           </p>
         </div>
       ) : (
@@ -235,13 +254,13 @@ const RoomsSection = () => {
             onScroll={handleSliderScroll}
             className="flex overflow-x-auto gap-5 pb-14 sm:pb-12 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] snap-x snap-mandatory px-2 scroll-smooth"
           >
-            {filteredRooms.map((room) => (
+            {searchrooms.map((room) => (
               <div
                 key={room.id || room._id}
                 className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group shrink-0 w-[75vw] sm:w-[320px] snap-center flex flex-col"
               >
                 {/* Card top accent bar */}
-                <div className="h-1 w-full bg-gradient-to-r from-amber-400 to-amber-300 flex-shrink-0" />
+                <div className="h-1 w-full bg-linear-to-r from-amber-400 to-amber-300 shrink-0" />
 
                 <div className="p-5 flex-1 flex flex-col justify-between">
                   <div>
@@ -282,23 +301,8 @@ const RoomsSection = () => {
                     {/* Reference Number */}
                     {room.bookingCode && (
                       <div className="mb-4 flex items-center gap-2 p-2.5 bg-amber-50 rounded-lg border border-amber-100">
-                        <p className="text-[8px] text-amber-600 uppercase font-bold tracking-widest leading-none flex-1">
+                        <p className="text-[8px] text-amber-600 uppercase font-bold tracking-widest leading-none">
                           Booking Ref:
-                  {/* Check-in / Check-out */}
-                  <div className="bg-gray-50 rounded-xl p-3 sm:p-4 flex items-center justify-between mb-4 border border-gray-100 overflow-hidden">
-                    <div className="flex items-center gap-2">
-                      <CalendarDays
-                        size={14}
-                        className="text-amber-500 shrink-0"
-                      />
-                      <div>
-                        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
-                          Check In
-                        </p>
-                        <p className="text-xs font-bold text-gray-800">
-                          {new Date(room.checkInDate).toLocaleDateString(
-                            "en-GB",
-                          )}
                         </p>
                         <span className="bg-white text-amber-700 border border-amber-200 font-mono font-black tracking-wider text-[10px] px-3 py-1 rounded-md">
                           {room.bookingCode}
