@@ -3,7 +3,7 @@ const transpoter = require("../services/SendMail");
 const SendEmail = async ({ to, subject, html }) => {
   try {
     await transpoter.sendMail({
-      from: process.env.EMAIL_ADDRES,
+      from: process.env.BREVO_EMAIL,
       to,
       subject,
       html,
