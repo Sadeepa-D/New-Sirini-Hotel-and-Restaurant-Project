@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { GoogleLogin } from "@react-oauth/google";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -127,6 +128,20 @@ const Login = () => {
     }
   };
 
+  const handleGoogleLoginSuccess = async (credentialResponse) => {
+    try {
+      const response = await axios.post(`${API_URL}/api/users/googlelogin`, {
+        token: credentialResponse.credential,
+      });
+      localStorage.setItem("token", response.data.token);
+      toast.success("Google Sign-In successful. Welcome, " + response.data.user.name);
+      navigate("/");
+    } catch (error) {
+      console.error("Google Sign-In error:", error);
+      toast.error("Google Sign-In failed. Please try again.");
+    }
+  };
+
   return (
     <div className="min-h-screen relative flex items-center justify-center bg-linear-to-br from-slate-900 via-neutral-900 to-amber-950 px-4 py-7">
       {/* Decorative Grid Background */}
@@ -212,7 +227,14 @@ const Login = () => {
               {isLoading ? "Signing in..." : "Login"}
             </button>
           </form>
-
+          <div className="pt-2">
+            <GoogleLogin
+              onSuccess={handleGoogleLoginSuccess}
+              onError={() => {
+                toast.error("Google Sign-In failed. Please try again.");
+              }}
+            />
+          </div>
           <div className="mt-8 text-center">
             <p className="text-amber-100/60 text-sm">
               Don't have an account?{" "}

@@ -7,7 +7,8 @@ const OTPController = require("../controllers/OTPCont");
 const upload = require("../config/CloudinaryConfig");
 
 router.post("/register", UserController.registerUser);
-router.post("/login", UserController.loginUser);
+router.post("/login", UserController.loginUser);``
+router.post("/googlelogin", UserController.googlelogin);
 router.get("/profile", authMiddleware, UserController.getUserProfile);
 router.put(
   "/profile/update",
