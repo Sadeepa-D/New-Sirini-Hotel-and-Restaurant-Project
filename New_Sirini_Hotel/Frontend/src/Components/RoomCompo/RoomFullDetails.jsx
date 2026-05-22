@@ -48,61 +48,57 @@ function RoomFullDetails({ room, isOpen, onClose }) {
 
         <div className="p-6">
           {/* Images Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
-            {/* Left Side - Main Image */}
-            <div className="lg:col-span-2">
-              <div className="relative bg-gray-900 rounded-xl overflow-hidden h-80">
-                <img
-                  src={images[currentImageIndex]}
-                  alt="Room"
-                  className="w-full h-full object-cover"
-                />
+          <div className="flex flex-col gap-4 mb-8">
+            {/* Main Image - Large */}
+            <div className="relative bg-gray-900 rounded-xl overflow-hidden h-96 w-full">
+              <img
+                src={images[currentImageIndex]}
+                alt="Room"
+                className="w-full h-full object-cover"
+              />
 
-                {/* Navigation Arrows */}
-                <button
-                  onClick={handlePrevImage}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full transition-all"
-                >
-                  <ChevronLeft size={24} className="text-gray-900" />
-                </button>
-                <button
-                  onClick={handleNextImage}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full transition-all"
-                >
-                  <ChevronRight size={24} className="text-gray-900" />
-                </button>
+              {/* Navigation Arrows */}
+              <button
+                onClick={handlePrevImage}
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full transition-all"
+              >
+                <ChevronLeft size={24} className="text-gray-900" />
+              </button>
+              <button
+                onClick={handleNextImage}
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full transition-all"
+              >
+                <ChevronRight size={24} className="text-gray-900" />
+              </button>
 
-                {/* Image Counter */}
-                <div className="absolute bottom-4 right-4 bg-black/60 text-white px-3 py-1 rounded-full text-sm">
-                  {currentImageIndex + 1} / {images.length}
-                </div>
+              {/* Image Counter */}
+              <div className="absolute bottom-4 right-4 bg-black/60 text-white px-3 py-1 rounded-full text-sm">
+                {currentImageIndex + 1} / {images.length}
               </div>
             </div>
 
-            {/* Right - Small Images Grid (2x2) */}
-            <div className="lg:col-span-1">
-              <div className="grid grid-cols-2 gap-2 h-80">
-                {images.slice(0, 4).map((img, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleThumbnailClick(index)}
-                    className={`relative rounded-lg overflow-hidden cursor-pointer transition-all transform hover:scale-105 ${
-                      currentImageIndex === index
-                        ? "ring-3 ring-orange-500 shadow-lg"
-                        : "border-2 border-gray-200 hover:border-orange-300"
-                    }`}
-                  >
-                    <img
-                      src={img}
-                      alt={`Room ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                    {currentImageIndex === index && (
-                      <div className="absolute inset-0 bg-orange-500/20" />
-                    )}
-                  </button>
-                ))}
-              </div>
+            {/* Thumbnail Images Below - Horizontal Scroll */}
+            <div className="flex gap-2 overflow-x-auto pb-2">
+              {images.map((img, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleThumbnailClick(index)}
+                  className={`relative rounded-lg overflow-hidden cursor-pointer transition-all transform hover:scale-105 flex-shrink-0 w-24 h-24 ${
+                    currentImageIndex === index
+                      ? "ring-3 ring-orange-500 shadow-lg"
+                      : "border-2 border-gray-200 hover:border-orange-300"
+                  }`}
+                >
+                  <img
+                    src={img}
+                    alt={`Room ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                  {currentImageIndex === index && (
+                    <div className="absolute inset-0 bg-orange-500/20" />
+                  )}
+                </button>
+              ))}
             </div>
           </div>
 
