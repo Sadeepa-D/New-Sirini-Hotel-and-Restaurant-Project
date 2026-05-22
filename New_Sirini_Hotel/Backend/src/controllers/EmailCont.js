@@ -189,9 +189,9 @@ const sendRoomBookingEmail = async ({
       subject: "Your Sirini Room Booking Confirmation",
       html: htmlTemplate,
     });
-    console.log("Room booking confirmation email sent successfully");
+    console.log("Email sent:", info.response);
   } catch (error) {
-    console.error("Error sending room booking email:", error);
+    console.log("EMAIL ERROR:", error);
   }
 };
 
