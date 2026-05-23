@@ -296,7 +296,7 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
             <div className="flex gap-3">
               <button
                 onClick={onClose}
-                className="flex-1 py-2 sm:py-3 bg-gray-300 text-gray-700 rounded-xl hover:bg-gray-400 transition-colors font-bold text-xs sm:text-sm md:text-base shadow-md"
+                className="flex-1 py-1.5 sm:py-3 px-1 sm:px-4 bg-gray-300 text-gray-700 rounded-xl hover:bg-gray-400 transition-colors font-bold text-[10px] sm:text-xs md:text-base leading-tight shadow-md"
               >
                 Find more dishes
               </button>
@@ -307,7 +307,7 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
                     ? toast.error("You should log in first to proceed to checkout.")
                     : onCheckout(cartItems)
                 }
-                className="flex-1 py-2 sm:py-3 bg-linear-to-r from-amber-500 to-amber-600 text-white rounded-xl hover:from-amber-600 hover:to-amber-700 transition-all font-bold text-xs sm:text-sm md:text-base shadow-lg hover:shadow-xl"
+                className="flex-1 py-1.5 sm:py-3 px-1 sm:px-4 bg-linear-to-r from-amber-500 to-amber-600 text-white rounded-xl hover:from-amber-600 hover:to-amber-700 transition-all font-bold text-[10px] sm:text-xs md:text-base leading-tight shadow-lg hover:shadow-xl"
               >
                 Proceed to Checkout
               </button>
@@ -316,10 +316,10 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
         )}
 
         {cartItems.length === 0 && (
-          <div className="border-t border-gray-200 p-6 bg-gray-50 flex gap-3">
+          <div className="border-t border-gray-200 p-4 sm:p-6 bg-gray-50 flex gap-3">
             <button
               onClick={onClose}
-              className="flex-1 py-3 bg-linear-to-r from-amber-500 to-amber-600 text-white rounded-xl hover:from-amber-600 hover:to-amber-700 transition-all font-bold text-sm md:text-base shadow-md"
+              className="flex-1 py-1.5 sm:py-3 px-1 sm:px-4 bg-linear-to-r from-amber-500 to-amber-600 text-white rounded-xl hover:from-amber-600 hover:to-amber-700 transition-all font-bold text-[10px] sm:text-xs md:text-base leading-tight shadow-md"
             >
               Find more dishes
             </button>
