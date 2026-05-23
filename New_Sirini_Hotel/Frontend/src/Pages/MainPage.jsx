@@ -5,6 +5,11 @@ import axios from "axios";
 import Exploreindicator from "../Components/Exploreindicator";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
+// Import local background images
+import BgImage1 from "../assets/HomePageImages/Image1.png";
+import BgImage2 from "../assets/HomePageImages/Image2.png";
+import BgImage3 from "../assets/HomePageImages/Image3.png";
+
 const NewSiriniHotel = () => {
   const VITE_API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
@@ -51,12 +56,8 @@ const NewSiriniHotel = () => {
     }
   };
 
-  // images for the hero section slideshow
-  const backgroundImages = [
-    "https://plus.unsplash.com/premium_photo-1661963123153-5471a95b7042?q=80&w=1074&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1170&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=1100&auto=format&fit=crop",
-  ];
+  // Local background images from assets
+  const backgroundImages = [BgImage1, BgImage2, BgImage3];
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
