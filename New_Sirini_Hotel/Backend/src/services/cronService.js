@@ -1,6 +1,7 @@
 const cron = require("node-cron");
 const FoodItemorder = require("../models/Restraunt/FoodItemBookModel");
 const Appointment = require("../models/Reception/ReciptionAppointModel");
+const RoomBook = require("../models/Rooms/RoomBookModel");
 
 const initCronJobs = () => {
   // Run every minute
@@ -80,6 +81,29 @@ const initCronJobs = () => {
       if (updatedappointments > 0) {
         console.log(
           `[Cron] Updated ${updatedappointments} appointments to 'Overdue'`,
+        );
+      }
+
+      // ================= Room Bookings =================
+
+      const roomBookings = await RoomBook.find({
+        status: "Pending",
+      });
+      let updatedRoomBookings = 0;
+      for (const booking of roomBookings) {
+        if (!booking.checkInDate) continue;
+        const bookingCheckInDate = new Date(booking.checkInDate)
+          .toISOString()
+          .split("T")[0];
+        if (bookingCheckInDate < slDate) {
+          booking.status = "Overdue";
+          await booking.save();
+          updatedRoomBookings++;
+        }
+      }
+      if (updatedRoomBookings > 0) {
+        console.log(
+          `[Cron] Updated ${updatedRoomBookings} room bookings to 'Overdue'`,
         );
       }
     } catch (error) {
