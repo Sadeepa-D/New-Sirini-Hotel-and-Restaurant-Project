@@ -14,11 +14,13 @@ function RoomFullDetails({ room, isOpen, onClose }) {
 
   if (!isOpen || !room) return null;
 
-  // Use gallery images if available, otherwise fall back to main image repeated
-  const images = 
-    room.galleryImages && room.galleryImages.length > 0
+  // Include main image first, then gallery images
+  const images = [
+    room.image,
+    ...(room.galleryImages && room.galleryImages.length > 0
       ? room.galleryImages
-      : [room.image, room.image, room.image, room.image];
+      : []),
+  ];
 
   const handlePrevImage = () => {
     setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
