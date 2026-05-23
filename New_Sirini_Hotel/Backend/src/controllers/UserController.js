@@ -2,6 +2,9 @@ const User = require("../models/UserModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cloudinary = require("cloudinary");
+const { OAuth2Client } = require("google-auth-library");
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const registerUser = async (req, res) => {
   try {
@@ -155,6 +158,11 @@ const UpdatePassword = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    if (user.authProvider === "google" && !user.password) {
+      return res.status(400).json({
+        message: "Password change is not available for Google accounts.",
+      });
+    }
     const isPasswordValid = await bcrypt.compare(
       currentPassword,
       user.password,
@@ -284,6 +292,87 @@ const resetuserpassword = async (req, res) => {
   }
 };
 
+const googlelogin = async (req, res) => {
+  try {
+    const { token } = req.body;
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const { name, email, sub, picture } = payload;
+    let user = await User.findOne({ email });
+    if (user) {
+      if (user.Status === "Suspended" || user.Status === "Deleted") {
+        return res.status(403).json({
+          message: "Your account is suspended or deleted.",
+        });
+      } else if (user.authProvider === "local") {
+        return res.status(400).json({
+          message: "Email already registered",
+        });
+      }
+    }
+    if (!user) {
+      user = await User.create({
+        name,
+        email,
+        password: null,
+        Role: "User",
+        authProvider: "google",
+        googleId: sub,
+        image: picture,
+      });
+    }
+    const jwtToken = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        Phone: user.Phone,
+        Role: user.Role,
+        Status: user.Status,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h",
+      },
+    );
+    res.status(200).json({
+      message: "Google login successful",
+      token: jwtToken,
+      user,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Google login failed",
+    });
+  }
+};
+
+const deactivateaccount = async (req, res) => {
+  try {
+    const userId = req.userData.id;
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized User" });
+    }
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: { Status: "Deleted" } },
+      { new: true },
+    );
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({ message: "Account deactivated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -296,4 +385,6 @@ module.exports = {
   deleteUser,
   updateuserdetails,
   resetuserpassword,
+  googlelogin,
+  deactivateaccount,
 };

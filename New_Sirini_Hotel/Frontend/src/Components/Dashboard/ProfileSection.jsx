@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Camera, Lock } from "lucide-react";
+import { Camera, Lock, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
+import ConfirmDialog from "../ConfrimDialog";
 
 const ProfileSection = () => {
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
   const [loading, setloading] = useState(true);
   const [existingProfileData, setExistingProfileData] = useState({
     name: "",
@@ -15,11 +19,17 @@ const ProfileSection = () => {
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    id: null,
+    type: "delete",
+    title: "",
+    message: "",
+  });
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
   const fetchProfileData = async () => {
-    const token = localStorage.getItem("token");
     try {
       const response = await axios.get(`${VITE_URL}/api/users/profile`, {
         headers: {
@@ -60,7 +70,6 @@ const ProfileSection = () => {
 
   const handleSaveChanges = async () => {
     const loadingToast = toast.loading("Updating profile...");
-    const token = localStorage.getItem("token");
     if (!token) {
       toast.error("You must be logged in to update your profile.");
       return;
@@ -130,6 +139,43 @@ const ProfileSection = () => {
     );
   }
 
+  const confrimDeactivate = () => {
+    setConfirmDialog({
+      isOpen: true,
+      type: "delete",
+      title: "Confirm Account Deactivation",
+      message:
+        "Are you sure you want to deactivate your account? This action can be reversed by contacting support.",
+    });
+  };
+
+  const deactivateAccount = async () => {
+    setConfirmDialog({ isOpen: false, id: null });
+    const loadingToast = toast.loading("Deactivating account...");
+    try {
+      const response = await axios.put(
+        `${VITE_URL}/api/users/deactivate/account`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      toast.dismiss(loadingToast);
+      toast.success(
+        "Account deactivated successfully. Please contact support to reactivate.",
+      );
+      localStorage.removeItem("token");
+
+      navigate("/login");
+      fetchProfileData();
+    } catch (error) {
+      console.error("Error deactivating account:", error);
+      toast.error("Failed to deactivate account. Please try again.");
+    }
+  };
+
   const inputStyle =
     "w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none transition-all text-gray-900 bg-gray-50 font-sans text-sm placeholder:text-gray-400";
   const labelStyle =
@@ -137,10 +183,18 @@ const ProfileSection = () => {
 
   return (
     <div className="font-sans space-y-6 max-w-3xl mx-auto pb-8">
-
       {/* ── Profile Header ── */}
-      <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-amber-50 via-white to-gray-50 border border-amber-100 px-6 py-8">
+      <div className="relative rounded-2xl overflow-hidden bg-linear-to-br from-amber-50 via-white to-gray-50 border border-amber-100 px-6 py-8">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+          <button
+            className="absolute top-4 right-4 p-2 rounded-full hover:bg-red-50 transition-colors"
+            onClick={confrimDeactivate}
+          >
+            <Trash2
+              size={25}
+              className="text-gray-400 hover:text-red-500 transition-colors"
+            />
+          </button>
           {/* Avatar */}
           <div className="relative group cursor-pointer shrink-0">
             <label className="cursor-pointer">
@@ -198,7 +252,7 @@ const ProfileSection = () => {
             <input
               type="text"
               name="name"
-              defaultValue={existingProfileData.name}
+              value={existingProfileData.name}
               onChange={handleChange}
               className={inputStyle}
             />
@@ -209,7 +263,7 @@ const ProfileSection = () => {
             <input
               type="email"
               name="email"
-              defaultValue={existingProfileData.email}
+              value={existingProfileData.email}
               onChange={handleChange}
               className={inputStyle}
             />
@@ -220,7 +274,7 @@ const ProfileSection = () => {
             <input
               type="tel"
               name="Phone"
-              defaultValue={existingProfileData.Phone}
+              value={existingProfileData.Phone}
               onChange={handleChange}
               className={inputStyle}
             />
@@ -229,35 +283,37 @@ const ProfileSection = () => {
       </div>
 
       {/* ── Security Settings ── */}
-      <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
-        <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-5 flex items-center gap-2">
-          <span className="w-4 h-px bg-amber-400"></span>
-          <Lock size={13} className="text-amber-500" />
-          Security Settings
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div className="flex flex-col gap-1.5">
-            <label className={labelStyle}>Current Password</label>
-            <input
-              type="password"
-              name="currentPassword"
-              placeholder="Enter current password"
-              onChange={handleChange}
-              className={inputStyle}
-            />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label className={labelStyle}>New Password</label>
-            <input
-              type="password"
-              name="newPassword"
-              onChange={handleChange}
-              placeholder="Enter new password"
-              className={inputStyle}
-            />
+      {existingProfileData.authProvider !== "google" && (
+        <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+          <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-5 flex items-center gap-2">
+            <span className="w-4 h-px bg-amber-400"></span>
+            <Lock size={13} className="text-amber-500" />
+            Security Settings
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="flex flex-col gap-1.5">
+              <label className={labelStyle}>Current Password</label>
+              <input
+                type="password"
+                name="currentPassword"
+                placeholder="Enter current password"
+                onChange={handleChange}
+                className={inputStyle}
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelStyle}>New Password</label>
+              <input
+                type="password"
+                name="newPassword"
+                onChange={handleChange}
+                placeholder="Enter new password"
+                className={inputStyle}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* ── Save Button ── */}
       <div className="flex justify-end">
@@ -268,6 +324,14 @@ const ProfileSection = () => {
           Save Changes
         </button>
       </div>
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        type={confirmDialog.type}
+        title={confirmDialog.title}
+        message={confirmDialog.message}
+        onConfirm={deactivateAccount}
+        onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
+      />
     </div>
   );
 };
