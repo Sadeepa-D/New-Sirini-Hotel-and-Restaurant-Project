@@ -18,6 +18,10 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
   );
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(initialData?.image || null);
+  const [galleryImages, setGalleryImages] = useState([]);
+  const [galleryPreviews, setGalleryPreviews] = useState(
+    initialData?.galleryImages || [],
+  );
 
   const facilitiesOptions = ["WiFi", "Hot Water", "TV", "Mini Fridge"];
 
@@ -65,6 +69,34 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
     }
   };
 
+  const handleGalleryFilesChange = (e) => {
+    const files = Array.from(e.target.files);
+    setGalleryImages(files);
+
+    // Create previews for all gallery images
+    const newPreviews = [];
+    let loadedCount = 0;
+
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        newPreviews.push(reader.result);
+        loadedCount++;
+        if (loadedCount === files.length) {
+          setGalleryPreviews(newPreviews);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeGalleryImage = (index) => {
+    const updatedImages = galleryImages.filter((_, i) => i !== index);
+    const updatedPreviews = galleryPreviews.filter((_, i) => i !== index);
+    setGalleryImages(updatedImages);
+    setGalleryPreviews(updatedPreviews);
+  };
+
   const handleSubmit = () => {
     if (
       !form.roomNumber ||
@@ -97,7 +129,7 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
     }
 
     onClose(); // Hide the form when click the button
-    onSubmit({ ...form, imageFile });
+    onSubmit({ ...form, imageFile, galleryImages });
   };
 
   return (
@@ -147,6 +179,53 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Gallery Images Upload */}
+          <div>
+            <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 block">
+              Room Gallery Images (Optional)
+            </label>
+            <div className="relative border-2 border-dashed border-gray-200 rounded-xl p-4 hover:border-yellow-400 hover:bg-yellow-50/50 transition cursor-pointer">
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleGalleryFilesChange}
+                className="absolute inset-0 opacity-0 cursor-pointer z-10"
+              />
+              <div className="flex flex-col items-center gap-2">
+                <Upload size={24} className="text-gray-400" />
+                <p className="text-[10px] sm:text-xs text-gray-500">
+                  Click to upload multiple images
+                </p>
+                <p className="text-[9px] text-gray-400">
+                  {galleryImages.length} image(s) selected
+                </p>
+              </div>
+            </div>
+
+            {/* Gallery Previews */}
+            {galleryPreviews.length > 0 && (
+              <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {galleryPreviews.map((preview, index) => (
+                  <div key={index} className="relative group">
+                    <img
+                      src={preview}
+                      alt={`Gallery ${index + 1}`}
+                      className="w-full h-24 object-cover rounded-lg border border-gray-200"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeGalleryImage(index)}
+                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Room Number & Type */}

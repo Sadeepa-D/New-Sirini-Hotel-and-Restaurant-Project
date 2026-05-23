@@ -46,6 +46,10 @@ const receptionHallBookingSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    refnumber: {
+      type: String,
+      unique: true,
+    },
   },
   { timestamps: true },
 );

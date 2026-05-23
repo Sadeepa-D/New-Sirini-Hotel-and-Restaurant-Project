@@ -26,23 +26,30 @@ const userSchema = mongoose.Schema(
 
     Phone: {
       type: String,
-      required: [true, "please add Your Phone Number"],
-      unique: true,
+    default: null,
     },
     Role: {
       type: String,
-      enum: ["User", "Admin", "Manager","Operational Manager"],
       default: "User",
     },
     password: {
       type: String,
-      required: [true, "Please add a Password"],
+      default: null,
     },
     Status: {
       type: String,
       enum: ["Active", "Suspended", "Deleted"],
       default: "Active",
     },
+    authProvider: {
+    type: String,
+    enum: ["local", "google"],
+    default: "local",
+  },
+   googleId: {
+    type: String,
+    default: null,
+  },
   },
   {
     timestamps: true,

@@ -33,7 +33,10 @@ const RestaurantSection = ({ data }) => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [index, setIndex] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(3);
-  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" ? window.innerWidth < 768 : false);
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth < 768 : false,
+  );
+  const [searchTerm, setSearchTerm] = useState("");
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -81,13 +84,13 @@ const RestaurantSection = ({ data }) => {
   }, []);
 
   const handleDelete = (order) => {
-
     setConfirmDialog({
       isOpen: true,
       id: order._id,
       type: "delete",
       title: "Delete Order?",
-      message: "Are you sure you want to delete this order? This action cannot be undone.",
+      message:
+        "Are you sure you want to delete this order? This action cannot be undone.",
     });
   };
 
@@ -129,35 +132,59 @@ const RestaurantSection = ({ data }) => {
   const deletedOrders = orders.filter((o) => o.status === "delete");
   const overdueOrders = orders.filter((o) => o.status === "Overdue");
 
-  const filteredOrders = activeTab === "Accepted"
-    ? acceptedOrders
-    : activeTab === "Preparing"
-      ? preparingOrders
-      : activeTab === "Complete"
-        ? completeOrders
-        : activeTab === "Deleted"
-          ? deletedOrders
-          : activeTab === "Overdue"
-            ? overdueOrders
-            : pendingOrders;
+  const filteredOrders =
+    activeTab === "Accepted"
+      ? acceptedOrders
+      : activeTab === "Preparing"
+        ? preparingOrders
+        : activeTab === "Complete"
+          ? completeOrders
+          : activeTab === "Deleted"
+            ? deletedOrders
+            : activeTab === "Overdue"
+              ? overdueOrders
+              : pendingOrders;
 
-  const tabs = ["Pending", "Accepted", "Preparing", "Complete", "Deleted", "Overdue"];
+  const tabs = [
+    "Pending",
+    "Accepted",
+    "Preparing",
+    "Complete",
+    "Deleted",
+    "Overdue",
+  ];
+
+  const searchOrders = (searchTerm ? orders : filteredOrders).filter(
+    (order) => {
+      const term = searchTerm.toLowerCase();
+      return (
+        order.foodName.toLowerCase().includes(term) ||
+        order.orderCode.toLowerCase().includes(term) ||
+        new Date(order.pickupDate).toLocaleDateString("en-GB").includes(term) ||
+        order.pickupTime.includes(term)
+      );
+    },
+  );
 
   const tabCounts = {
-    "Pending": orders.filter(o => o.status === "Pending").length,
-    "Accepted": orders.filter(o => o.status === "Accepted").length,
-    "Preparing": orders.filter(o => o.status === "Preparing").length,
-    "Complete": orders.filter(o => o.status === "Complete").length,
-    "Deleted": orders.filter(o => o.status === "delete").length,
-    "Overdue": orders.filter(o => o.status === "Overdue").length,
+    Pending: orders.filter((o) => o.status === "Pending").length,
+    Accepted: orders.filter((o) => o.status === "Accepted").length,
+    Preparing: orders.filter((o) => o.status === "Preparing").length,
+    Complete: orders.filter((o) => o.status === "Complete").length,
+    Deleted: orders.filter((o) => o.status === "delete").length,
+    Overdue: orders.filter((o) => o.status === "Overdue").length,
   };
 
   const statusStyle = (status) => {
-    if (status === "Complete") return "bg-green-50 text-green-600 border-green-200";
-    if (status === "Accepted") return "bg-blue-50 text-blue-600 border-blue-200";
-    if (status === "Preparing") return "bg-purple-50 text-purple-600 border-purple-200";
+    if (status === "Complete")
+      return "bg-green-50 text-green-600 border-green-200";
+    if (status === "Accepted")
+      return "bg-blue-50 text-blue-600 border-blue-200";
+    if (status === "Preparing")
+      return "bg-purple-50 text-purple-600 border-purple-200";
     if (status === "delete") return "bg-red-50 text-red-500 border-red-200";
-    if (status === "Overdue") return "bg-orange-50 text-orange-600 border-orange-200";
+    if (status === "Overdue")
+      return "bg-orange-50 text-orange-600 border-orange-200";
     return "bg-amber-50 text-amber-600 border-amber-200";
   };
 
@@ -166,8 +193,21 @@ const RestaurantSection = ({ data }) => {
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-gray-900 tracking-tight">Restaurant Orders</h2>
-          <p className="text-gray-400 text-xs mt-0.5">Manage and track your food orders</p>
+          <h2 className="text-xl font-bold text-gray-900 tracking-tight">
+            Restaurant Orders
+          </h2>
+          <p className="text-gray-400 text-xs mt-0.5">
+            Manage and track your food orders
+          </p>
+          <div>
+            <input
+              type="text"
+              placeholder="Search by booking ref..."
+              className="mt-2 w-full sm:w-64 px-4 py-2 bg-gray-100 placeholder:text-gray-400 text-gray-700 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-400 focus:outline-none transition-colors"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
 
         {/* Tab bar */}
@@ -176,13 +216,16 @@ const RestaurantSection = ({ data }) => {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-[10px] uppercase tracking-wider transition-all whitespace-nowrap font-semibold ${activeTab === tab
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-[10px] uppercase tracking-wider transition-all whitespace-nowrap font-semibold ${
+                activeTab === tab
                   ? "bg-white text-amber-600 shadow-sm ring-1 ring-black/5"
                   : "text-gray-400 hover:text-gray-600 font-normal"
-                }`}
+              }`}
             >
               {tab}
-              <span className={`text-[9px] font-mono ${activeTab === tab ? "text-amber-400" : "opacity-50"}`}>
+              <span
+                className={`text-[9px] font-mono ${activeTab === tab ? "text-amber-400" : "opacity-50"}`}
+              >
                 ({tabCounts[tab]})
               </span>
             </button>
@@ -196,13 +239,17 @@ const RestaurantSection = ({ data }) => {
           <div className="w-10 h-10 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
           <p className="text-gray-400 text-sm animate-pulse">Loading orders…</p>
         </div>
-      ) : filteredOrders.length === 0 ? (
+      ) : searchOrders.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 bg-gray-50/50 rounded-3xl border border-dashed border-gray-200">
           <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-6 border border-gray-100">
             <UtensilsCrossed size={40} className="text-gray-200" />
           </div>
-          <h3 className="text-xl font-bold text-gray-700">No orders available</h3>
-          <p className="text-gray-400 text-sm font-medium mt-1">No items found in the {activeTab.toLowerCase()} section</p>
+          <h3 className="text-xl font-bold text-gray-700">
+            No orders available
+          </h3>
+          <p className="text-gray-400 text-sm font-medium mt-1">
+            No items found in the {activeTab.toLowerCase()} section
+          </p>
         </div>
       ) : (
         <div className="relative group/nav">
@@ -216,36 +263,44 @@ const RestaurantSection = ({ data }) => {
             </button>
           )}
 
-          <div className={`overflow-x-auto md:overflow-hidden px-1 py-4 scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isMobile ? "pb-6" : ""}`}>
+          <div
+            className={`overflow-x-auto md:overflow-hidden px-1 py-4 scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isMobile ? "pb-6" : ""}`}
+          >
             <div
               className={`flex justify-start gap-6 ${isMobile ? "snap-x snap-mandatory" : "transition-transform duration-[1200ms] ease-in-out"}`}
-              style={isMobile ? {} : {
-                transform: `translateX(calc(-${index * (100 / itemsPerView)}% - ${
-                  index * (24 / itemsPerView)
-                }px))`,
-              }}
+              style={
+                isMobile
+                  ? {}
+                  : {
+                      transform: `translateX(calc(-${index * (100 / itemsPerView)}% - ${
+                        index * (24 / itemsPerView)
+                      }px))`,
+                    }
+              }
             >
-              {filteredOrders.map((order) => (
+              {searchOrders.map((order) => (
                 <div
                   key={order._id}
                   className={`flex-shrink-0 ${isMobile ? "w-[90%] snap-start" : ""}`}
-                  style={isMobile ? {} : {
-                    width: `calc(${100 / itemsPerView}% - ${
-                      ((itemsPerView - 1) * 24) / itemsPerView
-                    }px)`,
-                  }}
+                  style={
+                    isMobile
+                      ? {}
+                      : {
+                          width: `calc(${100 / itemsPerView}% - ${
+                            ((itemsPerView - 1) * 24) / itemsPerView
+                          }px)`,
+                        }
+                  }
                 >
                   <div
                     className={`p-5 rounded-[1.75rem] shadow-sm border transition-all duration-300 flex flex-col h-full group ${
                       order.status === "delete"
                         ? "bg-red-50/30 border-red-100 hover:border-red-200"
                         : order.status === "Overdue"
-                        ? "bg-orange-50/30 border-orange-100 hover:border-orange-200"
-                        : "bg-white border-gray-100 hover:shadow-xl hover:border-amber-200/50"
+                          ? "bg-orange-50/30 border-orange-100 hover:border-orange-200"
+                          : "bg-white border-gray-100 hover:shadow-xl hover:border-amber-200/50"
                     }`}
                   >
-        
-                  
                     {/* Card Header */}
                     <div className="flex items-start mb-4">
                       <div className="flex items-center gap-3">
@@ -326,9 +381,13 @@ const RestaurantSection = ({ data }) => {
           </div>
 
           {/* Right Arrow */}
-          {!isMobile && index < filteredOrders.length - itemsPerView && (
+          {!isMobile && index < searchOrders.length - itemsPerView && (
             <button
-              onClick={() => setIndex(Math.min(filteredOrders.length - itemsPerView, index + 1))}
+              onClick={() =>
+                setIndex(
+                  Math.min(searchOrders.length - itemsPerView, index + 1),
+                )
+              }
               className="absolute right-2 sm:right-0 top-1/2 -translate-y-1/2 sm:translate-x-4 z-10 w-10 h-10 sm:w-12 sm:h-12 bg-white hover:bg-neutral-100 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 border border-gray-100 group-hover/nav:scale-110"
             >
               <ChevronRight className="w-6 h-6 text-neutral-900" />

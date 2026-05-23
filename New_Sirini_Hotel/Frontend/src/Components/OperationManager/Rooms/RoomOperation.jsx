@@ -89,6 +89,13 @@ const RoomOperation = () => {
       data.append("image", formData.imageFile);
     }
 
+    // Append gallery images if provided
+    if (formData.galleryImages && formData.galleryImages.length > 0) {
+      formData.galleryImages.forEach((file) => {
+        data.append("galleryImages", file);
+      });
+    }
+
     try {
       const config = {
         headers: { "Content-Type": "multipart/form-data" },
@@ -104,14 +111,14 @@ const RoomOperation = () => {
         await axios.post(`${VITE_URL}/api/rooms/add`, data, config);
       }
       toast.dismiss(loadingtoast);
+      toast.success("Room saved successfully!");
       fetchRooms();
       setIsFormOpen(false);
       setEditingRoom(null);
     } catch (err) {
       console.error("Save Error:", err.response?.data);
-      alert(err.response?.data?.message || "Error saving room");
-    } finally {
       toast.dismiss(loadingtoast);
+      toast.error(err.response?.data?.message || "Error saving room");
     }
   };
 

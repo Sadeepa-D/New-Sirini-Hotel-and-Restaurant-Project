@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { ArrowLeft } from "lucide-react";
+import GoogleLoginBtn from "../Components/GoogleLoginBtn";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Registration = () => {
@@ -129,7 +131,9 @@ const Registration = () => {
       setverfiy(true);
     } catch (error) {
       console.error("Error sending OTP:", error);
-      const errMsg = error.response?.data?.message || "Failed to send OTP. Please try again.";
+      const errMsg =
+        error.response?.data?.message ||
+        "Failed to send OTP. Please try again.";
       toast.error(errMsg);
     } finally {
       setSendingOtp(false);
@@ -155,7 +159,9 @@ const Registration = () => {
       setIsVerified(true);
     } catch (error) {
       console.error("Error verifying OTP:", error);
-      const errMsg = error.response?.data?.message || "Failed to verify OTP. Please try again.";
+      const errMsg =
+        error.response?.data?.message ||
+        "Failed to verify OTP. Please try again.";
       toast.error(errMsg);
     }
   };
@@ -226,9 +232,24 @@ const Registration = () => {
                     >
                       {sendingOtp ? (
                         <span className="flex items-center gap-1">
-                          <svg className="animate-spin h-3.5 w-3.5 text-neutral-900" viewBox="0 0 24 24" fill="none">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                          <svg
+                            className="animate-spin h-3.5 w-3.5 text-neutral-900"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            />
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            />
                           </svg>
                           Sending
                         </span>
@@ -238,8 +259,16 @@ const Registration = () => {
                     </button>
                   ) : (
                     <span className="flex items-center gap-1 px-2.5 py-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold rounded-md">
-                      <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      <svg
+                        className="h-3.5 w-3.5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                       Verified
                     </span>
@@ -363,12 +392,13 @@ const Registration = () => {
               {isLoading ? "Creating Account..." : "Create Account"}
             </button>
           </form>
+          <GoogleLoginBtn />
 
           <div className="mt-6 text-center">
             <p className="text-amber-100/60 text-sm">
               Already have an account?
               <Link
-                to="/"
+                to="/login"
                 className="text-amber-400 hover:text-amber-300 font-semibold transition-colors"
               >
                 Sign In
@@ -382,19 +412,7 @@ const Registration = () => {
             to="/"
             className="inline-flex items-center text-amber-100/60 hover:text-amber-400 transition-colors text-sm"
           >
-            <svg
-              className="w-4 h-4 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
+            <ArrowLeft className="h-4 w-4 mr-1" />
             Back to Home
           </Link>
         </div>

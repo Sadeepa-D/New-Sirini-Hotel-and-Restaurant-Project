@@ -54,11 +54,21 @@ router.put(
   roomBookingController.setRoomBookingStatustoCancelled,
 );
 
-router.post("/add", upload.single("image"), roomController.createRoom);
+router.post(
+  "/add",
+  upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "galleryImages", maxCount: 4 },
+  ]),
+  roomController.createRoom,
+);
 router.get("/viewrooms", roomController.getAllRooms);
 router.put(
   "/updateroom/:id",
-  upload.single("image"),
+  upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "galleryImages", maxCount: 4 },
+  ]),
   roomController.updateRoom,
 );
 router.delete("/deleteroom/:id", roomController.deleteRoom);
@@ -73,7 +83,10 @@ router.get(
 
 router.post("/roomanlys/bookingstats", roomAnlysController.getBookingStats);
 router.post("/roomanlys/roomfrequency", roomAnlysController.getRoomFrequency);
-router.get("/roomanlys/statusoverview", roomAnlysController.getRoomStatusOverview);
+router.get(
+  "/roomanlys/statusoverview",
+  roomAnlysController.getRoomStatusOverview,
+);
 router.post("/roomanlys/revenuemnothly", roomAnlysController.getMonthlyRevenue);
 router.post("/roomanlys/revenuebyroom", roomAnlysController.getRevenueByRoom);
 
