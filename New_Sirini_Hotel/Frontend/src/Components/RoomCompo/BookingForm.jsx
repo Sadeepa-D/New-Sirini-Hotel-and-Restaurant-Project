@@ -22,14 +22,19 @@ const PACKAGES = [
   },
 ];
 
-
 const addDays = (dateStr, n) => {
   const [y, m, d] = dateStr.split("-").map(Number);
   const next = new Date(Date.UTC(y, m - 1, d + n));
   return `${next.getUTCFullYear()}-${String(next.getUTCMonth() + 1).padStart(2, "0")}-${String(next.getUTCDate()).padStart(2, "0")}`;
 };
 
-function BookingForm({ selectedRoom, onClose, onConfirmed, isLoggedIn, onRequireLogin }) {
+function BookingForm({
+  selectedRoom,
+  onClose,
+  onConfirmed,
+  isLoggedIn,
+  onRequireLogin,
+}) {
   const VITE_URL = import.meta.env.VITE_API_URL;
 
   const [step, setStep] = useState(0);
@@ -47,7 +52,6 @@ function BookingForm({ selectedRoom, onClose, onConfirmed, isLoggedIn, onRequire
     checkOutDate: "",
   });
 
-  
   useEffect(() => {
     if (!bookingMode) return;
     const pkg = PACKAGES.find((p) => p.id === bookingMode);
@@ -110,7 +114,6 @@ function BookingForm({ selectedRoom, onClose, onConfirmed, isLoggedIn, onRequire
     }
   };
 
- 
   const handleSelectMode = (mode) => {
     setBookingMode(mode);
     setFormData({
@@ -126,7 +129,6 @@ function BookingForm({ selectedRoom, onClose, onConfirmed, isLoggedIn, onRequire
 
   const handleDateSelect = (dateStr) => {
     if (bookingMode === "fullday") {
-      
       if (
         !formData.checkInDate ||
         (formData.checkInDate && formData.checkOutDate)
@@ -136,12 +138,10 @@ function BookingForm({ selectedRoom, onClose, onConfirmed, isLoggedIn, onRequire
         if (dateStr > formData.checkInDate) {
           setFormData({ ...formData, checkOutDate: dateStr });
         } else {
-          
           setFormData({ ...formData, checkInDate: dateStr, checkOutDate: "" });
         }
       }
     } else {
-      
       setFormData({
         ...formData,
         checkInDate: dateStr,
@@ -214,7 +214,6 @@ function BookingForm({ selectedRoom, onClose, onConfirmed, isLoggedIn, onRequire
           </button>
 
           <div className="mb-5 text-center">
-
             <h2 className="text-gray-900 text-2xl font-serif italic font-medium tracking-tight">
               Choose a Package
             </h2>
