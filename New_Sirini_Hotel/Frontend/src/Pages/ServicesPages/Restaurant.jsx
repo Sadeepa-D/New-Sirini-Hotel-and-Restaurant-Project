@@ -105,6 +105,18 @@ export default function Restaurant() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Disable background scrolling when cart is open
+  useEffect(() => {
+    if (showCart) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showCart]);
+
   const filteredItems =
     selectedCategory === "All"
       ? mealData
@@ -300,7 +312,7 @@ export default function Restaurant() {
         {/* Floating Action Button (FAB) - Smart visibility */}
         <div
           className={`fixed z-[60] right-8 
-            ${isFabVisible ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-10 pointer-events-none'}`}
+            ${(isFabVisible && !showCart) ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-10 pointer-events-none'}`}
           style={{
             bottom: `${fabBottomOffset}px`,
             transition: 'opacity 500ms ease-in-out, transform 500ms ease-in-out',
