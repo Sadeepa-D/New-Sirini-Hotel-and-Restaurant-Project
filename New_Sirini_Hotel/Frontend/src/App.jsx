@@ -24,9 +24,12 @@ const autoLogout = (token) => {
   const navigate = useNavigate();
   useEffect(() => {
     if (!token) return;
-    const logouttimer = setTimeout(() => {
-      handlelogout();
-    }, 30*60*1000);
+    const logouttimer = setTimeout(
+      () => {
+        handlelogout();
+      },
+      30 * 60 * 1000,
+    );
 
     const handlelogout = () => {
       localStorage.removeItem("token");
@@ -51,7 +54,7 @@ export const App = () => {
   autoLogout(token);
   return (
     <>
-      <Toaster position="top-center" reverseOrder={false} />
+      <Toaster position="top-right" reverseOrder={false} />
       <ScrollToTop />
       <Routes>
         <Route

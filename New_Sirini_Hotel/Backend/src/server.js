@@ -10,6 +10,7 @@ const RestrauntRoutes = require("./routes/RestrauntRoutes");
 const ReceptionHallRoutes = require("./routes/ReceptionHallRoutes");
 const GalleryRoutes = require("./routes/GalleryRoutes");
 const { initCronJobs } = require("./services/cronService");
+const { apiLimiter } = require("./middleware/RateLimiter");
 
 connectDB();
 initCronJobs();
@@ -26,11 +27,11 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/users", UserRoutes);
-app.use("/api/liquor", LiquorRoutes);
-app.use("/api/rooms", RoomRoutes);
-app.use("/api/restraunt", RestrauntRoutes);
-app.use("/api/receptionhall", ReceptionHallRoutes);
-app.use("/api/gallery", GalleryRoutes);
+app.use("/api/liquor",apiLimiter, LiquorRoutes);
+app.use("/api/rooms",apiLimiter, RoomRoutes);
+app.use("/api/restraunt", apiLimiter, RestrauntRoutes);
+app.use("/api/receptionhall", apiLimiter, ReceptionHallRoutes);
+app.use("/api/gallery", apiLimiter, GalleryRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
