@@ -22,14 +22,19 @@ const PACKAGES = [
   },
 ];
 
-
 const addDays = (dateStr, n) => {
   const [y, m, d] = dateStr.split("-").map(Number);
   const next = new Date(Date.UTC(y, m - 1, d + n));
   return `${next.getUTCFullYear()}-${String(next.getUTCMonth() + 1).padStart(2, "0")}-${String(next.getUTCDate()).padStart(2, "0")}`;
 };
 
-function BookingForm({ selectedRoom, onClose, onConfirmed, isLoggedIn, onRequireLogin }) {
+function BookingForm({
+  selectedRoom,
+  onClose,
+  onConfirmed,
+  isLoggedIn,
+  onRequireLogin,
+}) {
   const VITE_URL = import.meta.env.VITE_API_URL;
 
   const [step, setStep] = useState(0);
@@ -37,6 +42,7 @@ function BookingForm({ selectedRoom, onClose, onConfirmed, isLoggedIn, onRequire
   const [loading, setLoading] = useState(false);
   const [bookingMode, setBookingMode] = useState(null);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [userData, setUserData] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -46,7 +52,6 @@ function BookingForm({ selectedRoom, onClose, onConfirmed, isLoggedIn, onRequire
     checkOutDate: "",
   });
 
-  
   useEffect(() => {
     if (!bookingMode) return;
     const pkg = PACKAGES.find((p) => p.id === bookingMode);
@@ -78,13 +83,43 @@ function BookingForm({ selectedRoom, onClose, onConfirmed, isLoggedIn, onRequire
     selectedRoom.shortStayPrice,
   ]);
 
- 
+  // Fetch user data when step 2 is reached
+  useEffect(() => {
+    if (step === 2 && isLoggedIn && !userData) {
+      fetchUserData();
+    }
+  }, [step, isLoggedIn]);
+
+  const fetchUserData = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const response = await axios.get(`${VITE_URL}/api/users/profile`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const user = response.data;
+      setUserData(user);
+
+      // Pre-fill form with user data (Phone is uppercase in model)
+      setFormData((prev) => ({
+        ...prev,
+        name: user.name || "",
+        email: user.email || "",
+        phone: user.Phone || "", // Note: Phone is uppercase in the model
+      }));
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
   const handleSelectMode = (mode) => {
     setBookingMode(mode);
     setFormData({
-      name: "",
-      email: "",
-      phone: "",
+      name: userData?.name || "",
+      email: userData?.email || "",
+      phone: userData?.Phone || "", // Note: Phone is uppercase in the model
       guests: 1,
       checkInDate: "",
       checkOutDate: "",
@@ -94,7 +129,6 @@ function BookingForm({ selectedRoom, onClose, onConfirmed, isLoggedIn, onRequire
 
   const handleDateSelect = (dateStr) => {
     if (bookingMode === "fullday") {
-      
       if (
         !formData.checkInDate ||
         (formData.checkInDate && formData.checkOutDate)
@@ -104,12 +138,10 @@ function BookingForm({ selectedRoom, onClose, onConfirmed, isLoggedIn, onRequire
         if (dateStr > formData.checkInDate) {
           setFormData({ ...formData, checkOutDate: dateStr });
         } else {
-          
           setFormData({ ...formData, checkInDate: dateStr, checkOutDate: "" });
         }
       }
     } else {
-      
       setFormData({
         ...formData,
         checkInDate: dateStr,
@@ -182,7 +214,6 @@ function BookingForm({ selectedRoom, onClose, onConfirmed, isLoggedIn, onRequire
           </button>
 
           <div className="mb-5 text-center">
-
             <h2 className="text-gray-900 text-2xl font-serif italic font-medium tracking-tight">
               Choose a Package
             </h2>

@@ -96,6 +96,14 @@ const RoomOperation = () => {
       });
     }
 
+    // For updates, send the list of gallery images to keep
+    if (editingRoom && formData.keptGalleryImages) {
+      data.append(
+        "keptGalleryImages",
+        JSON.stringify(formData.keptGalleryImages),
+      );
+    }
+
     try {
       const config = {
         headers: { "Content-Type": "multipart/form-data" },

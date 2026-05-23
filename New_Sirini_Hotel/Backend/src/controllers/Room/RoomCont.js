@@ -116,25 +116,61 @@ const updateRoom = async (req, res) => {
       updates.imagePublicId = req.files.image[0].public_id;
     }
 
-    // Handle gallery images update
-    if (req.files?.galleryImages?.[0]) {
-      // Delete old gallery images from Cloudinary
+    // Handle gallery images update with selective deletion
+    if (req.body.keptGalleryImages || req.files?.galleryImages?.[0]) {
+      let keptImages = [];
+      let keptPublicIds = [];
+
+      // Parse kept gallery images from request body
+      if (req.body.keptGalleryImages) {
+        try {
+          keptImages = JSON.parse(req.body.keptGalleryImages);
+        } catch (e) {
+          keptImages = [];
+        }
+      }
+
+      // Find public IDs of images to keep
+      if (keptImages.length > 0 && existingRoom.galleryImages) {
+        keptPublicIds = existingRoom.galleryImages
+          .map((img, idx) => {
+            if (keptImages.includes(img)) {
+              return existingRoom.galleryImagePublicIds?.[idx];
+            }
+            return null;
+          })
+          .filter((id) => id !== null);
+      }
+
+      // Delete images that are not being kept
       if (
         existingRoom.galleryImagePublicIds &&
         existingRoom.galleryImagePublicIds.length > 0
       ) {
-        for (const publicId of existingRoom.galleryImagePublicIds) {
-          await cloudinary.v2.uploader.destroy(publicId);
+        for (let i = 0; i < existingRoom.galleryImagePublicIds.length; i++) {
+          const publicId = existingRoom.galleryImagePublicIds[i];
+          if (!keptPublicIds.includes(publicId)) {
+            await cloudinary.v2.uploader.destroy(publicId);
+          }
         }
       }
 
-      // Add new gallery images
-      updates.galleryImages = req.files.galleryImages.map(
-        (file) => file.secure_url,
-      );
-      updates.galleryImagePublicIds = req.files.galleryImages.map(
-        (file) => file.public_id,
-      );
+      // Add new gallery images if provided
+      if (req.files?.galleryImages?.[0]) {
+        const newImages = req.files.galleryImages.map(
+          (file) => file.secure_url,
+        );
+        const newPublicIds = req.files.galleryImages.map(
+          (file) => file.public_id,
+        );
+
+        updates.galleryImages = keptImages.concat(newImages);
+        updates.galleryImagePublicIds = keptPublicIds.concat(newPublicIds);
+      } else {
+        // Only kept images, no new uploads
+        updates.galleryImages = keptImages;
+        updates.galleryImagePublicIds = keptPublicIds;
+      }
     }
 
     const updatedRoom = await RoomModel.findByIdAndUpdate(
