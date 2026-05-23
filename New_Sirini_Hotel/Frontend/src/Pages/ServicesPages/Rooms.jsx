@@ -359,6 +359,7 @@ function Rooms() {
         room={selectedRoomForDetails}
         isOpen={showDetailsModal}
         onClose={() => setShowDetailsModal(false)}
+        onBookNow={handleBookNow}
       />
 
       {isModalOpen && selectedRoom && (
