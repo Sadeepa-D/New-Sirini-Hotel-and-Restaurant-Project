@@ -170,9 +170,7 @@ export default function Reception() {
       </section> */}
       <ReceptionHallPackages />
       {/* <CateringItemCard /> */}
-      <div id="ads">
-        <AdvertismentSection />
-      </div>
+      <AdvertismentSection />
 
       {/* Calendar */}
       {showcalander && (
