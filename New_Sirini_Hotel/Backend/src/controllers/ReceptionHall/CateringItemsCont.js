@@ -29,7 +29,7 @@ const createCateringItem = async (req, res) => {
 };
 const getCateringItems = async (req, res) => {
   try {
-    const items = await CateringItems.find();
+    const items = await CateringItems.find().sort({ createdAt: -1 });
     res.status(200).json(items);
   } catch (error) {
     res.status(500).json({ message: "Error fetching catering items", error });

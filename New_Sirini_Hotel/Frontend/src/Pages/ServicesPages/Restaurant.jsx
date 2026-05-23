@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Exploreindicator from "../../Components/Exploreindicator";
@@ -22,6 +22,7 @@ const CATEGORIES = [
 export default function Restaurant() {
   const [itemsPerView, setItemsPerView] = useState(4);
   const [mealData, setMealData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [showCart, setShowCart] = useState(false);
   const [cartItems, setCartItems] = useState(() => {
     try {
@@ -43,6 +44,8 @@ export default function Restaurant() {
   const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0]);
 
   const fetchFoodItems = async () => {
+    setIsLoading(true);
+    const toastId = toast.loading("Loading food items...");
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/restraunt/viewfooditems`,
@@ -60,17 +63,19 @@ export default function Restaurant() {
         category: item.category,
         availability: item.availability,
         label: item.availability ? "Available" : "Unavailable",
-        productionPrice: item.productionPrice,
-        discount: item.discount,
-        sellingPrice: item.sellingPrice,
       }));
       setMealData(mappedData);
+      toast.success("Food items loaded successfully", { id: toastId });
     } catch (error) {
       if (error.response && error.response.status === 404) {
         setMealData([]);
+        toast.success("Food items loaded successfully", { id: toastId });
       } else {
         console.error("Error fetching food items:", error);
+        toast.error("Failed to load food items", { id: toastId });
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -150,20 +155,33 @@ export default function Restaurant() {
 
 
 
+  const foodSectionRef = useRef(null);
   const [isFabVisible, setIsFabVisible] = useState(false);
-  const [isNearFooter, setIsNearFooter] = useState(false);
+  const [fabBottomOffset, setFabBottomOffset] = useState(32);
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
 
       // Show FAB after scrolling past hero 
       setIsFabVisible(scrollY > windowHeight * 0.7);
 
-      // Detect if near footer 
-      setIsNearFooter(scrollY + windowHeight > documentHeight - 350);
+      if (foodSectionRef.current) {
+        const rect = foodSectionRef.current.getBoundingClientRect();
+        const foodBottom = rect.bottom;
+        
+        const isMobile = window.innerWidth < 768;
+        const fabMargin = 32;
+        
+        // If bottom of food items section enters viewport
+        if (foodBottom < windowHeight) {
+          const offset = windowHeight - foodBottom + fabMargin;
+          setFabBottomOffset(offset);
+        } else {
+          setFabBottomOffset(fabMargin);
+        }
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -173,16 +191,14 @@ export default function Restaurant() {
   return (
     <div className="min-h-screen bg-neutral-50 relative">
       {/* HERO SECTION */}
-      <header className="relative w-full h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
+      <header className="relative w-full h-[320px] sm:h-[400px] md:h-[500px] lg:h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
         {/* Background */}
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage: `url(${resturantImg})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
+        <div className="absolute inset-0 z-0">
+          <img
+            src={resturantImg}
+            alt="Our Restaurant"
+            className="w-full h-full object-cover"
+          />
           <div className="absolute inset-0 bg-black/50"></div>
         </div>
 
@@ -241,14 +257,27 @@ export default function Restaurant() {
         </div>
 
         {/* Food Items Grid Section */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-[400px]">
-          {filteredItems.length > 0 ? (
+        <div ref={foodSectionRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-[400px]">
+          {isLoading ? (
+            <div className="flex flex-col">
+              <div className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-x-6 md:gap-y-12 md:overflow-visible md:pb-0">
+                {Array.from({ length: 8 }).map((_, index) => (
+                  <div
+                    key={`skeleton-${index}`}
+                    className="w-[85%] shrink-0 snap-start md:w-auto md:shrink md:snap-none h-full"
+                  >
+                    <RestaurantCard isLoading={true} itemsPerView={1} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : filteredItems.length > 0 ? (
             <div className="flex flex-col">
               <div className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-x-6 md:gap-y-12 md:overflow-visible md:pb-0">
                 {filteredItems.map((item) => (
                   <div
                     key={item.id}
-                    className="w-[85%] shrink-0 snap-start md:w-auto md:shrink md:snap-none"
+                    className="w-[85%] shrink-0 snap-start md:w-auto md:shrink md:snap-none h-full"
                   >
                     <RestaurantCard
                       item={item}
@@ -275,10 +304,12 @@ export default function Restaurant() {
 
         {/* Floating Action Button (FAB) - Smart visibility */}
         <div
-          className={`fixed transition-all duration-500 ease-in-out z-[60] 
-            ${isFabVisible ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-10 pointer-events-none'}
-            ${isNearFooter ? 'bottom-[380px] md:bottom-[420px]' : 'bottom-8'}
-            right-8`}
+          className={`fixed z-[60] right-8 
+            ${isFabVisible ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-10 pointer-events-none'}`}
+          style={{
+            bottom: `${fabBottomOffset}px`,
+            transition: 'opacity 500ms ease-in-out, transform 500ms ease-in-out',
+          }}
         >
          <button 
            className="relative group transition-all duration-300"

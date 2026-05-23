@@ -31,12 +31,12 @@ const createAdvertisment = async (req, res) => {
     // Validate NIC format (should be 9 digits followed by a digit or X)
     const nicRegex = /^([0-9]{9}[vVxX]|[0-9]{12})$/;
 
-if (!nicRegex.test(NIC)) {
-  return res.status(400).json({
-    message: "Invalid NIC format.",
-    example: "Old: 123456789V | New: 200012345678",
-  });
-}
+    if (!nicRegex.test(NIC)) {
+      return res.status(400).json({
+        message: "Invalid NIC format.",
+        example: "Old: 123456789V | New: 200012345678",
+      });
+    }
 
     // Validate TPNumber format (should be 10 digits)
     const phoneRegex = /^[0-9]{10}$/;
@@ -85,7 +85,7 @@ if (!nicRegex.test(NIC)) {
 };
 const getAdvertisments = async (req, res) => {
   try {
-    const advertisments = await Adevertisment.find();
+    const advertisments = await Adevertisment.find().sort({ createdAt: -1 });
     if (advertisments.length === 0) {
       return res.status(404).json({ message: "No advertisments found" });
     }
@@ -260,7 +260,7 @@ const getPendingAdvertisments = async (req, res) => {
   try {
     const pendingAdvertisments = await Adevertisment.find({
       status: "pending",
-    });
+    }).sort({ createdAt: -1 });
     res.status(200).json(pendingAdvertisments);
   } catch (error) {
     console.error("Error fetching pending advertisments:", error);
@@ -274,7 +274,7 @@ const getApprovedAdvertisments = async (req, res) => {
   try {
     const approvedAdvertisments = await Adevertisment.find({
       status: "approved",
-    });
+    }).sort({ createdAt: -1 });
     res.status(200).json(approvedAdvertisments);
   } catch (error) {
     console.error("Error fetching approved advertisments:", error);
@@ -288,7 +288,7 @@ const getRejectedAdvertisments = async (req, res) => {
   try {
     const rejectedAdvertisments = await Adevertisment.find({
       status: "rejected",
-    });
+    }).sort({ createdAt: -1 });
     res.status(200).json(rejectedAdvertisments);
   } catch (error) {
     console.error("Error fetching rejected advertisments:", error);
@@ -305,7 +305,9 @@ const getSpecificUserAdvertisments = async (req, res) => {
     if (!userId) {
       return res.status(400).json({ message: "User ID is required" });
     }
-    const userAdvertisments = await Adevertisment.find({ userId });
+    const userAdvertisments = await Adevertisment.find({ userId }).sort({
+      createdAt: -1,
+    });
     res.status(200).json(userAdvertisments);
   } catch (error) {
     console.error("Error fetching user advertisments:", error);
@@ -314,7 +316,7 @@ const getSpecificUserAdvertisments = async (req, res) => {
       error: error.message,
     });
   }
-};    
+};
 module.exports = {
   createAdvertisment,
   getAdvertisments,

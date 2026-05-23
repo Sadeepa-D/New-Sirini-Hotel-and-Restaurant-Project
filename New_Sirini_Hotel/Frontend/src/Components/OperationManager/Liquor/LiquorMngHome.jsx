@@ -14,7 +14,7 @@ import axios from "axios";
 import AddLiquorForm from "../Liquor/AddLiquorForm";
 import DrinkCard from "../../LiqourStore/LiqourCard";
 import LiquorDetailsComp from "../../LiqourStore/LIquorDetailsComp";
-import ConfirmDialog from "../../ConfrimDialog";
+import ConfrimDialog from "../../ConfrimDialog";
 import LiquorInventory from "./LiquorInventory";
 
 const LiquorManager = () => {
@@ -310,7 +310,7 @@ const LiquorManager = () => {
         onClose={() => setIsDetailsOpen(false)}
       />
 
-      <ConfirmDialog
+      <ConfrimDialog
         isOpen={confirmDialog.isOpen}
         type={confirmDialog.type}
         title={confirmDialog.title}

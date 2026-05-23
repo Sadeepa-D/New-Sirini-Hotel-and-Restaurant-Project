@@ -10,6 +10,7 @@ import Exploreindicator from "../../Components/Exploreindicator";
 import Calander from "../../Components/Calander";
 import toast from "react-hot-toast";
 import LoginMessage from "../../Components/LoginMessage";
+import RoomFullDetails from "../../Components/RoomCompo/RoomFullDetails";
 import {
   Bed,
   Users,
@@ -32,6 +33,8 @@ function Rooms() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [bookedDates, setBookedDates] = useState([]);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [selectedRoomForDetails, setSelectedRoomForDetails] = useState(null);
 
   //Slide show in main room page
   const backgroundImages = [Room_1, Room_2, Room_3];
@@ -95,10 +98,15 @@ function Rooms() {
     console.log("Booking request received for room ID:", roomId);
   };
 
+  const handleViewRoomDetails = (room) => {
+    setSelectedRoomForDetails(room);
+    setShowDetailsModal(true);
+  };
+
   return (
     <div className="bg-[#fafafa] min-h-screen font-sans">
       {/*Slide show*/}
-      <header className="relative w-full h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4 bg-black">
+      <header className="relative w-full h-[320px] sm:h-[400px] md:h-[500px] lg:h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4 bg-black">
         <div className="absolute inset-0 z-0">
           {backgroundImages.map((img, index) => (
             <div
@@ -117,9 +125,9 @@ function Rooms() {
           ))}
         </div>
 
-        <div className="z-20 flex flex-col items-center gap-4 bg-white px-8 md:px-12 py-8 rounded-2xl border border-gray-200 shadow-lg">
+        <div className="z-20 flex flex-col items-center gap-1.5 sm:gap-4 bg-white px-4 py-3.5 sm:px-8 sm:py-6 md:px-12 md:py-8 rounded-xl sm:rounded-2xl border border-gray-200 shadow-lg w-[88%] sm:w-auto max-w-[280px] sm:max-w-none">
           <h1
-            className="text-5xl md:text-6xl font-serif italic text-black"
+            className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-serif italic text-black"
             style={{
               animation: "slideUpFadeIn 0.7s ease-out forwards",
             }}
@@ -127,7 +135,7 @@ function Rooms() {
             Our Rooms
           </h1>
           <p
-            className="text-sm md:text-base uppercase tracking-[0.4em] font-light border-b border-gray-300 pb-2 text-gray-700"
+            className="text-[10px] sm:text-xs md:text-sm lg:text-base uppercase tracking-[0.2em] sm:tracking-[0.4em] font-light border-b border-gray-300 pb-1 sm:pb-2 text-gray-700 leading-normal"
             style={{
               animation: "slideUpFadeIn 0.7s ease-out 0.15s forwards",
             }}
@@ -148,7 +156,7 @@ function Rooms() {
           `}</style>
         </div>
 
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20">
+        <div className="absolute bottom-2 sm:bottom-4 md:bottom-6 lg:bottom-10 left-1/2 -translate-x-1/2 z-20">
           <Exploreindicator />
         </div>
       </header>
@@ -165,7 +173,8 @@ function Rooms() {
               {roomList.map((room) => (
                 <div
                   key={room._id}
-                  className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:scale-[1.02] transition-all duration-500 border border-gray-100 flex flex-col h-full w-[85%] shrink-0 snap-start md:w-auto md:shrink md:snap-none"
+                  onClick={() => handleViewRoomDetails(room)}
+                  className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:scale-[1.02] transition-all duration-500 border border-gray-100 flex flex-col h-full w-[85%] shrink-0 snap-start md:w-auto md:shrink md:snap-none cursor-pointer"
                 >
                   {/* Image Section */}
                   <div className="relative h-56 overflow-hidden">
@@ -298,7 +307,10 @@ function Rooms() {
                         </span>
                       </div>
                       <button
-                        onClick={() => handleBookNow(room)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleBookNow(room);
+                        }}
                         disabled={room.status !== "available"}
                         className={`group relative flex items-center justify-center 
       w-full sm:w-fit px-6 py-3 sm:py-2.5 
@@ -341,6 +353,12 @@ function Rooms() {
       <LoginMessage
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}
+      />
+
+      <RoomFullDetails
+        room={selectedRoomForDetails}
+        isOpen={showDetailsModal}
+        onClose={() => setShowDetailsModal(false)}
       />
 
       {isModalOpen && selectedRoom && (
