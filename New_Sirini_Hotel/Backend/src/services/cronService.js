@@ -1,5 +1,6 @@
 const cron = require("node-cron");
 const FoodItemorder = require("../models/Restraunt/FoodItemBookModel");
+const Appointment = require("../models/Reception/ReciptionAppointModel");
 
 const initCronJobs = () => {
   // Run every minute
@@ -20,6 +21,8 @@ const initCronJobs = () => {
         minute: "2-digit",
         hour12: false,
       }).format(now);
+
+      // ================= FOOD ORDERS =================
 
       // Find orders with status 'Pending' or 'Accepted'
       const orders = await FoodItemorder.find({
@@ -53,6 +56,31 @@ const initCronJobs = () => {
 
       if (updatedCount > 0) {
         console.log(`[Cron] Updated ${updatedCount} orders to 'Overdue'`);
+      }
+
+      // ================= APPOINTMENTS =================
+
+      const appointments = await Appointment.find({
+        status: "Pending",
+      });
+
+      let updatedappointments = 0;
+      for (const appointment of appointments) {
+        if (!appointment.date) continue;
+        const appointmentDate = new Date(appointment.date)
+          .toISOString()
+          .split("T")[0];
+        if (appointmentDate < slDate) {
+          appointment.status = "Overdue";
+          await appointment.save();
+          updatedappointments++;
+        }
+      }
+
+      if (updatedappointments > 0) {
+        console.log(
+          `[Cron] Updated ${updatedappointments} appointments to 'Overdue'`,
+        );
       }
     } catch (error) {
       console.error("[Cron Error] Error in overdue automation job:", error);
