@@ -10,6 +10,12 @@ import BgImage1 from "../assets/HomePageImages/Image1.png";
 import BgImage2 from "../assets/HomePageImages/Image2.png";
 import BgImage3 from "../assets/HomePageImages/Image3.png";
 
+// Import service images from assets
+import ReceptionImg from "../assets/HomePageImages/Reciption.png";
+import RoomsImg from "../assets/HomePageImages/Room.jpg";
+import RestaurantImg from "../assets/HomePageImages/Restaurant.png";
+import LiquorImg from "../assets/HomePageImages/Liquor.jpg";
+
 const NewSiriniHotel = () => {
   const VITE_API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
@@ -23,25 +29,25 @@ const NewSiriniHotel = () => {
     {
       title: "Reception",
       desc: "Friendly service to assist you every step of your stay.",
-      img: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=400",
+      img: ReceptionImg,
       path: "/reception",
     },
     {
       title: "Rooms",
       desc: "Comfortable rooms designed for rest and relaxation.",
-      img: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=400",
+      img: RoomsImg,
       path: "/rooms",
     },
     {
       title: "Restaurant",
       desc: "Delicious food made with fresh ingredients.",
-      img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=400",
+      img: RestaurantImg,
       path: "/restaurant",
     },
     {
       title: "Liquor",
       desc: "Enjoy expertly selected spirits in a relaxed setting.",
-      img: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&q=80&w=400",
+      img: LiquorImg,
       path: "/liquor",
     },
   ];
