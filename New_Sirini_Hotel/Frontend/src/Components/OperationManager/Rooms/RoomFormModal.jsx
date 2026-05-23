@@ -22,6 +22,10 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
   const [galleryPreviews, setGalleryPreviews] = useState(
     initialData?.galleryImages || [],
   );
+  // Track which existing gallery images to keep (for edits)
+  const [keptGalleryImages, setKeptGalleryImages] = useState(
+    initialData?.galleryImages || [],
+  );
 
   const facilitiesOptions = ["WiFi", "Hot Water", "TV", "Mini Fridge"];
 
@@ -83,7 +87,8 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
         newPreviews.push(reader.result);
         loadedCount++;
         if (loadedCount === files.length) {
-          setGalleryPreviews(newPreviews);
+          // Combine existing images with new previews
+          setGalleryPreviews([...keptGalleryImages, ...newPreviews]);
         }
       };
       reader.readAsDataURL(file);
@@ -91,10 +96,42 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
   };
 
   const removeGalleryImage = (index) => {
-    const updatedImages = galleryImages.filter((_, i) => i !== index);
-    const updatedPreviews = galleryPreviews.filter((_, i) => i !== index);
-    setGalleryImages(updatedImages);
-    setGalleryPreviews(updatedPreviews);
+    const currentTotal = galleryPreviews.length;
+    const existingCount = keptGalleryImages.length;
+
+    if (index < existingCount) {
+      // Removing an existing image
+      const updatedKept = keptGalleryImages.filter((_, i) => i !== index);
+      setKeptGalleryImages(updatedKept);
+      setGalleryPreviews(
+        updatedKept.concat(galleryPreviews.slice(existingCount)),
+      );
+    } else {
+      // Removing a newly added image
+      const newImageIndex = index - existingCount;
+      const updatedNew = galleryImages.filter((_, i) => i !== newImageIndex);
+      setGalleryImages(updatedNew);
+
+      // Recreate previews from scratch
+      const newPreviews = [];
+      let loadedCount = 0;
+
+      if (updatedNew.length === 0) {
+        setGalleryPreviews(keptGalleryImages);
+      } else {
+        updatedNew.forEach((file) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            newPreviews.push(reader.result);
+            loadedCount++;
+            if (loadedCount === updatedNew.length) {
+              setGalleryPreviews(keptGalleryImages.concat(newPreviews));
+            }
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+    }
   };
 
   const handleSubmit = () => {
@@ -129,7 +166,12 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
     }
 
     onClose(); // Hide the form when click the button
-    onSubmit({ ...form, imageFile, galleryImages });
+    onSubmit({
+      ...form,
+      imageFile,
+      galleryImages,
+      keptGalleryImages, // Send info about which existing images to keep
+    });
   };
 
   return (
@@ -207,23 +249,45 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
 
             {/* Gallery Previews */}
             {galleryPreviews.length > 0 && (
-              <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
-                {galleryPreviews.map((preview, index) => (
-                  <div key={index} className="relative group">
-                    <img
-                      src={preview}
-                      alt={`Gallery ${index + 1}`}
-                      className="w-full h-24 object-cover rounded-lg border border-gray-200"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeGalleryImage(index)}
-                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
-                    >
-                      <X size={14} />
-                    </button>
-                  </div>
-                ))}
+              <div className="mt-3">
+                <p className="text-xs text-gray-600 mb-2">
+                  {galleryPreviews.length} image(s)
+                  {keptGalleryImages.length > 0 &&
+                    galleryImages.length > 0 &&
+                    ` (${keptGalleryImages.length} existing, ${galleryImages.length} new)`}
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {galleryPreviews.map((preview, index) => {
+                    const isExisting = index < keptGalleryImages.length;
+                    return (
+                      <div key={index} className="relative group">
+                        <img
+                          src={preview}
+                          alt={`Gallery ${index + 1}`}
+                          className={`w-full h-24 object-cover rounded-lg border ${isExisting ? "border-blue-300" : "border-green-300"}`}
+                        />
+                        {isExisting && (
+                          <div className="absolute bottom-1 left-1 bg-blue-500 text-white text-[9px] px-1.5 py-0.5 rounded">
+                            Existing
+                          </div>
+                        )}
+                        {!isExisting && (
+                          <div className="absolute bottom-1 left-1 bg-green-500 text-white text-[9px] px-1.5 py-0.5 rounded">
+                            New
+                          </div>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => removeGalleryImage(index)}
+                          className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-md transition transform hover:scale-110"
+                          title="Remove image"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>
