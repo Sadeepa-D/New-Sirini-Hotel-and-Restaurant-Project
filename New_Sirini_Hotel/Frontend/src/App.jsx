@@ -19,6 +19,7 @@ import Dashboard from "./Pages/Dashboard";
 import NotFound from "./Pages/NotFound";
 import Unauthorized from "./Pages/Unauthorized";
 import ProtectedRoutes from "./Components/ProtectedRoutes";
+import AdvertismentSection from "./Components/Receptionhall/AdvertismentSection";
 
 const autoLogout = (token) => {
   const navigate = useNavigate();
@@ -125,7 +126,7 @@ export const App = () => {
         >
           <Route path="/operationmanager" element={<OperationManager />} />
         </Route>
-
+        <Route path="/ads" element={<AdvertismentSection />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

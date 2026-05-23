@@ -116,7 +116,9 @@ export default function Reception() {
 
         {/* Content - centered in hero */}
         <div className="z-10 flex flex-col items-center justify-center gap-3 md:gap-4 lg:gap-6">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light">Reception Hall</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light">
+            Reception Hall
+          </h1>
           <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl italic tracking-widest border-t border-b border-white py-1 px-3 md:py-2 md:px-4">
             Your special moments, handled with elegance
           </p>
@@ -168,7 +170,10 @@ export default function Reception() {
       </section> */}
       <ReceptionHallPackages />
       {/* <CateringItemCard /> */}
-      <AdvertismentSection />
+      <div id="ads">
+        <AdvertismentSection />
+      </div>
+
       {/* Calendar */}
       {showcalander && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center">
