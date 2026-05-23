@@ -302,7 +302,7 @@ const RestaurantSection = ({ data }) => {
                     }`}
                   >
                     {/* Card Header */}
-                    <div className="flex items-start mb-4">
+                    <div className="flex justify-between items-start mb-4">
                       <div className="flex items-center gap-3">
                         <div className="flex flex-col">
                           <h5 className="font-bold text-gray-900 text-[12px] leading-snug">
@@ -313,6 +313,21 @@ const RestaurantSection = ({ data }) => {
                           </span>
                         </div>
                       </div>
+
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${order.status === "Complete"
+                        ? "bg-green-50 text-green-600"
+                        : order.status === "Accepted"
+                          ? "bg-[#013155] text-white"
+                          : order.status === "Preparing"
+                            ? "bg-purple-50 text-purple-600"
+                            : order.status === "delete"
+                              ? "bg-red-50 text-red-600"
+                              : order.status === "Overdue"
+                                ? "bg-orange-100 text-orange-700"
+                                : "bg-amber-50 text-amber-600"
+                        }`}>
+                        {order.status === "delete" ? "DELETED" : order.status.toUpperCase()}
+                      </span>
                     </div>
 
                     {/* Order Details */}
