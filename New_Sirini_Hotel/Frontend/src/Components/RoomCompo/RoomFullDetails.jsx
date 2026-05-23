@@ -9,10 +9,15 @@ import {
   Star,
 } from "lucide-react";
 
-function RoomFullDetails({ room, isOpen, onClose }) {
+function RoomFullDetails({ room, isOpen, onClose, onBookNow }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   if (!isOpen || !room) return null;
+
+  const handleBookNow = () => {
+    onClose();
+    onBookNow(room);
+  };
 
   // Include main image first, then gallery images
   const images = [
@@ -126,19 +131,17 @@ function RoomFullDetails({ room, isOpen, onClose }) {
               </p>
             </div>
 
-            {/* Status */}
             <div>
-              <p className="text-gray-600 text-xs mb-2 font-semibold">STATUS</p>
-              <div
-                className={`inline-block px-3 py-1.5 rounded-full text-xs font-semibold ${
-                  room.status === "available"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-red-100 text-red-700"
-                }`}
-              >
-                {room.status === "available" ? "✓ Available" : "Not Available"}
-              </div>
+              <p className="text-gray-600 text-xs mb-2 font-semibold">
+                PRICE / MIDDAY (3 HOURS)
+              </p>
+              <p className="text-xl font-bold text-orange-600">
+               Rs. {room.shortStayPrice?.toLocaleString()}
+              </p>
             </div>
+
+            {/* Status */}
+            
 
             {/* Rating */}
             <div>
@@ -214,15 +217,29 @@ function RoomFullDetails({ room, isOpen, onClose }) {
             </div>
           )}
 
-          {/* Short Stay Price */}
-          {room.shortStayPrice && (
-            <div className="mt-6 pt-6 border-t">
-              <p className="text-gray-600 text-sm mb-1">Short Stay (3 hours)</p>
-              <p className="text-xl font-bold">
-                Rs. {room.shortStayPrice?.toLocaleString()}
-              </p>
+         
+          {/* STATUS & ACTION */}
+            <div className="mt-6 pt-6 border-t flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-xs mb-2 font-semibold">STATUS</p>
+                <div
+                  className={`inline-block px-3 py-1.5 rounded-full text-xs font-semibold ${
+                    room.status === "available"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {room.status === "available" ? "✓ Available" : "Not Available"}
+                </div>
+              </div>
+              <button
+                onClick={handleBookNow}
+                className="bg-black hover:bg-orange-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors"
+              >
+                Book Now
+              </button>
             </div>
-          )}
+          
         </div>
       </div>
     </div>
