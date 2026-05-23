@@ -307,13 +307,6 @@ const NewSiriniHotel = () => {
                 }}
               ></div>
             </div>
-
-            {/* Bottom Decorative Elements */}
-            <div className="absolute -bottom-2 sm:-bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 sm:gap-2">
-              <div className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-amber-500 rounded-full"></div>
-              <div className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-yellow-500 rounded-full"></div>
-              <div className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-amber-400 rounded-full"></div>
-            </div>
           </div>
         </section>
       </div>
