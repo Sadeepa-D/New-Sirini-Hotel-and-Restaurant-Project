@@ -272,33 +272,31 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
               </div>
             </div>
           )}
-        </div>
-
-        {/* Footer */}
+        </div>        {/* Footer */}
         {cartItems.length > 0 && (
-          <div className="border-t-2 border-gray-200 bg-linear-to-r from-gray-50 to-amber-50 p-6">
+          <div className="border-t-2 border-gray-200 bg-linear-to-r from-gray-50 to-amber-50 p-4 sm:p-6">
             {/* Session Warning Message */}
-            <div className="mb-4 flex items-center gap-3 p-3 bg-amber-100/50 border border-amber-200 rounded-xl text-amber-800 animate-in fade-in slide-in-from-top-1 duration-500">
-              <div className="bg-amber-500 text-white rounded-full p-1 shadow-sm shrink-0">
-             <TriangleAlert size={14} />
+            <div className="mb-3 sm:mb-4 flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-amber-100/50 border border-amber-200 rounded-lg sm:rounded-xl text-amber-800 animate-in fade-in slide-in-from-top-1 duration-500">
+              <div className="bg-amber-500 text-white rounded-full p-0.5 sm:p-1 shadow-sm shrink-0">
+                <TriangleAlert className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
-              <p className="text-md font-medium">
+              <p className="text-[11px] sm:text-xs md:text-sm font-medium leading-snug">
                 Your cart is saved for this session, but it will be cleared if you log out before checking out.
               </p>
             </div>
 
-            <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
-              <span className="text-lg font-bold text-gray-800">
+            <div className="flex justify-between items-center mb-3 sm:mb-6 pb-2.5 sm:pb-4 border-b border-gray-200">
+              <span className="text-base sm:text-lg font-bold text-gray-800">
                 Cart Total:
               </span>
-              <span className="text-3xl font-bold text-amber-600">
+              <span className="text-xl sm:text-3xl font-bold text-amber-600">
                 LKR {total.toFixed(2)}
               </span>
             </div>
             <div className="flex gap-3">
               <button
                 onClick={onClose}
-                className="flex-1 py-3 bg-gray-300 text-gray-700 rounded-xl hover:bg-gray-400 transition-colors font-bold text-sm md:text-base shadow-md"
+                className="flex-1 py-2 sm:py-3 bg-gray-300 text-gray-700 rounded-xl hover:bg-gray-400 transition-colors font-bold text-xs sm:text-sm md:text-base shadow-md"
               >
                 Find more dishes
               </button>
@@ -309,7 +307,7 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
                     ? toast.error("You should log in first to proceed to checkout.")
                     : onCheckout(cartItems)
                 }
-                className="flex-1 py-3 bg-linear-to-r from-amber-500 to-amber-600 text-white rounded-xl hover:from-amber-600 hover:to-amber-700 transition-all font-bold text-sm md:text-base shadow-lg hover:shadow-xl"
+                className="flex-1 py-2 sm:py-3 bg-linear-to-r from-amber-500 to-amber-600 text-white rounded-xl hover:from-amber-600 hover:to-amber-700 transition-all font-bold text-xs sm:text-sm md:text-base shadow-lg hover:shadow-xl"
               >
                 Proceed to Checkout
               </button>
