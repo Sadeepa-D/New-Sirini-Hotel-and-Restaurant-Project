@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Star, Calendar, Quote, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
+import {
+  Star,
+  Calendar,
+  Quote,
+  ChevronLeft,
+  ChevronRight,
+  Trash2,
+} from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
@@ -30,11 +37,14 @@ const ShowFeedback = () => {
       try {
         const token = localStorage.getItem("token");
         if (token) {
-          const response = await axios.get(`${VITE_API_URL}/api/users/profile`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
+          const response = await axios.get(
+            `${VITE_API_URL}/api/users/profile`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
             },
-          });
+          );
           setUserRole(response.data.Role || null);
         }
       } catch (error) {
@@ -48,7 +58,7 @@ const ShowFeedback = () => {
 
   const handleDeleteFeedback = async (feedbackId) => {
     const confirmed = window.confirm(
-      "Are you sure you want to delete this feedback? This action cannot be undone."
+      "Are you sure you want to delete this feedback? This action cannot be undone.",
     );
     if (!confirmed) return;
 
@@ -65,7 +75,7 @@ const ShowFeedback = () => {
 
       // Remove deleted feedback from list
       setTestimonials((prev) =>
-        prev.filter((testimonial) => testimonial._id !== feedbackId)
+        prev.filter((testimonial) => testimonial._id !== feedbackId),
       );
 
       toast.success("Feedback deleted successfully", { id: toastId });
@@ -73,7 +83,7 @@ const ShowFeedback = () => {
       console.error("Error deleting feedback:", error);
       toast.error(
         error.response?.data?.message || "Failed to delete feedback",
-        { id: toastId }
+        { id: toastId },
       );
     } finally {
       setDeletingId(null);

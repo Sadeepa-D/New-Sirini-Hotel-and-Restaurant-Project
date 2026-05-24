@@ -5,11 +5,7 @@ const RoleBaseMiddleware = require("../middleware/RoleBaseMiddleware");
 const FeedbackController = require("../controllers/FeedbackCont");
 
 // Protected route - user must be logged in to submit feedback
-router.post(
-  "/add",
-  authMiddleware,
-  FeedbackController.addFeedback,
-);
+router.post("/add", authMiddleware, FeedbackController.addFeedback);
 
 // Delete feedback - Admin only
 router.delete(
@@ -20,19 +16,10 @@ router.delete(
 );
 
 // Public routes - anyone can view feedback
-router.get(
-  "/room/:roomNumber",
-  FeedbackController.getRoomAverageRating,
-);
+router.get("/room/:roomNumber", FeedbackController.getRoomAverageRating);
 
-router.get(
-  "/room/:roomNumber/reviews",
-  FeedbackController.getRoomFeedbacks,
-);
+router.get("/room/:roomNumber/reviews", FeedbackController.getRoomFeedbacks);
 
-router.get(
-  "/all",
-  FeedbackController.getAllFeedback,
-);
+router.get("/all", FeedbackController.getAllFeedback);
 
 module.exports = router;
