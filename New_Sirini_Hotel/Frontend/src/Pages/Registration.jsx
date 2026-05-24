@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { ArrowLeft } from "lucide-react";
 import GoogleLoginBtn from "../Components/GoogleLoginBtn";
+import { handleApiError } from "../Utils/HandleApiError";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Registration = () => {
@@ -90,17 +91,13 @@ const Registration = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/api/users/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          Phone: formData.phone,
-          password: formData.password,
-        }),
+      const response = await axios.post(`${API_URL}/api/users/register`, {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
       });
-      const data = await response.json();
+      const data = response.data;
 
       if (!response.ok) {
         setErrors({ submit: data.message || "Registration failed" });
@@ -111,7 +108,12 @@ const Registration = () => {
       toast.success("Registration successful!");
       navigate("/login");
     } catch (error) {
-      setErrors({ submit: "Registration failed. Please try again." });
+      handleApiError(error);
+      setErrors({
+        submit:
+          error.response?.data?.message ||
+          "Registration failed. Please try again.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -130,11 +132,8 @@ const Registration = () => {
       toast.success("Verification code sent!");
       setverfiy(true);
     } catch (error) {
+      handleApiError(error);
       console.error("Error sending OTP:", error);
-      const errMsg =
-        error.response?.data?.message ||
-        "Failed to send OTP. Please try again.";
-      toast.error(errMsg);
     } finally {
       setSendingOtp(false);
     }

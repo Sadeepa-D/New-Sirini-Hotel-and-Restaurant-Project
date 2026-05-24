@@ -19,14 +19,18 @@ import Dashboard from "./Pages/Dashboard";
 import NotFound from "./Pages/NotFound";
 import Unauthorized from "./Pages/Unauthorized";
 import ProtectedRoutes from "./Components/ProtectedRoutes";
+import AdvertismentSection from "./Components/Receptionhall/AdvertismentSection";
 
 const autoLogout = (token) => {
   const navigate = useNavigate();
   useEffect(() => {
     if (!token) return;
-    const logouttimer = setTimeout(() => {
-      handlelogout();
-    }, 30*60*1000);
+    const logouttimer = setTimeout(
+      () => {
+        handlelogout();
+      },
+      30 * 60 * 1000,
+    );
 
     const handlelogout = () => {
       localStorage.removeItem("token");
@@ -51,7 +55,7 @@ export const App = () => {
   autoLogout(token);
   return (
     <>
-      <Toaster position="top-center" reverseOrder={false} />
+      <Toaster position="top-right" reverseOrder={false} />
       <ScrollToTop />
       <Routes>
         <Route
@@ -122,7 +126,7 @@ export const App = () => {
         >
           <Route path="/operationmanager" element={<OperationManager />} />
         </Route>
-
+        <Route path="/ads" element={<AdvertismentSection />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import GoogleLoginBtn from "../Components/GoogleLoginBtn";
+import { handleApiError } from "../Utils/HandleApiError";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -119,10 +120,11 @@ const Login = () => {
         }
       }
     } catch (error) {
-      const message =
-        error.response?.data?.message || "Login failed. Please try again.";
-      setErrors({ submit: message });
-      toast.error(message);
+      handleApiError(error);
+      setErrors({
+        submit:
+          error.response?.data?.message || "Login failed. Please try again.",
+      });
     } finally {
       setIsLoading(false);
     }

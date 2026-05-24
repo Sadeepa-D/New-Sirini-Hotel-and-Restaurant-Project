@@ -11,6 +11,7 @@ const ReceptionHallRoutes = require("./routes/ReceptionHallRoutes");
 const GalleryRoutes = require("./routes/GalleryRoutes");
 const FeedbackRoutes = require("./routes/FeedbackRoutes");
 const { initCronJobs } = require("./services/cronService");
+const { apiLimiter } = require("./middleware/RateLimiter");
 
 connectDB();
 initCronJobs();

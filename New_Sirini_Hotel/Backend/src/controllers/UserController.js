@@ -13,15 +13,34 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
     const user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({ message: "User already exists" });
-    }
     const hashedPassword = await bcrypt.hash(password, 10);
+    if (user) {
+      if (user.Status === "Active") {
+        return res.status(400).json({ message: "User already exists" });
+      } else if (user.Status === "Suspended") {
+        return res.status(403).json({
+          message: "Your account is suspended. Please contact the Hotel Admin.",
+        });
+      } else if (user.Status === "Deleted") {
+        user.name = name;
+        user.Phone = Phone;
+        user.password = hashedPassword;
+        user.Status = "Active";
+        user.authProvider = "local";
+        await user.save();
+        return res
+          .status(200)
+          .json({ message: "Account reactivated successfully" });
+      }
+    }
     const newUser = await User.create({
       name,
       email,
       Phone,
       password: hashedPassword,
+      Role: "User",
+      Status: "Active",
+      authProvider: "local",
     });
     res.status(201).json({ message: "User created successfully" });
   } catch (error) {
@@ -303,14 +322,22 @@ const googlelogin = async (req, res) => {
     const { name, email, sub, picture } = payload;
     let user = await User.findOne({ email });
     if (user) {
-      if (user.Status === "Suspended" || user.Status === "Deleted") {
+      if (user.Status === "Suspended") {
         return res.status(403).json({
-          message: "Your account is suspended or deleted.",
+          message: "Your account is suspended. Please contact the Hotel Admin.",
         });
-      } else if (user.authProvider === "local") {
+      } else if (user.authProvider === "local" && user.Status === "Active") {
         return res.status(400).json({
-          message: "Email already registered",
+          message: "Email already registered with password login.",
         });
+      }
+      if (user.Status === "Deleted") {
+        user.name = name;
+        user.Status = "Active";
+        user.authProvider = "google";
+        user.googleId = sub;
+        user.image = picture;
+        await user.save();
       }
     }
     if (!user) {

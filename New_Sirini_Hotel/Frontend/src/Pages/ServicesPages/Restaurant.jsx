@@ -45,7 +45,6 @@ export default function Restaurant() {
 
   const fetchFoodItems = async () => {
     setIsLoading(true);
-    const toastId = toast.loading("Loading food items...");
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/restraunt/viewfooditems`,
@@ -65,14 +64,12 @@ export default function Restaurant() {
         label: item.availability ? "Available" : "Unavailable",
       }));
       setMealData(mappedData);
-      toast.success("Food items loaded successfully", { id: toastId });
     } catch (error) {
       if (error.response && error.response.status === 404) {
         setMealData([]);
-        toast.success("Food items loaded successfully", { id: toastId });
       } else {
         console.error("Error fetching food items:", error);
-        toast.error("Failed to load food items", { id: toastId });
+        toast.error("Failed to load food items");
       }
     } finally {
       setIsLoading(false);
@@ -107,6 +104,18 @@ export default function Restaurant() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Disable background scrolling when cart is open
+  useEffect(() => {
+    if (showCart) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showCart]);
 
   const filteredItems =
     selectedCategory === "All"
@@ -259,17 +268,15 @@ export default function Restaurant() {
         {/* Food Items Grid Section */}
         <div ref={foodSectionRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-[400px]">
           {isLoading ? (
-            <div className="flex flex-col">
-              <div className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-x-6 md:gap-y-12 md:overflow-visible md:pb-0">
-                {Array.from({ length: 8 }).map((_, index) => (
-                  <div
-                    key={`skeleton-${index}`}
-                    className="w-[85%] shrink-0 snap-start md:w-auto md:shrink md:snap-none h-full"
-                  >
-                    <RestaurantCard isLoading={true} itemsPerView={1} />
-                  </div>
-                ))}
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              {/* Modern elegant spinner */}
+              <div className="relative w-16 h-16 mb-4">
+                <div className="absolute inset-0 rounded-full border-4 border-amber-100"></div>
+                <div className="absolute inset-0 rounded-full border-4 border-amber-600 border-t-transparent animate-spin"></div>
               </div>
+              <p className="text-neutral-600 font-medium text-lg animate-pulse">
+                Loading food items...
+              </p>
             </div>
           ) : filteredItems.length > 0 ? (
             <div className="flex flex-col">
@@ -292,11 +299,11 @@ export default function Restaurant() {
               </p>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in">
               <div className="w-20 h-20 bg-neutral-100 rounded-full flex items-center justify-center mb-4">
                 <ShoppingCart className="w-10 h-10 text-neutral-300" />
               </div>
-              <h3 className="text-xl font-semibold text-neutral-800 mb-2">No items found</h3>
+              <h3 className="text-xl font-semibold text-neutral-800 mb-2">No food items available in this category.</h3>
               <p className="text-neutral-500 max-w-xs">We couldn't find any dishes in the "{selectedCategory}" category at the moment.</p>
             </div>
           )}
@@ -305,7 +312,7 @@ export default function Restaurant() {
         {/* Floating Action Button (FAB) - Smart visibility */}
         <div
           className={`fixed z-[60] right-8 
-            ${isFabVisible ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-10 pointer-events-none'}`}
+            ${(isFabVisible && !showCart) ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-10 pointer-events-none'}`}
           style={{
             bottom: `${fabBottomOffset}px`,
             transition: 'opacity 500ms ease-in-out, transform 500ms ease-in-out',
@@ -322,7 +329,7 @@ export default function Restaurant() {
               className="w-16 h-16 md:w-20 md:h-20 bg-amber-500 text-white flex items-center justify-center rounded-full shadow-2xl group-hover:bg-amber-600 group-hover:scale-110 transition-all duration-300"
               style={{ boxShadow: "0 10px 25px -5px rgba(245, 158, 11, 0.4)" }}
             >
-              <ShoppingCart className="w-8 h-8 md:w-10 md:h-10" />
+              <ShoppingCart className="w-6 h-6 md:w-9 md:h-9" />
               {cartItems.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-white text-amber-600 text-[10px] md:text-xs font-bold w-5 h-5 md:w-7 md:h-7 flex items-center justify-center rounded-full shadow-md border-2 border-amber-500 animate-in zoom-in duration-300">
                   {cartItems.length}
