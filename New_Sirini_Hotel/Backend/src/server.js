@@ -9,6 +9,7 @@ const UserRoutes = require("./routes/UserRoute");
 const RestrauntRoutes = require("./routes/RestrauntRoutes");
 const ReceptionHallRoutes = require("./routes/ReceptionHallRoutes");
 const GalleryRoutes = require("./routes/GalleryRoutes");
+const FeedbackRoutes = require("./routes/FeedbackRoutes");
 const { initCronJobs } = require("./services/cronService");
 
 connectDB();
@@ -31,6 +32,7 @@ app.use("/api/rooms", RoomRoutes);
 app.use("/api/restraunt", RestrauntRoutes);
 app.use("/api/receptionhall", ReceptionHallRoutes);
 app.use("/api/gallery", GalleryRoutes);
+app.use("/api/feedback", FeedbackRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
