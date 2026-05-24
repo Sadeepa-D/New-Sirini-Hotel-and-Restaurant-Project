@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Star } from "lucide-react";
 import axios from "axios";
 
-const DynamicStarsDisplay = ({ roomNumber, size = "sm" }) => {
+const StarRating = ({ roomNumber, size = "sm" }) => {
   const [rating, setRating] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -98,4 +98,4 @@ const DynamicStarsDisplay = ({ roomNumber, size = "sm" }) => {
   );
 };
 
-export default DynamicStarsDisplay;
+export default StarRating;
