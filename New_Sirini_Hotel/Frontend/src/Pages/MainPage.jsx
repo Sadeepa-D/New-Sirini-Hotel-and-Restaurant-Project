@@ -3,7 +3,19 @@ import { useNavigate } from "react-router-dom";
 import Logo from "../assets/Logo.png";
 import axios from "axios";
 import Exploreindicator from "../Components/Exploreindicator";
+import ShowFeedback from "../Components/ShowFeedback";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
+
+// Import local background images
+import BgImage1 from "../assets/HomePageImages/Image1.png";
+import BgImage2 from "../assets/HomePageImages/Image2.png";
+import BgImage3 from "../assets/HomePageImages/Image3.png";
+
+// Import service images from assets
+import ReceptionImg from "../assets/HomePageImages/Reciption.png";
+import RoomsImg from "../assets/HomePageImages/Room.jpg";
+import RestaurantImg from "../assets/HomePageImages/Restaurant.png";
+import LiquorImg from "../assets/HomePageImages/Liquor.jpg";
 
 const NewSiriniHotel = () => {
   const VITE_API_URL = import.meta.env.VITE_API_URL;
@@ -18,25 +30,25 @@ const NewSiriniHotel = () => {
     {
       title: "Reception",
       desc: "Friendly service to assist you every step of your stay.",
-      img: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=400",
+      img: ReceptionImg,
       path: "/reception",
     },
     {
       title: "Rooms",
       desc: "Comfortable rooms designed for rest and relaxation.",
-      img: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=400",
+      img: RoomsImg,
       path: "/rooms",
     },
     {
       title: "Restaurant",
       desc: "Delicious food made with fresh ingredients.",
-      img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=400",
+      img: RestaurantImg,
       path: "/restaurant",
     },
     {
       title: "Liquor",
       desc: "Enjoy expertly selected spirits in a relaxed setting.",
-      img: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&q=80&w=400",
+      img: LiquorImg,
       path: "/liquor",
     },
   ];
@@ -51,12 +63,8 @@ const NewSiriniHotel = () => {
     }
   };
 
-  // images for the hero section slideshow
-  const backgroundImages = [
-    "https://plus.unsplash.com/premium_photo-1661963123153-5471a95b7042?q=80&w=1074&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1170&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=1100&auto=format&fit=crop",
-  ];
+  // Local background images from assets
+  const backgroundImages = [BgImage1, BgImage2, BgImage3];
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -248,6 +256,9 @@ const NewSiriniHotel = () => {
           </div>
         </section>
 
+        {/* --- Testimonials Section --- */}
+        <ShowFeedback />
+
         {/* --- About Us --- */}
         <section
           id="about"
@@ -305,13 +316,6 @@ const NewSiriniHotel = () => {
                   boxShadow: "0 0 15px sm:0 0 20px rgba(239, 68, 68, 0.6)",
                 }}
               ></div>
-            </div>
-
-            {/* Bottom Decorative Elements */}
-            <div className="absolute -bottom-2 sm:-bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 sm:gap-2">
-              <div className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-amber-500 rounded-full"></div>
-              <div className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-yellow-500 rounded-full"></div>
-              <div className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-amber-400 rounded-full"></div>
             </div>
           </div>
         </section>

@@ -12,10 +12,12 @@ import {
   Flag,
   MoveLeft,
   MoveRight,
+  MessageCircle,
 } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import ConfrimDialog from "../ConfrimDialog";
+import FeedbackModal from "../FeedbackModal";
 
 const RoomsSection = () => {
   const [allRooms, setAllRooms] = useState([]);
@@ -32,6 +34,10 @@ const RoomsSection = () => {
     message: "",
   });
   const [searchTerm, setSearchTerm] = useState("");
+  const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
+  const [selectedBookingForFeedback, setSelectedBookingForFeedback] =
+    useState(null);
+  const [userProfile, setUserProfile] = useState(null);
   const VITE_API_URL = import.meta.env.VITE_API_URL;
 
   const fetchUserSpecificRooms = useCallback(async () => {
@@ -60,6 +66,24 @@ const RoomsSection = () => {
   useEffect(() => {
     fetchUserSpecificRooms();
   }, [fetchUserSpecificRooms]);
+
+  useEffect(() => {
+    // Fetch user profile for feedback modal
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`${VITE_API_URL}/api/users/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUserProfile(response.data);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+    fetchProfile();
+  }, [VITE_API_URL]);
 
   useEffect(() => {
     setSliderPosition(0);
@@ -111,6 +135,11 @@ const RoomsSection = () => {
     } finally {
       setCancellationLoading(null);
     }
+  };
+
+  const handleOpenFeedbackModal = (booking) => {
+    setSelectedBookingForFeedback(booking);
+    setFeedbackModalOpen(true);
   };
 
   const counts = {
@@ -386,6 +415,19 @@ const RoomsSection = () => {
                         </span>
                       </button>
                     )}
+
+                    {/* Feedback Button for Completed Bookings */}
+                    {room.status?.toLowerCase() === "completed" && (
+                      <button
+                        onClick={() => handleOpenFeedbackModal(room)}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-600 font-semibold text-sm transition-all duration-300 border border-amber-200 hover:border-amber-300"
+                      >
+                        <MessageCircle size={16} />
+                        <span className="tracking-wider uppercase text-xs">
+                          Leave Feedback
+                        </span>
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -446,6 +488,17 @@ const RoomsSection = () => {
         message={confirmDialog.message}
         onConfirm={handleCancelBooking}
         onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
+      />
+
+      {/* Feedback Modal */}
+      <FeedbackModal
+        isOpen={feedbackModalOpen}
+        onClose={() => {
+          setFeedbackModalOpen(false);
+          setSelectedBookingForFeedback(null);
+        }}
+        booking={selectedBookingForFeedback}
+        userName={userProfile?.name || "Guest"}
       />
     </div>
   );

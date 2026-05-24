@@ -2,6 +2,9 @@ const User = require("../models/UserModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cloudinary = require("cloudinary");
+const { OAuth2Client } = require("google-auth-library");
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const registerUser = async (req, res) => {
   try {
@@ -10,15 +13,34 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
     const user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({ message: "User already exists" });
-    }
     const hashedPassword = await bcrypt.hash(password, 10);
+    if (user) {
+      if (user.Status === "Active") {
+        return res.status(400).json({ message: "User already exists" });
+      } else if (user.Status === "Suspended") {
+        return res.status(403).json({
+          message: "Your account is suspended. Please contact the Hotel Admin.",
+        });
+      } else if (user.Status === "Deleted") {
+        user.name = name;
+        user.Phone = Phone;
+        user.password = hashedPassword;
+        user.Status = "Active";
+        user.authProvider = "local";
+        await user.save();
+        return res
+          .status(200)
+          .json({ message: "Account reactivated successfully" });
+      }
+    }
     const newUser = await User.create({
       name,
       email,
       Phone,
       password: hashedPassword,
+      Role: "User",
+      Status: "Active",
+      authProvider: "local",
     });
     res.status(201).json({ message: "User created successfully" });
   } catch (error) {
@@ -155,6 +177,11 @@ const UpdatePassword = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    if (user.authProvider === "google" && !user.password) {
+      return res.status(400).json({
+        message: "Password change is not available for Google accounts.",
+      });
+    }
     const isPasswordValid = await bcrypt.compare(
       currentPassword,
       user.password,
@@ -284,6 +311,95 @@ const resetuserpassword = async (req, res) => {
   }
 };
 
+const googlelogin = async (req, res) => {
+  try {
+    const { token } = req.body;
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const { name, email, sub, picture } = payload;
+    let user = await User.findOne({ email });
+    if (user) {
+      if (user.Status === "Suspended") {
+        return res.status(403).json({
+          message: "Your account is suspended. Please contact the Hotel Admin.",
+        });
+      } else if (user.authProvider === "local" && user.Status === "Active") {
+        return res.status(400).json({
+          message: "Email already registered with password login.",
+        });
+      }
+      if (user.Status === "Deleted") {
+        user.name = name;
+        user.Status = "Active";
+        user.authProvider = "google";
+        user.googleId = sub;
+        user.image = picture;
+        await user.save();
+      }
+    }
+    if (!user) {
+      user = await User.create({
+        name,
+        email,
+        password: null,
+        Role: "User",
+        authProvider: "google",
+        googleId: sub,
+        image: picture,
+      });
+    }
+    const jwtToken = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        Phone: user.Phone,
+        Role: user.Role,
+        Status: user.Status,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h",
+      },
+    );
+    res.status(200).json({
+      message: "Google login successful",
+      token: jwtToken,
+      user,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Google login failed",
+    });
+  }
+};
+
+const deactivateaccount = async (req, res) => {
+  try {
+    const userId = req.userData.id;
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized User" });
+    }
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: { Status: "Deleted" } },
+      { new: true },
+    );
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({ message: "Account deactivated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -296,4 +412,6 @@ module.exports = {
   deleteUser,
   updateuserdetails,
   resetuserpassword,
+  googlelogin,
+  deactivateaccount,
 };

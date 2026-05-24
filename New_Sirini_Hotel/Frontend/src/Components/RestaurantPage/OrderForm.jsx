@@ -197,8 +197,10 @@ export default function OrderForm({ item, cartItems, onClose }) {
                   type="email"
                   name="email"
                   value={form.email}
-                  readOnly
-                  className="w-full border border-neutral-200 bg-neutral-50 rounded-lg px-4 py-2.5 text-sm text-neutral-500 cursor-not-allowed outline-none"
+                  onChange={handleChange}
+                  required
+                  placeholder="example@mail.com"
+                  className="w-full border border-neutral-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition"
                 />
               </div>
             </div>

@@ -10,6 +10,7 @@ import {
   Sparkles,
   CalendarDays,
   ChevronDown,
+  CheckCircle,
 } from "lucide-react";
 
 const GuestDetail = ({
@@ -40,10 +41,8 @@ const GuestDetail = ({
 
   return (
     <div className="relative w-full max-w-[350px] sm:max-w-[380px] bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-6 sm:p-8 border border-gray-100 animate-in slide-in-from-right-8 duration-500 overflow-hidden mx-auto">
-      
       <div className="absolute -top-12 -right-12 w-32 h-32 bg-orange-50 rounded-full blur-3xl opacity-60" />
 
-      
       <div className="flex justify-between items-center mb-3 relative z-10">
         <button
           onClick={onBack}
@@ -62,17 +61,24 @@ const GuestDetail = ({
         </button>
       </div>
 
-     
       <div className="mb-3 relative">
         <div className="flex items-center gap-1.5 mb-1">
           <Sparkles size={10} className="text-orange-400" />
           <span className="text-orange-500 text-[8px] font-black uppercase tracking-[0.2em]">
             Provide Your Contact Details
           </span>
+          <CheckCircle size={10} className="text-green-500 ml-auto" />
         </div>
-        <h2 className="text-gray-900 text-xl font-serif italic leading-tight">
-          Guest Details
-        </h2>
+        <div className="flex justify-between items-start">
+          <div>
+            <h2 className="text-gray-900 text-xl font-serif italic leading-tight">
+              Guest Details
+            </h2>
+          </div>
+        </div>
+        <p className="text-gray-400 text-[8px] mt-1">
+          Pre-filled from your profile • Editable
+        </p>
       </div>
 
       <form onSubmit={onSubmit} className="space-y-4 relative">
@@ -91,7 +97,11 @@ const GuestDetail = ({
                 setFormData({ ...formData, name: e.target.value })
               }
               required
-              className="w-full bg-gray-50 border border-gray-100 rounded-xl pl-11 pr-4 py-2.5 text-[11px] focus:ring-2 focus:ring-orange-500/10 focus:border-orange-500/30 outline-none transition-all"
+              className={`w-full border rounded-xl pl-11 pr-4 py-2.5 text-[11px] focus:ring-2 focus:ring-orange-500/10 focus:border-orange-500/30 outline-none transition-all ${
+                formData.name
+                  ? "bg-green-50/50 border-green-100"
+                  : "bg-gray-50 border-gray-100"
+              }`}
             />
           </div>
 
@@ -110,7 +120,11 @@ const GuestDetail = ({
                   setFormData({ ...formData, email: e.target.value })
                 }
                 required
-                className="w-full bg-gray-50 border border-gray-100 rounded-xl pl-11 pr-4 py-2.5 text-[11px] outline-none transition-all"
+                className={`w-full border rounded-xl pl-11 pr-4 py-2.5 text-[11px] outline-none transition-all ${
+                  formData.email
+                    ? "bg-green-50/50 border-green-100"
+                    : "bg-gray-50 border-gray-100"
+                }`}
               />
             </div>
             <div className="relative group">
@@ -126,7 +140,11 @@ const GuestDetail = ({
                   setFormData({ ...formData, phone: e.target.value })
                 }
                 required
-                className="w-full bg-gray-50 border border-gray-100 rounded-xl pl-11 pr-4 py-2.5 text-[11px] outline-none transition-all"
+                className={`w-full border rounded-xl pl-11 pr-4 py-2.5 text-[11px] outline-none transition-all ${
+                  formData.phone
+                    ? "bg-green-50/50 border-green-100"
+                    : "bg-gray-50 border-gray-100"
+                }`}
               />
             </div>
           </div>

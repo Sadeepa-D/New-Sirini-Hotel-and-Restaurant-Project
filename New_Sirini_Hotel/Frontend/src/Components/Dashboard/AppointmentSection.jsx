@@ -29,6 +29,12 @@ const TABS = [
     icon: CheckCircle2,
     color: "text-green-500",
   },
+  {
+    key: "Overdue",
+    label: "Overdue",
+    icon: AlertCircle,
+    color: "text-red-500",
+  },
 ];
 
 const AppointmentsSection = () => {
@@ -129,6 +135,7 @@ const AppointmentsSection = () => {
     Pending: appointments.filter((a) => a.status === "Pending").length,
     Cancelled: appointments.filter((a) => a.status === "Cancelled").length,
     Completed: appointments.filter((a) => a.status === "Completed").length,
+    Overdue: appointments.filter((a) => a.status === "Overdue").length,
   };
 
   // Filter to active tab
