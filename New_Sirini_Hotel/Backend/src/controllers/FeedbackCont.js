@@ -181,9 +181,35 @@ const getRoomFeedbacks = async (req, res) => {
   }
 };
 
+// @DELETE /api/feedback/:feedbackId
+const deleteFeedback = async (req, res) => {
+  try {
+    const { feedbackId } = req.params;
+
+    if (!feedbackId) {
+      return res.status(400).json({ message: "Feedback ID is required" });
+    }
+
+    const feedback = await Feedback.findByIdAndDelete(feedbackId);
+
+    if (!feedback) {
+      return res.status(404).json({ message: "Feedback not found" });
+    }
+
+    res.status(200).json({
+      message: "Feedback deleted successfully",
+      deletedFeedback: feedback,
+    });
+  } catch (error) {
+    console.error("Error deleting feedback:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
 module.exports = {
   addFeedback,
   getRoomAverageRating,
   getAllFeedback,
   getRoomFeedbacks,
+  deleteFeedback,
 };

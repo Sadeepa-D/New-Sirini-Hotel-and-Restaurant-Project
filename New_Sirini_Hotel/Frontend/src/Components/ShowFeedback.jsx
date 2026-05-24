@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Star, Calendar, Quote, ChevronLeft, ChevronRight } from "lucide-react";
+import { Star, Calendar, Quote, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const ShowFeedback = () => {
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [userRole, setUserRole] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
   const scrollContainerRef = React.useRef(null);
   const VITE_API_URL = import.meta.env.VITE_API_URL;
 
@@ -22,8 +25,60 @@ const ShowFeedback = () => {
       }
     };
 
+    // Fetch user profile to check if admin
+    const fetchUserRole = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (token) {
+          const response = await axios.get(`${VITE_API_URL}/api/users/profile`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setUserRole(response.data.Role || null);
+        }
+      } catch (error) {
+        console.error("Error fetching user role:", error);
+      }
+    };
+
     fetchTestimonials();
+    fetchUserRole();
   }, [VITE_API_URL]);
+
+  const handleDeleteFeedback = async (feedbackId) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this feedback? This action cannot be undone."
+    );
+    if (!confirmed) return;
+
+    setDeletingId(feedbackId);
+    const toastId = toast.loading("Deleting feedback...");
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${VITE_API_URL}/api/feedback/${feedbackId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Remove deleted feedback from list
+      setTestimonials((prev) =>
+        prev.filter((testimonial) => testimonial._id !== feedbackId)
+      );
+
+      toast.success("Feedback deleted successfully", { id: toastId });
+    } catch (error) {
+      console.error("Error deleting feedback:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to delete feedback",
+        { id: toastId }
+      );
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   const handleScroll = (e) => {
     setScrollPosition(e.target.scrollLeft);
@@ -114,9 +169,21 @@ const ShowFeedback = () => {
                       />
                     ))}
                   </div>
-                  <span className="text-xs bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full font-semibold border border-amber-100 font-mono">
-                    Room {testimonial.roomNumber}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full font-semibold border border-amber-100 font-mono">
+                      Room {testimonial.roomNumber}
+                    </span>
+                    {userRole === "Admin" && (
+                      <button
+                        onClick={() => handleDeleteFeedback(testimonial._id)}
+                        disabled={deletingId === testimonial._id}
+                        className="p-1.5 text-red-500 hover:bg-red-50 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Delete feedback"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {/* Comment */}
