@@ -130,6 +130,19 @@ const initCronJobs = () => {
     }
   });
 
+  // ================= Read Notifi clear =================
+
+  cron.schedule("0 0 */5 * *", async () => {
+    try {
+      console.log("[Cron Cleanup] Starting cleanup of read notifications...");
+      const result = await NotifiModel.deleteMany({ isRead: true });
+      console.log(
+        `[Cron Cleanup] Successfully deleted ${result.deletedCount} read notifications.`,
+      );
+    } catch (error) {
+      console.error("[Cron Error] Error in notification cleanup job:", error);
+    }
+  });
   console.log("[Cron] Overdue status automation system initialized");
 };
 

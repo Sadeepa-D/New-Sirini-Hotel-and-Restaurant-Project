@@ -105,8 +105,11 @@ const AppointmentsSection = () => {
     setConfirmDialog({ isOpen: false, id: null });
     const loadingToast = toast.loading("Canceling appointment...");
     try {
+      const token = localStorage.getItem("token");
       await axios.put(
         `${VITE_URL}/api/receptionhall/appointment/update/Canceled/${id}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       toast.dismiss(loadingToast);
       toast.success("Appointment canceled successfully.");

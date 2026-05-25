@@ -149,11 +149,15 @@ const LiquorInventory = ({
   const increaseLiquorInventory = async (id, quantity) => {
     const loadingtoast = toast.loading("Updating inventory, please wait...");
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.put(
         `${VITE_URL}/api/liquor/increaseinventory/`,
         {
           id,
           quantity,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
         },
       );
       if (response.status === 200) {
@@ -172,11 +176,15 @@ const LiquorInventory = ({
   const decreaseLiquorInventory = async (id, quantity) => {
     const loadingtoast = toast.loading("Updating inventory, please wait...");
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.put(
         `${VITE_URL}/api/liquor/decreaseinventory/`,
         {
           id,
           quantity,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
         },
       );
       if (response.status === 200) {

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const upload = require("../config/CloudinaryConfig");
 const authmiddleware = require("../middleware/AuthMiddleware");
+const RoleBaseMiddleware = require("../middleware/RoleBaseMiddleware");
 const ReceptionHallAppoint = require("../controllers/ReceptionHall/ReceptionHallAppointCont");
 const ReceptionHallPackg = require("../controllers/ReceptionHall/ReceptionHallPackg");
 const CateringItemsCont = require("../controllers/ReceptionHall/CateringItemsCont");
@@ -14,37 +15,54 @@ router.post(
   authmiddleware,
   ReceptionHallAppoint.createReceptionAppointment,
 );
-router.get("/appointment/view", ReceptionHallAppoint.getReceptionAppointments);
-router.delete(
-  "/appointment/delete/:id",
-  ReceptionHallAppoint.deleteReceptionAppointment,
+router.get(
+  "/appointment/view",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
+  ReceptionHallAppoint.getReceptionAppointments,
 );
+// router.delete(
+//   "/appointment/delete/:id",
+//   ReceptionHallAppoint.deleteReceptionAppointment,
+// );
 router.put(
   "/appointment/update/:id",
   ReceptionHallAppoint.updateReceptionAppointment,
 );
 router.put(
   "/appointment/update/completed/:id",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   ReceptionHallAppoint.updateReceptionAppointmentasCompleted,
 );
 router.put(
   "/appointment/update/canceled/:id",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   ReceptionHallAppoint.updateReceptionAppointmentasCancelled,
 );
 router.get(
   "/appointment/view/pending",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   ReceptionHallAppoint.getPendingReceptionAppointments,
 );
 router.get(
   "/appointment/view/completed",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   ReceptionHallAppoint.getCompletedReceptionAppointments,
 );
 router.get(
   "/appointment/view/canceled",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   ReceptionHallAppoint.getCancelledReceptionAppointments,
 );
 router.get(
   "/appointment/view/overdue",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   ReceptionHallAppoint.getOverdueReceptionAppointments,
 );
 router.get(
@@ -54,44 +72,70 @@ router.get(
 );
 router.post(
   "/package/add",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   upload.single("image"),
   ReceptionHallPackg.createReceptionHallPackage,
 );
 router.get("/package/view", ReceptionHallPackg.getReceptionHallPackages);
 router.put(
   "/package/update/:id",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   upload.single("image"),
   ReceptionHallPackg.updateReceptionHallPackage,
 );
 router.delete(
   "/package/delete/:id",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   ReceptionHallPackg.deleteReceptionHallPackage,
 );
-router.put("/package/toggle/:id", ReceptionHallPackg.toggleAvailability);
+router.put(
+  "/package/toggle/:id",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
+  ReceptionHallPackg.toggleAvailability,
+);
 router.get("/package/:id/items", ReceptionHallPackg.getPackageCateringItems);
 router.post(
   "/package/:id/add-catering",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   ReceptionHallPackg.addCateringToPackage,
 );
 router.delete(
   "/package/:id/remove-catering/:itemId",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   ReceptionHallPackg.removeCateringFromPackage,
 );
 
 router.post(
   "/catering/add",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   upload.single("image"),
   CateringItemsCont.createCateringItem,
 );
 router.get("/catering/view", CateringItemsCont.getCateringItems);
 router.put(
   "/catering/update/:id",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   upload.single("image"),
   CateringItemsCont.updateCateringItem,
 );
-router.delete("/catering/delete/:id", CateringItemsCont.deleteCateringItem);
+router.delete(
+  "/catering/delete/:id",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
+  CateringItemsCont.deleteCateringItem,
+);
 router.put(
   "/catering/toggle/:id",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   CateringItemsCont.toggleCateringItemAvailability,
 );
 
@@ -102,7 +146,12 @@ router.post(
   AdvertismentCont.createAdvertisment,
 );
 router.get("/advertisment/view", AdvertismentCont.getAdvertisments);
-router.delete("/advertisment/delete/:id", AdvertismentCont.deleteAdvertisment);
+router.delete(
+  "/advertisment/delete/:id",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
+  AdvertismentCont.deleteAdvertisment,
+);
 router.put(
   "/advertisment/update/:id",
   upload.single("image"),
@@ -110,14 +159,20 @@ router.put(
 );
 router.put(
   "/advertisment/toggle/approved/:id",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   AdvertismentCont.toggleAdvertismentStatustoApproved,
 );
 router.put(
   "/advertisment/toggle/rejected/:id",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   AdvertismentCont.toggleAdvertismentStatustoRejected,
 );
 router.put(
   "/advertisment/toggle/pending/:id",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   AdvertismentCont.toggleAdvertismentStatustoPending,
 );
 router.get(
@@ -138,18 +193,34 @@ router.get(
   AdvertismentCont.getSpecificUserAdvertisments,
 );
 router.get("/booking/dates", ReceptionHallBookCont.GetBookingDates);
-router.post("/booking/add", ReceptionHallBookCont.createReceptionHallBooking);
-router.get("/booking/view", ReceptionHallBookCont.getReceptionHallBookings);
+router.post(
+  "/booking/add",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
+  ReceptionHallBookCont.createReceptionHallBooking,
+);
+router.get(
+  "/booking/view",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
+  ReceptionHallBookCont.getReceptionHallBookings,
+);
 router.delete(
   "/booking/delete/:id",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   ReceptionHallBookCont.deleteReceptionHallBooking,
 );
 router.put(
   "/booking/update/:id",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   ReceptionHallBookCont.editReceptionHallBooking,
 );
 router.put(
   "/booking/update/status/:id/:status",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   ReceptionHallBookCont.updateBookingStatus,
 );
 router.post(
