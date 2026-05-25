@@ -190,6 +190,24 @@ function Header() {
     }
   };
 
+  const handleClearAll = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      const res = await axios.delete(
+        `${VITE_URL}/api/users/notifications/clearall`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      setNotifications([]);
+    } catch (error) {
+      console.error("Error clearing all notifications:", error);
+    }
+  };
+
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   useEffect(() => {
@@ -274,6 +292,7 @@ function Header() {
                     notifications={notifications}
                     onMarkAsRead={handleMarkAsRead}
                     onMarkAllAsRead={handleMarkAllAsRead}
+                    onClearAll={handleClearAll}
                     onClose={() => setNotifiOpen(false)}
                   />
                 )}
@@ -405,6 +424,7 @@ function Header() {
                     notifications={notifications}
                     onMarkAsRead={handleMarkAsRead}
                     onMarkAllAsRead={handleMarkAllAsRead}
+                    onClearAll={handleClearAll}
                     onClose={() => setNotifiOpen(false)}
                   />
                 )}

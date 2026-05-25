@@ -77,5 +77,10 @@ router.put(
   authMiddleware,
   NotifiCont.markAllAsRead,
 );
+router.delete(
+  "/notifications/clearall",
+  authMiddleware,
+  NotifiCont.clearallNotifications,
+);
 
 module.exports = router;
