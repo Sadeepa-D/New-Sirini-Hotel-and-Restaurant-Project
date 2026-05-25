@@ -2,6 +2,7 @@ const cron = require("node-cron");
 const FoodItemorder = require("../models/Restraunt/FoodItemBookModel");
 const Appointment = require("../models/Reception/ReciptionAppointModel");
 const RoomBook = require("../models/Rooms/RoomBookModel");
+const NotifiModel = require("../models/NotifiModel");
 
 const initCronJobs = () => {
   // Run every minute
@@ -51,6 +52,12 @@ const initCronJobs = () => {
         if (isOverdue) {
           order.status = "Overdue";
           await order.save();
+          const newNotifi = new NotifiModel({
+            userId: order.userId,
+            title: `${order.foodName} Order is overdue`,
+            message: `The pickup time for order, Ref: ${order.orderCode} has passed without completion.`,
+          });
+          await newNotifi.save();
           updatedCount++;
         }
       }
@@ -74,6 +81,12 @@ const initCronJobs = () => {
         if (appointmentDate < slDate) {
           appointment.status = "Overdue";
           await appointment.save();
+          const newNotifi = new NotifiModel({
+            userId: appointment.userId,
+            title: `${appointment.eventType} Appointment is overdue`,
+            message: `The date for your appointment, Ref: ${appointment.appointcode} has passed without completion.`,
+          });
+          await newNotifi.save();
           updatedappointments++;
         }
       }
@@ -98,6 +111,12 @@ const initCronJobs = () => {
         if (bookingCheckInDate < slDate) {
           booking.status = "Overdue";
           await booking.save();
+          const newNotifi = new NotifiModel({
+            userId: booking.userId,
+            title: `Room Number:${booking.roomNumber} Booking is overdue`,
+            message: `The check-in date for your room booking, Ref: ${booking.bookingCode} has passed without completion.`,
+          });
+          await newNotifi.save();
           updatedRoomBookings++;
         }
       }
