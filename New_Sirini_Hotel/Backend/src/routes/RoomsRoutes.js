@@ -10,7 +10,7 @@ const roomAnlysController = require("../controllers/Room/RoomAnlys");
 router.post("/book", authmiddleware, roomBookingController.createRoomBooking);
 router.delete("/deletebooking/:id", roomBookingController.deleteRoomBooking);
 router.put("/updatebooking/:id", roomBookingController.editRoomBooking);
-router.get("/viewbookings", roomBookingController.getAllRoomBookings);
+router.get("/viewbookings",authmiddleware,RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]), roomBookingController.getAllRoomBookings);
 router.get(
   "/viewspecificuserbookings",
   authmiddleware,

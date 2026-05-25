@@ -64,8 +64,11 @@ const RoomandReception = () => {
   };
 
   const fetchroombookings = async () => {
+    const token = localStorage.getItem("token");
     try {
-      const response = await axios.get(`${VITE_URL}/api/rooms/viewbookings`);
+      const response = await axios.get(`${VITE_URL}/api/rooms/viewbookings`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setRoomBookingData(response.data);
     } catch (error) {
       console.error("Error fetching room booking data:", error);
