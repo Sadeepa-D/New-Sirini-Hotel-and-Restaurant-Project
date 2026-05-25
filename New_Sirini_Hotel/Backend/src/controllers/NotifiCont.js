@@ -35,8 +35,22 @@ const markAllAsRead = async (req, res) => {
   }
 };
 
+const clearallNotifications = async (req, res) => {
+  try {
+    const userId = req.userData.id;
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+    await NotifiModel.deleteMany({ userId });
+    res.status(200).json({ message: "All notifications cleared" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
 module.exports = {
   getNotifications,
   markAsRead,
   markAllAsRead,
+  clearallNotifications,
 };

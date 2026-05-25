@@ -14,6 +14,7 @@ const NotifiCenter = ({
   notifications,
   onMarkAsRead,
   onMarkAllAsRead,
+  onClearAll,
   onClose,
 }) => {
   const getIcon = (title) => {
@@ -112,6 +113,20 @@ const NotifiCenter = ({
           ))
         )}
       </div>
+      {notifications.length > 0 && (
+        <div className="absolute bottom-0 left-0 right-0 p-3 bg-linear-to-t from-zinc-950 via-zinc-950/95 to-transparent flex justify-center pointer-events-none">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onClearAll();
+            }}
+            className="pointer-events-auto flex items-center justify-center gap-2 text-xs font-semibold text-zinc-300 hover:text-white bg-zinc-900 hover:bg-rose-600 border border-white/10 hover:border-rose-500 shadow-xl px-4 py-2 rounded-xl transition-all duration-300 scale-100 hover:scale-105 active:scale-95 cursor-pointer"
+          >
+            <Trash2 size={14} />
+            <span>Clear All Notifications</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };

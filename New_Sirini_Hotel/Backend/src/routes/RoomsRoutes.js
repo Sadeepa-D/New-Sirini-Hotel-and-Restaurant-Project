@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const upload = require("../config/CloudinaryConfig");
 const authmiddleware = require("../middleware/AuthMiddleware");
+const RoleBaseMiddleware = require("../middleware/RoleBaseMiddleware");
 const roomBookingController = require("../controllers/Room/RoomBookingCont");
 const roomController = require("../controllers/Room/RoomCont");
 const roomAnlysController = require("../controllers/Room/RoomAnlys");
@@ -9,7 +10,7 @@ const roomAnlysController = require("../controllers/Room/RoomAnlys");
 router.post("/book", authmiddleware, roomBookingController.createRoomBooking);
 router.delete("/deletebooking/:id", roomBookingController.deleteRoomBooking);
 router.put("/updatebooking/:id", roomBookingController.editRoomBooking);
-router.get("/viewbookings", roomBookingController.getAllRoomBookings);
+router.get("/viewbookings",authmiddleware,RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]), roomBookingController.getAllRoomBookings);
 router.get(
   "/viewspecificuserbookings",
   authmiddleware,
@@ -42,20 +43,28 @@ router.get(
 );
 router.put(
   "/completebooking/:id",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   roomBookingController.setRoomBookingStatustoCompleted,
 );
 
 router.put(
   "/confirmbooking/:id",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   roomBookingController.setRoomBookingStatustoConfirmed,
 );
 router.put(
   "/cancelbooking/:id",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   roomBookingController.setRoomBookingStatustoCancelled,
 );
 
 router.post(
   "/add",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   upload.fields([
     { name: "image", maxCount: 1 },
     { name: "galleryImages", maxCount: 4 },
@@ -65,15 +74,19 @@ router.post(
 router.get("/viewrooms", roomController.getAllRooms);
 router.put(
   "/updateroom/:id",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   upload.fields([
     { name: "image", maxCount: 1 },
     { name: "galleryImages", maxCount: 4 },
   ]),
   roomController.updateRoom,
 );
-router.delete("/deleteroom/:id", roomController.deleteRoom);
+router.delete("/deleteroom/:id", authmiddleware, RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]), roomController.deleteRoom);
 router.put(
   "/changeroomavailability/:id",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   roomController.toggleRoomAvailability,
 );
 router.get(
