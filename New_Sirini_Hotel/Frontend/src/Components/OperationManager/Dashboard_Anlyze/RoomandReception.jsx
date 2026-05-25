@@ -25,8 +25,12 @@ const RoomandReception = () => {
 
   const fetchappointmentdata = async () => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.get(
         `${VITE_URL}/api/receptionhall/appointment/view`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
       setApointmentdata(response.data);
     } catch (error) {

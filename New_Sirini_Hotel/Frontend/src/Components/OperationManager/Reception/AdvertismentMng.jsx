@@ -103,8 +103,15 @@ const AdvertismentMng = () => {
 
   const handleApprove = async (id) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.put(
         `${VITE_URL}/api/receptionhall/advertisment/toggle/approved/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       const updatedAd = response.data;
       toast.success("Advertisement approved successfully");
@@ -123,8 +130,15 @@ const AdvertismentMng = () => {
   };
   const handleReject = async (id) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.put(
         `${VITE_URL}/api/receptionhall/advertisment/toggle/rejected/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       const updatedAd = response.data;
       toast.success("Advertisement rejected successfully");
@@ -159,8 +173,14 @@ const AdvertismentMng = () => {
       id: null,
     });
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.delete(
         `${VITE_URL}/api/receptionhall/advertisment/delete/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       const updatedAllAds = allAds.filter((a) => a._id !== id);
       setAllAds(updatedAllAds);
@@ -177,8 +197,15 @@ const AdvertismentMng = () => {
 
   const handlepending = async (id) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.put(
         `${VITE_URL}/api/receptionhall/advertisment/toggle/pending/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       const updatedAd = response.data;
       toast.success("Advertisement reset to pending successfully");

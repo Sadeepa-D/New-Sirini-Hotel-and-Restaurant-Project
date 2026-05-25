@@ -16,8 +16,12 @@ const AppointmentMng = () => {
   const fetchAppointments = async () => {
     setLoading(true);
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.get(
         `${VITE_URL}/api/receptionhall/appointment/view/${activeTab.toLowerCase()}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
       );
       setAppointments(response.data);
     } catch (err) {
@@ -45,8 +49,13 @@ const AppointmentMng = () => {
   const handlestatuseChange = async (id, newStatus) => {
     const loadingtoast = toast.loading("Updating status to ${newStatus}...");
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.put(
         `${VITE_URL}/api/receptionhall/appointment/update/${newStatus}/${id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
       );
       if (response.status === 200) {
         toast.success("Status updated successfully");
