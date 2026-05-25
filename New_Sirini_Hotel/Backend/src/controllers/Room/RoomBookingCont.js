@@ -1,5 +1,6 @@
 const RoomBooking = require("../../models/Rooms/RoomBookModel");
 const { sendRoomBookingEmail } = require("../EmailCont");
+const NotifiModel = require("../../models/NotifiModel");
 
 const genarateRoomBookingCode = async () => {
   const prefix = "SHRB";
@@ -93,20 +94,25 @@ const createRoomBooking = async (req, res) => {
 
     await newRoomBooking.save();
 
-    await sendRoomBookingEmail({
-      name,
-      email,
-      phone,
-      checkInDate: newIn,
-      checkOutDate: newOut,
-      roomNumber,
-      numberOfGuests,
-      totalAmount,
-      timeSlot,
-      status: "Pending",
-      newRoomBooking,
+    // await sendRoomBookingEmail({
+    //   name,
+    //   email,
+    //   phone,
+    //   checkInDate: newIn,
+    //   checkOutDate: newOut,
+    //   roomNumber,
+    //   numberOfGuests,
+    //   totalAmount,
+    //   timeSlot,
+    //   status: "Pending",
+    //   newRoomBooking,
+    // });
+    const newNotification = new NotifiModel({
+      userId,
+      title: "New Room Booking Created",
+      message: `Your booking for room ${roomNumber} from ${checkInDate} to ${checkOutDate} has been created. Ref: ${newRoomBooking.bookingCode}`,
     });
-
+    await newNotification.save();
     res.status(201).json(newRoomBooking);
   } catch (error) {
     console.error("Booking Error:", error);
@@ -124,6 +130,12 @@ const deleteRoomBooking = async (req, res) => {
     if (!deletedRoomBooking) {
       return res.status(404).json({ error: "Room booking not found" });
     }
+    const newNotification = new NotifiModel({
+      userId: deletedRoomBooking.userId,
+      title: "Room Booking Deleted",
+      message: `Room Booking for room ${deletedRoomBooking.roomNumber} Ref: ${deletedRoomBooking.bookingCode} has been deleted.`,
+    });
+    await newNotification.save();
     res.status(200).json({ message: "Room booking deleted successfully" });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -147,6 +159,12 @@ const editRoomBooking = async (req, res) => {
     if (!updatedRoomBooking) {
       return res.status(404).json({ error: "Room booking not found" });
     }
+    const newNotification = new NotifiModel({
+      userId: updatedRoomBooking.userId,
+      title: "Room Booking Updated",
+      message: `Your room booking for room ${updatedRoomBooking.roomNumber} Ref: ${updatedRoomBooking.bookingCode} has been updated.`,
+    });
+    await newNotification.save();
     res.status(200).json(updatedRoomBooking);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -222,6 +240,12 @@ const setRoomBookingStatustoConfirmed = async (req, res) => {
     if (!updatedRoomBooking) {
       return res.status(404).json({ error: "Room booking not found" });
     }
+    const newNotification = new NotifiModel({
+      userId: updatedRoomBooking.userId,
+      title: "Room Booking Confirmed",
+      message: `Your booking for room ${updatedRoomBooking.roomNumber} Ref: ${updatedRoomBooking.bookingCode} has been confirmed.`,
+    });
+    await newNotification.save();
     res.status(200).json(updatedRoomBooking);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -242,6 +266,12 @@ const setRoomBookingStatustoCancelled = async (req, res) => {
     if (!updatedRoomBooking) {
       return res.status(404).json({ error: "Room booking not found" });
     }
+    const newNotification = new NotifiModel({
+      userId: updatedRoomBooking.userId,
+      title: "Room Booking Cancelled",
+      message: `Your booking for room ${updatedRoomBooking.roomNumber} Ref: ${updatedRoomBooking.bookingCode} has been cancelled.`,
+    });
+    await newNotification.save();
     res.status(200).json(updatedRoomBooking);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -270,6 +300,12 @@ const setRoomBookingStatustoCompleted = async (req, res) => {
       { new: true },
     );
     res.status(200).json(updatedBooking);
+    const newNotification = new NotifiModel({
+      userId: updatedBooking.userId,
+      title: "Room Booking Completed",
+      message: `Your booking for room ${updatedBooking.roomNumber} Ref: ${updatedBooking.bookingCode} has been completed.`,
+    });
+    await newNotification.save();
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
