@@ -39,8 +39,11 @@ const LiqourandRestruant = () => {
   };
 
   const fetchOrders = async () => {
+    const token = localStorage.getItem("token");
     try {
-      const response = await axios.get(`${VITE_URL}/api/restraunt/vieworders`);
+      const response = await axios.get(`${VITE_URL}/api/restraunt/vieworders`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setOrders(response.data);
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -86,12 +89,17 @@ const LiqourandRestruant = () => {
     return total;
   }, 0);
   const orderStats = {
-    pending: activeMonthOrders.filter((order) => order.status === "Pending").length,
-    accepted: activeMonthOrders.filter((order) => order.status === "Accepted").length,
-    preparing: activeMonthOrders.filter((order) => order.status === "Preparing").length,
-    complete: activeMonthOrders.filter((order) => order.status === "Complete").length,
-    overdue: activeMonthOrders.filter((order) => order.status === "Overdue").length,
-    total: activeMonthOrders.length
+    pending: activeMonthOrders.filter((order) => order.status === "Pending")
+      .length,
+    accepted: activeMonthOrders.filter((order) => order.status === "Accepted")
+      .length,
+    preparing: activeMonthOrders.filter((order) => order.status === "Preparing")
+      .length,
+    complete: activeMonthOrders.filter((order) => order.status === "Complete")
+      .length,
+    overdue: activeMonthOrders.filter((order) => order.status === "Overdue")
+      .length,
+    total: activeMonthOrders.length,
   };
   const completionRate =
     orderStats.total > 0 ? (orderStats.complete / orderStats.total) * 100 : 0;
