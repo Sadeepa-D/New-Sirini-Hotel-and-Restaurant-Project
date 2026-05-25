@@ -48,7 +48,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(`${API_URL}/api/users/login`, {
-        email: formData.emailOrPhone,
+        email: formData.emailOrPhone.trim(),
         password: formData.password,
       });
 
@@ -64,6 +64,7 @@ const Login = () => {
         return;
       }
       if (data.token && data.user) {
+        localStorage.clear();
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
 
@@ -201,7 +202,7 @@ const Login = () => {
               )}
             </div>
 
-            <div className="flex items-center justify-between text-sm">
+            {/* <div className="flex items-center justify-between text-sm">
               <label className="flex items-center text-amber-100/70 cursor-pointer">
                 <input
                   type="checkbox"
@@ -216,7 +217,7 @@ const Login = () => {
               >
                 Forgot password?
               </Link>
-            </div>
+            </div> */}
 
             {errors.submit && (
               <p className="text-sm text-red-400 text-center bg-red-400/10 py-2 rounded-lg">
