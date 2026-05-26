@@ -44,6 +44,7 @@ const CateringSelectionHub = ({ onClose, selectedPackage, isAdd = true }) => {
 
   const handleAddItem = async () => {
     try {
+      const token = localStorage.getItem("token");
       const alreadyadded = packageItems.some(
         (item) => item._id === selectedItemId,
       );
@@ -55,6 +56,11 @@ const CateringSelectionHub = ({ onClose, selectedPackage, isAdd = true }) => {
         `${VITE_URL}/api/receptionhall/package/${selectedPackage._id}/add-catering`,
         {
           cateringItemId: selectedItemId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
       );
       toast.success("Item added to package");
@@ -75,8 +81,14 @@ const CateringSelectionHub = ({ onClose, selectedPackage, isAdd = true }) => {
       return;
     }
     try {
+      const token = localStorage.getItem("token");
       await axios.delete(
         `${VITE_URL}/api/receptionhall/package/${selectedPackage._id}/remove-catering/${itemId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       toast.success("Item removed from package");
       fetchPackageItems();
@@ -334,6 +346,5 @@ const CateringSelectionHub = ({ onClose, selectedPackage, isAdd = true }) => {
     </div>
   );
 };
-
 
 export default CateringSelectionHub;

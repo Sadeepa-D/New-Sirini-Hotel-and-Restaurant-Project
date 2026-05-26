@@ -1,5 +1,6 @@
 const FoodOrder = require("../../models/Restraunt/FoodItemBookModel");
 const { sendRestaurantOrderEmail } = require("../EmailCont");
+const NotifiModel = require("../../models/NotifiModel");
 
 const getCurrentSLTime = () => {
   const now = new Date();
@@ -63,20 +64,16 @@ const createFoodOrder = async (req, res) => {
     // Sri Lanka Time Validation
     const { slDate, slTime } = getCurrentSLTime();
     if (pickupDate < slDate) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "Selected date is in the past. Please choose today or a future date.",
-        });
+      return res.status(400).json({
+        message:
+          "Selected date is in the past. Please choose today or a future date.",
+      });
     }
     if (pickupDate === slDate && pickupTime <= slTime) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "Selected time has already passed for today. Please choose a future time.",
-        });
+      return res.status(400).json({
+        message:
+          "Selected time has already passed for today. Please choose a future time.",
+      });
     }
 
     const newFoodOrder = new FoodOrder({
@@ -95,18 +92,25 @@ const createFoodOrder = async (req, res) => {
     });
     const savedOrder = await newFoodOrder.save();
 
-    await sendRestaurantOrderEmail({
-      email,
-      fullName,
-      savedOrder,
-      foodName,
-      portion,
-      quantity,
-      Price,
-      pickupDate,
-      pickupTime,
-      phoneNumber,
+    // await sendRestaurantOrderEmail({
+    //   email,
+    //   fullName,
+    //   savedOrder,
+    //   foodName,
+    //   portion,
+    //   quantity,
+    //   Price,
+    //   pickupDate,
+    //   pickupTime,
+    //   phoneNumber,
+    // });
+
+    const newNotification = new NotifiModel({
+      userId,
+      title: "New Food Order",
+      message: `A new food order has been placed. Your Ref Number: ${savedOrder.orderCode}.`,
     });
+    await newNotification.save();
 
     res.status(201).json(savedOrder);
   } catch (error) {
@@ -155,20 +159,16 @@ const editfoodOrder = async (req, res) => {
     // Sri Lanka Time Validation
     const { slDate, slTime } = getCurrentSLTime();
     if (pickupDate < slDate) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "Selected date is in the past. Please choose today or a future date.",
-        });
+      return res.status(400).json({
+        message:
+          "Selected date is in the past. Please choose today or a future date.",
+      });
     }
     if (pickupDate === slDate && pickupTime <= slTime) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "Selected time has already passed for today. Please choose a future time.",
-        });
+      return res.status(400).json({
+        message:
+          "Selected time has already passed for today. Please choose a future time.",
+      });
     }
     const updatedOrder = await FoodOrder.findByIdAndUpdate(
       id,
@@ -187,6 +187,14 @@ const editfoodOrder = async (req, res) => {
     if (!updatedOrder) {
       return res.status(404).json({ message: "Food order not found" });
     }
+
+    const newNotification = new NotifiModel({
+      userId: updatedOrder.userId,
+      title: "Food Order Updated",
+      message: `Your food order with Ref Number: ${updatedOrder.orderCode} has been updated.`,
+    });
+    await newNotification.save();
+
     res.status(200).json(updatedOrder);
   } catch (error) {
     res.status(500).json({ message: "Failed to update food order", error });
@@ -205,6 +213,13 @@ const deleteFoodOrder = async (req, res) => {
     if (!order) {
       return res.status(404).json({ message: "Food order not found" });
     }
+
+    const newNotification = new NotifiModel({
+      userId: order.userId,
+      title: "Food Order Deleted",
+      message: `Your food order with Ref Number: ${order.orderCode} has been deleted.`,
+    });
+    await newNotification.save();
 
     order.status = "delete";
     await order.save();
@@ -229,6 +244,12 @@ const updateFoodOrderStatusTOComplete = async (req, res) => {
     if (!updatedOrder) {
       return res.status(404).json({ message: "Food order not found" });
     }
+    const newNotification = new NotifiModel({
+      userId: updatedOrder.userId,
+      title: "Food Order Completed",
+      message: `Your food order with Ref Number: ${updatedOrder.orderCode} has been completed.`,
+    });
+    await newNotification.save();
     res.status(200).json(updatedOrder);
   } catch (error) {
     res
@@ -251,6 +272,12 @@ const updateFoodOrderStatusToAccepted = async (req, res) => {
     if (!updatedOrder) {
       return res.status(404).json({ message: "Food order not found" });
     }
+    const newNotification = new NotifiModel({
+      userId: updatedOrder.userId,
+      title: "Food Order Accepted",
+      message: `Your food order with Ref Number: ${updatedOrder.orderCode} has been accepted.`,
+    });
+    await newNotification.save();
     res.status(200).json(updatedOrder);
   } catch (error) {
     res
@@ -273,6 +300,12 @@ const updateFoodOrderStatusToPreparing = async (req, res) => {
     if (!updatedOrder) {
       return res.status(404).json({ message: "Food order not found" });
     }
+    const newNotification = new NotifiModel({
+      userId: updatedOrder.userId,
+      title: "Food Order Preparing",
+      message: `Your food order with Ref Number: ${updatedOrder.orderCode} is now being preparing.`,
+    });
+    await newNotification.save();
     res.status(200).json(updatedOrder);
   } catch (error) {
     res

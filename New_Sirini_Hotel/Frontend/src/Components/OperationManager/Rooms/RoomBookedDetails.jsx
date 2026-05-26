@@ -106,8 +106,11 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
         endpoint = `${VITE_URL}/api/rooms/cancelbooking/${id}`;
       else if (actionType === "complete")
         endpoint = `${VITE_URL}/api/rooms/completebooking/${id}`;
-
-      await axios.put(endpoint);
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Unauthorized");
+      await axios.put(endpoint,{}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       toast.success(`Status Updated`, { id: actionToast });
       fetchAllData();
       if (onActionCompleted) onActionCompleted();

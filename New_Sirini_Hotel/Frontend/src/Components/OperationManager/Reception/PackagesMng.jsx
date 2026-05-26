@@ -87,8 +87,15 @@ const PackagesMng = () => {
 
   const handleToggle = async (id) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.put(
         `${VITE_URL}/api/receptionhall/package/toggle/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
 
       const updatedpackage = response.data;
@@ -121,7 +128,12 @@ const PackagesMng = () => {
     const { id } = confirmDialog;
     setConfirmDialog({ isOpen: false, id: null });
     try {
-      await axios.delete(`${VITE_URL}/api/receptionhall/package/delete/${id}`);
+      const token = localStorage.getItem("token");
+      await axios.delete(`${VITE_URL}/api/receptionhall/package/delete/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setPackages((prev) => prev.filter((p) => p._id !== id));
       toast.dismiss(loadingToast);
       toast.success("Package deleted successfully");
@@ -162,7 +174,6 @@ const PackagesMng = () => {
         <p className="text-center text-red-400 text-sm py-10">{error}</p>
       </div>
     );
-
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-6">

@@ -68,12 +68,14 @@ const CateringAddForm = ({ onClose, fetchitems, editItem }) => {
     );
     if (editItem) {
       try {
+        const token = localStorage.getItem("token");
         const response = await axios.put(
           `${VITE_URL}/api/receptionhall/catering/update/${editItem._id}`,
           data,
           {
             headers: {
               "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
             },
           },
         );
@@ -88,12 +90,14 @@ const CateringAddForm = ({ onClose, fetchitems, editItem }) => {
       }
     } else {
       try {
+        const token = localStorage.getItem("token");
         const response = await axios.post(
           `${VITE_URL}/api/receptionhall/catering/add`,
           data,
           {
             headers: {
               "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
             },
           },
         );

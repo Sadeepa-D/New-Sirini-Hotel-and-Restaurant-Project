@@ -72,8 +72,12 @@ const GalleryManagementHub = ({ onClose }) => {
   const handleDelete = async (id) => {
     const loadingToast = toast.loading("Deleting image...");
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.delete(
         `${VITE_URL}/api/gallery/delete/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
       );
       toast.dismiss(loadingToast);
       toast.success("Image deleted successfully.");
@@ -94,6 +98,7 @@ const GalleryManagementHub = ({ onClose }) => {
       `Publishing ${selectedFiles.length} images...`,
     );
     try {
+      const token = localStorage.getItem("token");
       const formData = new FormData();
       selectedFiles.forEach((file) => {
         formData.append("images", file);
@@ -105,6 +110,7 @@ const GalleryManagementHub = ({ onClose }) => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
           },
         },
       );
