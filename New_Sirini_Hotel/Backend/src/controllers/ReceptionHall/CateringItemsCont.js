@@ -113,6 +113,7 @@ const toggleCateringItemAvailability = async (req, res) => {
       .json({ message: "Error toggling catering item availability", error });
   }
 };
+
 module.exports = {
   createCateringItem,
   getCateringItems,
