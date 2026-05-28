@@ -25,6 +25,7 @@ const NewSiriniHotel = () => {
   const [activeFilter, setActiveFilter] = useState("Reception");
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const services = [
     {
@@ -55,11 +56,14 @@ const NewSiriniHotel = () => {
 
   const fetchgalleryItems = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(`${VITE_API_URL}/api/gallery/view`);
       setGalleryItems(response.data);
     } catch (error) {
       console.error("Error fetching gallery items:", error);
       setGalleryItems([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -210,49 +214,57 @@ const NewSiriniHotel = () => {
             </div>
 
             {/* Scrollable Container */}
-            <div className="max-w-6xl mx-auto">
-              {filteredGalleryItems.length > 0 ? (
-                <div
-                  className="pr-2 overflow-y-auto 
+            {loading ? (
+              <div className="bg-white rounded-[2rem] py-16 border border-gray-200">
+                <p className="text-gray-400 text-sm italic">
+                  Loading photographs...
+                </p>
+              </div>
+            ) : (
+              <div className="max-w-6xl mx-auto">
+                {filteredGalleryItems.length > 0 ? (
+                  <div
+                    className="pr-2 overflow-y-auto 
                        h-[300px] sm:h-[530px] 
                        scrollbar-thin 
                        scrollbar-thumb-amber-500 
                        scrollbar-track-transparent"
-                  style={{
-                    scrollbarWidth: "thin",
-                    scrollbarColor: "#f59e0b transparent",
-                  }}
-                >
-                  {/* Changed to grid-cols-4 */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                    {filteredGalleryItems.map((item, idx) => (
-                      <div
-                        key={item._id}
-                        onClick={() => openPreview(idx)}
-                        className="group relative aspect-[4/3] rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-500 cursor-pointer"
-                      >
-                        <img
-                          src={item.image}
-                          alt={item.category}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2">
-                          <span className="text-white text-[7px] font-bold uppercase tracking-widest border border-white/40 px-1.5 py-0.5 rounded backdrop-blur-sm">
-                            {item.category}
-                          </span>
+                    style={{
+                      scrollbarWidth: "thin",
+                      scrollbarColor: "#f59e0b transparent",
+                    }}
+                  >
+                    {/* Changed to grid-cols-4 */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                      {filteredGalleryItems.map((item, idx) => (
+                        <div
+                          key={item._id}
+                          onClick={() => openPreview(idx)}
+                          className="group relative aspect-[4/3] rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-500 cursor-pointer"
+                        >
+                          <img
+                            src={item.image}
+                            alt={item.category}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          />
+                          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2">
+                            <span className="text-white text-[7px] font-bold uppercase tracking-widest border border-white/40 px-1.5 py-0.5 rounded backdrop-blur-sm">
+                              {item.category}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div className="bg-white rounded-[2rem] py-16 border border-gray-200">
-                  <p className="text-gray-400 text-sm italic">
-                    No photographs found.
-                  </p>
-                </div>
-              )}
-            </div>
+                ) : (
+                  <div className="bg-white rounded-[2rem] py-16 border border-gray-200">
+                    <p className="text-gray-400 text-sm italic">
+                      No photographs found.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </section>
 

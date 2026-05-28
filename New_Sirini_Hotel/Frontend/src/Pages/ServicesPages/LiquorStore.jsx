@@ -14,6 +14,7 @@ const LiquorStore = () => {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000);
   const [liquorItems, setLiquorItems] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const beerSliderRef = useRef(null);
   const othersSliderRef = useRef(null);
@@ -30,6 +31,7 @@ const LiquorStore = () => {
 
   const fetchliquor = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/liquor/get`,
       );
@@ -48,6 +50,8 @@ const LiquorStore = () => {
       }
     } catch (error) {
       console.error("Error fetching liquor items:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -77,7 +81,7 @@ const LiquorStore = () => {
   return (
     <div className="min-h-screen bg-neutral-50">
       {/* HERO SECTION - Aligned with MainPage */}
-      <header className="relative w-full h-[320px] sm:h-[400px] md:h-[500px] lg:h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
+      <header className="relative w-full h-80 sm:h-100 md:h-125 lg:h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
         {/* Background */}
         <div
           className="absolute inset-0 z-0"
@@ -93,7 +97,9 @@ const LiquorStore = () => {
 
         {/* Content - centered in hero */}
         <div className="z-10 flex flex-col items-center justify-center gap-1.5 sm:gap-4 max-w-[90%] sm:max-w-none">
-          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-light">Our Liquor Store</h1>
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-light">
+            Our Liquor Store
+          </h1>
           <p className="text-[10px] sm:text-sm md:text-lg lg:text-xl italic tracking-wider sm:tracking-widest border-t border-b border-white py-1 px-2.5 sm:py-1.5 sm:px-3 md:py-2 md:px-4">
             A perfect drink for every celebration
           </p>
@@ -156,113 +162,161 @@ const LiquorStore = () => {
             </div>
           </div>
 
-          <div className="mb-16">
-            <h3 className="text-2xl font-bold text-neutral-900 mb-6">Beer</h3>
-            <div className="relative">
-              <button
-                onClick={() => scrollSection(beerSliderRef, -1)}
-                aria-label="Scroll left"
-                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
-              >
-                <ChevronLeft size={18} strokeWidth={2.5} />
-              </button>
-              <div
-                ref={beerSliderRef}
-                className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-1"
-              >
-                {filteredBeerDrinks.length === 0 && (
-                  <div className="flex flex-col items-center justify-center gap-2 py-10 px-6 bg-gray-50 border border-gray-200 rounded-2xl text-center w-full">
-                    <div className="w-11 h-11 rounded-xl bg-white border border-gray-200 shadow-sm flex items-center justify-center mb-1">
-                      <PackageX
-                        size={22}
-                        className="text-gray-400"
-                        strokeWidth={1.5}
-                      />
-                    </div>
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-                      No Beer Available
-                    </p>
-                    <p className="text-[11px] text-gray-400">
-                      No items found in this section
-                    </p>
-                  </div>
-                )}
-                {filteredBeerDrinks.map((drink) => (
-                  <div
-                    key={drink._id}
-                    data-slider-card
-                    className="w-[85%] shrink-0 snap-start md:w-64"
-                  >
-                    <LiqourCard drink={drink} onClick={handleDrinkClick} />
-                  </div>
-                ))}
-              </div>
-              <button
-                onClick={() => scrollSection(beerSliderRef, 1)}
-                aria-label="Scroll right"
-                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
-              >
-                <ChevronRight size={18} strokeWidth={2.5} />
-              </button>
-              <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
-                ← Swipe to browse →
-              </p>
-            </div>
-          </div>
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-24 w-full gap-5">
+              {/* Custom CSS Liquor Bottle with Wobble effect */}
+              <div className="relative w-20 h-28 flex flex-col items-center justify-end animate-[bounce_1.5s_infinite]">
+                {/* Bottle Neck & Cap Container */}
+                <div className="flex flex-col items-center origin-bottom animate-[pulse_1.2s_infinite]">
+                  {/* Cap */}
+                  <div className="w-5 h-3 bg-amber-700 rounded-t-sm shadow-inner"></div>
+                  {/* Neck */}
+                  <div className="w-4 h-8 bg-linear-to-r from-amber-500 to-amber-600 border-x border-amber-700/30"></div>
+                </div>
 
-          <div>
-            <h3 className="text-2xl font-bold text-neutral-900 mb-6">Others</h3>
-            <div className="relative">
-              <button
-                onClick={() => scrollSection(othersSliderRef, -1)}
-                aria-label="Scroll left"
-                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
-              >
-                <ChevronLeft size={18} strokeWidth={2.5} />
-              </button>
-              <div
-                ref={othersSliderRef}
-                className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-1"
-              >
-                {filteredOtherDrinks.length === 0 && (
-                  <div className="flex flex-col items-center justify-center gap-2 py-10 px-6 bg-gray-50 border border-gray-200 rounded-2xl text-center w-full">
-                    <div className="w-11 h-11 rounded-xl bg-white border border-gray-200 shadow-sm flex items-center justify-center mb-1">
-                      <PackageX
-                        size={22}
-                        className="text-gray-400"
-                        strokeWidth={1.5}
-                      />
-                    </div>
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-                      No Others Available
-                    </p>
-                    <p className="text-[11px] text-gray-400">
-                      No items found in this section
-                    </p>
+                {/* Bottle Body */}
+                <div className="w-14 h-18 bg-linear-to-b from-amber-400 to-amber-600 rounded-b-xl border-t-4 border-amber-700 relative overflow-hidden shadow-xl border">
+                  {/* Liquid Glow Effect */}
+                  <div className="absolute inset-x-0 bottom-0 top-1/4 bg-linear-to-t from-amber-700 to-amber-500 rounded-b-lg">
+                    {/* Floating Bubbles */}
+                    <span className="absolute bottom-2 left-3 w-2 h-2 bg-white/40 rounded-full animate-ping [animation-duration:1.4s]"></span>
+                    <span className="absolute bottom-6 right-4 w-1 h-1 bg-white/30 rounded-full animate-ping [animation-duration:1s]"></span>
+                    <span className="absolute bottom-4 left-7 w-1.5 h-1.5 bg-white/20 rounded-full animate-bubble opacity-70"></span>
                   </div>
-                )}
-                {filteredOtherDrinks.map((drink) => (
-                  <div
-                    key={drink._id}
-                    data-slider-card
-                    className="w-[85%] shrink-0 snap-start md:w-64"
-                  >
-                    <LiqourCard drink={drink} onClick={handleDrinkClick} />
+
+                  {/* Classic Bottle Label */}
+                  <div className="absolute top-4 inset-x-2 h-7 bg-yellow-50/90 border border-amber-800/40 rounded shadow-sm flex flex-col items-center justify-center p-0.5">
+                    <div className="w-6 h-0.5 bg-amber-800/60 mb-0.5"></div>
+                    <div className="w-4 h-0.5 bg-amber-800/40"></div>
                   </div>
-                ))}
+                </div>
               </div>
-              <button
-                onClick={() => scrollSection(othersSliderRef, 1)}
-                aria-label="Scroll right"
-                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
-              >
-                <ChevronRight size={18} strokeWidth={2.5} />
-              </button>
-              <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
-                ← Swipe to browse →
-              </p>
+
+              {/* Premium Message */}
+              <div className="text-center">
+                <p className="text-sm font-semibold text-amber-600 tracking-widest uppercase animate-pulse">
+                  Pouring Your Drinks
+                </p>
+                <p className="text-[11px] text-neutral-400 mt-1 italic">
+                  Preparing the finest selection...
+                </p>
+              </div>
             </div>
-          </div>
+          ) : (
+            <>
+              <div className="mb-16">
+                <h3 className="text-2xl font-bold text-neutral-900 mb-6">
+                  Beer
+                </h3>
+                <div className="relative">
+                  <button
+                    onClick={() => scrollSection(beerSliderRef, -1)}
+                    aria-label="Scroll left"
+                    className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
+                  >
+                    <ChevronLeft size={18} strokeWidth={2.5} />
+                  </button>
+                  <div
+                    ref={beerSliderRef}
+                    className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-1"
+                  >
+                    {filteredBeerDrinks.length === 0 && (
+                      <div className="flex flex-col items-center justify-center gap-2 py-10 px-6 bg-gray-50 border border-gray-200 rounded-2xl text-center w-full">
+                        <div className="w-11 h-11 rounded-xl bg-white border border-gray-200 shadow-sm flex items-center justify-center mb-1">
+                          <PackageX
+                            size={22}
+                            className="text-gray-400"
+                            strokeWidth={1.5}
+                          />
+                        </div>
+                        <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                          No Beer Available
+                        </p>
+                        <p className="text-[11px] text-gray-400">
+                          No items found in this section
+                        </p>
+                      </div>
+                    )}
+                    {filteredBeerDrinks.map((drink) => (
+                      <div
+                        key={drink._id}
+                        data-slider-card
+                        className="w-[85%] shrink-0 snap-start md:w-64"
+                      >
+                        <LiqourCard drink={drink} onClick={handleDrinkClick} />
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => scrollSection(beerSliderRef, 1)}
+                    aria-label="Scroll right"
+                    className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
+                  >
+                    <ChevronRight size={18} strokeWidth={2.5} />
+                  </button>
+                  <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
+                    ← Swipe to browse →
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-2xl font-bold text-neutral-900 mb-6">
+                  Others
+                </h3>
+                <div className="relative">
+                  <button
+                    onClick={() => scrollSection(othersSliderRef, -1)}
+                    aria-label="Scroll left"
+                    className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
+                  >
+                    <ChevronLeft size={18} strokeWidth={2.5} />
+                  </button>
+                  <div
+                    ref={othersSliderRef}
+                    className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-1"
+                  >
+                    {filteredOtherDrinks.length === 0 && (
+                      <div className="flex flex-col items-center justify-center gap-2 py-10 px-6 bg-gray-50 border border-gray-200 rounded-2xl text-center w-full">
+                        <div className="w-11 h-11 rounded-xl bg-white border border-gray-200 shadow-sm flex items-center justify-center mb-1">
+                          <PackageX
+                            size={22}
+                            className="text-gray-400"
+                            strokeWidth={1.5}
+                          />
+                        </div>
+                        <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                          No Others Available
+                        </p>
+                        <p className="text-[11px] text-gray-400">
+                          No items found in this section
+                        </p>
+                      </div>
+                    )}
+                    {filteredOtherDrinks.map((drink) => (
+                      <div
+                        key={drink._id}
+                        data-slider-card
+                        className="w-[85%] shrink-0 snap-start md:w-64"
+                      >
+                        <LiqourCard drink={drink} onClick={handleDrinkClick} />
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => scrollSection(othersSliderRef, 1)}
+                    aria-label="Scroll right"
+                    className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
+                  >
+                    <ChevronRight size={18} strokeWidth={2.5} />
+                  </button>
+                  <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
+                    ← Swipe to browse →
+                  </p>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </section>
 
