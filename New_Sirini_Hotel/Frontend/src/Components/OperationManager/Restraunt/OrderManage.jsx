@@ -28,10 +28,6 @@ const OrderManage = () => {
     message: "",
   });
 
-  // Pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const cardsPerPage = 5;
-
   const VITE_URL = import.meta.env.VITE_API_URL;
 
   const fetchOrders = async () => {
@@ -55,10 +51,7 @@ const OrderManage = () => {
     fetchOrders();
   }, []);
 
-  // Reset page when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [activeTab, searchTerm, sortOrder]);
+
 
   const handleStatusChange = async (id, status) => {
     try {
@@ -166,12 +159,7 @@ const OrderManage = () => {
     return list;
   };
 
-  // Pagination logic
-  const filteredOrders = getFilteredHistory();
-  const indexOfLast = currentPage * cardsPerPage;
-  const indexOfFirst = indexOfLast - cardsPerPage;
-  const currentOrders = filteredOrders.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.ceil(filteredOrders.length / cardsPerPage);
+  const currentOrders = getFilteredHistory();
 
   const HistoryCard = ({ order }) => (
     <div
@@ -416,31 +404,7 @@ const OrderManage = () => {
           </div>
         )}
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-4 mt-6">
-            <button
-              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-4 py-2 bg-gray-100 rounded-lg"
-            >
-              Previous
-            </button>
-
-            <span className="text-sm">
-              Page {currentPage} of {totalPages}
-            </span>
-
-            <button
-              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 bg-gray-100 rounded-lg"
-            >
-              Next
-            </button>
-          </div>
-        )}
-      </div>
+       
 
       <ConfirmDialog
         isOpen={confirmDialog.isOpen}
@@ -450,6 +414,7 @@ const OrderManage = () => {
         onConfirm={handleConfirmDelete}
         onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
       />
+    </div>
     </div>
   );
 };
