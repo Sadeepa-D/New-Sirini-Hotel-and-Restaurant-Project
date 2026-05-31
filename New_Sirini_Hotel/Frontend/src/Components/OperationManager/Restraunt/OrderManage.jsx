@@ -387,18 +387,18 @@ const OrderManage = () => {
 
         {/* Cards */}
         {currentOrders.length > 0 ? (
-          <div className="flex flex-col">
-            <div className="flex gap-4 sm:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 mt-6">
+          <div className="flex flex-col w-full max-w-full overflow-hidden">
+            <div className="flex gap-4 sm:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6 lg:grid lg:grid-cols-3 xl:grid-cols-5 mt-6">
               {currentOrders.map((order) => (
                 <div
                   key={order._id}
-                  className="w-[94%] shrink-0 snap-start md:w-auto md:shrink md:snap-none"
+                  className="w-[94%] sm:w-[48%] shrink-0 snap-start lg:w-auto lg:shrink lg:snap-none"
                 >
                   <HistoryCard order={order} />
                 </div>
               ))}
             </div>
-            <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
+            <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider lg:hidden">
               ← Swipe to browse →
             </p>
           </div>

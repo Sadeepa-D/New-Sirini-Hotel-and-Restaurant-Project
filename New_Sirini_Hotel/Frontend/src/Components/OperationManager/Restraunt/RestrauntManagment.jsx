@@ -143,7 +143,7 @@ const RestaurantManager = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/restraunt/toggleavailability/${id}`,
+        '${import.meta.env.VITE_API_URL}/api/restraunt/toggleavailability/${id}',
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -164,7 +164,7 @@ const RestaurantManager = () => {
       const token = localStorage.getItem("token");
       if (editingItem) {
         await axios.put(
-          `${import.meta.env.VITE_API_URL}/api/restraunt/updatefooditem/${editingItem._id}`,
+          '${import.meta.env.VITE_API_URL}/api/restraunt/updatefooditem/${editingItem._id}',
           formData,
           {
             headers: {
