@@ -171,14 +171,7 @@ const OrderManage = () => {
             : "bg-white border-gray-100 hover:shadow-xl hover:border-amber-200/50"
       }`}
     >
-      {/* Overdue Alert */}
-      {order.status === "Overdue" && (
-        <div className="absolute top-4 right-4 z-10">
-          <span className="bg-orange-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-lg shadow-orange-500/20 uppercase tracking-widest animate-pulse">
-            Overdue
-          </span>
-        </div>
-      )}
+      
       {/* Customer Header */}
       <div className="flex justify-between items-start mb-4 gap-2">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
