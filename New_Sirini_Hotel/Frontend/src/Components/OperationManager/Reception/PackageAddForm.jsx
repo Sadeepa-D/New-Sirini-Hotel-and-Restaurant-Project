@@ -62,11 +62,17 @@ const PackageAddForm = ({ onClose, fetchpackages, editItem }) => {
       editItem ? "Updating package..." : "Adding package...",
     );
     try {
+      const token = localStorage.getItem("token");
       if (editItem) {
         const response = await axios.put(
           `${VITE_URL}/api/receptionhall/package/update/${editItem._id}`,
           formData,
-          { headers: { "Content-Type": "multipart/form-data" } },
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
         toast.success("Package updated successfully!");
         toast.dismiss(loadingToast);
@@ -78,6 +84,7 @@ const PackageAddForm = ({ onClose, fetchpackages, editItem }) => {
           {
             headers: {
               "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
             },
           },
         );

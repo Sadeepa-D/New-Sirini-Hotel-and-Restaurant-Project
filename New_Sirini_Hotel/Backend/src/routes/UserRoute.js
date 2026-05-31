@@ -2,12 +2,18 @@ const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middleware/AuthMiddleware");
 const RoleBaseMiddleware = require("../middleware/RoleBaseMiddleware");
+const {
+  loginLimiter,
+  registerLimiter,
+  otpLimiter,
+} = require("../middleware/RateLimiter");
+const NotifiCont = require("../controllers/NotifiCont");
 const UserController = require("../controllers/UserController");
 const OTPController = require("../controllers/OTPCont");
 const upload = require("../config/CloudinaryConfig");
 
-router.post("/register", UserController.registerUser);
-router.post("/login", UserController.loginUser);``
+router.post("/register", registerLimiter, UserController.registerUser);
+router.post("/login", loginLimiter, UserController.loginUser);
 router.post("/googlelogin", UserController.googlelogin);
 router.get("/profile", authMiddleware, UserController.getUserProfile);
 router.put(
@@ -21,14 +27,60 @@ router.put(
   authMiddleware,
   UserController.UpdatePassword,
 );
-router.get("/getall/users",authMiddleware,RoleBaseMiddleware(["Admin"]), UserController.getallUsers);
-router.put("/update/role",authMiddleware,RoleBaseMiddleware(["Admin"]), UserController.updateUserRole);
-router.put("/update/userstatus",authMiddleware,RoleBaseMiddleware(["Admin"]), UserController.suspendUser);
-router.put("/delete/user", authMiddleware, RoleBaseMiddleware(["Admin"]), UserController.deleteUser);
-router.put("/update/userdetails", authMiddleware, RoleBaseMiddleware(["Admin"]), UserController.updateuserdetails);
-router.put("/reset/userpassword", authMiddleware, RoleBaseMiddleware(["Admin"]), UserController.resetuserpassword);
-router.post("/sendotp", OTPController.sendOTPEmail);
-router.post("/verifyotp", OTPController.verifyOTP);
-router.put("/deactivate/account", authMiddleware, UserController.deactivateaccount);
+router.get(
+  "/getall/users",
+  authMiddleware,
+  RoleBaseMiddleware(["Admin"]),
+  UserController.getallUsers,
+);
+router.put(
+  "/update/role",
+  authMiddleware,
+  RoleBaseMiddleware(["Admin"]),
+  UserController.updateUserRole,
+);
+router.put(
+  "/update/userstatus",
+  authMiddleware,
+  RoleBaseMiddleware(["Admin"]),
+  UserController.suspendUser,
+);
+router.put(
+  "/delete/user",
+  authMiddleware,
+  RoleBaseMiddleware(["Admin"]),
+  UserController.deleteUser,
+);
+router.put(
+  "/update/userdetails",
+  authMiddleware,
+  RoleBaseMiddleware(["Admin"]),
+  UserController.updateuserdetails,
+);
+router.put(
+  "/reset/userpassword",
+  authMiddleware,
+  RoleBaseMiddleware(["Admin"]),
+  UserController.resetuserpassword,
+);
+router.post("/sendotp", otpLimiter, OTPController.sendOTPEmail);
+router.post("/verifyotp", otpLimiter, OTPController.verifyOTP);
+router.put(
+  "/deactivate/account",
+  authMiddleware,
+  UserController.deactivateaccount,
+);
+router.get("/notifications", authMiddleware, NotifiCont.getNotifications);
+router.put("/notifications/markasread", authMiddleware, NotifiCont.markAsRead);
+router.put(
+  "/notifications/markallasread",
+  authMiddleware,
+  NotifiCont.markAllAsRead,
+);
+router.delete(
+  "/notifications/clearall",
+  authMiddleware,
+  NotifiCont.clearallNotifications,
+);
 
 module.exports = router;

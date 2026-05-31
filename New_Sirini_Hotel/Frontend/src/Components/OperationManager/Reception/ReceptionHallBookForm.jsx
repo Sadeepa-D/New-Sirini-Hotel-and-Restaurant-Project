@@ -63,13 +63,27 @@ const ReceptionHallBookForm = ({
     );
 
     try {
+      const token = localStorage.getItem("token");
       if (editData) {
         await axios.put(
           `${VITE_URL}/api/receptionhall/booking/update/${editData._id}`,
           formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
       } else {
-        await axios.post(`${VITE_URL}/api/receptionhall/booking/add`, formData);
+        await axios.post(
+          `${VITE_URL}/api/receptionhall/booking/add`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
       }
       toast.success(`${editData ? "Updated" : "Created"} booking successfully`);
       fetchBookings();

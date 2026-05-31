@@ -103,7 +103,7 @@ export default function Reception() {
   return (
     <div ref={containerRef} className="min-h-screen bg-neutral-50">
       {/* HERO SECTION - Aligned with MainPage */}
-      <header className="relative w-full h-[320px] sm:h-[400px] md:h-[500px] lg:h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
+      <header className="relative w-full h-80 sm:h-100 md:h-[500px] lg:h-[calc(100vh-75px)] overflow-hidden flex flex-col items-center justify-center text-white text-center px-4">
         {/* Background Image using img tag for maximum responsive scaling and visual quality */}
         <div className="absolute inset-0 z-0">
           <img
@@ -116,7 +116,9 @@ export default function Reception() {
 
         {/* Content - centered in hero */}
         <div className="z-10 flex flex-col items-center justify-center gap-3 md:gap-4 lg:gap-6">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light">Reception Hall</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light">
+            Reception Hall
+          </h1>
           <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl italic tracking-widest border-t border-b border-white py-1 px-3 md:py-2 md:px-4">
             Your special moments, handled with elegance
           </p>
@@ -169,6 +171,7 @@ export default function Reception() {
       <ReceptionHallPackages />
       {/* <CateringItemCard /> */}
       <AdvertismentSection />
+
       {/* Calendar */}
       {showcalander && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center">

@@ -11,6 +11,7 @@ import Calander from "../../Components/Calander";
 import toast from "react-hot-toast";
 import LoginMessage from "../../Components/LoginMessage";
 import RoomFullDetails from "../../Components/RoomCompo/RoomFullDetails";
+import StarRating from "../../Components/StarRating";
 import {
   Bed,
   Users,
@@ -212,14 +213,8 @@ function Rooms() {
                   </div>
 
                   <div className="p-3 flex flex-col flex-grow">
-                    <div className="flex items-center gap-1 mb-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          size={10}
-                          className="fill-orange-400 text-orange-400"
-                        />
-                      ))}
+                    <div className="mb-2">
+                      <StarRating roomNumber={room.roomNumber} size="sm" />
                     </div>
                     <h3 className="text-lg font-serif italic text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">
                       {room.roomType} Room
@@ -359,6 +354,7 @@ function Rooms() {
         room={selectedRoomForDetails}
         isOpen={showDetailsModal}
         onClose={() => setShowDetailsModal(false)}
+        onBookNow={handleBookNow}
       />
 
       {isModalOpen && selectedRoom && (
