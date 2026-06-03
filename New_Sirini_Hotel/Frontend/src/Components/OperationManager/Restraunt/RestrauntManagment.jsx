@@ -143,7 +143,7 @@ const RestaurantManager = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/restraunt/toggleavailability/${id}`,
+        '${import.meta.env.VITE_API_URL}/api/restraunt/toggleavailability/${id}',
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -164,7 +164,7 @@ const RestaurantManager = () => {
       const token = localStorage.getItem("token");
       if (editingItem) {
         await axios.put(
-          `${import.meta.env.VITE_API_URL}/api/restraunt/updatefooditem/${editingItem._id}`,
+          '${import.meta.env.VITE_API_URL}/api/restraunt/updatefooditem/${editingItem._id}',
           formData,
           {
             headers: {
@@ -208,9 +208,9 @@ const RestaurantManager = () => {
   });
 
   return (
-    <div className="p-4 md:p-6 min-h-screen">
+    <div className="p-3 sm:p-4 md:p-6 min-h-screen w-full max-w-full overflow-hidden">
       {/* Header Actions */}
-      <div className="bg-white rounded-xl p-4 shadow-xl mb-8 flex flex-col md:flex-row justify-between items-center gap-4 border border-gray-100">
+      <div className="bg-white rounded-xl p-3.5 sm:p-4 shadow-xl mb-4 md:mb-8 flex flex-col md:flex-row justify-between items-center gap-4 border border-gray-100">
         <button
           onClick={() => {
             setEditingItem(null);
@@ -236,7 +236,7 @@ const RestaurantManager = () => {
       </div>
 
       {/* Category Navigation Bar */}
-      <div className="bg-white rounded-xl p-4 shadow-sm mb-8 border border-gray-100">
+      <div className="bg-white rounded-xl p-3 sm:p-4 shadow-sm mb-4 md:mb-8 border border-gray-100">
         <div className="flex overflow-x-auto gap-3 pb-2 hide-scrollbar scroll-smooth">
           {CATEGORIES.map((cat) => (
             <button
@@ -256,14 +256,14 @@ const RestaurantManager = () => {
       </div>
 
       {/* Food Items Grid Section */}
-      <div className="bg-white rounded-xl p-6 md:p-10 shadow-sm min-h-[400px]">
+      <div className="bg-white rounded-xl p-3 sm:p-4 md:p-10 shadow-sm min-h-[400px]">
         {filteredItems.length > 0 ? (
           <div className="flex flex-col">
-            <div className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+            <div className="flex gap-4 md:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
               {filteredItems.map((item) => (
                 <div
                   key={item._id}
-                  className="relative group h-full w-[90%] shrink-0 snap-start md:w-auto md:shrink md:snap-none"
+                  className="relative group h-full w-[94%] shrink-0 snap-start md:w-auto md:shrink md:snap-none"
                 >
                   <FoodCard item={item} onClick={() => {}} />
                   <div className="absolute top-4 right-4 flex flex-col gap-2 z-50">

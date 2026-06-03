@@ -105,7 +105,6 @@ function Header() {
     transition: "color 0.2s ease, transform 0.2s ease",
     transform: hoveredLink === id ? "scale(1.1)" : "scale(1)",
     display: "inline-block",
-    fontSize: "1rem",
   });
 
   const getMobileLinkStyle = (path, id) => ({
@@ -237,13 +236,13 @@ function Header() {
             alt="New Sirini Hotel Logo"
             className="w-18 h-18 object-contain"
           />
-          <span className="text-white font-serif text-lg italic hidden sm:block tracking-wide">
+          <span className="text-white font-serif text-lg italic hidden sm:block md:hidden lg:block tracking-wide">
             New Sirini Hotel
           </span>
         </button>
 
         {/* ── Desktop Nav ── */}
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-0.5 lg:gap-1">
           {navLinks.map((link) => {
             const id = `desktop-${link.path}`;
             const active = isActive(link.path);
@@ -255,7 +254,7 @@ function Header() {
                 onMouseEnter={() => setHoveredLink(id)}
                 onMouseLeave={() => setHoveredLink(null)}
                 style={getLinkStyle(link.path, id)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                className={`px-2 lg:px-4 py-1.5 lg:py-2 rounded-lg text-xs lg:text-base font-medium transition-all duration-200 ${
                   active
                     ? "bg-yellow-500/10"
                     : hoveredLink === id
