@@ -1,13 +1,21 @@
-const nodemailer = require("nodemailer");
+const {Resend}= require("resend");
 
-const transpoter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_ADDRES,
-    pass: process.env.EMAIL_APPPASS,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-module.exports = transpoter;
+const sendMail = async (to, subject, html) => {
+  try{
+  const data= await resend.emails.send({
+    from: `Sirini Hotel <${process.env.FROM_EMAIL}>`,
+    to: to,
+    subject: subject,
+    html: html,
+  });
+  console.log("Email sent successfully:");
+    return data;
+}catch (error) {
+  console.log(error);
+  throw new Error("Failed to send email");
+}
+}
+
+module.exports = sendMail;
