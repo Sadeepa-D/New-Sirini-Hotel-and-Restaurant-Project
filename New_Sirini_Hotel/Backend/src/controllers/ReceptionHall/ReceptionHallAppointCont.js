@@ -34,16 +34,16 @@ const createReceptionAppointment = async (req, res) => {
     });
     await newAppointment.save();
 
-    // await sendAppointmentEmail({
-    //   name,
-    //   email,
-    //   phone,
-    //   date,
-    //   noOfGuests,
-    //   eventType,
-    //   status: "Pending",
-    //   newAppointment,
-    // });
+    await sendAppointmentEmail({
+      name,
+      email,
+      phone,
+      date,
+      noOfGuests,
+      eventType,
+      status: "Pending",
+      newAppointment,
+    });
 
     const newNotifi = new NotifiModel({
       userId,
