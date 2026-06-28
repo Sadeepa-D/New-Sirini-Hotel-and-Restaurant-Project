@@ -3,7 +3,7 @@ const express = require("express");
 
 const app = express();
 
-app.set("trust proxy", 1);
+app.set("trust proxy", true);
 
 const apiLimiter = ratelimiter({
   windowMs: 15 * 60 * 1000, // 15
