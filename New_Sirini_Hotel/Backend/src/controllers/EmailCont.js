@@ -341,7 +341,6 @@ const sendReceptionhallBookingEmail = async ({ newBooking }) => {
 };
 
 module.exports = {
-  SendEmail,
   sendRestaurantOrderEmail,
   sendRoomBookingEmail,
   sendAppointmentEmail,
