@@ -81,8 +81,14 @@ const LiquorManager = () => {
     setConfirmDialog({ isOpen: false, id: null });
     const loadingtoast = toast.loading("Deleting item...");
     try {
+      const token = localStorage.getItem("token");
       await axios.delete(
         `${import.meta.env.VITE_API_URL}/api/liquor/delete/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       toast.dismiss(loadingtoast);
       toast.success("Item deleted successfully");
@@ -94,8 +100,13 @@ const LiquorManager = () => {
 
   const handleToggleAvailability = async (id) => {
     try {
+      const token = localStorage.getItem("token");
       await axios.put(
         `${import.meta.env.VITE_API_URL}/api/liquor/toggle/${id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
       );
       fetchLiquorItems();
       toast.success("Item Availability Update Sucessfully!");
@@ -106,12 +117,16 @@ const LiquorManager = () => {
 
   const handleSave = async (formData) => {
     try {
+      const token = localStorage.getItem("token");
       if (editingItem) {
         await axios.put(
           `${import.meta.env.VITE_API_URL}/api/liquor/update/${editingItem._id}`,
           formData,
           {
-            headers: { "Content-Type": "multipart/form-data" },
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
           },
         );
       } else {
@@ -119,7 +134,10 @@ const LiquorManager = () => {
           `${import.meta.env.VITE_API_URL}/api/liquor/add`,
           formData,
           {
-            headers: { "Content-Type": "multipart/form-data" },
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
           },
         );
       }

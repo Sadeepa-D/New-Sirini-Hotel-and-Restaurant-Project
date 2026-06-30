@@ -1,18 +1,11 @@
 import React, { useState, useEffect } from "react";
-import {
-  Plus,
-  Search,
-  Edit2,
-  Trash2,
-  Power,
-} from "lucide-react";
+import { Plus, Search, Edit2, Trash2, Power } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 
 import AddRestrauntItemForm from "./AddRestrauntItemForm";
 import OrderManage from "./OrderManage";
 import ConfirmDialog from "../../ConfrimDialog";
-
 
 const FoodCard = ({ item, onClick }) => (
   <div
@@ -51,8 +44,9 @@ const FoodCard = ({ item, onClick }) => (
           </p>
         )}
         <p
-          className={`text-[9px] font-black tracking-widest mt-1 uppercase ${item.availability !== false ? "text-green-400" : "text-red-400"
-            }`}
+          className={`text-[9px] font-black tracking-widest mt-1 uppercase ${
+            item.availability !== false ? "text-green-400" : "text-red-400"
+          }`}
         >
           {item.availability !== false ? "AVAILABLE" : "UNAVAILABLE"}
         </p>
@@ -84,14 +78,14 @@ const RestaurantManager = () => {
     "Noodles",
     "Bites",
     "Side Dishes",
-    "Snacks"
+    "Snacks",
   ];
   const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0]);
 
   const fetchFoodItems = async () => {
     try {
       const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/restraunt/viewfooditems`
+        `${import.meta.env.VITE_API_URL}/api/restraunt/viewfooditems`,
       );
       setFoodItems(data);
     } catch (err) {
@@ -128,7 +122,13 @@ const RestaurantManager = () => {
     setConfirmDialog({ isOpen: false, id: null });
     const loadingtoast = toast.loading("Deleting item...");
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/api/restraunt/deletefooditem/${id}`);
+      const token = localStorage.getItem("token");
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}/api/restraunt/deletefooditem/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       toast.dismiss(loadingtoast);
       toast.success("Item deleted successfully");
       fetchFoodItems();
@@ -141,7 +141,14 @@ const RestaurantManager = () => {
 
   const handleToggleAvailability = async (id) => {
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL}/api/restraunt/toggleavailability/${id}`);
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/restraunt/toggleavailability/${id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       toast.success("Availability updated!");
       fetchFoodItems();
     } catch (err) {
@@ -150,20 +157,33 @@ const RestaurantManager = () => {
   };
 
   const handleSave = async (formData) => {
-    const loadingToast = toast.loading(editingItem ? "Updating item..." : "Adding item...");
+    const loadingToast = toast.loading(
+      editingItem ? "Updating item..." : "Adding item...",
+    );
     try {
+      const token = localStorage.getItem("token");
       if (editingItem) {
         await axios.put(
           `${import.meta.env.VITE_API_URL}/api/restraunt/updatefooditem/${editingItem._id}`,
           formData,
-          { headers: { "Content-Type": "multipart/form-data" } }
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
         toast.success("Item updated successfully", { id: loadingToast });
       } else {
         await axios.post(
           `${import.meta.env.VITE_API_URL}/api/restraunt/addfooditem`,
           formData,
-          { headers: { "Content-Type": "multipart/form-data" } }
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
         toast.success("Item added successfully", { id: loadingToast });
       }
@@ -179,16 +199,18 @@ const RestaurantManager = () => {
 
   const filteredItems = foodItems.filter((item) => {
     const itemName = item.name || item.foodname || "";
-    const matchesSearch = itemName.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === "All" || item.category === selectedCategory;
+    const matchesSearch = itemName
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "All" || item.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-
   return (
-    <div className="p-4 md:p-6 min-h-screen">
+    <div className="p-3 sm:p-4 md:p-6 min-h-screen w-full max-w-full overflow-hidden">
       {/* Header Actions */}
-      <div className="bg-white rounded-xl p-4 shadow-xl mb-8 flex flex-col md:flex-row justify-between items-center gap-4 border border-gray-100">
+      <div className="bg-white rounded-xl p-3.5 sm:p-4 shadow-xl mb-4 md:mb-8 flex flex-col md:flex-row justify-between items-center gap-4 border border-gray-100">
         <button
           onClick={() => {
             setEditingItem(null);
@@ -214,16 +236,17 @@ const RestaurantManager = () => {
       </div>
 
       {/* Category Navigation Bar */}
-      <div className="bg-white rounded-xl p-4 shadow-sm mb-8 border border-gray-100">
+      <div className="bg-white rounded-xl p-3 sm:p-4 shadow-sm mb-4 md:mb-8 border border-gray-100">
         <div className="flex overflow-x-auto gap-3 pb-2 hide-scrollbar scroll-smooth">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
               className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 whitespace-nowrap shadow-sm border
-                ${selectedCategory === cat
-                  ? "bg-amber-500 text-black border-amber-500 shadow-md scale-105"
-                  : "bg-gray-50 text-neutral-600 hover:bg-gray-100 border-neutral-200"
+                ${
+                  selectedCategory === cat
+                    ? "bg-amber-500 text-black border-amber-500 shadow-md scale-105"
+                    : "bg-gray-50 text-neutral-600 hover:bg-gray-100 border-neutral-200"
                 }`}
             >
               {cat}
@@ -233,25 +256,33 @@ const RestaurantManager = () => {
       </div>
 
       {/* Food Items Grid Section */}
-      <div className="bg-white rounded-xl p-6 md:p-10 shadow-sm min-h-[400px]">
+      <div className="bg-white rounded-xl p-3 sm:p-4 md:p-10 shadow-sm min-h-[400px]">
         {filteredItems.length > 0 ? (
           <div className="flex flex-col">
-            <div className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+            <div className="flex gap-4 md:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
               {filteredItems.map((item) => (
-                <div key={item._id} className="relative group h-full w-[90%] shrink-0 snap-start md:w-auto md:shrink md:snap-none">
-                  <FoodCard item={item} onClick={() => { }} />
+                <div
+                  key={item._id}
+                  className="relative group h-full w-[94%] shrink-0 snap-start md:w-auto md:shrink md:snap-none"
+                >
+                  <FoodCard item={item} onClick={() => {}} />
                   <div className="absolute top-4 right-4 flex flex-col gap-2 z-50">
                     {/* Toggle Availability */}
                     <button
-                      className={`p-2 rounded-full shadow-lg transition transform hover:scale-110 ${item.availability !== false
-                        ? "bg-green-100 text-green-600 hover:bg-green-600 hover:text-white"
-                        : "bg-red-100 text-red-600 hover:bg-red-600 hover:text-white"
-                        }`}
+                      className={`p-2 rounded-full shadow-lg transition transform hover:scale-110 ${
+                        item.availability !== false
+                          ? "bg-green-100 text-green-600 hover:bg-green-600 hover:text-white"
+                          : "bg-red-100 text-red-600 hover:bg-red-600 hover:text-white"
+                      }`}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleToggleAvailability(item._id);
                       }}
-                      title={item.availability !== false ? "Mark as Unavailable" : "Mark as Available"}
+                      title={
+                        item.availability !== false
+                          ? "Mark as Unavailable"
+                          : "Mark as Available"
+                      }
                     >
                       <Power size={16} />
                     </button>

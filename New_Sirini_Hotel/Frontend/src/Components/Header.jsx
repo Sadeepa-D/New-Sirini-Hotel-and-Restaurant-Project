@@ -9,15 +9,18 @@ import {
   LogIn,
   UserPlus,
   ExternalLink,
+  Bell,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import Footer from "./Footer";
+import NotifiCenter from "./NotifiCenter";
 
 function Header() {
   const VITE_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const location = useLocation();
+  const [notifiOpen, setNotifiOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hoveredLink, setHoveredLink] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -26,6 +29,7 @@ function Header() {
     localStorage.getItem("token") ? true : false,
   );
   const [userData, setUserData] = useState([]);
+  const [notifications, setNotifications] = useState([]);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
   const handlelogout = () => {
@@ -52,7 +56,7 @@ function Header() {
   const fetchuserimg = async () => {
     try {
       const token = localStorage.getItem("token");
-      if (!token) return null;
+      if (!token) return;
       const response = await axios.get(`${VITE_URL}/api/users/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -101,7 +105,6 @@ function Header() {
     transition: "color 0.2s ease, transform 0.2s ease",
     transform: hoveredLink === id ? "scale(1.1)" : "scale(1)",
     display: "inline-block",
-    fontSize: "1rem",
   });
 
   const getMobileLinkStyle = (path, id) => ({
@@ -132,6 +135,89 @@ function Header() {
     }
   };
 
+  const fetchNotifications = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      const response = await axios.get(`${VITE_URL}/api/users/notifications`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setNotifications(response.data || []);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+
+  const handleMarkAsRead = async (id) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n._id === id ? { ...n, isRead: true } : n)),
+    );
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.put(
+        `${VITE_URL}/api/users/notifications/markasread/`,
+        { notificationId: id },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      const res = await axios.put(
+        `${VITE_URL}/api/users/notifications/markallasread`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+    }
+  };
+
+  const handleClearAll = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      const res = await axios.delete(
+        `${VITE_URL}/api/users/notifications/clearall`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      setNotifications([]);
+    } catch (error) {
+      console.error("Error clearing all notifications:", error);
+    }
+  };
+
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchuserimg();
+      fetchNotifications();
+      const interval = setInterval(fetchNotifications, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [isLoggedIn]);
+
   return (
     <header className="bg-black/95 backdrop-blur-md sticky top-0 z-50 border-b border-white/5">
       <div className="w-full px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
@@ -150,13 +236,13 @@ function Header() {
             alt="New Sirini Hotel Logo"
             className="w-18 h-18 object-contain"
           />
-          <span className="text-white font-serif text-lg italic hidden sm:block tracking-wide">
+          <span className="text-white font-serif text-lg italic hidden sm:block md:hidden lg:block tracking-wide">
             New Sirini Hotel
           </span>
         </button>
 
         {/* ── Desktop Nav ── */}
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-0.5 lg:gap-1">
           {navLinks.map((link) => {
             const id = `desktop-${link.path}`;
             const active = isActive(link.path);
@@ -168,7 +254,7 @@ function Header() {
                 onMouseEnter={() => setHoveredLink(id)}
                 onMouseLeave={() => setHoveredLink(null)}
                 style={getLinkStyle(link.path, id)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                className={`px-2 lg:px-4 py-1.5 lg:py-2 rounded-lg text-xs lg:text-base font-medium transition-all duration-200 ${
                   active
                     ? "bg-yellow-500/10"
                     : hoveredLink === id
@@ -185,86 +271,112 @@ function Header() {
         {/* ── Desktop Auth ── */}
         <div className="hidden md:flex items-center gap-3">
           {isLoggedIn ? (
-            <div className="flex items-center gap-3">
-              {userData.Role !== "User" && (
-                <div>
-                  {userData.Role === "Admin" && (
-                    <>
-                      <button
-                        className="flex items-center gap-2 group transition-all"
-                        onClick={() => navigate("/admin")}
-                      >
-                        <ExternalLink
-                          className="text-amber-500 font-bold hover:scale-105"
-                          size={25}
-                        />
-                        <span className="text-amber-500 font-bold hover:scale-105">
-                          Admin Portal
-                        </span>
-                      </button>
-                    </>
+            <>
+              <div className="relative z-40 overflow-visible">
+                <button
+                  onClick={() => setNotifiOpen(!notifiOpen)}
+                  className="p-2 text-zinc-400 hover:text-white rounded-full hover:bg-white/5 transition-all relative cursor-pointer"
+                >
+                  <Bell size={22} />
+                  {unreadCount > 0 && (
+                    <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-yellow-500 text-black font-bold text-[10px] flex items-center justify-center rounded-full animate-pulse">
+                      {unreadCount}
+                    </span>
                   )}
-                  {userData.Role ===
-                    "Operation Manager 1 (Restraunt,Liquor)" && (
-                    <>
-                      <button
-                        className="flex items-center gap-2 group transition-all"
-                        onClick={() => navigate("/operationmanager")}
-                      >
-                        <ExternalLink
-                          className="text-amber-500 font-bold hover:scale-105"
-                          size={25}
-                        />
-                        <span className="text-amber-500 font-bold hover:scale-105">
-                          Manager Portal
-                        </span>
-                      </button>
-                    </>
-                  )}
-                  {userData.Role ===
-                    "Operation Manager 2 (Reception, Room)" && (
-                    <>
-                      <button
-                        className="flex items-center gap-2 group transition-all"
-                        onClick={() => navigate("/manager")}
-                      >
-                        <ExternalLink
-                          className="text-amber-500 font-bold hover:scale-105"
-                          size={25}
-                        />
-                        <span className="text-amber-500 font-bold hover:scale-105">
-                          Manager Portal
-                        </span>
-                      </button>
-                    </>
-                  )}
-                </div>
-              )}
-              <div className="w-14 h-14 bg-amber-500 rounded-full overflow-hidden hover:scale-105 transition-transform cursor-pointer shadow-md ring-2 ring-amber-200 ring-offset-1">
-                {userImage ? (
-                  <img
-                    src={userImage}
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                    onClick={() => navigate("/dashboard")}
+                </button>
+
+                {/* Dropdown Card */}
+                {notifiOpen && (
+                  <NotifiCenter
+                    notifications={notifications}
+                    onMarkAsRead={handleMarkAsRead}
+                    onMarkAllAsRead={handleMarkAllAsRead}
+                    onClearAll={handleClearAll}
+                    onClose={() => setNotifiOpen(false)}
                   />
-                ) : (
-                  <div
-                    className="w-full h-full flex items-center justify-center"
-                    onClick={() => navigate("/dashboard")}
-                  >
-                    <User size={20} className="text-white" />
-                  </div>
                 )}
               </div>
-              <button
-                onClick={handlelogout}
-                className="flex items-center gap-1.5 px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-400 rounded-lg text-sm font-medium hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-200"
-              >
-                <LogOut size={15} />
-                <span>Log Out</span>
-              </button>
-            </div>
+              <div className="flex items-center gap-3">
+                {userData.Role !== "User" && (
+                  <div>
+                    {userData.Role === "Admin" && (
+                      <>
+                        <button
+                          className="flex items-center gap-2 group transition-all"
+                          onClick={() => navigate("/admin")}
+                        >
+                          <ExternalLink
+                            className="text-amber-500 font-bold hover:scale-105"
+                            size={25}
+                          />
+                          <span className="text-amber-500 font-bold hover:scale-105">
+                            Admin Portal
+                          </span>
+                        </button>
+                      </>
+                    )}
+                    {userData.Role ===
+                      "Operation Manager 1 (Restraunt,Liquor)" && (
+                      <>
+                        <button
+                          className="flex items-center gap-2 group transition-all"
+                          onClick={() => navigate("/operationmanager")}
+                        >
+                          <ExternalLink
+                            className="text-amber-500 font-bold hover:scale-105"
+                            size={25}
+                          />
+                          <span className="text-amber-500 font-bold hover:scale-105">
+                            Manager Portal
+                          </span>
+                        </button>
+                      </>
+                    )}
+                    {userData.Role ===
+                      "Operation Manager 2 (Reception, Room)" && (
+                      <>
+                        <button
+                          className="flex items-center gap-2 group transition-all"
+                          onClick={() => navigate("/manager")}
+                        >
+                          <ExternalLink
+                            className="text-amber-500 font-bold hover:scale-105"
+                            size={25}
+                          />
+                          <span className="text-amber-500 font-bold hover:scale-105">
+                            Manager Portal
+                          </span>
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
+                <div className="w-14 h-14 bg-amber-500 rounded-full overflow-hidden hover:scale-105 transition-transform cursor-pointer shadow-md ring-2 ring-amber-200 ring-offset-1">
+                  {userImage ? (
+                    <img
+                      src={userImage}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                      onClick={() => navigate("/dashboard")}
+                    />
+                  ) : (
+                    <div
+                      className="w-full h-full flex items-center justify-center"
+                      onClick={() => navigate("/dashboard")}
+                    >
+                      <User size={20} className="text-white" />
+                    </div>
+                  )}
+                </div>
+                <button
+                  onClick={handlelogout}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-400 rounded-lg text-sm font-medium hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-200"
+                >
+                  <LogOut size={15} />
+                  <span>Log Out</span>
+                </button>
+              </div>
+            </>
           ) : (
             <div className="flex items-center gap-2">
               <button
@@ -292,6 +404,30 @@ function Header() {
         <div className="md:hidden flex items-center gap-2 sm:gap-3">
           {isLoggedIn && (
             <div className="flex items-center gap-2">
+              <div className="relative z-40 overflow-visible">
+                <button
+                  onClick={() => setNotifiOpen(!notifiOpen)}
+                  className="p-1.5 text-zinc-400 hover:text-white rounded-full hover:bg-white/5 transition-all relative cursor-pointer"
+                >
+                  <Bell size={20} />
+                  {unreadCount > 0 && (
+                    <span className="absolute top-1 right-1 w-3.5 h-3.5 bg-yellow-500 text-black font-bold text-[9px] flex items-center justify-center rounded-full">
+                      {unreadCount}
+                    </span>
+                  )}
+                </button>
+
+                {/* Mobile Screen Pop-up style drop */}
+                {notifiOpen && (
+                  <NotifiCenter
+                    notifications={notifications}
+                    onMarkAsRead={handleMarkAsRead}
+                    onMarkAllAsRead={handleMarkAllAsRead}
+                    onClearAll={handleClearAll}
+                    onClose={() => setNotifiOpen(false)}
+                  />
+                )}
+              </div>
               {userData.Role !== "User" && (
                 <div className="flex items-center">
                   {userData.Role === "Admin" && (

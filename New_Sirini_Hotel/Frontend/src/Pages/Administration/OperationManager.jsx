@@ -173,8 +173,104 @@ const OperationManager = () => {
           </div>
         </div>
 
-        {/* ── DESKTOP layout (≥ md): single row, 3-column grid ── */}
-        <div className="hidden md:grid md:grid-cols-3 md:items-center md:gap-4">
+        {/* ── TABLET layout (md to lg): two rows ── */}
+        <div className="hidden md:flex lg:hidden flex-col gap-3">
+          {/* Row 1: Logo & Brand (left) and Action Buttons + Profile (right) */}
+          <div className="flex items-center justify-between">
+            {/* Left: Logo & Brand */}
+            <div className="flex items-center gap-3">
+              <img
+                src={Logo}
+                alt="Hotel Logo"
+                className="w-12 h-12 object-contain"
+              />
+              <div>
+                <h2 className="font-serif italic text-sm text-gray-900 leading-tight">
+                  New Sirini Hotel
+                </h2>
+                <p className="text-[9px] font-bold text-gray-500 tracking-[0.1em] uppercase">
+                  Manager 1
+                </p>
+              </div>
+            </div>
+
+            {/* Right: Actions + Profile */}
+            <div className="flex items-center gap-3">
+              {userdata.Role === "Admin" && (
+                <button
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 transition-colors group"
+                  onClick={() => usenavigate("/admin")}
+                  title="Go to Admin Portal"
+                >
+                  <ExternalLink
+                    className="text-amber-600 group-hover:text-amber-700"
+                    size={16}
+                  />
+                  <span className="text-xs text-amber-600 group-hover:text-amber-700 font-semibold whitespace-nowrap">
+                    Admin
+                  </span>
+                </button>
+              )}
+              <button
+                onClick={() => usenavigate("/")}
+                className="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"
+                title="Home"
+              >
+                <Home size={20} />
+              </button>
+              <div
+                className="w-10 h-10 bg-amber-500 rounded-full overflow-hidden flex items-center justify-center shadow-md border-2 border-amber-600 cursor-pointer hover:scale-105 transition-transform shrink-0"
+                onClick={() => usenavigate("/dashboard")}
+                title="Profile"
+              >
+                <img
+                  src={userdata.image || Logo}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="text-right">
+                <p className="text-xs font-bold text-gray-800 line-clamp-1 max-w-[120px]">
+                  {userdata.name || "User Name"}
+                </p>
+                <p className="text-[10px] text-gray-500 font-medium">Manager 1</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Row 2: Tabs (centered) */}
+          <div className="flex justify-center border-t border-gray-100 pt-2">
+            <div className="flex items-center gap-2 bg-gray-100 rounded-xl p-1.5 shadow-inner w-full md:w-auto md:justify-center">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeTab === item.id;
+                const isLogout = item.id === "Logout";
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      if (isLogout) handleLogout();
+                      else setActiveTab(item.id);
+                    }}
+                    className={`flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200 ${
+                      isActive && !isLogout
+                        ? "bg-amber-600 text-white shadow-lg scale-105 ring-2 ring-amber-400 ring-offset-1"
+                        : isLogout
+                          ? "text-red-500 hover:bg-red-50 hover:text-red-600"
+                          : "text-gray-500 hover:bg-white hover:text-gray-800 hover:shadow-sm"
+                    }`}
+                  >
+                    <Icon size={15} />
+                    <span className="whitespace-nowrap">{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* ── DESKTOP layout (≥ lg): single row, 3-column grid ── */}
+        <div className="hidden lg:grid lg:grid-cols-3 lg:items-center lg:gap-4">
           {/* Left: Logo */}
           <div className="flex items-center gap-3">
             <img

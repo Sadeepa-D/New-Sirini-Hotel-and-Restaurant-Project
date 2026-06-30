@@ -25,8 +25,12 @@ const RoomandReception = () => {
 
   const fetchappointmentdata = async () => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.get(
         `${VITE_URL}/api/receptionhall/appointment/view`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
       setApointmentdata(response.data);
     } catch (error) {
@@ -64,8 +68,11 @@ const RoomandReception = () => {
   };
 
   const fetchroombookings = async () => {
+    const token = localStorage.getItem("token");
     try {
-      const response = await axios.get(`${VITE_URL}/api/rooms/viewbookings`);
+      const response = await axios.get(`${VITE_URL}/api/rooms/viewbookings`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setRoomBookingData(response.data);
     } catch (error) {
       console.error("Error fetching room booking data:", error);

@@ -7,6 +7,7 @@ const {
   registerLimiter,
   otpLimiter,
 } = require("../middleware/RateLimiter");
+const NotifiCont = require("../controllers/NotifiCont");
 const UserController = require("../controllers/UserController");
 const OTPController = require("../controllers/OTPCont");
 const upload = require("../config/CloudinaryConfig");
@@ -68,6 +69,18 @@ router.put(
   "/deactivate/account",
   authMiddleware,
   UserController.deactivateaccount,
+);
+router.get("/notifications", authMiddleware, NotifiCont.getNotifications);
+router.put("/notifications/markasread", authMiddleware, NotifiCont.markAsRead);
+router.put(
+  "/notifications/markallasread",
+  authMiddleware,
+  NotifiCont.markAllAsRead,
+);
+router.delete(
+  "/notifications/clearall",
+  authMiddleware,
+  NotifiCont.clearallNotifications,
 );
 
 module.exports = router;

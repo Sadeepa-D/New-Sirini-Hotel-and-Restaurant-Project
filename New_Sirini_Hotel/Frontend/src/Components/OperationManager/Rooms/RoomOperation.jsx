@@ -55,9 +55,13 @@ const RoomOperation = () => {
   };
 
   const handleDelete = async (id) => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Unauthorized");
     if (window.confirm("Are you sure you want to delete this room?")) {
       try {
-        await axios.delete(`${VITE_URL}/api/rooms/deleteroom/${id}`);
+        await axios.delete(`${VITE_URL}/api/rooms/deleteroom/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         fetchRooms();
       } catch (err) {
         alert("Delete failed");
@@ -105,8 +109,13 @@ const RoomOperation = () => {
     }
 
     try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Unauthorized");
       const config = {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
       };
 
       if (editingRoom) {
