@@ -81,8 +81,14 @@ const LiquorManager = () => {
     setConfirmDialog({ isOpen: false, id: null });
     const loadingtoast = toast.loading("Deleting item...");
     try {
+      const token = localStorage.getItem("token");
       await axios.delete(
         `${import.meta.env.VITE_API_URL}/api/liquor/delete/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       toast.dismiss(loadingtoast);
       toast.success("Item deleted successfully");
