@@ -94,19 +94,19 @@ const createRoomBooking = async (req, res) => {
 
     await newRoomBooking.save();
 
-    // await sendRoomBookingEmail({
-    //   name,
-    //   email,
-    //   phone,
-    //   checkInDate: newIn,
-    //   checkOutDate: newOut,
-    //   roomNumber,
-    //   numberOfGuests,
-    //   totalAmount,
-    //   timeSlot,
-    //   status: "Pending",
-    //   newRoomBooking,
-    // });
+    await sendRoomBookingEmail({
+      name,
+      email,
+      phone,
+      checkInDate: newIn,
+      checkOutDate: newOut,
+      roomNumber,
+      numberOfGuests,
+      totalAmount,
+      timeSlot,
+      status: "Pending",
+      newRoomBooking,
+    });
     const newNotification = new NotifiModel({
       userId,
       title: "New Room Booking Created",
