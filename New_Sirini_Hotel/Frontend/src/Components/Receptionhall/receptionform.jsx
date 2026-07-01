@@ -56,12 +56,12 @@ export default function BookingForm({ editData = null, onSuccess }) {
       } catch (e) {
         console.error("Error parsing user data from localStorage:", e);
       }
-      if (!currentuser?.phone) {
-        toast.error(
-          "Please add a phone number to your profile before submitting an Appointment.",
-        );
-        return;
-      }
+    }
+    if (!currentuser?.phone) {
+      toast.error(
+        "Please add a phone number to your profile before submitting an Appointment.",
+      );
+      return;
     }
     const loadingtoast = toast.loading(
       editData ? "Updating booking..." : "Submitting booking...",
