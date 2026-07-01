@@ -181,12 +181,29 @@ const editRoomBooking = async (req, res) => {
     if (!updatedRoomBooking) {
       return res.status(404).json({ error: "Room booking not found" });
     }
-    const newNotification = new NotifiModel({
-      userId: updatedRoomBooking.userId,
-      title: "Room Booking Updated",
-      message: `Your room booking for room ${updatedRoomBooking.roomNumber} Ref: ${updatedRoomBooking.bookingCode} has been updated.`,
-    });
-    await newNotification.save();
+    try {
+      await NotifiModel.create({
+        userId: updatedRoomBooking.userId,
+        title: "Room Booking Updated",
+        message: `Your room booking for room ${updatedRoomBooking.roomNumber} Ref: ${updatedRoomBooking.bookingCode} has been updated.`,
+      });
+
+      const managers = await User.find({
+        Role: "Operation Manager 2 (Reception, Room)",
+      }).select("_id");
+
+      if (managers.length > 0) {
+        await NotifiModel.insertMany(
+          managers.map((manager) => ({
+            userId: manager._id,
+            title: "Room Booking Updated",
+            message: `The room booking ${updatedRoomBooking.bookingCode} has been updated. Please review the changes.`,
+          })),
+        );
+      }
+    } catch (notifError) {
+      console.error("Notification error (non-blocking):", notifError);
+    }
     res.status(200).json(updatedRoomBooking);
   } catch (error) {
     res.status(400).json({ error: error.message });
