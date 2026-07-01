@@ -54,6 +54,7 @@ export default function BookingForm({ editData = null, onSuccess }) {
     const token = localStorage.getItem("token");
 
     if (!token) {
+      toast.dismiss(loadingtoast);
       toast.error("You must be logged in to submit a booking request.");
       return;
     }
@@ -107,14 +108,26 @@ export default function BookingForm({ editData = null, onSuccess }) {
     } catch (error) {
       toast.dismiss(loadingtoast);
       console.error("Error submitting booking:", error);
-      // Handle the 401 specifically to help the user
-      if (error.response && error.response.status === 401) {
-        toast.error(
-          "Your session has expired. Please log out and log back in.",
-        );
+
+      if (error.response) {
+        console.error("Error response data:", error.response.data);
+
+        if (error.response.status === 401) {
+          toast.error(
+            "Your session has expired. Please log out and log back in.",
+          );
+        } else {
+          const errorMessage =
+            error.response.data?.message ||
+            "Failed to process booking request. Please try again.";
+          toast.error(errorMessage);
+        }
+      } else if (error.request) {
+        toast.error("No response from server. Check your connection.");
       } else {
         toast.error(
-          "Failed to process booking request. Check Your Profile Details and Please try again.",
+          error.message ||
+            "Failed to process booking request. Please try again.",
         );
       }
     }

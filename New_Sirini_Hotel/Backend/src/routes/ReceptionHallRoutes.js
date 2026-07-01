@@ -27,6 +27,7 @@ router.get(
 // );
 router.put(
   "/appointment/update/:id",
+  authmiddleware,
   ReceptionHallAppoint.updateReceptionAppointment,
 );
 router.put(
