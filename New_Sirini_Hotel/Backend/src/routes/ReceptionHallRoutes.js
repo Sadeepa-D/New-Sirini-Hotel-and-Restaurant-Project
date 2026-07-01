@@ -149,7 +149,7 @@ router.get("/advertisment/view", AdvertismentCont.getAdvertisments);
 router.delete(
   "/advertisment/delete/:id",
   authmiddleware,
-  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)","User"]),
   AdvertismentCont.deleteAdvertisment,
 );
 router.put(
