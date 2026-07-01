@@ -56,12 +56,34 @@ const createReceptionAppointment = async (req, res) => {
       newAppointment,
     });
 
-    const newNotifi = new NotifiModel({
-      userId,
-      title: "New Reception Appointment",
-      message: `Your reception appointment for ${eventType} on ${date} has been created successfully.`,
-    });
-    await newNotifi.save();
+    try {
+      const newNotifi = new NotifiModel({
+        userId,
+        title: "New Reception Appointment",
+        message: `Your reception appointment for ${eventType} on ${date} has been created successfully.`,
+      });
+      await newNotifi.save();
+
+      const managers = await User.find({
+        Role: "Operation Manager 2 (Reception, Room)",
+      }).select("_id");
+
+      if (managers.length > 0) {
+        await NotifiModel.insertMany(
+          managers.map((manager) => ({
+            userId: manager._id,
+            title: "New Reception Appointment",
+            message: `${name} submitted a new reception appointment for ${eventType} on ${date}. Ref: ${newAppointment.appointcode}.`,
+          })),
+        );
+      } else {
+        console.warn(
+          "No managers found for new reception appointment notification",
+        );
+      }
+    } catch (notifError) {
+      console.error("Notification error (non-blocking):", notifError);
+    }
 
     res
       .status(201)
