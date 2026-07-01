@@ -92,18 +92,18 @@ const createFoodOrder = async (req, res) => {
     });
     const savedOrder = await newFoodOrder.save();
 
-    // await sendRestaurantOrderEmail({
-    //   email,
-    //   fullName,
-    //   savedOrder,
-    //   foodName,
-    //   portion,
-    //   quantity,
-    //   Price,
-    //   pickupDate,
-    //   pickupTime,
-    //   phoneNumber,
-    // });
+    await sendRestaurantOrderEmail({
+      email,
+      fullName,
+      savedOrder,
+      foodName,
+      portion,
+      quantity,
+      Price,
+      pickupDate,
+      pickupTime,
+      phoneNumber,
+    });
 
     const newNotification = new NotifiModel({
       userId,
