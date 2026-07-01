@@ -1,5 +1,6 @@
 const Adevertisment = require("../../models/Reception/AdvertisingModel");
 const User = require("../../models/UserModel");
+const NotifiModel = require("../../models/NotifiModel");
 const cloudinary = require("cloudinary");
 
 const createAdvertisment = async (req, res) => {
@@ -81,6 +82,12 @@ const createAdvertisment = async (req, res) => {
       status: "pending",
     });
     await newAdvertisment.save();
+    const newnotification = new NotifiModel({
+      userId,
+      title: "Advertisment Created Pending Approval",
+      message: `Your advertisment ${BuissnesName} is created and pending for approval. We will contact you soon.`,
+    });
+    await newnotification.save();
     res.status(201).json({
       message: "Advertisment created successfully",
     });
@@ -217,6 +224,12 @@ const toggleAdvertismentStatustoApproved = async (req, res) => {
       message: "Advertisment status updated to approved",
       advertisment: updatedAdvertisment,
     });
+    const newnotification = new NotifiModel({
+      userId: updatedAdvertisment.userId,
+      title: "Advertisment Approved",
+      message: `Your advertisment ${updatedAdvertisment.BuissnesName} is Live Now Visit the advertisment section to see your advertisment`,
+    });
+    await newnotification.save();
   } catch (error) {
     console.error("Error updating advertisment status:", error);
     res.status(500).json({
@@ -244,6 +257,12 @@ const toggleAdvertismentStatustoRejected = async (req, res) => {
       message: "Advertisment status updated to rejected",
       advertisment: updatedAdvertisment,
     });
+    const newnotification = new NotifiModel({
+      userId: updatedAdvertisment.userId,
+      title: "Advertisment Rejected",
+      message: `Your advertisment ${updatedAdvertisment.BuissnesName} is rejected. Please Contact admin for more details.`,
+    });
+    await newnotification.save();
   } catch (error) {
     console.error("Error updating advertisment status:", error);
     res.status(500).json({
