@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import LoginMessage from "../../Components/LoginMessage";
 import RoomFullDetails from "../../Components/RoomCompo/RoomFullDetails";
 import StarRating from "../../Components/StarRating";
+import ShowFeedback from "../../Components/ShowFeedback";
 import {
   Bed,
   Users,
@@ -343,6 +344,10 @@ function Rooms() {
             </p>
           </div>
         )}
+
+        <div className="mt-16">
+          <ShowFeedback />
+        </div>
       </main>
 
       <LoginMessage
