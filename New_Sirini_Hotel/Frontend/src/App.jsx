@@ -1,7 +1,8 @@
-import React, { use, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
+import { jwtDecode } from "jwt-decode";
 import ScrollToTop from "./Components/ScrollToTop";
 import Login from "./Pages/Login";
 import Registration from "./Pages/Registration";
@@ -21,24 +22,35 @@ import Unauthorized from "./Pages/Unauthorized";
 import ProtectedRoutes from "./Components/ProtectedRoutes";
 import AdvertismentSection from "./Components/Receptionhall/AdvertismentSection";
 
-const autoLogout = (token) => {
+const useAutoLogout = () => {
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
   useEffect(() => {
     if (!token) return;
-    const logouttimer = setTimeout(
-      () => {
-        handlelogout();
-      },
-      30 * 60 * 1000,
-    );
-
-    const handlelogout = () => {
+    const handleLogout = () => {
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
       toast.error("Session expired. Please log in again.");
       navigate("/login");
       window.location.reload();
     };
-    return () => clearTimeout(logouttimer);
+    try {
+      const decode = jwtDecode(token);
+      const exp = decode.exp * 1000;
+      const currentTime = Date.now();
+      if (currentTime >= exp) {
+        handleLogout();
+        return;
+      }
+      const remainingTime = exp - currentTime;
+      const logouttimer = setTimeout(() => {
+        handleLogout();
+      }, remainingTime);
+      return () => clearTimeout(logouttimer);
+    } catch (err) {
+      console.error("Invalid token:", err);
+      handleLogout();
+    }
   }, [token, navigate]);
 };
 
@@ -52,7 +64,7 @@ const PublicLayout = ({ children }) => (
 
 export const App = () => {
   const token = localStorage.getItem("token");
-  autoLogout(token);
+  useAutoLogout();
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />

@@ -1,5 +1,6 @@
 const ReceptionAppointment = require("../../models/Reception/ReciptionAppointModel");
 const { sendAppointmentEmail } = require("../EmailCont");
+const NotifiModel = require("../../models/NotifiModel");
 
 const genarateReceptionAppointmentCode = async () => {
   const prefix = "SRHA";
@@ -33,16 +34,23 @@ const createReceptionAppointment = async (req, res) => {
     });
     await newAppointment.save();
 
-    await sendAppointmentEmail({
-      name,
-      email,
-      phone,
-      date,
-      noOfGuests,
-      eventType,
-      status: "Pending",
-      newAppointment,
+    // await sendAppointmentEmail({
+    //   name,
+    //   email,
+    //   phone,
+    //   date,
+    //   noOfGuests,
+    //   eventType,
+    //   status: "Pending",
+    //   newAppointment,
+    // });
+
+    const newNotifi = new NotifiModel({
+      userId,
+      title: "New Reception Appointment",
+      message: `Your reception appointment for ${eventType} on ${date} has been created successfully.`,
     });
+    await newNotifi.save();
 
     res
       .status(201)
@@ -73,6 +81,14 @@ const deleteReceptionAppointment = async (req, res) => {
     if (!deletedAppointment) {
       return res.status(404).json({ message: "Appointment not found" });
     }
+
+    const newNotifi = new NotifiModel({
+      userId: deletedAppointment.userId,
+      title: "Reception Appointment Deleted",
+      message: `Reception appointment for ${deletedAppointment.eventType} Ref: ${deletedAppointment.appointcode} has been deleted.`,
+    });
+    await newNotifi.save();
+
     res.status(200).json({ message: "Appointment deleted successfully" });
   } catch (error) {
     console.error("Error deleting reception appointment:", error);
@@ -117,6 +133,14 @@ const updateReceptionAppointmentasCompleted = async (req, res) => {
     if (!updatedAppointment) {
       return res.status(404).json({ message: "Appointment not found" });
     }
+
+    const newNotifi = new NotifiModel({
+      userId: updatedAppointment.userId,
+      title: "Reception Appointment Completed",
+      message: `Reception appointment for ${updatedAppointment.eventType} Ref: ${updatedAppointment.appointcode} has been Completed.`,
+    });
+    await newNotifi.save();
+
     res.status(200).json({
       message: "Appointment status updated to Completed",
       appointment: updatedAppointment,
@@ -140,6 +164,14 @@ const updateReceptionAppointmentasCancelled = async (req, res) => {
     if (!updatedAppointment) {
       return res.status(404).json({ message: "Appointment not found" });
     }
+
+    const newNotifi = new NotifiModel({
+      userId: updatedAppointment.userId,
+      title: "Reception Appointment Cancelled",
+      message: `Reception appointment for ${updatedAppointment.eventType} Ref: ${updatedAppointment.appointcode} has been Cancelled.`,
+    });
+    await newNotifi.save();
+
     res.status(200).json({
       message: "Appointment status updated to Cancelled",
       appointment: updatedAppointment,

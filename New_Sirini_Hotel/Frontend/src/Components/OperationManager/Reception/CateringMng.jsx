@@ -94,8 +94,15 @@ const CateringMng = () => {
 
   const handleToggle = async (id) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.put(
         `${VITE_URL}/api/receptionhall/catering/toggle/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       const updatedItem = response.data;
       toast.success("Availability updated Successfully");
@@ -126,7 +133,15 @@ const CateringMng = () => {
       id: null,
     });
     try {
-      await axios.delete(`${VITE_URL}/api/receptionhall/catering/delete/${id}`);
+      const token = localStorage.getItem("token");
+      await axios.delete(
+        `${VITE_URL}/api/receptionhall/catering/delete/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
       await fetchItems();
       toast.success("Item deleted successfully");
     } catch (err) {

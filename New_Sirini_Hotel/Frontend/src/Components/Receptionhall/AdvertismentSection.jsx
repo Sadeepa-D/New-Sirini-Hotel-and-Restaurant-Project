@@ -33,6 +33,7 @@ const AdvertisementSection = () => {
   useEffect(() => {
     const fetchAds = async () => {
       try {
+        setLoading(true);
         const response = await axios.get(
           `${VITE_URL}/api/receptionhall/advertisment/view/approved`,
         );

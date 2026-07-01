@@ -66,8 +66,14 @@ const ReceptionHallBookMng = () => {
 
   const fetchBookings = async () => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.get(
         `${VITE_URL}/api/receptionhall/booking/view`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       setbookings(response.data);
     } catch (err) {
@@ -124,8 +130,15 @@ const ReceptionHallBookMng = () => {
     const { id, status } = confirmDialog;
     setConfirmDialog({ isOpen: false, id: null });
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.put(
         `${VITE_URL}/api/receptionhall/booking/update/status/${id}/${status}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       if (response.status === 200) {
         toast.success(`Booking ${status.toLowerCase()} successfully`);
