@@ -14,11 +14,26 @@ router.get(
   RoleBaseMiddleware(["Admin", "Operation Manager 1 (Restraunt,Liquor)"]),
   FoodOrderCont.getFoodOrders,
 );
-router.put("/updateorder/:id", authMiddleware, RoleBaseMiddleware(["Admin", "Operation Manager 1 (Restraunt,Liquor)","User"]), FoodOrderCont.editfoodOrder);
+router.put(
+  "/updateorder/:id",
+  authMiddleware,
+  RoleBaseMiddleware([
+    "Admin",
+    "Operation Manager 1 (Restraunt,Liquor)",
+    "Operation Manager 2 (Reception, Room)",
+    "User",
+  ]),
+  FoodOrderCont.editfoodOrder,
+);
 router.delete(
   "/deleteorder/:id",
   authMiddleware,
-  RoleBaseMiddleware(["Admin", "Operation Manager 1 (Restraunt,Liquor)","User"]),
+  RoleBaseMiddleware([
+    "Admin",
+    "Operation Manager 1 (Restraunt,Liquor)",
+    "Operation Manager 2 (Reception, Room)",
+    "User",
+  ]),
   FoodOrderCont.deleteFoodOrder,
 );
 router.put(

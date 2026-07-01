@@ -420,11 +420,87 @@ const sendmultiplerestrauntitemsEmail = async ({
     console.error("Error sending multiple restaurant orders email:", error);
   }
 };
+const sendAdvertismentEmail = async ({
+  email,
+  BuissnesName,
+  BuissnessOwnerName,
+  NIC,
+  category,
+  description,
+  price,
+  location,
+  TPNumber,
+  newAdvertisment,
+}) => {
+  try {
+    const htmlTemplate = `
+      <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #f0f0f0;">
+        ${emailHeader()}
+        
+        <div style="padding: 40px 30px;">
+          <h2 style="color: #1a1a1a; margin-top: 0; font-size: 24px;">Advertisment Submitted</h2>
+          <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">Dear <strong>${BuissnessOwnerName}</strong>,</p>
+          <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">Thank you for submitting your advertisment! Your request has been received and is currently <strong>${newAdvertisment.status}</strong>. We will review the details and notify you once the process is complete.</p>
+          
+          <div style="background-color: #f9fafb; border-radius: 8px; padding: 20px; margin: 30px 0; border: 1px solid #e5e7eb;">
+            <h3 style="color: #1a1a1a; margin-top: 0; margin-bottom: 15px; font-size: 18px; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px;">Advertisment Details</h3>
+            
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 8px 0; color: #6b7280; font-size: 14px; width: 40%;">Business Name</td>
+                <td style="padding: 8px 0; color: #1a1a1a; font-size: 14px; font-weight: 600; text-align: right;">${BuissnesName}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Category</td>
+                <td style="padding: 8px 0; color: #1a1a1a; font-size: 14px; font-weight: 600; text-align: right;">${category}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Location</td>
+                <td style="padding: 8px 0; color: #1a1a1a; font-size: 14px; font-weight: 600; text-align: right;">${location}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Description</td>
+                <td style="padding: 8px 0; color: #1a1a1a; font-size: 14px; font-weight: 600; text-align: right;">${description}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Price</td>
+                <td style="padding: 8px 0; color: #f59e0b; font-size: 16px; font-weight: bold; text-align: right;">Rs. ${price}</td>
+              </tr>
+            </table>
+          </div>
 
+          <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px 20px; margin-bottom: 30px;">
+            <h4 style="color: #b45309; margin: 0 0 10px 0; font-size: 16px;">Status</h4>
+            <p style="color: #92400e; margin: 5px 0; font-size: 14px;">Your advertisment is currently under review. We will contact you soon regarding the approval status.</p>
+          </div>
+
+          <div style="border-top: 1px solid #e5e7eb; padding-top: 20px;">
+            <h4 style="color: #1a1a1a; margin: 0 0 10px 0; font-size: 16px;">Submitted Information</h4>
+            <p style="color: #4b5563; margin: 5px 0; font-size: 14px;"><strong>NIC:</strong> ${NIC}</p>
+            <p style="color: #4b5563; margin: 5px 0; font-size: 14px;"><strong>Phone:</strong> ${TPNumber}</p>
+            <p style="color: #4b5563; margin: 5px 0; font-size: 14px;"><strong>Email:</strong> ${email}</p>
+          </div>
+        </div>
+        
+        ${emailFooter()}
+      </div>
+    `;
+
+    await SendEmail({
+      to: email,
+      subject: "Your Sirini Advertisment Submission - Pending Approval",
+      html: htmlTemplate,
+    });
+    console.log("Advertisment confirmation email sent successfully");
+  } catch (error) {
+    console.error("Error sending advertisment email:", error);
+  }
+};
 module.exports = {
   sendRestaurantOrderEmail,
   sendRoomBookingEmail,
   sendAppointmentEmail,
   sendReceptionhallBookingEmail,
   sendmultiplerestrauntitemsEmail,
+  sendAdvertismentEmail,
 };

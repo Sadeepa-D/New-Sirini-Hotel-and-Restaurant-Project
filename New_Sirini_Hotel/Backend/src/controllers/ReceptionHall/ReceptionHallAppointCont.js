@@ -56,12 +56,34 @@ const createReceptionAppointment = async (req, res) => {
       newAppointment,
     });
 
-    const newNotifi = new NotifiModel({
-      userId,
-      title: "New Reception Appointment",
-      message: `Your reception appointment for ${eventType} on ${date} has been created successfully.`,
-    });
-    await newNotifi.save();
+    try {
+      const newNotifi = new NotifiModel({
+        userId,
+        title: "New Reception Appointment",
+        message: `Your reception appointment for ${eventType} on ${date} has been created successfully.`,
+      });
+      await newNotifi.save();
+
+      const managers = await User.find({
+        Role: "Operation Manager 2 (Reception, Room)",
+      }).select("_id");
+
+      if (managers.length > 0) {
+        await NotifiModel.insertMany(
+          managers.map((manager) => ({
+            userId: manager._id,
+            title: "New Reception Appointment",
+            message: `${name} submitted a new reception appointment for ${eventType} on ${date}. Ref: ${newAppointment.appointcode}.`,
+          })),
+        );
+      } else {
+        console.warn(
+          "No managers found for new reception appointment notification",
+        );
+      }
+    } catch (notifError) {
+      console.error("Notification error (non-blocking):", notifError);
+    }
 
     res
       .status(201)
@@ -92,13 +114,19 @@ const deleteReceptionAppointment = async (req, res) => {
     if (!deletedAppointment) {
       return res.status(404).json({ message: "Appointment not found" });
     }
-
-    const newNotifi = new NotifiModel({
-      userId: deletedAppointment.userId,
-      title: "Reception Appointment Deleted",
-      message: `Reception appointment for ${deletedAppointment.eventType} Ref: ${deletedAppointment.appointcode} has been deleted.`,
-    });
-    await newNotifi.save();
+    const managers = await User.find({
+      Role: "Operation Manager 2 (Reception, Room)",
+    }).select("_id");
+    await Promise.all(
+      managers.map(async (manager) => {
+        const newnotification = new NotifiModel({
+          userId: manager._id,
+          title: "Reception Appointment Deleted",
+          message: `Reception appointment for ${deletedAppointment.eventType} Ref: ${deletedAppointment.appointcode} has been deleted.`,
+        });
+        await newnotification.save();
+      }),
+    );
 
     res.status(200).json({ message: "Appointment deleted successfully" });
   } catch (error) {
@@ -136,6 +164,19 @@ const updateReceptionAppointment = async (req, res) => {
       message: "Appointment updated successfully",
       appointment: updatedAppointment,
     });
+    const managers = await User.find({
+      Role: "Operation Manager 2 (Reception, Room)",
+    }).select("_id");
+    await Promise.all(
+      managers.map(async (manager) => {
+        const newnotification = new NotifiModel({
+          userId: manager._id,
+          title: "Reception Appointment Updated",
+          message: `Reception appointment for ${updatedAppointment.eventType} Ref: ${updatedAppointment.appointcode} has been updated.`,
+        });
+        await newnotification.save();
+      }),
+    );
   } catch (error) {
     console.error("Error updating reception appointment:", error);
     res.status(500).json({ message: "Server error" });
@@ -187,12 +228,19 @@ const updateReceptionAppointmentasCancelled = async (req, res) => {
       return res.status(404).json({ message: "Appointment not found" });
     }
 
-    const newNotifi = new NotifiModel({
-      userId: updatedAppointment.userId,
-      title: "Reception Appointment Cancelled",
-      message: `Reception appointment for ${updatedAppointment.eventType} Ref: ${updatedAppointment.appointcode} has been Cancelled.`,
-    });
-    await newNotifi.save();
+    const managers = await User.find({
+      Role: "Operation Manager 2 (Reception, Room)",
+    }).select("_id");
+    await Promise.all(
+      managers.map(async (manager) => {
+        const newnotification = new NotifiModel({
+          userId: manager._id,
+          title: "Reception Appointment Cancelled",
+          message: `Reception appointment for ${updatedAppointment.eventType} Ref: ${updatedAppointment.appointcode} has been cancelled.`,
+        });
+        await newnotification.save();
+      }),
+    );
 
     res.status(200).json({
       message: "Appointment status updated to Cancelled",

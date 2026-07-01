@@ -19,9 +19,9 @@ const advertisingSchema = new mongoose.Schema(
       type: String,
       required: true,
       match: [
-      /^([0-9]{9}[vVxX]|[0-9]{12})$/,
-      "Please enter a valid NIC number",
-    ],
+        /^([0-9]{9}[vVxX]|[0-9]{12})$/,
+        "Please enter a valid NIC number",
+      ],
     },
     category: {
       type: String,
@@ -42,6 +42,14 @@ const advertisingSchema = new mongoose.Schema(
     },
     portfolio: {
       type: String,
+    },
+    EmailAddress: {
+      type: String,
+      required: true,
+      match: [
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        "Please enter a valid email address",
+      ],
     },
     price: {
       type: String,

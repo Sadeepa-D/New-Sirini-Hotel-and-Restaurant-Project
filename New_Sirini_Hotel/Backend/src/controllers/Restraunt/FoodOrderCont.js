@@ -126,12 +126,34 @@ const createFoodOrder = async (req, res) => {
     }
 
     const refNumbers = savedOrders.map((o) => o.orderCode).join(", ");
-    const newNotification = new NotifiModel({
-      userId,
-      title: savedOrders.length > 1 ? "New Food Orders" : "New Food Order",
-      message: `A new food order has been placed. Your Ref Number(s): ${refNumbers}.`,
-    });
-    await newNotification.save();
+    try {
+      const newNotification = new NotifiModel({
+        userId,
+        title: savedOrders.length > 1 ? "New Food Orders" : "New Food Order",
+        message: `A new food order has been placed. Your Ref Number(s): ${refNumbers}.`,
+      });
+      await newNotification.save();
+
+      // Notify managers
+      const managers = await User.find({
+        Role: "Operation Manager 1 (Restraunt,Liquor)",
+      }).select("_id");
+
+      if (managers.length > 0) {
+        await NotifiModel.insertMany(
+          managers.map((manager) => ({
+            userId: manager._id,
+            title:
+              savedOrders.length > 1 ? "New Food Orders" : "New Food Order",
+            message: `${fullName} placed a new food order. Ref Number(s): ${refNumbers}.`,
+          })),
+        );
+      } else {
+        console.warn("No managers found for new order notification");
+      }
+    } catch (notifError) {
+      console.error("Notification error (non-blocking):", notifError);
+    }
 
     res.status(201).json(savedOrders.length > 1 ? savedOrders : savedOrders[0]);
   } catch (error) {
@@ -226,12 +248,29 @@ const editfoodOrder = async (req, res) => {
       return res.status(404).json({ message: "Food order not found" });
     }
 
-    const newNotification = new NotifiModel({
-      userId: updatedOrder.userId,
-      title: "Food Order Updated",
-      message: `Your food order with Ref Number: ${updatedOrder.orderCode} has been updated.`,
-    });
-    await newNotification.save();
+    try {
+      await NotifiModel.create({
+        userId: updatedOrder.userId,
+        title: "Food Order Updated",
+        message: `Your food order with Ref Number: ${updatedOrder.orderCode} has been updated.`,
+      });
+
+      const managers = await User.find({
+        Role: "Operation Manager 1 (Restraunt,Liquor)",
+      }).select("_id");
+
+      if (managers.length > 0) {
+        await NotifiModel.insertMany(
+          managers.map((manager) => ({
+            userId: manager._id,
+            title: "Food Order Updated",
+            message: `The food order ${updatedOrder.orderCode} has been updated. Please review the changes.`,
+          })),
+        );
+      }
+    } catch (notifError) {
+      console.error("Notification error (non-blocking):", notifError);
+    }
 
     res.status(200).json(updatedOrder);
   } catch (error) {

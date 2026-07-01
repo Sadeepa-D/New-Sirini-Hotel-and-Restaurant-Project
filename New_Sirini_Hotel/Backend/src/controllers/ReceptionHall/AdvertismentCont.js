@@ -1,6 +1,7 @@
 const Adevertisment = require("../../models/Reception/AdvertisingModel");
 const User = require("../../models/UserModel");
 const NotifiModel = require("../../models/NotifiModel");
+const { sendAdvertismentEmail } = require("../EmailCont");
 const cloudinary = require("cloudinary");
 
 const createAdvertisment = async (req, res) => {
@@ -25,6 +26,7 @@ const createAdvertisment = async (req, res) => {
       category,
       description,
       portfolio,
+      EmailAddress,
       price,
       location,
       TPNumber,
@@ -35,6 +37,7 @@ const createAdvertisment = async (req, res) => {
       !NIC ||
       !category ||
       !description ||
+      !EmailAddress ||
       !price ||
       !location ||
       !TPNumber
@@ -76,18 +79,54 @@ const createAdvertisment = async (req, res) => {
       image,
       imagePublicId,
       portfolio,
+      EmailAddress,
       price,
       location,
       TPNumber,
       status: "pending",
     });
     await newAdvertisment.save();
-    const newnotification = new NotifiModel({
-      userId,
-      title: "Advertisment Created Pending Approval",
-      message: `Your advertisment ${BuissnesName} is created and pending for approval. We will contact you soon.`,
+
+    await sendAdvertismentEmail({
+      email: EmailAddress,
+      BuissnesName,
+      BuissnessOwnerName,
+      NIC,
+      category,
+      description,
+      price,
+      location,
+      TPNumber,
+      newAdvertisment,
     });
-    await newnotification.save();
+
+    try {
+      const newnotification = new NotifiModel({
+        userId,
+        title: "Advertisment Created and Pending for Approval",
+        message: `Your advertisment ${BuissnesName} is created and pending for approval. We will contact you soon.`,
+      });
+      await newnotification.save();
+
+      const managers = await User.find({
+        Role: "Operation Manager 2 (Reception, Room)",
+      }).select("_id");
+
+      if (managers.length > 0) {
+        await NotifiModel.insertMany(
+          managers.map((manager) => ({
+            userId: manager._id,
+            title: "New Advertisment Pending Approval",
+            message: `${BuissnesName} (owner: ${BuissnessOwnerName}) submitted a new advertisment. Please review and approve.`,
+          })),
+        );
+      } else {
+        console.warn("No managers found for new advertisment notification");
+      }
+    } catch (notifError) {
+      console.error("Notification error (non-blocking):", notifError);
+    }
+
     res.status(201).json({
       message: "Advertisment created successfully",
     });
@@ -196,6 +235,19 @@ const updateAdvertisment = async (req, res) => {
       message: "Advertisment updated successfully",
       advertisment: updatedAdvertisment,
     });
+    const managers = await User.find({
+      Role: "Operation Manager 2 (Reception, Room)",
+    }).select("_id");
+    await Promise.all(
+      managers.map(async (manager) => {
+        const newnotification = new NotifiModel({
+          userId: manager._id,
+          title: "Advertisment Updated",
+          message: `The advertisment ${updatedAdvertisment.BuissnesName} has been updated. Please review the changes.`,
+        });
+        await newnotification.save();
+      }),
+    );
   } catch (error) {
     console.error("Error updating advertisment:", error);
     const statusCode = error.name === "ValidationError" ? 400 : 500;
