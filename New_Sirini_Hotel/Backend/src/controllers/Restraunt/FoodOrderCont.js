@@ -49,7 +49,7 @@ const createFoodOrder = async (req, res) => {
     if (!user.Phone) {
       return res.status(400).json({
         message:
-          "Please update your profile with a phone number before creating an advertisement.",
+          "Please update your profile with a phone number before creating Order.",
       });
     }
     const { items, fullName, email, phoneNumber, pickupDate, pickupTime } =
@@ -159,7 +159,7 @@ const editfoodOrder = async (req, res) => {
     if (!user.Phone) {
       return res.status(400).json({
         message:
-          "Please update your profile with a phone number before creating an advertisement.",
+          "Please update your profile with a phone number before Updating Order.",
       });
     }
     const { id } = req.params;

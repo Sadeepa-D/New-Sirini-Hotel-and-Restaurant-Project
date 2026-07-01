@@ -115,7 +115,7 @@ const updateReceptionAppointment = async (req, res) => {
     if (!user.Phone) {
       return res.status(400).json({
         message:
-          "Please update your profile with a phone number before Updating an advertisement.",
+          "Please update your profile with a phone number before Updating an Appointment.",
       });
     }
     const { id } = req.params;

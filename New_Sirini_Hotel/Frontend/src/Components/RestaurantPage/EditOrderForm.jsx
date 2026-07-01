@@ -33,7 +33,7 @@ export default function EditOrderForm({ item = {}, editingOrder, onClose }) {
       }
       if (!currentuser?.phone) {
         toast.error(
-          "Please add a phone number to your profile before submitting an advertisement.",
+          "Please add a phone number to your profile before Updating the order.",
         );
         return;
       }
