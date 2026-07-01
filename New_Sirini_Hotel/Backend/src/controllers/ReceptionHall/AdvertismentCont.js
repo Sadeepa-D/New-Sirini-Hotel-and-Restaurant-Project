@@ -11,12 +11,10 @@ const createAdvertisment = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
     if (!user.Phone) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "Please update your profile with a phone number before creating an advertisement.",
-        });
+      return res.status(400).json({
+        message:
+          "Please update your profile with a phone number before creating an advertisement.",
+      });
     }
 
     const {
@@ -147,6 +145,17 @@ const deleteAdvertisment = async (req, res) => {
 
 const updateAdvertisment = async (req, res) => {
   try {
+    const userId = req.userData?.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (!user.Phone) {
+      return res.status(400).json({
+        message:
+          "Please update your profile with a phone number before Updating an Advertisment.",
+      });
+    }
     const { id } = req.params;
     if (!id) {
       return res.status(400).json({ message: "Advertisment ID is required" });

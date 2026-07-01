@@ -69,21 +69,6 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const userDataStr = localStorage.getItem("userData");
-    let currentuser = null;
-    if (userDataStr) {
-      try {
-        currentuser = JSON.parse(userDataStr);
-      } catch (e) {
-        console.error("Error parsing user data from localStorage:", e);
-      }
-      if (!currentuser?.phone) {
-        toast.error(
-          "Please add a phone number to your profile before submitting an advertisement.",
-        );
-        return;
-      }
-    }
     onClose();
     const loadingtoast = toast.loading(
       editData
@@ -163,7 +148,7 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
           : "";
 
         toast.error(
-          `Failed: ${errorMessage}${errorDetails ? `\n${errorDetails}` : ""}`,
+          `${errorMessage}${errorDetails ? `\n${errorDetails}` : ""}`,
         );
       } else if (error.request) {
         console.error("No response received:", error.request);

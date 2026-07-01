@@ -24,7 +24,8 @@ const createReceptionAppointment = async (req, res) => {
     }
     if (!user.Phone) {
       return res.status(400).json({
-        message: "User phone number is required to create an appointment",
+        message:
+          "Please update your profile with a phone number before Submit an Appointment.",
       });
     }
     const { name, email, phone, date, noOfGuests, eventType } = req.body;
