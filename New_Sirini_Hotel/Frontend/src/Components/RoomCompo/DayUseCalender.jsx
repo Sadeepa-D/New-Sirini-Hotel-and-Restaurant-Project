@@ -307,16 +307,22 @@ const DayUseCalender = ({
         <div className="mb-4 bg-gray-50/50 p-2.5 rounded-xl border border-gray-100 flex items-center justify-center gap-6 animate-in fade-in slide-in-from-bottom-2 duration-300 text-center">
           {selectedDate && (
             <div className="flex-1">
-              <span className="block text-[8px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Check-In</span>
+              <span className="block text-[8px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">
+                {isFullDay ? "Check-In (4:00 PM)" : "Check-In (12:00 PM)"}
+              </span>
               <span className="block text-xs font-bold text-gray-900">{selectedDate}</span>
             </div>
           )}
-          {isFullDay && selectedCheckOut && (
+          {(isFullDay ? selectedCheckOut : selectedDate) && (
             <>
               <div className="h-6 w-px bg-gray-200" />
               <div className="flex-1">
-                <span className="block text-[8px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Check-Out</span>
-                <span className="block text-xs font-bold text-gray-900">{selectedCheckOut}</span>
+                <span className="block text-[8px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">
+                  {isFullDay ? "Check-Out (10:00 AM)" : "Check-Out (3:00 PM)"}
+                </span>
+                <span className="block text-xs font-bold text-gray-900">
+                  {isFullDay ? selectedCheckOut : selectedDate}
+                </span>
               </div>
             </>
           )}
