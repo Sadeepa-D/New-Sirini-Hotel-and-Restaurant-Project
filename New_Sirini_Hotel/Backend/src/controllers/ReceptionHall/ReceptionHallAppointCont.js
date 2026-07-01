@@ -1,4 +1,5 @@
 const ReceptionAppointment = require("../../models/Reception/ReciptionAppointModel");
+const User = require("../../models/UserModel");
 const { sendAppointmentEmail } = require("../EmailCont");
 const NotifiModel = require("../../models/NotifiModel");
 
@@ -17,6 +18,15 @@ const genarateReceptionAppointmentCode = async () => {
 const createReceptionAppointment = async (req, res) => {
   try {
     const userId = req.userData.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (!user.Phone) {
+      return res.status(400).json({
+        message: "User phone number is required to create an appointment",
+      });
+    }
     const { name, email, phone, date, noOfGuests, eventType } = req.body;
     if (!name || !email || !phone || !date || !noOfGuests || !eventType) {
       return res.status(400).json({ message: "All fields are required" });
@@ -97,6 +107,17 @@ const deleteReceptionAppointment = async (req, res) => {
 };
 const updateReceptionAppointment = async (req, res) => {
   try {
+    const userId = req.userData.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (!user.Phone) {
+      return res.status(400).json({
+        message:
+          "Please update your profile with a phone number before Updating an advertisement.",
+      });
+    }
     const { id } = req.params;
     const updates = req.body;
     if (!id) {

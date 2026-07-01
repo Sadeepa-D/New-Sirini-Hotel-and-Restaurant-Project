@@ -1,4 +1,6 @@
 const FoodOrder = require("../../models/Restraunt/FoodItemBookModel");
+const User = require("../../models/UserModel");
+
 const {
   sendRestaurantOrderEmail,
   sendmultiplerestrauntitemsEmail,
@@ -40,6 +42,16 @@ const GenarateFoodOrderCode = async () => {
 const createFoodOrder = async (req, res) => {
   try {
     const userId = req.userData.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (!user.Phone) {
+      return res.status(400).json({
+        message:
+          "Please update your profile with a phone number before creating an advertisement.",
+      });
+    }
     const { items, fullName, email, phoneNumber, pickupDate, pickupTime } =
       req.body;
 
@@ -139,6 +151,17 @@ const getFoodOrders = async (req, res) => {
 };
 const editfoodOrder = async (req, res) => {
   try {
+    const userId = req.userData.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (!user.Phone) {
+      return res.status(400).json({
+        message:
+          "Please update your profile with a phone number before creating an advertisement.",
+      });
+    }
     const { id } = req.params;
     const {
       fullName,
