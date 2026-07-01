@@ -127,7 +127,7 @@ const createRoomBooking = async (req, res) => {
       await newNotification.save();
 
       const managers = await User.find({
-        Role: "Operation Manager 4 (Rooms)", // TODO: replace with the actual role name for room booking managers
+        Role: "Operation Manager 2 (Reception, Room)",
       }).select("_id");
 
       if (managers.length > 0) {
