@@ -48,7 +48,9 @@ export default function BookingForm({ editData = null, onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const loadingtoast= toast.loading(editData ? "Updating booking..." : "Submitting booking...");
+    const loadingtoast = toast.loading(
+      editData ? "Updating booking..." : "Submitting booking...",
+    );
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -103,6 +105,7 @@ export default function BookingForm({ editData = null, onSuccess }) {
         }
       }
     } catch (error) {
+      toast.dismiss(loadingtoast);
       console.error("Error submitting booking:", error);
       // Handle the 401 specifically to help the user
       if (error.response && error.response.status === 401) {

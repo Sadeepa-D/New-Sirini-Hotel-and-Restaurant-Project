@@ -64,46 +64,45 @@ export default function OrderForm({ item, cartItems, onClose }) {
       let userId = null;
       if (userDataStr) {
         try {
-          const userData = JSON.parse(userDataStr);
-          userId = userData._id;
+          userId = JSON.parse(userDataStr)._id;
         } catch (e) {}
       }
 
-      // Save all cart items as separate orders
-      const orderPromises = items.map((cartItem) => {
+      const orderItems = items.map((cartItem) => {
         const itemPrice =
           cartItem.portion === "Full" && cartItem.full_price
             ? cartItem.full_price
             : cartItem.normal_price;
-
+        const quantity = cartItem.quantity || 1;
         const portionValue = cartItem.has_portions
           ? cartItem.portion || "Normal"
           : "Normal";
-
-        const orderData = {
-          fullName: form.name,
-          email: form.email,
-          phoneNumber: form.phone.replace(/\D/g, ""),
-          pickupDate: form.pickupDate,
-          pickupTime: form.pickupTime,
-          quantity: cartItem.quantity || 1,
-          portion: portionValue,
+        return {
           foodName: cartItem.name,
-          userId: userId,
-          Price: itemPrice * cartItem.quantity,
+          quantity,
+          portion: portionValue,
+          Price: itemPrice * quantity,
         };
-        return axios.post(
-          `${import.meta.env.VITE_API_URL}/api/restraunt/placeorder`,
-          orderData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
       });
 
-      await Promise.all(orderPromises);
+      const orderData = {
+        fullName: form.name,
+        email: form.email,
+        phoneNumber: form.phone.replace(/\D/g, ""),
+        pickupDate: form.pickupDate,
+        pickupTime: form.pickupTime,
+        userId,
+        items: orderItems,
+      };
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/restraunt/placeorder`,
+        orderData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
       toast.success(`Order placed successfully!`);
       onClose(true);
     } catch (error) {

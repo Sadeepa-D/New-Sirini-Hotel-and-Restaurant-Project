@@ -1,5 +1,8 @@
 const FoodOrder = require("../../models/Restraunt/FoodItemBookModel");
-const { sendRestaurantOrderEmail } = require("../EmailCont");
+const {
+  sendRestaurantOrderEmail,
+  sendmultiplerestrauntitemsEmail,
+} = require("../EmailCont");
 const NotifiModel = require("../../models/NotifiModel");
 
 const getCurrentSLTime = () => {
@@ -37,26 +40,16 @@ const GenarateFoodOrderCode = async () => {
 const createFoodOrder = async (req, res) => {
   try {
     const userId = req.userData.id;
-    const {
-      foodName,
-      fullName,
-      email,
-      quantity,
-      phoneNumber,
-      pickupDate,
-      pickupTime,
-      Price,
-      portion,
-    } = req.body;
+    const { items, fullName, email, phoneNumber, pickupDate, pickupTime } =
+      req.body;
 
     if (
       !fullName ||
       !email ||
-      !quantity ||
       !phoneNumber ||
       !pickupDate ||
       !pickupTime ||
-      !portion
+      !items?.length
     ) {
       return res.status(400).json({ message: "All fields are required" });
     }
@@ -75,44 +68,60 @@ const createFoodOrder = async (req, res) => {
           "Selected time has already passed for today. Please choose a future time.",
       });
     }
+    const orderCode = await GenarateFoodOrderCode();
+    const savedOrders = [];
+    for (const item of items) {
+      const newFoodOrder = new FoodOrder({
+        userId,
+        foodName: item.foodName,
+        fullName,
+        email,
+        quantity: item.quantity,
+        phoneNumber,
+        pickupDate,
+        pickupTime,
+        orderCode,
+        status: "Pending",
+        Price: item.Price,
+        portion: item.portion,
+      });
+      savedOrders.push(await newFoodOrder.save());
+    }
 
-    const newFoodOrder = new FoodOrder({
-      userId,
-      foodName,
-      fullName,
-      email,
-      quantity,
-      phoneNumber,
-      pickupDate,
-      pickupTime,
-      orderCode: await GenarateFoodOrderCode(),
-      status: "Pending",
-      Price,
-      portion,
-    });
-    const savedOrder = await newFoodOrder.save();
+    if (savedOrders.length > 1) {
+      await sendmultiplerestrauntitemsEmail({
+        email,
+        fullName,
+        phoneNumber,
+        pickupDate,
+        pickupTime,
+        orders: savedOrders,
+      });
+    } else {
+      const savedOrder = savedOrders[0];
+      await sendRestaurantOrderEmail({
+        email,
+        fullName,
+        savedOrder,
+        foodName: savedOrder.foodName,
+        portion: savedOrder.portion,
+        quantity: savedOrder.quantity,
+        Price: savedOrder.Price,
+        pickupDate,
+        pickupTime,
+        phoneNumber,
+      });
+    }
 
-    await sendRestaurantOrderEmail({
-      email,
-      fullName,
-      savedOrder,
-      foodName,
-      portion,
-      quantity,
-      Price,
-      pickupDate,
-      pickupTime,
-      phoneNumber,
-    });
-
+    const refNumbers = savedOrders.map((o) => o.orderCode).join(", ");
     const newNotification = new NotifiModel({
       userId,
-      title: "New Food Order",
-      message: `A new food order has been placed. Your Ref Number: ${savedOrder.orderCode}.`,
+      title: savedOrders.length > 1 ? "New Food Orders" : "New Food Order",
+      message: `A new food order has been placed. Your Ref Number(s): ${refNumbers}.`,
     });
     await newNotification.save();
 
-    res.status(201).json(savedOrder);
+    res.status(201).json(savedOrders.length > 1 ? savedOrders : savedOrders[0]);
   } catch (error) {
     res.status(500).json({ message: "Failed to create food order", error });
   }

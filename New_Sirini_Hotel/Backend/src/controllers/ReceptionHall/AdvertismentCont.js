@@ -1,9 +1,24 @@
 const Adevertisment = require("../../models/Reception/AdvertisingModel");
+const User = require("../../models/UserModel");
 const cloudinary = require("cloudinary");
 
 const createAdvertisment = async (req, res) => {
   try {
     const userId = req.userData?.id;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (!user.phone) {
+      return res
+        .status(400)
+        .json({
+          message:
+            "Please update your profile with a phone number before creating an advertisement.",
+        });
+    }
+
     const {
       BuissnesName,
       BuissnessOwnerName,
