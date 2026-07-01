@@ -5,6 +5,7 @@ import {
   Quote,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Trash2,
 } from "lucide-react";
 import axios from "axios";
@@ -16,6 +17,7 @@ const ShowFeedback = () => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [userRole, setUserRole] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+  const [selectedRoomFilter, setSelectedRoomFilter] = useState("All");
   const scrollContainerRef = React.useRef(null);
   const VITE_API_URL = import.meta.env.VITE_API_URL;
 
@@ -118,6 +120,36 @@ const ShowFeedback = () => {
     }
   };
 
+  const uniqueRooms = [
+    "All",
+    ...Array.from(
+      new Set(testimonials.map((t) => t.roomNumber).filter(Boolean))
+    ).sort((a, b) =>
+      String(a).localeCompare(String(b), undefined, { numeric: true })
+    ),
+  ];
+
+  const showFilter = uniqueRooms.length > 2;
+
+  const filteredTestimonials =
+    selectedRoomFilter === "All"
+      ? testimonials
+      : testimonials.filter(
+          (t) => String(t.roomNumber) === String(selectedRoomFilter)
+        );
+
+  // Reset filter to "All" if selected room no longer has testimonials (e.g. after deletion)
+  useEffect(() => {
+    if (
+      selectedRoomFilter !== "All" &&
+      !testimonials.some(
+        (t) => String(t.roomNumber) === String(selectedRoomFilter)
+      )
+    ) {
+      setSelectedRoomFilter("All");
+    }
+  }, [testimonials, selectedRoomFilter]);
+
   if (loading) {
     return (
       <section className="py-16 px-6 bg-gray-50 font-sans">
@@ -164,10 +196,10 @@ const ShowFeedback = () => {
   }
 
   return (
-    <section className="py-16 px-6 bg-linear-to-b from-gray-50 to-white font-sans">
+    <section className="py-8 px-6 bg-linear-to-b from-gray-50 to-white font-sans">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-6">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Quote size={24} className="text-amber-500" />
             <h2 className="text-3xl md:text-4xl font-serif italic text-gray-900">
@@ -179,6 +211,32 @@ const ShowFeedback = () => {
             unforgettable stays at New Sirini Hotel.
           </p>
         </div>
+
+        {/* Filter Section */}
+        {showFilter && (
+          <div className="flex flex-col items-center mb-8">
+            <label htmlFor="room-filter" className="text-amber-500 text-[10px] font-bold uppercase tracking-widest mb-2.5">
+            Select The Room
+            </label>
+            <div className="relative inline-block w-48">
+              <select
+                id="room-filter"
+                value={selectedRoomFilter}
+                onChange={(e) => setSelectedRoomFilter(e.target.value)}
+                className="w-full appearance-none bg-white text-gray-800 text-[11px] font-black uppercase tracking-wider pl-5 pr-10 py-2.5 rounded-full border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent cursor-pointer hover:border-amber-300 hover:text-amber-600 transition-all duration-300"
+              >
+                {uniqueRooms.map((roomNum) => (
+                  <option key={roomNum} value={roomNum} className="text-gray-700 bg-white">
+                    {roomNum === "All" ? "All Rooms" : `Room ${roomNum}`}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-amber-500">
+                <ChevronDown size={14} className="stroke-[3]" />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Testimonials Slider */}
         <div className="relative group">
@@ -197,10 +255,10 @@ const ShowFeedback = () => {
             onScroll={handleScroll}
             className="flex overflow-x-auto gap-6 pb-4 px-12 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth snap-x snap-mandatory"
           >
-            {testimonials.map((testimonial, index) => (
+            {filteredTestimonials.map((testimonial, index) => (
               <div
                 key={testimonial._id || index}
-                className="group/card bg-white text-slate-900 rounded-[22px] border border-gray-200 shadow-sm hover:shadow-xl hover:border-amber-200 hover:-translate-y-1 transition-all duration-300 overflow-hidden p-6 flex flex-col shrink-0 w-80 sm:w-96 snap-start"
+                className="group/card bg-white text-slate-900 rounded-[22px] border border-gray-200 shadow-sm hover:shadow-xl hover:border-amber-200 hover:-translate-y-1 transition-all duration-300 overflow-hidden p-4 sm:p-5 flex flex-col shrink-0 w-80 sm:w-96 snap-start"
               >
                 <div className="flex items-start gap-3">
                   <div className="h-12 w-12 rounded-full bg-amber-500 text-black flex items-center justify-center text-sm font-semibold shadow-sm shrink-0">
@@ -228,7 +286,7 @@ const ShowFeedback = () => {
                   )}
                 </div>
 
-                <div className="mt-4 flex items-center gap-1 text-amber-500">
+                <div className="mt-2.5 flex items-center gap-1 text-amber-500">
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
@@ -242,11 +300,11 @@ const ShowFeedback = () => {
                   ))}
                 </div>
 
-                <p className="mt-4 text-slate-700 text-[22px] sm:text-[26px] leading-[1.35] font-serif font-medium">
+                <p className="mt-2.5 text-slate-700 text-[15px] sm:text-[16px] leading-normal font-serif font-medium">
                   {testimonial.comment}
                 </p>
 
-                <div className="mt-6 pt-4 border-t border-gray-200 text-gray-500 text-sm">
+                <div className="mt-4 pt-3 border-t border-gray-200 text-gray-500 text-sm">
                   {testimonial.timestamp}
                 </div>
               </div>
@@ -264,8 +322,8 @@ const ShowFeedback = () => {
         </div>
 
         {/* CTA */}
-        <div className="text-center mt-12">
-          <p className="text-gray-600 text-sm mb-4">
+        <div className="text-center mt-8">
+          <p className="text-gray-600 text-sm mb-3">
             Share your experience and help us improve
           </p>
           <div className="h-px w-20 bg-linear-to-r from-transparent via-amber-500 to-transparent mx-auto" />
