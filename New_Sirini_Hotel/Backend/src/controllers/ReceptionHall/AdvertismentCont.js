@@ -85,7 +85,7 @@ const createAdvertisment = async (req, res) => {
     const newnotification = new NotifiModel({
       userId,
       title: "Advertisment Created Pending Approval",
-      message: `Your advertisment ${BuissnesName} is created and pending for approval`,
+      message: `Your advertisment ${BuissnesName} is created and pending for approval. We will contact you soon.`,
     });
     await newnotification.save();
     res.status(201).json({
@@ -227,7 +227,7 @@ const toggleAdvertismentStatustoApproved = async (req, res) => {
     const newnotification = new NotifiModel({
       userId: updatedAdvertisment.userId,
       title: "Advertisment Approved",
-      message: `Your advertisment ${updatedAdvertisment.BuissnesName} is approved`,
+      message: `Your advertisment ${updatedAdvertisment.BuissnesName} is Live Now Visit the advertisment section to see your advertisment`,
     });
     await newnotification.save();
   } catch (error) {
@@ -260,7 +260,7 @@ const toggleAdvertismentStatustoRejected = async (req, res) => {
     const newnotification = new NotifiModel({
       userId: updatedAdvertisment.userId,
       title: "Advertisment Rejected",
-      message: `Your advertisment ${updatedAdvertisment.BuissnesName} is rejected`,
+      message: `Your advertisment ${updatedAdvertisment.BuissnesName} is rejected. Please Contact admin for more details.`,
     });
     await newnotification.save();
   } catch (error) {
