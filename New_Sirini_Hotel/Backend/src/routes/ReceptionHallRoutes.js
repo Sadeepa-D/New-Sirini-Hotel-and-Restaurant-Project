@@ -39,7 +39,7 @@ router.put(
 router.put(
   "/appointment/update/canceled/:id",
   authmiddleware,
-  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)","User","Operation Manager 1 (Restraunt,Liquor)"]),
   ReceptionHallAppoint.updateReceptionAppointmentasCancelled,
 );
 router.get(
