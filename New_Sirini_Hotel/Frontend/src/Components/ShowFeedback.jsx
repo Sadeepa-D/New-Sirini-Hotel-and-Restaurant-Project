@@ -123,9 +123,9 @@ const ShowFeedback = () => {
   const uniqueRooms = [
     "All",
     ...Array.from(
-      new Set(testimonials.map((t) => t.roomNumber).filter(Boolean))
+      new Set(testimonials.map((t) => t.roomNumber).filter(Boolean)),
     ).sort((a, b) =>
-      String(a).localeCompare(String(b), undefined, { numeric: true })
+      String(a).localeCompare(String(b), undefined, { numeric: true }),
     ),
   ];
 
@@ -135,7 +135,7 @@ const ShowFeedback = () => {
     selectedRoomFilter === "All"
       ? testimonials
       : testimonials.filter(
-          (t) => String(t.roomNumber) === String(selectedRoomFilter)
+          (t) => String(t.roomNumber) === String(selectedRoomFilter),
         );
 
   // Reset filter to "All" if selected room no longer has testimonials (e.g. after deletion)
@@ -143,7 +143,7 @@ const ShowFeedback = () => {
     if (
       selectedRoomFilter !== "All" &&
       !testimonials.some(
-        (t) => String(t.roomNumber) === String(selectedRoomFilter)
+        (t) => String(t.roomNumber) === String(selectedRoomFilter),
       )
     ) {
       setSelectedRoomFilter("All");
@@ -215,8 +215,11 @@ const ShowFeedback = () => {
         {/* Filter Section */}
         {showFilter && (
           <div className="flex flex-col items-center mb-8">
-            <label htmlFor="room-filter" className="text-amber-500 text-[10px] font-bold uppercase tracking-widest mb-2.5">
-            Select The Room
+            <label
+              htmlFor="room-filter"
+              className="text-amber-500 text-[10px] font-bold uppercase tracking-widest mb-2.5"
+            >
+              Select The Room
             </label>
             <div className="relative inline-block w-48">
               <select
@@ -226,7 +229,11 @@ const ShowFeedback = () => {
                 className="w-full appearance-none bg-white text-gray-800 text-[11px] font-black uppercase tracking-wider pl-5 pr-10 py-2.5 rounded-full border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent cursor-pointer hover:border-amber-300 hover:text-amber-600 transition-all duration-300"
               >
                 {uniqueRooms.map((roomNum) => (
-                  <option key={roomNum} value={roomNum} className="text-gray-700 bg-white">
+                  <option
+                    key={roomNum}
+                    value={roomNum}
+                    className="text-gray-700 bg-white"
+                  >
                     {roomNum === "All" ? "All Rooms" : `Room ${roomNum}`}
                   </option>
                 ))}
@@ -253,7 +260,15 @@ const ShowFeedback = () => {
           <div
             ref={scrollContainerRef}
             onScroll={handleScroll}
-            className="flex overflow-x-auto gap-6 pb-4 px-12 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth snap-x snap-mandatory"
+            className="flex overflow-x-auto gap-6 pb-6 px-12 scroll-smooth snap-x snap-mandatory 
+                       [&::-webkit-scrollbar]:h-2 
+                       [&::-webkit-scrollbar-track]:bg-amber-500/10 
+                       [&::-webkit-scrollbar-track]:rounded-full 
+                       [&::-webkit-scrollbar-thumb]:bg-amber-500/60 
+                       [&::-webkit-scrollbar-thumb]:rounded-full 
+                       hover:[&::-webkit-scrollbar-thumb]:bg-amber-600 
+                       [scrollbar-width:thin] 
+                       [scrollbar-color:#f59e0b_rgba(245,158,11,0.1)]"
           >
             {filteredTestimonials.map((testimonial, index) => (
               <div
