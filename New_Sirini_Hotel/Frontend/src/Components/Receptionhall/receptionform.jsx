@@ -113,7 +113,9 @@ export default function BookingForm({ editData = null, onSuccess }) {
           "Your session has expired. Please log out and log back in.",
         );
       } else {
-        toast.error("Failed to process booking request. Please try again.");
+        toast.error(
+          "Failed to process booking request. Check Your Profile Details and Please try again.",
+        );
       }
     }
   };
