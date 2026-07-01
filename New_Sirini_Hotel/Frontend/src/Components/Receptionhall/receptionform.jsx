@@ -217,5 +217,4 @@ export default function BookingForm({ editData = null, onSuccess }) {
       </div>
     </section>
   );
-  
 }
