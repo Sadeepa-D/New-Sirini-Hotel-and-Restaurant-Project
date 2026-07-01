@@ -69,12 +69,28 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const userDataStr = localStorage.getItem("userData");
+    let currentuser = null;
+    if (userDataStr) {
+      try {
+        currentuser = JSON.parse(userDataStr);
+      } catch (e) {
+        console.error("Error parsing user data from localStorage:", e);
+      }
+      if (!currentuser?.phone) {
+        toast.error(
+          "Please add a phone number to your profile before submitting an advertisement.",
+        );
+        return;
+      }
+    }
     onClose();
     const loadingtoast = toast.loading(
       editData
         ? "Updating advertisement..."
         : "Submitting your advertisement request...",
     );
+
     try {
       const submitData = new FormData();
       submitData.append("BuissnesName", formData.BuissnesName);
@@ -133,21 +149,30 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
     } catch (error) {
       toast.dismiss(loadingtoast);
       console.error("Advertisement submission error:", error);
-      
+
       // Log detailed error information
       if (error.response) {
         console.error("Error response data:", error.response.data);
         console.error("Error status:", error.response.status);
-        const errorMessage = error.response.data?.error || error.response.data?.message || "Server error occurred";
-        const errorDetails = error.response.data?.details ? JSON.stringify(error.response.data.details, null, 2) : "";
-        
-        toast.error(`Failed: ${errorMessage}${errorDetails ? `\n${errorDetails}` : ""}`);
+        const errorMessage =
+          error.response.data?.error ||
+          error.response.data?.message ||
+          "Server error occurred";
+        const errorDetails = error.response.data?.details
+          ? JSON.stringify(error.response.data.details, null, 2)
+          : "";
+
+        toast.error(
+          `Failed: ${errorMessage}${errorDetails ? `\n${errorDetails}` : ""}`,
+        );
       } else if (error.request) {
         console.error("No response received:", error.request);
         toast.error("No response from server. Check your connection.");
       } else {
         console.error("Error message:", error.message);
-        toast.error(error.message || "Failed to submit advertisement. Please try again.");
+        toast.error(
+          error.message || "Failed to submit advertisement. Please try again.",
+        );
       }
     } finally {
       toast.dismiss(loadingtoast);
