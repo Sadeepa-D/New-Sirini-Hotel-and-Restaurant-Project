@@ -82,12 +82,33 @@ const createAdvertisment = async (req, res) => {
       status: "pending",
     });
     await newAdvertisment.save();
-    const newnotification = new NotifiModel({
-      userId,
-      title: "Advertisment Created Pending Approval",
-      message: `Your advertisment ${BuissnesName} is created and pending for approval. We will contact you soon.`,
-    });
-    await newnotification.save();
+    try {
+      const newnotification = new NotifiModel({
+        userId,
+        title: "Advertisment Created Pending Approval",
+        message: `Your advertisment ${BuissnesName} is created and pending for approval. We will contact you soon.`,
+      });
+      await newnotification.save();
+
+      const managers = await User.find({
+        Role: "Operation Manager 2 (Reception, Room)",
+      }).select("_id");
+
+      if (managers.length > 0) {
+        await NotifiModel.insertMany(
+          managers.map((manager) => ({
+            userId: manager._id,
+            title: "New Advertisment Pending Approval",
+            message: `${BuissnesName} (owner: ${BuissnessOwnerName}) submitted a new advertisment. Please review and approve.`,
+          })),
+        );
+      } else {
+        console.warn("No managers found for new advertisment notification");
+      }
+    } catch (notifError) {
+      console.error("Notification error (non-blocking):", notifError);
+    }
+
     res.status(201).json({
       message: "Advertisment created successfully",
     });
