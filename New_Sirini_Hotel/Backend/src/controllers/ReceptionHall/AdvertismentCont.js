@@ -196,6 +196,19 @@ const updateAdvertisment = async (req, res) => {
       message: "Advertisment updated successfully",
       advertisment: updatedAdvertisment,
     });
+    const managers = await User.find({
+      Role: "Operation Manager 2 (Reception, Room)",
+    }).select("_id");
+    await Promise.all(
+      managers.map(async (manager) => {
+        const newnotification = new NotifiModel({
+          userId: manager._id,
+          title: "Advertisment Updated",
+          message: `The advertisment ${updatedAdvertisment.BuissnesName} has been updated. Please review the changes.`,
+        });
+        await newnotification.save();
+      }),
+    );
   } catch (error) {
     console.error("Error updating advertisment:", error);
     const statusCode = error.name === "ValidationError" ? 400 : 500;

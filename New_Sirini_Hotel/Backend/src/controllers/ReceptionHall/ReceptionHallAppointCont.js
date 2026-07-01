@@ -136,6 +136,19 @@ const updateReceptionAppointment = async (req, res) => {
       message: "Appointment updated successfully",
       appointment: updatedAppointment,
     });
+    const managers = await User.find({
+      Role: "Operation Manager 2 (Reception, Room)",
+    }).select("_id");
+    await Promise.all(
+      managers.map(async (manager) => {
+        const newnotification = new NotifiModel({
+          userId: manager._id,
+          title: "Reception Appointment Updated",
+          message: `Reception appointment for ${updatedAppointment.eventType} Ref: ${updatedAppointment.appointcode} has been updated.`,
+        });
+        await newnotification.save();
+      }),
+    );
   } catch (error) {
     console.error("Error updating reception appointment:", error);
     res.status(500).json({ message: "Server error" });
