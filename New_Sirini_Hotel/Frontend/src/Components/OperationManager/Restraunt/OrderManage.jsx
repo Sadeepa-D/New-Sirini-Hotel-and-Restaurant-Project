@@ -28,10 +28,6 @@ const OrderManage = () => {
     message: "",
   });
 
-  // Pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const cardsPerPage = 5;
-
   const VITE_URL = import.meta.env.VITE_API_URL;
 
   const fetchOrders = async () => {
@@ -55,10 +51,7 @@ const OrderManage = () => {
     fetchOrders();
   }, []);
 
-  // Reset page when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [activeTab, searchTerm, sortOrder]);
+
 
   const handleStatusChange = async (id, status) => {
     try {
@@ -166,16 +159,11 @@ const OrderManage = () => {
     return list;
   };
 
-  // Pagination logic
-  const filteredOrders = getFilteredHistory();
-  const indexOfLast = currentPage * cardsPerPage;
-  const indexOfFirst = indexOfLast - cardsPerPage;
-  const currentOrders = filteredOrders.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.ceil(filteredOrders.length / cardsPerPage);
+  const currentOrders = getFilteredHistory();
 
   const HistoryCard = ({ order }) => (
     <div
-      className={`p-5 rounded-[1.75rem] shadow-sm border transition-all duration-300 flex flex-col h-full group ${
+      className={`p-4 sm:p-5 rounded-[1.75rem] shadow-sm border transition-all duration-300 flex flex-col h-full group ${
         order.status === "delete"
           ? "bg-red-50/30 border-red-100 hover:border-red-200"
           : order.status === "Overdue"
@@ -183,32 +171,25 @@ const OrderManage = () => {
             : "bg-white border-gray-100 hover:shadow-xl hover:border-amber-200/50"
       }`}
     >
-      {/* Overdue Alert */}
-      {order.status === "Overdue" && (
-        <div className="absolute top-4 right-4 z-10">
-          <span className="bg-orange-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-lg shadow-orange-500/20 uppercase tracking-widest animate-pulse">
-            Overdue
-          </span>
-        </div>
-      )}
+      
       {/* Customer Header */}
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300">
+      <div className="flex justify-between items-start mb-4 gap-2">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+          <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shrink-0">
             <User size={18} />
           </div>
-          <div className="flex flex-col">
-            <h5 className="font-bold text-gray-900 text-[13px] leading-tight line-clamp-1">
+          <div className="flex flex-col min-w-0 flex-1">
+            <h5 className="font-bold text-gray-900 text-[13px] leading-tight line-clamp-1 break-words">
               {order.fullName}
             </h5>
-            <span className="text-[12px] text-gray-600 font-medium">
+            <span className="text-[12px] text-gray-600 font-medium truncate">
               {order.phoneNumber}
             </span>
           </div>
         </div>
 
         <span
-          className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+          className={`text-[10px] font-bold px-2 py-0.5 rounded-full inline-block shrink-0 max-w-[85px] sm:max-w-none truncate text-center ${
             order.status === "Complete"
               ? "bg-green-50 text-green-600"
               : order.status === "Accepted"
@@ -280,29 +261,29 @@ const OrderManage = () => {
       </div>
 
       {/* Actions */}
-      <div className="flex gap-3 mt-6">
+      <div className="flex gap-2 sm:gap-3 mt-6">
         {order.status === "Pending" && (
           <button
             onClick={() => handleStatusChange(order._id, "Accepted")}
-            className="flex-1 py-2.5 bg-gradient-to-r from-blue-900 to-blue-500 text-white rounded-full font-bold text-[10px] tracking-widest hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 uppercase"
+            className="flex-1 py-2 sm:py-2.5 bg-gradient-to-r from-blue-900 to-blue-500 text-white rounded-full font-bold text-[9px] sm:text-[10px] tracking-wider sm:tracking-widest hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 uppercase"
           >
-            <Check size={14} strokeWidth={2.5} /> Accept
+            <Check size={14} strokeWidth={2.5} className="shrink-0" /> Accept
           </button>
         )}
         {order.status === "Accepted" && (
           <button
             onClick={() => handleStatusChange(order._id, "Preparing")}
-            className="flex-1 py-2.5 bg-gradient-to-r from-purple-900 to-purple-500 text-white rounded-full font-bold text-[10px] tracking-widest hover:shadow-lg hover:shadow-purple-500/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 uppercase"
+            className="flex-1 py-2 sm:py-2.5 bg-gradient-to-r from-purple-900 to-purple-500 text-white rounded-full font-bold text-[9px] sm:text-[10px] tracking-wider sm:tracking-widest hover:shadow-lg hover:shadow-purple-500/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 uppercase"
           >
-            <Clock size={14} strokeWidth={2.5} /> Prepare
+            <Clock size={14} strokeWidth={2.5} className="shrink-0" /> Prepare
           </button>
         )}
         {order.status === "Preparing" && (
           <button
             onClick={() => handleStatusChange(order._id, "Complete")}
-            className="flex-1 py-2.5 bg-gradient-to-r from-green-900 to-green-500 text-white rounded-full font-bold text-[10px] tracking-widest hover:shadow-lg hover:shadow-green-500/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 uppercase"
+            className="flex-1 py-2 sm:py-2.5 bg-gradient-to-r from-green-900 to-green-500 text-white rounded-full font-bold text-[9px] sm:text-[10px] tracking-wider sm:tracking-widest hover:shadow-lg hover:shadow-green-500/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 uppercase"
           >
-            <CheckCircle size={14} strokeWidth={2.5} /> Complete
+            <CheckCircle size={14} strokeWidth={2.5} className="shrink-0" /> Complete
           </button>
         )}
         {order.status !== "Complete" &&
@@ -310,10 +291,10 @@ const OrderManage = () => {
           order.status !== "Overdue" && (
             <button
               onClick={() => confirmDeleteOrder(order._id)}
-              className="flex-1 py-2.5 bg-white text-red-700 border border-red-100 rounded-full font-bold text-[10px] tracking-widest hover:bg-red-50 hover:shadow-lg hover:shadow-red-500/10 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 uppercase"
+              className="flex-1 py-2 sm:py-2.5 bg-white text-red-700 border border-red-100 rounded-full font-bold text-[9px] sm:text-[10px] tracking-wider sm:tracking-widest hover:bg-red-50 hover:shadow-lg hover:shadow-red-500/10 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 uppercase"
               title="Delete Order"
             >
-              <X size={14} strokeWidth={2.5} /> Delete
+              <X size={14} strokeWidth={2.5} className="shrink-0" /> Delete
             </button>
           )}
       </div>
@@ -321,7 +302,7 @@ const OrderManage = () => {
   );
 
   return (
-    <div className="mt-12 space-y-12 pb-12">
+    <div className="mt-12 space-y-12 pb-12 w-full max-w-full overflow-hidden">
       {/* History Section */}
       <div>
         <h2 className="text-2xl font-black text-gray-800 uppercase">
@@ -387,18 +368,18 @@ const OrderManage = () => {
 
         {/* Cards */}
         {currentOrders.length > 0 ? (
-          <div className="flex flex-col">
-            <div className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 mt-6">
+          <div className="flex flex-col w-full max-w-full overflow-hidden">
+            <div className="flex gap-4 sm:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6 lg:grid lg:grid-cols-3 xl:grid-cols-5 mt-6">
               {currentOrders.map((order) => (
                 <div
                   key={order._id}
-                  className="w-[90%] shrink-0 snap-start md:w-auto md:shrink md:snap-none"
+                  className="w-[94%] sm:w-[48%] shrink-0 snap-start lg:w-auto lg:shrink lg:snap-none"
                 >
                   <HistoryCard order={order} />
                 </div>
               ))}
             </div>
-            <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
+            <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider lg:hidden">
               ← Swipe to browse →
             </p>
           </div>
@@ -416,31 +397,7 @@ const OrderManage = () => {
           </div>
         )}
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-4 mt-6">
-            <button
-              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-4 py-2 bg-gray-100 rounded-lg"
-            >
-              Previous
-            </button>
-
-            <span className="text-sm">
-              Page {currentPage} of {totalPages}
-            </span>
-
-            <button
-              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 bg-gray-100 rounded-lg"
-            >
-              Next
-            </button>
-          </div>
-        )}
-      </div>
+       
 
       <ConfirmDialog
         isOpen={confirmDialog.isOpen}
@@ -450,6 +407,7 @@ const OrderManage = () => {
         onConfirm={handleConfirmDelete}
         onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
       />
+    </div>
     </div>
   );
 };
