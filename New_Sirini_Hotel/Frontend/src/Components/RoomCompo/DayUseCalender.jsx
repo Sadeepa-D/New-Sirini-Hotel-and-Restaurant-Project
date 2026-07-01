@@ -26,7 +26,7 @@ const DayUseCalender = ({
 }) => {
   const VITE_URL = import.meta.env.VITE_API_URL;
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [activeBookings, setActiveBookings] = useState([]); 
+  const [activeBookings, setActiveBookings] = useState([]);
 
   
   useEffect(() => {
@@ -122,7 +122,7 @@ const DayUseCalender = ({
       }
     }
 
-    if (dateStr === selectedDate || (selectedCheckOut && dateStr === selectedCheckOut)) return "selected";
+    if (dateStr === selectedDate || (isFullDay && selectedCheckOut && dateStr === selectedCheckOut)) return "selected";
     if (timeSlot === "fullday" && selectedRange.has(dateStr)) return "range";
 
    
@@ -134,15 +134,7 @@ const DayUseCalender = ({
     }
 
     
-    if (timeSlot === "day") {
-      const hasFullDayEdge = activeBookings.some(
-        (b) =>
-          b.timeSlot === "fullday" &&
-          (b.checkInDate.split("T")[0] === dateStr ||
-            b.checkOutDate.split("T")[0] === dateStr),
-      );
-      if (hasFullDayEdge) return "has-fullday-edge";
-    }
+
 
     return "available";
   };
@@ -241,8 +233,6 @@ const DayUseCalender = ({
                   ? "Not available on this date"
                   : status === "span-blocked"
                     ? "Cannot span across a blocked date"
-                    : status === "has-fullday-edge"
-                      ? "Room is booked for the night, but still available for a Mid Day Stay."
                       : undefined
               }
               className={`group relative aspect-square rounded-[10px] text-[10px] font-bold transition-all duration-300 flex items-center justify-center border overflow-hidden outline-none focus:ring-2 focus:ring-orange-500/20 focus:ring-offset-1 ${
@@ -256,8 +246,6 @@ const DayUseCalender = ({
                         ? "bg-orange-50/50 text-orange-600 border-orange-100/50 backdrop-blur-sm"
                         : status === "has-day-booking"
                           ? "bg-gradient-to-br from-blue-50/80 to-white text-blue-700 border-blue-100/50 hover:border-blue-300 hover:-translate-y-0.5"
-                          : status === "has-fullday-edge"
-                            ? "bg-gradient-to-br from-purple-50/80 to-white text-purple-700 border-purple-100/50 hover:border-purple-300 hover:-translate-y-0.5"
                             : "bg-green-50 text-green-700 border-green-100 hover:border-green-400"
               }`}
             >
@@ -265,9 +253,7 @@ const DayUseCalender = ({
               {status === "has-day-booking" && (
                 <div className="absolute top-[3px] right-[3px] w-1.5 h-1.5 bg-blue-400 rounded-full ring-1 ring-white" />
               )}
-              {status === "has-fullday-edge" && (
-                <div className="absolute top-[3px] right-[3px] w-1.5 h-1.5 bg-purple-400 rounded-full ring-1 ring-white" />
-              )}
+
               {/* Hover effect background */}
               {status === "available" && (
                 <div className="absolute inset-0 bg-green-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -307,17 +293,7 @@ const DayUseCalender = ({
             </div>
           </>
         )}
-        {!isFullDay && (
-          <div 
-            className="flex items-center gap-1 cursor-help"
-            title="An Overnight Stay starts or ends on this date, but it is still available for a Mid Day Stay."
-          >
-            <div className="w-1.5 h-1.5 rounded-full bg-purple-400" />
-            <span className="text-[7px] font-bold text-gray-400 uppercase tracking-widest">
-              Night Booked (Day Free)
-            </span>
-          </div>
-        )}
+
         <div className="flex items-center gap-1">
           <div className="w-1.5 h-1.5 rounded-full bg-red-300" />
           <span className="text-[7px] font-bold text-gray-400 uppercase tracking-widest">
@@ -325,6 +301,27 @@ const DayUseCalender = ({
           </span>
         </div>
       </div>
+
+      {/* Selected Dates Display */}
+      {(selectedDate || selectedCheckOut) && (
+        <div className="mb-4 bg-gray-50/50 p-2.5 rounded-xl border border-gray-100 flex items-center justify-center gap-6 animate-in fade-in slide-in-from-bottom-2 duration-300 text-center">
+          {selectedDate && (
+            <div className="flex-1">
+              <span className="block text-[8px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Check-In</span>
+              <span className="block text-xs font-bold text-gray-900">{selectedDate}</span>
+            </div>
+          )}
+          {isFullDay && selectedCheckOut && (
+            <>
+              <div className="h-6 w-px bg-gray-200" />
+              <div className="flex-1">
+                <span className="block text-[8px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Check-Out</span>
+                <span className="block text-xs font-bold text-gray-900">{selectedCheckOut}</span>
+              </div>
+            </>
+          )}
+        </div>
+      )}
 
       {/* Confirm Button */}
       <button
