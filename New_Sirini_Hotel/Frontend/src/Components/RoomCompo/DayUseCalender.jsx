@@ -122,7 +122,7 @@ const DayUseCalender = ({
       }
     }
 
-    if (dateStr === selectedDate) return "selected";
+    if (dateStr === selectedDate || (selectedCheckOut && dateStr === selectedCheckOut)) return "selected";
     if (timeSlot === "fullday" && selectedRange.has(dateStr)) return "range";
 
    
