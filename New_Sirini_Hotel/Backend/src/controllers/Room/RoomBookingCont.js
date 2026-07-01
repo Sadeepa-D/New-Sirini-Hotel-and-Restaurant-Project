@@ -118,12 +118,33 @@ const createRoomBooking = async (req, res) => {
       status: "Pending",
       newRoomBooking,
     });
-    const newNotification = new NotifiModel({
-      userId,
-      title: "New Room Booking Created",
-      message: `Your booking for room ${roomNumber} from ${checkInDate} to ${checkOutDate} has been created. Ref: ${newRoomBooking.bookingCode}`,
-    });
-    await newNotification.save();
+    try {
+      const newNotification = new NotifiModel({
+        userId,
+        title: "New Room Booking Created",
+        message: `Your booking for room ${roomNumber} from ${checkInDate} to ${checkOutDate} has been created. Ref: ${newRoomBooking.bookingCode}`,
+      });
+      await newNotification.save();
+
+      const managers = await User.find({
+        Role: "Operation Manager 4 (Rooms)", // TODO: replace with the actual role name for room booking managers
+      }).select("_id");
+
+      if (managers.length > 0) {
+        await NotifiModel.insertMany(
+          managers.map((manager) => ({
+            userId: manager._id,
+            title: "New Room Booking Created",
+            message: `${name} booked room ${roomNumber} from ${checkInDate} to ${checkOutDate}. Ref: ${newRoomBooking.bookingCode}.`,
+          })),
+        );
+      } else {
+        console.warn("No managers found for new room booking notification");
+      }
+    } catch (notifError) {
+      console.error("Notification error (non-blocking):", notifError);
+    }
+
     res.status(201).json(newRoomBooking);
   } catch (error) {
     console.error("Booking Error:", error);
