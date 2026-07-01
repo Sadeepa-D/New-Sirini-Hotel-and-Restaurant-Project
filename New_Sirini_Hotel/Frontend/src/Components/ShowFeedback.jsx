@@ -207,9 +207,9 @@ const ShowFeedback = () => {
                 {/* User Info & Date */}
                 <div className="flex items-center justify-between">
                   <div className="flex-grow">
-                    <h3 className="font-bold text-gray-900 text-sm leading-none mb-1">
+                    <h6 className="font-bold text-gray-900 text-xs leading-none mb-1">
                       {testimonial.userName}
-                    </h3>
+                    </h6>
                     <div className="flex items-center gap-1 text-gray-500 text-xs">
                       <Calendar size={12} />
                       <span>{testimonial.timestamp}</span>
