@@ -1,4 +1,5 @@
 const RoomBooking = require("../../models/Rooms/RoomBookModel");
+const User = require("../../models/UserModel");
 const { sendRoomBookingEmail } = require("../EmailCont");
 const NotifiModel = require("../../models/NotifiModel");
 
@@ -17,6 +18,16 @@ const genarateRoomBookingCode = async () => {
 const createRoomBooking = async (req, res) => {
   try {
     const userId = req.userData.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (!user.Phone) {
+      return res.status(400).json({
+        message:
+          "Please update your profile with a phone number before creating Room Booking.",
+      });
+    }
     const {
       name,
       email,
@@ -143,6 +154,17 @@ const deleteRoomBooking = async (req, res) => {
 };
 const editRoomBooking = async (req, res) => {
   try {
+    const userId = req.userData.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (!user.Phone) {
+      return res.status(400).json({
+        message:
+          "Please update your profile with a phone number before Update Room Booking.",
+      });
+    }
     const { id } = req.params;
     if (!id) {
       return res.status(400).json({ error: "ID is required" });
