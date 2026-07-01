@@ -48,21 +48,6 @@ export default function BookingForm({ editData = null, onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const userDataStr = localStorage.getItem("userData");
-    let currentuser = null;
-    if (userDataStr) {
-      try {
-        currentuser = JSON.parse(userDataStr);
-      } catch (e) {
-        console.error("Error parsing user data from localStorage:", e);
-      }
-    }
-    if (!currentuser?.phone) {
-      toast.error(
-        "Please add a phone number to your profile before editing an Appointment.",
-      );
-      return;
-    }
     const loadingtoast = toast.loading(
       editData ? "Updating booking..." : "Submitting booking...",
     );
