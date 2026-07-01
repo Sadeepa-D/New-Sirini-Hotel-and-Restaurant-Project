@@ -73,7 +73,7 @@ const NewSiriniHotel = () => {
       setCurrentImageIndex((prevIndex) =>
         prevIndex === backgroundImages.length - 1 ? 0 : prevIndex + 1,
       );
-    }, 3000);
+    }, 8000);
 
     return () => clearInterval(interval);
   }, []);
