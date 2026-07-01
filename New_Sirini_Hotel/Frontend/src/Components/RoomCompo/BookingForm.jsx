@@ -152,21 +152,6 @@ function BookingForm({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const userDataStr = localStorage.getItem("userData");
-    let currentuser = null;
-    if (userDataStr) {
-      try {
-        currentuser = JSON.parse(userDataStr);
-      } catch (e) {
-        console.error("Error parsing user data from localStorage:", e);
-      }
-      if (!currentuser?.phone) {
-        toast.error(
-          "Please add a phone number to your profile before submitting Room Booking.",
-        );
-        return;
-      }
-    }
     setLoading(true);
     try {
       await axios.post(
@@ -187,7 +172,12 @@ function BookingForm({
       onConfirmed(selectedRoom._id);
       setShowSuccess(true);
     } catch (error) {
-      alert(error.response?.data?.error || "Booking failed.");
+      console.error("Booking error:", error);
+      const errorMessage =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        "Booking failed. Please try again.";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

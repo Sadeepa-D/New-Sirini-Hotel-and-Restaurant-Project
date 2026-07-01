@@ -135,7 +135,13 @@ const createFoodOrder = async (req, res) => {
 
     res.status(201).json(savedOrders.length > 1 ? savedOrders : savedOrders[0]);
   } catch (error) {
-    res.status(500).json({ message: "Failed to create food order", error });
+    console.error("Error creating food order:", error);
+    if (error.code === 11000) {
+      return res
+        .status(400)
+        .json({ message: "A duplicate entry was detected. Please try again." });
+    }
+    res.status(500).json({ message: "Failed to create food order" });
   }
 };
 const getFoodOrders = async (req, res) => {
@@ -229,7 +235,11 @@ const editfoodOrder = async (req, res) => {
 
     res.status(200).json(updatedOrder);
   } catch (error) {
-    res.status(500).json({ message: "Failed to update food order", error });
+    console.error("Error updating food order:", error); // full detail in server terminal
+    res.status(500).json({
+      message: "Failed to update food order",
+      error: error.message, // explicitly extract the string, not the Error object
+    });
   }
 };
 const deleteFoodOrder = async (req, res) => {

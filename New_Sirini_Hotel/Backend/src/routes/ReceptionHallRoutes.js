@@ -27,6 +27,7 @@ router.get(
 // );
 router.put(
   "/appointment/update/:id",
+  authmiddleware,
   ReceptionHallAppoint.updateReceptionAppointment,
 );
 router.put(
@@ -155,6 +156,8 @@ router.delete(
 router.put(
   "/advertisment/update/:id",
   upload.single("image"),
+  authmiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)","User"]),
   AdvertismentCont.updateAdvertisment,
 );
 router.put(

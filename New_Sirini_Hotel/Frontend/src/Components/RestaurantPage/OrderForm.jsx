@@ -33,21 +33,6 @@ export default function OrderForm({ item, cartItems, onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const userDataStr = localStorage.getItem("userData");
-    let currentuser = null;
-    if (userDataStr) {
-      try {
-        currentuser = JSON.parse(userDataStr);
-      } catch (e) {
-        console.error("Error parsing user data from localStorage:", e);
-      }
-      if (!currentuser?.phone) {
-        toast.error(
-          "Please add a phone number to your profile before submitting an order.",
-        );
-        return;
-      }
-    }
     setLoading(true);
     const token = localStorage.getItem("token");
 
@@ -122,7 +107,10 @@ export default function OrderForm({ item, cartItems, onClose }) {
       onClose(true);
     } catch (error) {
       console.error("Error placing order:", error);
-      toast.error(`Failed to place order. Please try again.`);
+      const errorMessage =
+        error.response?.data?.message ||
+        "Failed to place order. Please try again.";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
