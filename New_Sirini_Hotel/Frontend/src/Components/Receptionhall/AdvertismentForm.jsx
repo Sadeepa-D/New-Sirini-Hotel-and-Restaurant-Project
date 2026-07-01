@@ -85,6 +85,7 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
       submitData.append("category", formData.category);
       submitData.append("description", formData.description);
       submitData.append("portfolio", formData.portfolio);
+      submitData.append("EmailAddress", formData.EmailAddress);
       submitData.append("price", formData.price);
       submitData.append("location", formData.location);
       // Normalize TPNumber - remove spaces and dashes
@@ -298,6 +299,24 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
                 value={formData.portfolio}
                 onChange={handleChange}
                 placeholder="e.g. www.facebook.com/yourbusiness"
+                className="w-full text-sm text-gray-700 outline-none placeholder-gray-300"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs text-gray-400 uppercase tracking-widest mb-1.5 font-medium">
+              Email Address
+            </label>
+            <div className="flex items-center gap-3 border border-gray-200 rounded-2xl px-4 py-3 focus-within:border-amber-400 transition-colors">
+              <User size={15} className="text-amber-400 shrink-0" />
+              <input
+                type="text"
+                name="EmailAddress"
+                value={formData.EmailAddress}
+                onChange={handleChange}
+                placeholder="e.g. john.doe@example.com"
+                required
                 className="w-full text-sm text-gray-700 outline-none placeholder-gray-300"
               />
             </div>

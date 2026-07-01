@@ -1,6 +1,7 @@
 const Adevertisment = require("../../models/Reception/AdvertisingModel");
 const User = require("../../models/UserModel");
 const NotifiModel = require("../../models/NotifiModel");
+const { sendAdvertismentEmail } = require("../EmailCont");
 const cloudinary = require("cloudinary");
 
 const createAdvertisment = async (req, res) => {
@@ -25,6 +26,7 @@ const createAdvertisment = async (req, res) => {
       category,
       description,
       portfolio,
+      EmailAddress,
       price,
       location,
       TPNumber,
@@ -35,6 +37,7 @@ const createAdvertisment = async (req, res) => {
       !NIC ||
       !category ||
       !description ||
+      !EmailAddress ||
       !price ||
       !location ||
       !TPNumber
@@ -76,16 +79,31 @@ const createAdvertisment = async (req, res) => {
       image,
       imagePublicId,
       portfolio,
+      EmailAddress,
       price,
       location,
       TPNumber,
       status: "pending",
     });
     await newAdvertisment.save();
+
+    await sendAdvertismentEmail({
+      email: EmailAddress,
+      BuissnesName,
+      BuissnessOwnerName,
+      NIC,
+      category,
+      description,
+      price,
+      location,
+      TPNumber,
+      newAdvertisment,
+    });
+
     try {
       const newnotification = new NotifiModel({
         userId,
-        title: "Advertisment Created Pending Approval",
+        title: "Advertisment Created and Pending for Approval",
         message: `Your advertisment ${BuissnesName} is created and pending for approval. We will contact you soon.`,
       });
       await newnotification.save();
