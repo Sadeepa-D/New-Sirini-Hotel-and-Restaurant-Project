@@ -19,6 +19,15 @@ const ShowFeedback = () => {
   const scrollContainerRef = React.useRef(null);
   const VITE_API_URL = import.meta.env.VITE_API_URL;
 
+  const getInitials = (name = "") =>
+    name
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase() || "G";
+
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
@@ -126,7 +135,7 @@ const ShowFeedback = () => {
   }
 
   return (
-    <section className="py-16 px-6 bg-gradient-to-b from-gray-50 to-white font-sans">
+    <section className="py-16 px-6 bg-linear-to-b from-gray-50 to-white font-sans">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
@@ -162,68 +171,54 @@ const ShowFeedback = () => {
             {testimonials.map((testimonial, index) => (
               <div
                 key={testimonial._id || index}
-                className="group/card bg-white rounded-2xl border border-gray-200 hover:border-amber-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden p-6 flex flex-col flex-shrink-0 w-80 sm:w-96 snap-start"
+                className="group/card bg-white text-slate-900 rounded-[22px] border border-gray-200 shadow-sm hover:shadow-xl hover:border-amber-200 hover:-translate-y-1 transition-all duration-300 overflow-hidden p-6 flex flex-col shrink-0 w-80 sm:w-96 snap-start"
               >
-                {/* Stars & Room Info */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        size={14}
-                        className={`transition-colors ${
-                          i < Math.round(testimonial.rating)
-                            ? "fill-amber-400 text-amber-400"
-                            : "text-gray-300"
-                        }`}
-                      />
-                    ))}
+                <div className="flex items-start gap-3">
+                  <div className="h-12 w-12 rounded-full bg-amber-500 text-black flex items-center justify-center text-sm font-semibold shadow-sm shrink-0">
+                    {getInitials(testimonial.userName)}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full font-semibold border border-amber-100 font-mono">
-                      Room {testimonial.roomNumber}
-                    </span>
-                    {userRole === "Admin" && (
-                      <button
-                        onClick={() => handleDeleteFeedback(testimonial._id)}
-                        disabled={deletingId === testimonial._id}
-                        className="p-1.5 text-red-500 hover:bg-red-50 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="Delete feedback"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    )}
-                  </div>
-                </div>
 
-                {/* Comment */}
-                <p className="text-gray-700 text-sm leading-relaxed mb-5 flex-grow italic">
-                  "{testimonial.comment}"
-                </p>
-
-                {/* Divider */}
-                <div className="w-full h-px bg-gray-200 mb-4" />
-
-                {/* User Info & Date */}
-                <div className="flex items-center justify-between">
-                  <div className="flex-grow">
-                    <h6 className="font-bold text-gray-900 text-xs leading-none mb-1">
+                  <div className="min-w-0 flex-1">
+                    <h6 className="text-slate-900 text-[15px] sm:text-[17px] font-semibold leading-tight truncate">
                       {testimonial.userName}
                     </h6>
-                    <div className="flex items-center gap-1 text-gray-500 text-xs">
-                      <Calendar size={12} />
-                      <span>{testimonial.timestamp}</span>
-                    </div>
+                    <p className="text-slate-500 text-[12px] sm:text-[13px] leading-tight mt-0.5">
+                      Stayed in Room {testimonial.roomNumber}
+                    </p>
                   </div>
-                  {/* Rating Badge */}
-                  <div className="text-right">
-                    <div className="text-lg font-black text-amber-600">
-                      {testimonial.rating}
-                    </div>
-                    <span className="text-[9px] text-gray-400 uppercase tracking-wider font-semibold">
-                      Stars
-                    </span>
-                  </div>
+
+                  {userRole === "Admin" && (
+                    <button
+                      onClick={() => handleDeleteFeedback(testimonial._id)}
+                      disabled={deletingId === testimonial._id}
+                      className="p-1.5 text-red-500 hover:bg-red-50 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      title="Delete feedback"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
+                </div>
+
+                <div className="mt-4 flex items-center gap-1 text-amber-500">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      size={16}
+                      className={
+                        i < Math.round(testimonial.rating)
+                          ? "fill-amber-400 text-amber-400"
+                          : "text-gray-300"
+                      }
+                    />
+                  ))}
+                </div>
+
+                <p className="mt-4 text-slate-700 text-[22px] sm:text-[26px] leading-[1.35] font-serif font-medium">
+                  {testimonial.comment}
+                </p>
+
+                <div className="mt-6 pt-4 border-t border-gray-200 text-gray-500 text-sm">
+                  {testimonial.timestamp}
                 </div>
               </div>
             ))}
@@ -244,7 +239,7 @@ const ShowFeedback = () => {
           <p className="text-gray-600 text-sm mb-4">
             Share your experience and help us improve
           </p>
-          <div className="h-px w-20 bg-gradient-to-r from-transparent via-amber-500 to-transparent mx-auto" />
+          <div className="h-px w-20 bg-linear-to-r from-transparent via-amber-500 to-transparent mx-auto" />
         </div>
       </div>
     </section>
