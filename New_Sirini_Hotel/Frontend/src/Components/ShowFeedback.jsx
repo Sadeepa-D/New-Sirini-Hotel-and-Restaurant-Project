@@ -131,7 +131,36 @@ const ShowFeedback = () => {
   }
 
   if (testimonials.length === 0) {
-    return null; // Hide section if no testimonials
+    return (
+      <section className="py-16 px-6 bg-linear-to-b from-gray-50 to-white font-sans">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Quote size={24} className="text-amber-500" />
+              <h2 className="text-3xl md:text-4xl font-serif italic text-gray-900">
+                Guest Experiences
+              </h2>
+            </div>
+            <p className="text-gray-600 text-sm md:text-base max-w-2xl mx-auto">
+              Discover what our valued guests have to say about their
+              unforgettable stays at New Sirini Hotel.
+            </p>
+          </div>
+
+          <div className="max-w-2xl mx-auto rounded-[22px] border border-gray-200 bg-white shadow-sm px-6 py-14 text-center">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-amber-50 text-amber-500">
+              <Quote size={24} />
+            </div>
+            <h3 className="text-lg sm:text-xl font-serif italic text-gray-900">
+              No feedback yet
+            </h3>
+            <p className="mt-2 text-sm sm:text-base text-gray-500">
+              Be the first guest to share your experience with us.
+            </p>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (
