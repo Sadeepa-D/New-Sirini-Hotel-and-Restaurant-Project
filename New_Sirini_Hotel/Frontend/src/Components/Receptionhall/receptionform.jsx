@@ -59,7 +59,7 @@ export default function BookingForm({ editData = null, onSuccess }) {
     }
     if (!currentuser?.phone) {
       toast.error(
-        "Please add a phone number to your profile before submitting an Appointment.",
+        "Please add a phone number to your profile before editing an Appointment.",
       );
       return;
     }
