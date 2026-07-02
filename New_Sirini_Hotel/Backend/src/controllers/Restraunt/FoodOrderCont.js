@@ -66,6 +66,11 @@ const createFoodOrder = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    const phoneRegex = /^(?:\+94|0)?(7[0-8]\d{7}|[1-9]\d{8})$/;
+    if (!phoneRegex.test(phoneNumber)) {
+      return res.status(400).json({ message: "Invalid phone number format" });
+    }
+
     // Sri Lanka Time Validation
     const { slDate, slTime } = getCurrentSLTime();
     if (pickupDate < slDate) {
@@ -214,6 +219,10 @@ const editfoodOrder = async (req, res) => {
       !portion
     ) {
       return res.status(400).json({ message: "All fields are required" });
+    }
+    const phoneRegex = /^(?:\+94|0)?(7[0-8]\d{7}|[1-9]\d{8})$/;
+    if (!phoneRegex.test(phoneNumber)) {
+      return res.status(400).json({ message: "Invalid phone number format" });
     }
 
     // Sri Lanka Time Validation
