@@ -48,6 +48,14 @@ const createReceptionHallBooking = async (req, res) => {
     if (!phoneRegex.test(customerPhone)) {
       return res.status(400).json({ message: "Invalid phone number format" });
     }
+    if (numberOfGuests <= 0 || numberOfGuests > 250) {
+      return res
+        .status(400)
+        .json({
+          message:
+            "Invalid number of guests. Please enter a value between 1 and 250.",
+        });
+    }
     const existingBooking = await receptionandHallBook.findOne({
       eventDate: eventDate,
       eventTime: eventTime,
