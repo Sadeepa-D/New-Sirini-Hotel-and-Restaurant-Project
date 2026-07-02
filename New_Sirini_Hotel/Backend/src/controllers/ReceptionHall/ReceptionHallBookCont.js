@@ -139,6 +139,13 @@ const editReceptionHallBooking = async (req, res) => {
     if (!emailRegex.test(customerEmail)) {
       return res.status(400).json({ message: "Invalid email format" });
     }
+    const guests = Number(numberOfGuests);
+    if (isNaN(guests) || guests <= 0 || guests > 250) {
+      return res.status(400).json({
+        message:
+          "Invalid number of guests. Please enter a value between 1 and 250.",
+      });
+    }
     const updatedBooking = await receptionandHallBook.findByIdAndUpdate(
       id,
       {
