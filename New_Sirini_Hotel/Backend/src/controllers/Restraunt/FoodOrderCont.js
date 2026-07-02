@@ -1,5 +1,10 @@
 const FoodOrder = require("../../models/Restraunt/FoodItemBookModel");
-const { sendRestaurantOrderEmail } = require("../EmailCont");
+const User = require("../../models/UserModel");
+
+const {
+  sendRestaurantOrderEmail,
+  sendmultiplerestrauntitemsEmail,
+} = require("../EmailCont");
 const NotifiModel = require("../../models/NotifiModel");
 
 const getCurrentSLTime = () => {
@@ -37,26 +42,26 @@ const GenarateFoodOrderCode = async () => {
 const createFoodOrder = async (req, res) => {
   try {
     const userId = req.userData.id;
-    const {
-      foodName,
-      fullName,
-      email,
-      quantity,
-      phoneNumber,
-      pickupDate,
-      pickupTime,
-      Price,
-      portion,
-    } = req.body;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (!user.Phone) {
+      return res.status(400).json({
+        message:
+          "Please update your profile with a phone number before creating Order.",
+      });
+    }
+    const { items, fullName, email, phoneNumber, pickupDate, pickupTime } =
+      req.body;
 
     if (
       !fullName ||
       !email ||
-      !quantity ||
       !phoneNumber ||
       !pickupDate ||
       !pickupTime ||
-      !portion
+      !items?.length
     ) {
       return res.status(400).json({ message: "All fields are required" });
     }
@@ -75,46 +80,90 @@ const createFoodOrder = async (req, res) => {
           "Selected time has already passed for today. Please choose a future time.",
       });
     }
+    const orderCode = await GenarateFoodOrderCode();
+    const savedOrders = [];
+    for (const item of items) {
+      const newFoodOrder = new FoodOrder({
+        userId,
+        foodName: item.foodName,
+        fullName,
+        email,
+        quantity: item.quantity,
+        phoneNumber,
+        pickupDate,
+        pickupTime,
+        orderCode,
+        status: "Pending",
+        Price: item.Price,
+        portion: item.portion,
+      });
+      savedOrders.push(await newFoodOrder.save());
+    }
 
-    const newFoodOrder = new FoodOrder({
-      userId,
-      foodName,
-      fullName,
-      email,
-      quantity,
-      phoneNumber,
-      pickupDate,
-      pickupTime,
-      orderCode: await GenarateFoodOrderCode(),
-      status: "Pending",
-      Price,
-      portion,
-    });
-    const savedOrder = await newFoodOrder.save();
+    if (savedOrders.length > 1) {
+      await sendmultiplerestrauntitemsEmail({
+        email,
+        fullName,
+        phoneNumber,
+        pickupDate,
+        pickupTime,
+        orders: savedOrders,
+      });
+    } else {
+      const savedOrder = savedOrders[0];
+      await sendRestaurantOrderEmail({
+        email,
+        fullName,
+        savedOrder,
+        foodName: savedOrder.foodName,
+        portion: savedOrder.portion,
+        quantity: savedOrder.quantity,
+        Price: savedOrder.Price,
+        pickupDate,
+        pickupTime,
+        phoneNumber,
+      });
+    }
 
-    // await sendRestaurantOrderEmail({
-    //   email,
-    //   fullName,
-    //   savedOrder,
-    //   foodName,
-    //   portion,
-    //   quantity,
-    //   Price,
-    //   pickupDate,
-    //   pickupTime,
-    //   phoneNumber,
-    // });
+    const refNumbers = savedOrders.map((o) => o.orderCode).join(", ");
+    try {
+      const newNotification = new NotifiModel({
+        userId,
+        title: savedOrders.length > 1 ? "New Food Orders" : "New Food Order",
+        message: `A new food order has been placed. Your Ref Number(s): ${refNumbers}.`,
+      });
+      await newNotification.save();
 
-    const newNotification = new NotifiModel({
-      userId,
-      title: "New Food Order",
-      message: `A new food order has been placed. Your Ref Number: ${savedOrder.orderCode}.`,
-    });
-    await newNotification.save();
+      // Notify managers
+      const managers = await User.find({
+        Role: "Operation Manager 1 (Restraunt,Liquor)",
+      }).select("_id");
 
-    res.status(201).json(savedOrder);
+      if (managers.length > 0) {
+        await NotifiModel.insertMany(
+          managers.map((manager) => ({
+            userId: manager._id,
+            title:
+              savedOrders.length > 1 ? "New Food Orders" : "New Food Order",
+            message: `${fullName} placed a new food order. Ref Number(s): ${refNumbers}.`,
+          })),
+        );
+      } else {
+        console.warn("No managers found for new order notification");
+      }
+    } catch (notifError) {
+      console.error("Notification error (non-blocking):", notifError);
+    }
+
+    res.status(201).json(savedOrders.length > 1 ? savedOrders : savedOrders[0]);
   } catch (error) {
-    res.status(500).json({ message: "Failed to create food order", error });
+    console.error("Error creating food order:", error);
+    if (error.code === 11000) {
+      return res
+        .status(400)
+        .json({ message: "A duplicate entry was detected. Please try again." });
+    }
+    res.status(500).json({ message: "Failed to create food order" });
   }
 };
 const getFoodOrders = async (req, res) => {
@@ -130,6 +179,17 @@ const getFoodOrders = async (req, res) => {
 };
 const editfoodOrder = async (req, res) => {
   try {
+    const userId = req.userData.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (!user.Phone) {
+      return res.status(400).json({
+        message:
+          "Please update your profile with a phone number before Updating Order.",
+      });
+    }
     const { id } = req.params;
     const {
       fullName,
@@ -188,16 +248,37 @@ const editfoodOrder = async (req, res) => {
       return res.status(404).json({ message: "Food order not found" });
     }
 
-    const newNotification = new NotifiModel({
-      userId: updatedOrder.userId,
-      title: "Food Order Updated",
-      message: `Your food order with Ref Number: ${updatedOrder.orderCode} has been updated.`,
-    });
-    await newNotification.save();
+    try {
+      await NotifiModel.create({
+        userId: updatedOrder.userId,
+        title: "Food Order Updated",
+        message: `Your food order with Ref Number: ${updatedOrder.orderCode} has been updated.`,
+      });
+
+      const managers = await User.find({
+        Role: "Operation Manager 1 (Restraunt,Liquor)",
+      }).select("_id");
+
+      if (managers.length > 0) {
+        await NotifiModel.insertMany(
+          managers.map((manager) => ({
+            userId: manager._id,
+            title: "Food Order Updated",
+            message: `The food order ${updatedOrder.orderCode} has been updated. Please review the changes.`,
+          })),
+        );
+      }
+    } catch (notifError) {
+      console.error("Notification error (non-blocking):", notifError);
+    }
 
     res.status(200).json(updatedOrder);
   } catch (error) {
-    res.status(500).json({ message: "Failed to update food order", error });
+    console.error("Error updating food order:", error); // full detail in server terminal
+    res.status(500).json({
+      message: "Failed to update food order",
+      error: error.message, // explicitly extract the string, not the Error object
+    });
   }
 };
 const deleteFoodOrder = async (req, res) => {

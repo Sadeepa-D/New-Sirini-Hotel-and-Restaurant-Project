@@ -1,4 +1,5 @@
 const RoomBooking = require("../../models/Rooms/RoomBookModel");
+const User = require("../../models/UserModel");
 const { sendRoomBookingEmail } = require("../EmailCont");
 const NotifiModel = require("../../models/NotifiModel");
 
@@ -17,6 +18,16 @@ const genarateRoomBookingCode = async () => {
 const createRoomBooking = async (req, res) => {
   try {
     const userId = req.userData.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (!user.Phone) {
+      return res.status(400).json({
+        message:
+          "Please update your profile with a phone number before creating Room Booking.",
+      });
+    }
     const {
       name,
       email,
@@ -94,25 +105,46 @@ const createRoomBooking = async (req, res) => {
 
     await newRoomBooking.save();
 
-    // await sendRoomBookingEmail({
-    //   name,
-    //   email,
-    //   phone,
-    //   checkInDate: newIn,
-    //   checkOutDate: newOut,
-    //   roomNumber,
-    //   numberOfGuests,
-    //   totalAmount,
-    //   timeSlot,
-    //   status: "Pending",
-    //   newRoomBooking,
-    // });
-    const newNotification = new NotifiModel({
-      userId,
-      title: "New Room Booking Created",
-      message: `Your booking for room ${roomNumber} from ${checkInDate} to ${checkOutDate} has been created. Ref: ${newRoomBooking.bookingCode}`,
+    await sendRoomBookingEmail({
+      name,
+      email,
+      phone,
+      checkInDate: newIn,
+      checkOutDate: newOut,
+      roomNumber,
+      numberOfGuests,
+      totalAmount,
+      timeSlot,
+      status: "Pending",
+      newRoomBooking,
     });
-    await newNotification.save();
+    try {
+      const newNotification = new NotifiModel({
+        userId,
+        title: "New Room Booking Created",
+        message: `Your booking for room ${roomNumber} from ${checkInDate} to ${checkOutDate} has been created. Ref: ${newRoomBooking.bookingCode}`,
+      });
+      await newNotification.save();
+
+      const managers = await User.find({
+        Role: "Operation Manager 2 (Reception, Room)",
+      }).select("_id");
+
+      if (managers.length > 0) {
+        await NotifiModel.insertMany(
+          managers.map((manager) => ({
+            userId: manager._id,
+            title: "New Room Booking Created",
+            message: `${name} booked room ${roomNumber} from ${checkInDate} to ${checkOutDate}. Ref: ${newRoomBooking.bookingCode}.`,
+          })),
+        );
+      } else {
+        console.warn("No managers found for new room booking notification");
+      }
+    } catch (notifError) {
+      console.error("Notification error (non-blocking):", notifError);
+    }
+
     res.status(201).json(newRoomBooking);
   } catch (error) {
     console.error("Booking Error:", error);
@@ -143,6 +175,17 @@ const deleteRoomBooking = async (req, res) => {
 };
 const editRoomBooking = async (req, res) => {
   try {
+    const userId = req.userData.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (!user.Phone) {
+      return res.status(400).json({
+        message:
+          "Please update your profile with a phone number before Update Room Booking.",
+      });
+    }
     const { id } = req.params;
     if (!id) {
       return res.status(400).json({ error: "ID is required" });
@@ -159,12 +202,29 @@ const editRoomBooking = async (req, res) => {
     if (!updatedRoomBooking) {
       return res.status(404).json({ error: "Room booking not found" });
     }
-    const newNotification = new NotifiModel({
-      userId: updatedRoomBooking.userId,
-      title: "Room Booking Updated",
-      message: `Your room booking for room ${updatedRoomBooking.roomNumber} Ref: ${updatedRoomBooking.bookingCode} has been updated.`,
-    });
-    await newNotification.save();
+    try {
+      await NotifiModel.create({
+        userId: updatedRoomBooking.userId,
+        title: "Room Booking Updated",
+        message: `Your room booking for room ${updatedRoomBooking.roomNumber} Ref: ${updatedRoomBooking.bookingCode} has been updated.`,
+      });
+
+      const managers = await User.find({
+        Role: "Operation Manager 2 (Reception, Room)",
+      }).select("_id");
+
+      if (managers.length > 0) {
+        await NotifiModel.insertMany(
+          managers.map((manager) => ({
+            userId: manager._id,
+            title: "Room Booking Updated",
+            message: `The room booking ${updatedRoomBooking.bookingCode} has been updated. Please review the changes.`,
+          })),
+        );
+      }
+    } catch (notifError) {
+      console.error("Notification error (non-blocking):", notifError);
+    }
     res.status(200).json(updatedRoomBooking);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -302,8 +362,8 @@ const setRoomBookingStatustoCompleted = async (req, res) => {
     res.status(200).json(updatedBooking);
     const newNotification = new NotifiModel({
       userId: updatedBooking.userId,
-      title: "Room Booking Completed",
-      message: `Your booking for room ${updatedBooking.roomNumber} Ref: ${updatedBooking.bookingCode} has been completed.`,
+      title: "Checkout Confirmed",
+      message: `Checkout confirmed for room ${updatedBooking.roomNumber} Ref: ${updatedBooking.bookingCode}.`,
     });
     await newNotification.save();
   } catch (error) {

@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import Logo from "../assets/Logo.png";
 import axios from "axios";
 import Exploreindicator from "../Components/Exploreindicator";
-import ShowFeedback from "../Components/ShowFeedback";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 // Import local background images
@@ -77,7 +76,7 @@ const NewSiriniHotel = () => {
       setCurrentImageIndex((prevIndex) =>
         prevIndex === backgroundImages.length - 1 ? 0 : prevIndex + 1,
       );
-    }, 3000);
+    }, 8000);
 
     return () => clearInterval(interval);
   }, []);
@@ -267,9 +266,6 @@ const NewSiriniHotel = () => {
             )}
           </div>
         </section>
-
-        {/* --- Testimonials Section --- */}
-        <ShowFeedback />
 
         {/* --- About Us --- */}
         <section
