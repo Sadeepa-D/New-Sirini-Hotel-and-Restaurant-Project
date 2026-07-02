@@ -44,6 +44,10 @@ const createReceptionHallBooking = async (req, res) => {
         .status(400)
         .json({ message: "All required fields must be filled" });
     }
+    const phoneRegex = /^(?:\+94|0)?(7[0-8]\d{7}|[1-9]\d{8})$/;
+    if (!phoneRegex.test(customerPhone)) {
+      return res.status(400).json({ message: "Invalid phone number format" });
+    }
     const existingBooking = await receptionandHallBook.findOne({
       eventDate: eventDate,
       eventTime: eventTime,
@@ -116,6 +120,10 @@ const editReceptionHallBooking = async (req, res) => {
       selectedPackage,
       amountPayed,
     } = req.body;
+    const phoneRegex = /^(?:\+94|0)?(7[0-8]\d{7}|[1-9]\d{8})$/;
+    if (!phoneRegex.test(customerPhone)) {
+      return res.status(400).json({ message: "Invalid phone number format" });
+    }
     const updatedBooking = await receptionandHallBook.findByIdAndUpdate(
       id,
       {
