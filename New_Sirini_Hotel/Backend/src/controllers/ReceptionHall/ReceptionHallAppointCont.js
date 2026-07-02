@@ -43,6 +43,7 @@ const createReceptionAppointment = async (req, res) => {
       appointcode: await genarateReceptionAppointmentCode(),
       status: "Pending",
     });
+    
     await newAppointment.save();
 
     await sendAppointmentEmail({
