@@ -69,9 +69,9 @@ const createReceptionHallBooking = async (req, res) => {
       refnumber: await genarateBookingCode(),
     });
     await newBooking.save();
-    // await sendReceptionhallBookingEmail({
-    //   newBooking,
-    // });
+    await sendReceptionhallBookingEmail({
+      newBooking,
+    });
     res.status(201).json(newBooking);
   } catch (error) {
     res.status(400).json({ message: error.message });

@@ -155,7 +155,12 @@ function BookingForm({
       onConfirmed(selectedRoom._id);
       setShowSuccess(true);
     } catch (error) {
-      alert(error.response?.data?.error || "Booking failed.");
+      console.error("Booking error:", error);
+      const errorMessage =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        "Booking failed. Please try again.";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

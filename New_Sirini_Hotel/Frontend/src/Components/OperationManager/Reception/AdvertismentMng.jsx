@@ -168,6 +168,7 @@ const AdvertismentMng = () => {
 
   const handleDelete = async () => {
     const { id } = confirmDialog;
+    const loadingtoast = toast.loading("Deleting advertisement...");
     setConfirmDialog({
       isOpen: false,
       id: null,
@@ -189,8 +190,10 @@ const AdvertismentMng = () => {
       } else {
         setAds(updatedAllAds);
       }
+      toast.dismiss(loadingtoast);
       toast.success("Advertisement deleted successfully");
     } catch (err) {
+      toast.dismiss(loadingtoast);
       toast.error("Failed to delete advertisement");
     }
   };
