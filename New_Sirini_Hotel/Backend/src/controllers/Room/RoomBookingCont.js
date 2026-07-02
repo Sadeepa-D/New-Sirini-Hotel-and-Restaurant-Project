@@ -362,8 +362,8 @@ const setRoomBookingStatustoCompleted = async (req, res) => {
     res.status(200).json(updatedBooking);
     const newNotification = new NotifiModel({
       userId: updatedBooking.userId,
-      title: "Room Booking Completed",
-      message: `Your booking for room ${updatedBooking.roomNumber} Ref: ${updatedBooking.bookingCode} has been completed.`,
+      title: "Checkout Confirmed",
+      message: `Checkout confirmed for room ${updatedBooking.roomNumber} Ref: ${updatedBooking.bookingCode}.`,
     });
     await newNotification.save();
   } catch (error) {
