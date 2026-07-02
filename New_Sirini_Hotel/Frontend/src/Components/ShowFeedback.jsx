@@ -5,6 +5,7 @@ import {
   Quote,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Trash2,
 } from "lucide-react";
 import axios from "axios";
@@ -16,8 +17,18 @@ const ShowFeedback = () => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [userRole, setUserRole] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+  const [selectedRoomFilter, setSelectedRoomFilter] = useState("All");
   const scrollContainerRef = React.useRef(null);
   const VITE_API_URL = import.meta.env.VITE_API_URL;
+
+  const getInitials = (name = "") =>
+    name
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase() || "G";
 
   useEffect(() => {
     const fetchTestimonials = async () => {
@@ -109,6 +120,36 @@ const ShowFeedback = () => {
     }
   };
 
+  const uniqueRooms = [
+    "All",
+    ...Array.from(
+      new Set(testimonials.map((t) => t.roomNumber).filter(Boolean)),
+    ).sort((a, b) =>
+      String(a).localeCompare(String(b), undefined, { numeric: true }),
+    ),
+  ];
+
+  const showFilter = uniqueRooms.length > 2;
+
+  const filteredTestimonials =
+    selectedRoomFilter === "All"
+      ? testimonials
+      : testimonials.filter(
+          (t) => String(t.roomNumber) === String(selectedRoomFilter),
+        );
+
+  // Reset filter to "All" if selected room no longer has testimonials (e.g. after deletion)
+  useEffect(() => {
+    if (
+      selectedRoomFilter !== "All" &&
+      !testimonials.some(
+        (t) => String(t.roomNumber) === String(selectedRoomFilter),
+      )
+    ) {
+      setSelectedRoomFilter("All");
+    }
+  }, [testimonials, selectedRoomFilter]);
+
   if (loading) {
     return (
       <section className="py-16 px-6 bg-gray-50 font-sans">
@@ -122,14 +163,43 @@ const ShowFeedback = () => {
   }
 
   if (testimonials.length === 0) {
-    return null; // Hide section if no testimonials
+    return (
+      <section className="py-16 px-6 bg-linear-to-b from-gray-50 to-white font-sans">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Quote size={24} className="text-amber-500" />
+              <h2 className="text-3xl md:text-4xl font-serif italic text-gray-900">
+                Guest Experiences
+              </h2>
+            </div>
+            <p className="text-gray-600 text-sm md:text-base max-w-2xl mx-auto">
+              Discover what our valued guests have to say about their
+              unforgettable stays at New Sirini Hotel.
+            </p>
+          </div>
+
+          <div className="max-w-2xl mx-auto rounded-[22px] border border-gray-200 bg-white shadow-sm px-6 py-14 text-center">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-amber-50 text-amber-500">
+              <Quote size={24} />
+            </div>
+            <h3 className="text-lg sm:text-xl font-serif italic text-gray-900">
+              No feedback yet
+            </h3>
+            <p className="mt-2 text-sm sm:text-base text-gray-500">
+              Be the first guest to share your experience with us.
+            </p>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (
-    <section className="py-16 px-6 bg-gradient-to-b from-gray-50 to-white font-sans">
+    <section className="py-8 px-6 bg-linear-to-b from-gray-50 to-white font-sans">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-6">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Quote size={24} className="text-amber-500" />
             <h2 className="text-3xl md:text-4xl font-serif italic text-gray-900">
@@ -141,6 +211,39 @@ const ShowFeedback = () => {
             unforgettable stays at New Sirini Hotel.
           </p>
         </div>
+
+        {/* Filter Section */}
+        {showFilter && (
+          <div className="flex flex-col items-center mb-8">
+            <label
+              htmlFor="room-filter"
+              className="text-amber-500 text-[10px] font-bold uppercase tracking-widest mb-2.5"
+            >
+              Select The Room
+            </label>
+            <div className="relative inline-block w-48">
+              <select
+                id="room-filter"
+                value={selectedRoomFilter}
+                onChange={(e) => setSelectedRoomFilter(e.target.value)}
+                className="w-full appearance-none bg-white text-gray-800 text-[11px] font-black uppercase tracking-wider pl-5 pr-10 py-2.5 rounded-full border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent cursor-pointer hover:border-amber-300 hover:text-amber-600 transition-all duration-300"
+              >
+                {uniqueRooms.map((roomNum) => (
+                  <option
+                    key={roomNum}
+                    value={roomNum}
+                    className="text-gray-700 bg-white"
+                  >
+                    {roomNum === "All" ? "All Rooms" : `Room ${roomNum}`}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-amber-500">
+                <ChevronDown size={14} className="stroke-[3]" />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Testimonials Slider */}
         <div className="relative group">
@@ -157,73 +260,67 @@ const ShowFeedback = () => {
           <div
             ref={scrollContainerRef}
             onScroll={handleScroll}
-            className="flex overflow-x-auto gap-6 pb-4 px-12 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth snap-x snap-mandatory"
+            className="flex overflow-x-auto gap-6 pb-6 px-12 scroll-smooth snap-x snap-mandatory 
+                       [&::-webkit-scrollbar]:h-2 
+                       [&::-webkit-scrollbar-track]:bg-amber-500/10 
+                       [&::-webkit-scrollbar-track]:rounded-full 
+                       [&::-webkit-scrollbar-thumb]:bg-amber-500/60 
+                       [&::-webkit-scrollbar-thumb]:rounded-full 
+                       hover:[&::-webkit-scrollbar-thumb]:bg-amber-600 
+                       [scrollbar-width:thin] 
+                       [scrollbar-color:#f59e0b_rgba(245,158,11,0.1)]"
           >
-            {testimonials.map((testimonial, index) => (
+            {filteredTestimonials.map((testimonial, index) => (
               <div
                 key={testimonial._id || index}
-                className="group/card bg-white rounded-2xl border border-gray-200 hover:border-amber-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden p-6 flex flex-col flex-shrink-0 w-80 sm:w-96 snap-start"
+                className="group/card bg-white text-slate-900 rounded-[22px] border border-gray-200 shadow-sm hover:shadow-xl hover:border-amber-200 hover:-translate-y-1 transition-all duration-300 overflow-hidden p-4 sm:p-5 flex flex-col shrink-0 w-80 sm:w-96 snap-start"
               >
-                {/* Stars & Room Info */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        size={14}
-                        className={`transition-colors ${
-                          i < Math.round(testimonial.rating)
-                            ? "fill-amber-400 text-amber-400"
-                            : "text-gray-300"
-                        }`}
-                      />
-                    ))}
+                <div className="flex items-start gap-3">
+                  <div className="h-12 w-12 rounded-full bg-amber-500 text-black flex items-center justify-center text-sm font-semibold shadow-sm shrink-0">
+                    {getInitials(testimonial.userName)}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full font-semibold border border-amber-100 font-mono">
-                      Room {testimonial.roomNumber}
-                    </span>
-                    {userRole === "Admin" && (
-                      <button
-                        onClick={() => handleDeleteFeedback(testimonial._id)}
-                        disabled={deletingId === testimonial._id}
-                        className="p-1.5 text-red-500 hover:bg-red-50 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="Delete feedback"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    )}
+
+                  <div className="min-w-0 flex-1">
+                    <h6 className="text-slate-900 text-[15px] sm:text-[17px] font-semibold leading-tight truncate">
+                      {testimonial.userName}
+                    </h6>
+                    <p className="text-slate-500 text-[12px] sm:text-[13px] leading-tight mt-0.5">
+                      Stayed in Room {testimonial.roomNumber}
+                    </p>
                   </div>
+
+                  {userRole === "Admin" && (
+                    <button
+                      onClick={() => handleDeleteFeedback(testimonial._id)}
+                      disabled={deletingId === testimonial._id}
+                      className="p-1.5 text-red-500 hover:bg-red-50 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      title="Delete feedback"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
                 </div>
 
-                {/* Comment */}
-                <p className="text-gray-700 text-sm leading-relaxed mb-5 flex-grow italic">
-                  "{testimonial.comment}"
+                <div className="mt-2.5 flex items-center gap-1 text-amber-500">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      size={16}
+                      className={
+                        i < Math.round(testimonial.rating)
+                          ? "fill-amber-400 text-amber-400"
+                          : "text-gray-300"
+                      }
+                    />
+                  ))}
+                </div>
+
+                <p className="mt-2.5 text-slate-700 text-[15px] sm:text-[16px] leading-normal font-serif font-medium">
+                  {testimonial.comment}
                 </p>
 
-                {/* Divider */}
-                <div className="w-full h-px bg-gray-200 mb-4" />
-
-                {/* User Info & Date */}
-                <div className="flex items-center justify-between">
-                  <div className="flex-grow">
-                    <h3 className="font-bold text-gray-900 text-sm leading-none mb-1">
-                      {testimonial.userName}
-                    </h3>
-                    <div className="flex items-center gap-1 text-gray-500 text-xs">
-                      <Calendar size={12} />
-                      <span>{testimonial.timestamp}</span>
-                    </div>
-                  </div>
-                  {/* Rating Badge */}
-                  <div className="text-right">
-                    <div className="text-lg font-black text-amber-600">
-                      {testimonial.rating}
-                    </div>
-                    <span className="text-[9px] text-gray-400 uppercase tracking-wider font-semibold">
-                      Stars
-                    </span>
-                  </div>
+                <div className="mt-4 pt-3 border-t border-gray-200 text-gray-500 text-sm">
+                  {testimonial.timestamp}
                 </div>
               </div>
             ))}
@@ -240,11 +337,11 @@ const ShowFeedback = () => {
         </div>
 
         {/* CTA */}
-        <div className="text-center mt-12">
-          <p className="text-gray-600 text-sm mb-4">
+        <div className="text-center mt-8">
+          <p className="text-gray-600 text-sm mb-3">
             Share your experience and help us improve
           </p>
-          <div className="h-px w-20 bg-gradient-to-r from-transparent via-amber-500 to-transparent mx-auto" />
+          <div className="h-px w-20 bg-linear-to-r from-transparent via-amber-500 to-transparent mx-auto" />
         </div>
       </div>
     </section>

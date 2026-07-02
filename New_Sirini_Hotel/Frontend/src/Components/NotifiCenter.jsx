@@ -37,7 +37,7 @@ const NotifiCenter = ({
     if (t.includes("accepted") || t.includes("success")) {
       return <CheckCheck className="text-emerald-500 shrink-0" size={18} />;
     }
-    if (t.includes("complete")) {
+    if (t.includes("complete") || t.includes("checkout")) {
       return <CheckCheck className="text-teal-500 shrink-0" size={18} />;
     }
     if (t.includes("overdue")) {
@@ -64,9 +64,10 @@ const NotifiCenter = ({
               e.stopPropagation();
               onMarkAllAsRead();
             }}
-            className="text-xs font-semibold text-yellow-500 hover:text-yellow-400 transition-colors cursor-pointer bg-yellow-500/10 px-2.5 py-1 rounded-lg"
+            className="flex items-center gap-0.5 text-[9px] font-semibold text-yellow-500 hover:text-black bg-yellow-500/10 hover:bg-yellow-500 border border-yellow-500/20 hover:border-yellow-400 px-1.5 py-0.5 rounded transition-all duration-300 scale-100 hover:scale-105 active:scale-95 cursor-pointer shrink-0 self-end mb-0.5"
           >
-            Mark all as read
+            <CheckCheck size={10} className="shrink-0" />
+            <span>Mark all as read</span>
           </button>
         )}
       </div>

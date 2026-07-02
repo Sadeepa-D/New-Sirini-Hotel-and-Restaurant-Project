@@ -121,7 +121,16 @@ const RoomsSection = () => {
     setCancellationLoading(id);
     const toastId = toast.loading("Cancelling booking...");
     try {
-      await axios.put(`${VITE_API_URL}/api/rooms/cancelbooking/${id}`);
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `${VITE_API_URL}/api/rooms/cancelbooking/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
       toast.success(
         "Booking cancelled successfully. Dates are now available.",
         { id: toastId },

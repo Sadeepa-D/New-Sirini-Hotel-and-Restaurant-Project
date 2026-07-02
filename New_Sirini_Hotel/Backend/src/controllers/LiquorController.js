@@ -1,4 +1,6 @@
 const Liquor = require("../models/Liquor");
+const User = require("../models/UserModel");
+const NotifiModel = require("../models/NotifiModel");
 const cloudinary = require("cloudinary");
 
 const addLiquor = async (req, res) => {
@@ -57,7 +59,7 @@ const addLiquor = async (req, res) => {
     const newLiquor = new Liquor({
       name,
       buyingPrice,
-      discount: 0,
+      discount,
       sellingPrice,
       category,
       alcoholPercentage,
@@ -208,6 +210,29 @@ const decreaseLiquorInventory = async (req, res) => {
     }
     liquor.currentQuantityInBottles -= quantity;
     await liquor.save();
+
+    const lowStockThreshold = liquor.lowStockThreshold;
+    if (liquor.currentQuantityInBottles <= lowStockThreshold) {
+      try {
+        const managers = await User.find({
+          Role: "Operation Manager 1 (Restraunt,Liquor)",
+        }).select("_id");
+
+        if (managers.length > 0) {
+          await NotifiModel.insertMany(
+            managers.map((manager) => ({
+              userId: manager._id,
+              title: "Low Liquor Stock Alert",
+              message: `${liquor.name} stock is low. Remaining: ${liquor.currentQuantityInBottles} bottle(s). Please restock soon.`,
+            })),
+          );
+        } else {
+          console.warn("No managers found for low stock notification");
+        }
+      } catch (notifError) {
+        console.error("Notification error (non-blocking):", notifError);
+      }
+    }
     res.status(200).json(liquor);
   } catch (error) {
     res.status(500).json({

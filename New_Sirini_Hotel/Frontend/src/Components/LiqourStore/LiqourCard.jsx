@@ -72,7 +72,7 @@ const DrinkCard = ({ drink, onClick }) => {
           {/* Price */}
           <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/15 border border-amber-500/25 rounded-xl backdrop-blur-sm">
             <div className="flex flex-col gap-1">
-              {drink.sellingPrice && drink.discount && (
+              {drink.discount && (
                 <p className="text-[15px] text-gray-400 leading-none">
                   Selling Price:
                   <span className="text-amber-400 line-through">

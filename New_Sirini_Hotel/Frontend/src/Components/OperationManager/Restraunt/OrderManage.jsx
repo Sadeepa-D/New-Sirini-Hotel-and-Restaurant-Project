@@ -94,9 +94,9 @@ const OrderManage = () => {
     const loadingtoast = toast.loading("Deleting order...");
     try {
       const token = localStorage.getItem("token");
-      await axios.delete("${VITE_URL}/api/restraunt/deleteorder/${id}", {
+      await axios.delete(`${VITE_URL}/api/restraunt/deleteorder/${id}`, {
         headers: {
-          Authorization: "Bearer ${token}",
+          Authorization: `Bearer ${token}`,
         },
       });
       toast.dismiss(loadingtoast);

@@ -17,6 +17,7 @@ connectDB();
 initCronJobs();
 
 const app = express();
+app.set("trust proxy", 1);
 
 // Middleware
 app.use(cors());

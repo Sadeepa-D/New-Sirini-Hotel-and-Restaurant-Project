@@ -218,6 +218,23 @@ function Header() {
     }
   }, [isLoggedIn]);
 
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (!e.target.closest(".notifi-container-wrapper")) {
+        setNotifiOpen(false);
+      }
+    };
+
+    if (notifiOpen) {
+      document.addEventListener("mousedown", handleOutsideClick);
+      document.addEventListener("touchstart", handleOutsideClick);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("touchstart", handleOutsideClick);
+    };
+  }, [notifiOpen]);
+
   return (
     <header className="bg-black/95 backdrop-blur-md sticky top-0 z-50 border-b border-white/5">
       <div className="w-full px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
@@ -272,7 +289,7 @@ function Header() {
         <div className="hidden md:flex items-center gap-3">
           {isLoggedIn ? (
             <>
-              <div className="relative z-40 overflow-visible">
+              <div className="relative z-40 overflow-visible notifi-container-wrapper">
                 <button
                   onClick={() => setNotifiOpen(!notifiOpen)}
                   className="p-2 text-zinc-400 hover:text-white rounded-full hover:bg-white/5 transition-all relative cursor-pointer"
@@ -404,7 +421,7 @@ function Header() {
         <div className="md:hidden flex items-center gap-2 sm:gap-3">
           {isLoggedIn && (
             <div className="flex items-center gap-2">
-              <div className="relative z-40 overflow-visible">
+              <div className="relative z-40 overflow-visible notifi-container-wrapper">
                 <button
                   onClick={() => setNotifiOpen(!notifiOpen)}
                   className="p-1.5 text-zinc-400 hover:text-white rounded-full hover:bg-white/5 transition-all relative cursor-pointer"
