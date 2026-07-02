@@ -12,6 +12,10 @@ const registerUser = async (req, res) => {
     if (!name || !email || !Phone || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
+    const phoneRegex = /^(?:\+94|0)?(7[0-8]\d{7}|[1-9]\d{8})$/;
+    if (!phoneRegex.test(Phone)) {
+      return res.status(400).json({ message: "Invalid phone number format" });
+    }
     const user = await User.findOne({ email });
     const hashedPassword = await bcrypt.hash(password, 10);
     if (user) {
