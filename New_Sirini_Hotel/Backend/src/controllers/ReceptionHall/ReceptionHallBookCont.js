@@ -135,6 +135,10 @@ const editReceptionHallBooking = async (req, res) => {
     if (!phoneRegex.test(customerPhone)) {
       return res.status(400).json({ message: "Invalid phone number format" });
     }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(customerEmail)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
     const updatedBooking = await receptionandHallBook.findByIdAndUpdate(
       id,
       {

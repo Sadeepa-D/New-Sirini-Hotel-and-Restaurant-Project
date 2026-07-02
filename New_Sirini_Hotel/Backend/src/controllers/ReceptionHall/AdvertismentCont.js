@@ -63,6 +63,10 @@ const createAdvertisment = async (req, res) => {
         example: "0712345678",
       });
     }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(EmailAddress)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
 
     const image = req.file ? req.file.secure_url : null;
     const imagePublicId = req.file ? req.file.public_id : null;

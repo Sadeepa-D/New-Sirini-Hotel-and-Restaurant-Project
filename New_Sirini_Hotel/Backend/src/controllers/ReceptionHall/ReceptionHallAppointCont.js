@@ -36,6 +36,10 @@ const createReceptionAppointment = async (req, res) => {
     if (!phoneRegex.test(phone)) {
       return res.status(400).json({ message: "Invalid phone number format" });
     }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
     const newAppointment = new ReceptionAppointment({
       userId,
       name,
