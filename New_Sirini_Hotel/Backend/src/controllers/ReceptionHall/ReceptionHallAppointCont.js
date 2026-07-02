@@ -52,6 +52,7 @@ const createReceptionAppointment = async (req, res) => {
     });
     await newNotifi.save();
 
+    
     res
       .status(201)
       .json({ message: "Reception appointment created successfully" });
