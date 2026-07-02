@@ -168,19 +168,25 @@ const updateReceptionAppointment = async (req, res) => {
       return res.status(400).json({ message: "Appointment ID is required" });
     }
     const phoneRegex = /^(?:\+94|0)?(7[0-8]\d{7}|[1-9]\d{8})$/;
-    if (!phoneRegex.test(updates.phone)) {
-      return res.status(400).json({ message: "Invalid phone number format" });
+    if (updates.phone !== undefined && !phoneRegex.test(updates.phone)) {
+      return res.status(400).json({
+        message: "Invalid phone number format",
+      });
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(updates.email)) {
-      return res.status(400).json({ message: "Invalid email format" });
-    }
-    const guests = Number(updates.noOfGuests);
-    if (isNaN(guests) || guests <= 0 || guests > 250) {
+    if (updates.email !== undefined && !emailRegex.test(updates.email)) {
       return res.status(400).json({
-        message:
-          "Invalid number of guests. Please enter a value between 1 and 250.",
+        message: "Invalid email format",
       });
+    }
+    if (updates.noOfGuests !== undefined) {
+      const guests = Number(updates.noOfGuests);
+      if (isNaN(guests) || guests <= 0 || guests > 250) {
+        return res.status(400).json({
+          message:
+            "Invalid number of guests. Please enter a value between 1 and 250.",
+        });
+      }
     }
     const updatedAppointment = await ReceptionAppointment.findByIdAndUpdate(
       id,
