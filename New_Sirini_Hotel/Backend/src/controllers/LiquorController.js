@@ -48,6 +48,11 @@ const addLiquor = async (req, res) => {
         .json({ message: "Selling Price must be a positive number" });
     }
 
+    if (sellingPrice <= buyingPrice) {
+      return res
+        .status(400)
+        .json({ message: "Selling Price must be greater than Buying Price" });
+    }
     if (!req.file) {
       return res.status(400).json({ message: "Please upload an image" });
     }
