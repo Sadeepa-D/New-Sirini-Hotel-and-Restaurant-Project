@@ -143,6 +143,10 @@ const updateUserProfile = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized User" });
     }
     const { name, email, Phone } = req.body;
+    const phoneRegex = /^(?:\+94|0)?(7[0-8]\d{7}|[1-9]\d{8})$/;
+    if (!phoneRegex.test(Phone)) {
+      return res.status(400).json({ message: "Invalid phone number format" });
+    }
     const updates = { name, email, Phone };
     if (req.file) {
       const existingUser = await User.findById(userId);
