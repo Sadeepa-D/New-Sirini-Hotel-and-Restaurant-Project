@@ -7,6 +7,11 @@ const createReceptionHallPackage = async (req, res) => {
     if (!name || !description || !price || !features || !seatings) {
       return res.status(400).json({ message: "All fields are required" });
     }
+    if (seatings <= 0 || seatings > 250) {
+      return res
+        .status(400)
+        .json({ message: "Seatings must be between 1 and 250" });
+    }
     const image = req.file ? req.file.secure_url : null;
     const imagePublicId = req.file ? req.file.public_id : null;
     if (!image) {
