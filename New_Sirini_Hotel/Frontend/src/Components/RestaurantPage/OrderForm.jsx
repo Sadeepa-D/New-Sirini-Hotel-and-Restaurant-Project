@@ -285,7 +285,11 @@ export default function OrderForm({ item, cartItems, onClose }) {
               </div>
             </div>
 
-            <div className="mt-6">
+            <p className="text-xs text-amber-700 text-center font-medium leading-relaxed px-4">
+              Order processing takes at least 1 hour. This time can change for special reasons. For any questions, please contact us.
+            </p>
+
+            <div className="mt-1">
               <button
                 type="submit"
                 disabled={loading}
