@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import MainRoom from "../../assets/Rooms/Main_Room.png";
-import Room_1 from "../../assets/Rooms/Room_1.jpg";
+import Room_1 from "../../assets/Rooms/Room_1.png";
 import Room_2 from "../../assets/Rooms/Room_2.jpg";
 import Room_3 from "../../assets/Rooms/Room_3.webp";
 import BookingForm from "../../Components/RoomCompo/BookingForm";
@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import LoginMessage from "../../Components/LoginMessage";
 import RoomFullDetails from "../../Components/RoomCompo/RoomFullDetails";
 import StarRating from "../../Components/StarRating";
+import ShowFeedback from "../../Components/ShowFeedback";
 import {
   Bed,
   Users,
@@ -343,6 +344,10 @@ function Rooms() {
             </p>
           </div>
         )}
+
+        <div className="mt-16">
+          <ShowFeedback />
+        </div>
       </main>
 
       <LoginMessage

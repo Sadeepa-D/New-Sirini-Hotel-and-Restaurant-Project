@@ -81,7 +81,6 @@ const ReceptionHallBookingCard = ({ booking, onEdit, onCancel }) => {
         </div>
         {/* Divider */}
         <div className="h-px bg-gray-100" />
-
         {/* Details */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div className="flex items-center gap-2">
@@ -123,7 +122,6 @@ const ReceptionHallBookingCard = ({ booking, onEdit, onCancel }) => {
             </span>
           </div>
         </div>
-
         {/* Special requests - Now with a min-height and consistent spacing */}
         <div className="min-h-16 mb-2">
           {/* Wraps the requests in a fixed-height container */}
@@ -142,28 +140,23 @@ const ReceptionHallBookingCard = ({ booking, onEdit, onCancel }) => {
             <div className="h-full w-full border border-dashed border-gray-100 rounded-xl" />
           )}
         </div>
-
-        {/* Action buttons */}
-        <div className="flex gap-2 mt-auto pt-2 border-t border-gray-100">
-          {booking.status === "Confirmed" ||
-            (booking.status === "Booked" && (
-              <button
-                onClick={() => onEdit(booking)}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 text-xs font-semibold transition-colors"
-              >
-                <Pencil size={13} /> Edit
-              </button>
-            ))}
-          {booking.status === "Confirmed" ||
-            (booking.status === "Booked" && (
-              <button
-                onClick={() => onCancel(booking._id)}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 text-xs font-semibold transition-colors"
-              >
-                <X size={13} /> Cancel
-              </button>
-            ))}
-        </div>
+        {/* Action buttons */}{" "}
+        {booking.status !== "Cancelled" && (
+          <div className="flex gap-2 mt-auto pt-2 border-t border-gray-100">
+            <button
+              onClick={() => onEdit(booking)}
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 text-xs font-semibold transition-colors"
+            >
+              <Pencil size={13} /> Edit
+            </button>
+            <button
+              onClick={() => onCancel(booking._id)}
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 text-xs font-semibold transition-colors"
+            >
+              <X size={13} /> Cancel
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

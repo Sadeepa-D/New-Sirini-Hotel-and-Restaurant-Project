@@ -75,7 +75,16 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
 
   const handleGalleryFilesChange = (e) => {
     const files = Array.from(e.target.files);
-    setGalleryImages(files);
+    if (files.length === 0) return;
+
+    // Max limit is 4 images (existing + new)
+    const currentCount = keptGalleryImages.length + galleryImages.length;
+    if (currentCount + files.length > 4) {
+      alert(`You can upload a maximum of 4 gallery images. (Already selected: ${currentCount}, trying to add: ${files.length})`);
+      return;
+    }
+
+    setGalleryImages((prevImages) => [...prevImages, ...files]);
 
     // Create previews for all gallery images
     const newPreviews = [];
@@ -87,8 +96,8 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
         newPreviews.push(reader.result);
         loadedCount++;
         if (loadedCount === files.length) {
-          // Combine existing images with new previews
-          setGalleryPreviews([...keptGalleryImages, ...newPreviews]);
+          // Combine existing previews with new previews
+          setGalleryPreviews((prevPreviews) => [...prevPreviews, ...newPreviews]);
         }
       };
       reader.readAsDataURL(file);
