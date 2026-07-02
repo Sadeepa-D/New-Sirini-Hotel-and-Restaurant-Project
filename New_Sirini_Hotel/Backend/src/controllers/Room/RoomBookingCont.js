@@ -109,7 +109,7 @@ const createRoomBooking = async (req, res) => {
     // });
     const newNotification = new NotifiModel({
       userId,
-      title: "New Room Booking Created",
+      title: "You have booked a room",
       message: `Your booking for room ${roomNumber} from ${checkInDate} to ${checkOutDate} has been created. Ref: ${newRoomBooking.bookingCode}`,
     });
     await newNotification.save();
@@ -302,8 +302,8 @@ const setRoomBookingStatustoCompleted = async (req, res) => {
     res.status(200).json(updatedBooking);
     const newNotification = new NotifiModel({
       userId: updatedBooking.userId,
-      title: "Room Booking Completed",
-      message: `Your booking for room ${updatedBooking.roomNumber} Ref: ${updatedBooking.bookingCode} has been completed.`,
+      title: "Checkout Confirmed",
+      message: `Checkout confirmed for room ${updatedBooking.roomNumber} Ref: ${updatedBooking.bookingCode}.`,
     });
     await newNotification.save();
   } catch (error) {

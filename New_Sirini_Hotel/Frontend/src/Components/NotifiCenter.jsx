@@ -37,7 +37,7 @@ const NotifiCenter = ({
     if (t.includes("accepted") || t.includes("success")) {
       return <CheckCheck className="text-emerald-500 shrink-0" size={18} />;
     }
-    if (t.includes("complete")) {
+    if (t.includes("complete") || t.includes("checkout")) {
       return <CheckCheck className="text-teal-500 shrink-0" size={18} />;
     }
     if (t.includes("overdue")) {
