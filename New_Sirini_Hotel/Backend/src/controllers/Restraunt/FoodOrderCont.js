@@ -25,7 +25,10 @@ const getCurrentSLTime = () => {
 
   return { slDate, slTime };
 };
-
+const timeToMinutes = (timeStr) => {
+  const [h, m] = timeStr.split(":").map(Number);
+  return h * 60 + m;
+};
 const GenarateFoodOrderCode = async () => {
   const prefix = "SH";
   const randomNumber = Math.floor(1000 + Math.random() * 9000);
@@ -70,9 +73,20 @@ const createFoodOrder = async (req, res) => {
     if (!phoneRegex.test(phoneNumber)) {
       return res.status(400).json({ message: "Invalid phone number format" });
     }
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: "Invalid email format" });
+    }
+    const timeFormatRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+    if (!timeFormatRegex.test(pickupTime)) {
+      return res.status(400).json({ message: "Invalid pickup time format" });
+    }
+    const dateFormatRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (
+      !dateFormatRegex.test(pickupDate) ||
+      isNaN(new Date(pickupDate).getTime())
+    ) {
+      return res.status(400).json({ message: "Invalid pickup date format" });
     }
     // Sri Lanka Time Validation
     const { slDate, slTime } = getCurrentSLTime();
@@ -82,11 +96,23 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           "Selected date is in the past. Please choose today or a future date.",
       });
     }
-    if (pickupDate === slDate && pickupTime <= slTime) {
-      return res.status(400).json({
-        message:
-          "Selected time has already passed for today. Please choose a future time.",
-      });
+    if (pickupDate === slDate) {
+      const nowMinutes = timeToMinutes(slTime);
+      const pickupMinutes = timeToMinutes(pickupTime);
+
+      if (pickupMinutes <= nowMinutes) {
+        return res.status(400).json({
+          message:
+            "Selected time has already passed for today. Please choose a future time.",
+        });
+      }
+
+      if (pickupMinutes - nowMinutes < 60) {
+        return res.status(400).json({
+          message:
+            "Pick-up time must be at least 1 hour from now. Please choose a later time.",
+        });
+      }
     }
     const orderCode = await GenarateFoodOrderCode();
     const savedOrders = [];
@@ -227,7 +253,7 @@ const editfoodOrder = async (req, res) => {
     if (!phoneRegex.test(phoneNumber)) {
       return res.status(400).json({ message: "Invalid phone number format" });
     }
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: "Invalid email format" });
     }
