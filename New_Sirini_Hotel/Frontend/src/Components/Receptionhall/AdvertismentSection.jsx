@@ -145,12 +145,12 @@ const AdvertisementSection = () => {
       </div>
 
       {/* Divider */}
-      <div className="flex items-center gap-4 max-w-7xl mx-auto mb-8">
-        <div className="h-px flex-1 bg-gray-200" />
-        <span className="text-xs text-gray-400 uppercase tracking-widest font-medium whitespace-nowrap">
+      <div className="flex items-center gap-4 max-w-7xl mx-auto mb-8 px-4">
+        <div className="h-[1.5px] flex-1 bg-black/40" />
+        <span className="text-xs sm:text-sm md:text-base text-amber-950 font-cinzel font-bold tracking-widest whitespace-nowrap bg-amber-500/10 px-4 py-1.5 rounded-full border border-amber-500/20 shadow-sm">
           {activeCategory}
         </span>
-        <div className="h-px flex-1 bg-gray-200" />
+        <div className="h-[1.5px] flex-1 bg-black/40" />
       </div>
 
       {/* Cards Grid */}
