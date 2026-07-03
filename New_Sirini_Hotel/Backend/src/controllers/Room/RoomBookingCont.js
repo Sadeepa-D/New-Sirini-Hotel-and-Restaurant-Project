@@ -119,10 +119,14 @@ const createRoomBooking = async (req, res) => {
       newRoomBooking,
     });
     try {
+      const dateMsg = timeSlot === "day"
+        ? `on ${checkInDate}`
+        : `from ${checkInDate} to ${checkOutDate}`;
+
       const newNotification = new NotifiModel({
         userId,
         title: "New Room Booking Created",
-        message: `Your booking for room ${roomNumber} from ${checkInDate} to ${checkOutDate} has been created. Ref: ${newRoomBooking.bookingCode}`,
+        message: `Your booking for room ${roomNumber} ${dateMsg} has been created. Ref: ${newRoomBooking.bookingCode}`,
       });
       await newNotification.save();
 
@@ -135,7 +139,7 @@ const createRoomBooking = async (req, res) => {
           managers.map((manager) => ({
             userId: manager._id,
             title: "New Room Booking Created",
-            message: `${name} booked room ${roomNumber} from ${checkInDate} to ${checkOutDate}. Ref: ${newRoomBooking.bookingCode}.`,
+            message: `${name} booked room ${roomNumber} ${dateMsg}. Ref: ${newRoomBooking.bookingCode}.`,
           })),
         );
       } else {
