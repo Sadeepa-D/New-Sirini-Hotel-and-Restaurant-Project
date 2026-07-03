@@ -56,12 +56,12 @@ const createRoomBooking = async (req, res) => {
 
     const newStart =
       timeSlot === "day"
-        ? newIn.getTime() + 12 * 3600000
+        ? newIn.getTime() + 10 * 3600000
         : newIn.getTime() + 16 * 3600000;
     const newEnd =
       timeSlot === "day"
         ? newIn.getTime() + 15 * 3600000
-        : newOut.getTime() + 10 * 3600000;
+        : newOut.getTime() + 9 * 3600000;
 
     const activeBookings = await RoomBooking.find({
       roomNumber,
@@ -72,16 +72,16 @@ const createRoomBooking = async (req, res) => {
       const bIn = b.checkInDate.getTime();
       const bOut = b.checkOutDate.getTime();
       const bStart =
-        b.timeSlot === "day" ? bIn + 12 * 3600000 : bIn + 16 * 3600000;
+        b.timeSlot === "day" ? bIn + 10 * 3600000 : bIn + 16 * 3600000;
       const bEnd =
-        b.timeSlot === "day" ? bIn + 15 * 3600000 : bOut + 10 * 3600000;
+        b.timeSlot === "day" ? bIn + 15 * 3600000 : bOut + 9 * 3600000;
 
       return newStart < bEnd && newEnd > bStart;
     });
 
     if (hasConflict) {
       const slotLabel =
-        timeSlot === "day" ? "Day Package (12:00 PM – 3:00 PM)" : "Night Package (4:00 PM – 10:00 AM)";
+        timeSlot === "day" ? "Day Package (10:00 AM – 3:00 PM)" : "Night Package (4:00 PM – 9:00 AM)";
       return res.status(400).json({
         error: `Sorry! The ${slotLabel} is not available for one or more of those dates. Please choose different dates.`,
       });
