@@ -68,10 +68,10 @@ export default function ReceptionHallPackages() {
     <section className="bg-gray-50 py-5 px-4 sm:px-6 lg:px-8">
       {/* Section Header */}
       <div className="text-center mb-16 h-17">
-        <p className="text-amber-600 text-xs uppercase tracking-[0.4em] mb-3 font-bold">
+        <p className="text-amber-500 text-xs uppercase tracking-[0.3em] mb-2 font-medium">
           Tailored For You
         </p>
-        <h2 className="font-cinzel text-4xl md:text-5xl text-gray-900 italic leading-tight">
+        <h2 className="font-cinzel text-3xl sm:text-4xl md:text-5xl text-gray-800 font-semibold">
           Our Packages
         </h2>
         <div className="flex items-center justify-center gap-3 mt-6">
