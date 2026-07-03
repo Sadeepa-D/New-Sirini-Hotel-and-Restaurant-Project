@@ -12,6 +12,7 @@ import StarRating from "../StarRating";
 
 function RoomFullDetails({ room, isOpen, onClose, onBookNow }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   if (!isOpen || !room) return null;
 
@@ -69,10 +70,11 @@ function RoomFullDetails({ room, isOpen, onClose, onBookNow }) {
               <img
                 src={images[currentImageIndex]}
                 alt="Room"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover cursor-zoom-in transition-transform duration-500 hover:scale-105"
+                onClick={() => setIsLightboxOpen(true)}
               />
 
-              <div className="absolute inset-0 bg-linear-to-t from-slate-950/45 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-slate-950/45 via-transparent to-transparent pointer-events-none" />
 
               {/* Navigation Arrows */}
               <button
@@ -95,7 +97,7 @@ function RoomFullDetails({ room, isOpen, onClose, onBookNow }) {
               </button>
 
               {/* Image Counter */}
-              <div className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 bg-slate-950/70 text-white px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-sm font-medium tracking-wide backdrop-blur-sm ring-1 ring-white/10">
+              <div className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 bg-slate-950/70 text-white px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-sm font-medium tracking-wide backdrop-blur-sm ring-1 ring-white/10 pointer-events-none">
                 {currentImageIndex + 1} / {images.length}
               </div>
             </div>
@@ -272,6 +274,84 @@ function RoomFullDetails({ room, isOpen, onClose, onBookNow }) {
           </div>
         </div>
       </div>
+
+      {/* Fullscreen Lightbox Overlay */}
+      {isLightboxOpen && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center p-2 sm:p-4 select-none cursor-pointer"
+          onClick={() => setIsLightboxOpen(false)}
+        >
+          <style>{`
+            @keyframes lightboxFadeInZoom {
+              from {
+                opacity: 0;
+                transform: scale(0.93);
+              }
+              to {
+                opacity: 1;
+                transform: scale(1);
+              }
+            }
+          `}</style>
+
+          {/* Close button */}
+          <button
+            onClick={() => setIsLightboxOpen(false)}
+            className="absolute top-4 right-4 z-10 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 p-3 rounded-full transition-all duration-300 backdrop-blur-md shadow-lg"
+            aria-label="Close fullscreen view"
+          >
+            <X size={24} />
+          </button>
+
+          {/* Left Arrow */}
+          {images.length > 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handlePrevImage();
+              }}
+              className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-all duration-300 backdrop-blur-md shadow-lg hover:scale-105"
+              aria-label="Previous image"
+            >
+              <ChevronLeft size={24} />
+            </button>
+          )}
+
+          {/* Large Image Container */}
+          <div
+            className="w-full max-w-[95vw] h-full max-h-[90vh] flex items-center justify-center relative cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={images[currentImageIndex]}
+              alt="Room Fullscreen"
+              className="max-w-full max-h-full object-contain rounded-xl shadow-2xl transition-all duration-300 select-none"
+              style={{
+                animation: "lightboxFadeInZoom 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+              }}
+            />
+          </div>
+
+          {/* Right Arrow */}
+          {images.length > 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleNextImage();
+              }}
+              className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-all duration-300 backdrop-blur-md shadow-lg hover:scale-105"
+              aria-label="Next image"
+            >
+              <ChevronRight size={24} />
+            </button>
+          )}
+
+          {/* Image Counter Badge */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/90 text-xs sm:text-sm font-semibold tracking-widest uppercase bg-black/60 px-4 py-2 rounded-full border border-white/10 backdrop-blur-md shadow-md">
+            {currentImageIndex + 1} / {images.length}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
