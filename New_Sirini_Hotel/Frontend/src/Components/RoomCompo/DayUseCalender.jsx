@@ -80,9 +80,9 @@ const DayUseCalender = ({
       const bIn = parseBaseTime(b.checkInDate.split("T")[0]);
       const bOut = parseBaseTime(b.checkOutDate.split("T")[0]);
       const bStart =
-        b.timeSlot === "day" ? bIn + 12 * 3600000 : bIn + 16 * 3600000;
+        b.timeSlot === "day" ? bIn + 10 * 3600000 : bIn + 16 * 3600000;
       const bEnd =
-        b.timeSlot === "day" ? bIn + 15 * 3600000 : bOut + 10 * 3600000;
+        b.timeSlot === "day" ? bIn + 15 * 3600000 : bOut + 9 * 3600000;
       return proposedStart < bEnd && proposedEnd > bStart;
     });
   };
@@ -97,26 +97,26 @@ const DayUseCalender = ({
     const baseTime = Date.UTC(year, month, day);
 
     if (timeSlot === "day") {
-      // Proposed day booking: 12 PM - 3 PM
-      const start = baseTime + 12 * 3600000;
+      // Proposed day booking: 10 AM - 3 PM
+      const start = baseTime + 10 * 3600000;
       const end = baseTime + 15 * 3600000;
       if (isConflict(start, end)) return "blocked";
     } else {
       if (!selectedDate) {
         
         const start = baseTime + 16 * 3600000;
-        const end = baseTime + 24 * 3600000 + 10 * 3600000; 
+        const end = baseTime + 24 * 3600000 + 9 * 3600000; 
         if (isConflict(start, end)) return "blocked";
       } else {
         if (dateStr <= selectedDate) {
           
           const start = baseTime + 16 * 3600000;
-          const end = baseTime + 24 * 3600000 + 10 * 3600000;
+          const end = baseTime + 24 * 3600000 + 9 * 3600000;
           if (isConflict(start, end)) return "blocked";
         } else {
          
           const start = parseBaseTime(selectedDate) + 16 * 3600000;
-          const end = baseTime + 10 * 3600000;
+          const end = baseTime + 9 * 3600000;
           if (isConflict(start, end)) return "span-blocked";
         }
       }
@@ -308,7 +308,7 @@ const DayUseCalender = ({
           {selectedDate && (
             <div className="flex-1">
               <span className="block text-[8px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">
-                {isFullDay ? "Check-In (4:00 PM)" : "Check-In (12:00 PM)"}
+                {isFullDay ? "Check-In (4:00 PM)" : "Check-In (10:00 AM)"}
               </span>
               <span className="block text-xs font-bold text-gray-900">{selectedDate}</span>
             </div>
@@ -318,7 +318,7 @@ const DayUseCalender = ({
               <div className="h-6 w-px bg-gray-200" />
               <div className="flex-1">
                 <span className="block text-[8px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">
-                  {isFullDay ? "Check-Out (10:00 AM)" : "Check-Out (3:00 PM)"}
+                  {isFullDay ? "Check-Out (9:00 AM)" : "Check-Out (3:00 PM)"}
                 </span>
                 <span className="block text-xs font-bold text-gray-900">
                   {isFullDay ? selectedCheckOut : selectedDate}

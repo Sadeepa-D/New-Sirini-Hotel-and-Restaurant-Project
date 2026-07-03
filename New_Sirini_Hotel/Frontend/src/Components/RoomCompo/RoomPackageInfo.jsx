@@ -70,7 +70,7 @@ const RoomPackageInfo = () => {
             <div className="flex items-center gap-2 text-orange-600 bg-orange-100/60 w-fit px-3.5 py-2 rounded-xl border border-orange-100/50 shadow-sm">
               <Clock size={14} className="animate-pulse" />
               <span className="text-xs font-bold tracking-wide">
-                12:00 PM - 3:00 PM
+                10:00 AM - 3:00 PM
               </span>
             </div>
           </div>
@@ -93,7 +93,7 @@ const RoomPackageInfo = () => {
             <div className="flex items-center gap-2 text-blue-600 bg-blue-100/60 w-fit px-3.5 py-2 rounded-xl border border-blue-100/50 shadow-sm">
               <Clock size={14} className="animate-pulse" />
               <span className="text-xs font-bold tracking-wide">
-                4:00 PM - 10:00 AM{" "}
+                4:00 PM - 9:00 AM{" "}
                 <span className="text-[10px] uppercase opacity-80 ml-1 bg-blue-200/50 px-1.5 py-0.5 rounded-md">
                   Next Day
                 </span>

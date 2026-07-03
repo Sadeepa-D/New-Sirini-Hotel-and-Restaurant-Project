@@ -286,10 +286,59 @@ function Header() {
         </nav>
 
         {/* ── Desktop Auth ── */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-3 relative z-40 overflow-visible notifi-container-wrapper">
           {isLoggedIn ? (
             <>
-              <div className="relative z-40 overflow-visible notifi-container-wrapper">
+              {userData.Role !== "User" && (
+                <div className="flex items-center gap-3">
+                  {userData.Role === "Admin" && (
+                    <button
+                      className="flex items-center gap-2 group transition-all cursor-pointer"
+                      onClick={() => navigate("/admin")}
+                    >
+                      <ExternalLink
+                        className="text-amber-500 font-bold hover:scale-105"
+                        size={25}
+                      />
+                      <span className="text-amber-500 font-bold hover:scale-105">
+                        Admin Portal
+                      </span>
+                    </button>
+                  )}
+                  {userData.Role ===
+                    "Operation Manager 1 (Restraunt,Liquor)" && (
+                    <button
+                      className="flex items-center gap-2 group transition-all cursor-pointer"
+                      onClick={() => navigate("/operationmanager")}
+                    >
+                      <ExternalLink
+                        className="text-amber-500 font-bold hover:scale-105"
+                        size={25}
+                      />
+                      <span className="text-amber-500 font-bold hover:scale-105">
+                        Manager Portal
+                      </span>
+                    </button>
+                  )}
+                  {userData.Role ===
+                    "Operation Manager 2 (Reception, Room)" && (
+                    <button
+                      className="flex items-center gap-2 group transition-all cursor-pointer"
+                      onClick={() => navigate("/manager")}
+                    >
+                      <ExternalLink
+                        className="text-amber-500 font-bold hover:scale-105"
+                        size={25}
+                      />
+                      <span className="text-amber-500 font-bold hover:scale-105">
+                        Manager Portal
+                      </span>
+                    </button>
+                  )}
+                </div>
+              )}
+
+              <div className="relative">
                 <button
                   onClick={() => setNotifiOpen(!notifiOpen)}
                   className="p-2 text-zinc-400 hover:text-white rounded-full hover:bg-white/5 transition-all relative cursor-pointer"
@@ -301,73 +350,9 @@ function Header() {
                     </span>
                   )}
                 </button>
-
-                {/* Dropdown Card */}
-                {notifiOpen && (
-                  <NotifiCenter
-                    notifications={notifications}
-                    onMarkAsRead={handleMarkAsRead}
-                    onMarkAllAsRead={handleMarkAllAsRead}
-                    onClearAll={handleClearAll}
-                    onClose={() => setNotifiOpen(false)}
-                  />
-                )}
               </div>
+
               <div className="flex items-center gap-3">
-                {userData.Role !== "User" && (
-                  <div>
-                    {userData.Role === "Admin" && (
-                      <>
-                        <button
-                          className="flex items-center gap-2 group transition-all"
-                          onClick={() => navigate("/admin")}
-                        >
-                          <ExternalLink
-                            className="text-amber-500 font-bold hover:scale-105"
-                            size={25}
-                          />
-                          <span className="text-amber-500 font-bold hover:scale-105">
-                            Admin Portal
-                          </span>
-                        </button>
-                      </>
-                    )}
-                    {userData.Role ===
-                      "Operation Manager 1 (Restraunt,Liquor)" && (
-                      <>
-                        <button
-                          className="flex items-center gap-2 group transition-all"
-                          onClick={() => navigate("/operationmanager")}
-                        >
-                          <ExternalLink
-                            className="text-amber-500 font-bold hover:scale-105"
-                            size={25}
-                          />
-                          <span className="text-amber-500 font-bold hover:scale-105">
-                            Manager Portal
-                          </span>
-                        </button>
-                      </>
-                    )}
-                    {userData.Role ===
-                      "Operation Manager 2 (Reception, Room)" && (
-                      <>
-                        <button
-                          className="flex items-center gap-2 group transition-all"
-                          onClick={() => navigate("/manager")}
-                        >
-                          <ExternalLink
-                            className="text-amber-500 font-bold hover:scale-105"
-                            size={25}
-                          />
-                          <span className="text-amber-500 font-bold hover:scale-105">
-                            Manager Portal
-                          </span>
-                        </button>
-                      </>
-                    )}
-                  </div>
-                )}
                 <div className="w-14 h-14 bg-amber-500 rounded-full overflow-hidden hover:scale-105 transition-transform cursor-pointer shadow-md ring-2 ring-amber-200 ring-offset-1">
                   {userImage ? (
                     <img
@@ -393,6 +378,17 @@ function Header() {
                   <span>Log Out</span>
                 </button>
               </div>
+
+              {/* Dropdown Card */}
+              {notifiOpen && (
+                <NotifiCenter
+                  notifications={notifications}
+                  onMarkAsRead={handleMarkAsRead}
+                  onMarkAllAsRead={handleMarkAllAsRead}
+                  onClearAll={handleClearAll}
+                  onClose={() => setNotifiOpen(false)}
+                />
+              )}
             </>
           ) : (
             <div className="flex items-center gap-2">

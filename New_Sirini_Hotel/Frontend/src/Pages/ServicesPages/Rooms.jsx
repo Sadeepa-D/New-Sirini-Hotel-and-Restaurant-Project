@@ -207,7 +207,7 @@ function Rooms() {
                           Rs.{(room.shortStayPrice || 1500).toLocaleString()}
                         </p>
                         <span className="text-white/80 text-[10px] font-medium italic drop-shadow-md">
-                          per 3 hours
+                          per 5 hours
                         </span>
                       </div>
                     </div>

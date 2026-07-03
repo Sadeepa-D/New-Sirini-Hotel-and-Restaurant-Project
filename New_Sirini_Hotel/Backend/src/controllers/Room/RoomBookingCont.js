@@ -63,12 +63,12 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     const newStart =
       timeSlot === "day"
-        ? newIn.getTime() + 12 * 3600000
+        ? newIn.getTime() + 10 * 3600000
         : newIn.getTime() + 16 * 3600000;
     const newEnd =
       timeSlot === "day"
         ? newIn.getTime() + 15 * 3600000
-        : newOut.getTime() + 10 * 3600000;
+        : newOut.getTime() + 9 * 3600000;
 
     const activeBookings = await RoomBooking.find({
       roomNumber,
@@ -79,16 +79,16 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       const bIn = b.checkInDate.getTime();
       const bOut = b.checkOutDate.getTime();
       const bStart =
-        b.timeSlot === "day" ? bIn + 12 * 3600000 : bIn + 16 * 3600000;
+        b.timeSlot === "day" ? bIn + 10 * 3600000 : bIn + 16 * 3600000;
       const bEnd =
-        b.timeSlot === "day" ? bIn + 15 * 3600000 : bOut + 10 * 3600000;
+        b.timeSlot === "day" ? bIn + 15 * 3600000 : bOut + 9 * 3600000;
 
       return newStart < bEnd && newEnd > bStart;
     });
 
     if (hasConflict) {
       const slotLabel =
-        timeSlot === "day" ? "Day Package (12:00 PM – 3:00 PM)" : "Night Package (4:00 PM – 10:00 AM)";
+        timeSlot === "day" ? "Day Package (10:00 AM – 3:00 PM)" : "Night Package (4:00 PM – 9:00 AM)";
       return res.status(400).json({
         error: `Sorry! The ${slotLabel} is not available for one or more of those dates. Please choose different dates.`,
       });
@@ -126,10 +126,14 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       newRoomBooking,
     });
     try {
+      const dateMsg = timeSlot === "day"
+        ? `on ${checkInDate}`
+        : `from ${checkInDate} to ${checkOutDate}`;
+
       const newNotification = new NotifiModel({
         userId,
         title: "New Room Booking Created",
-        message: `Your booking for room ${roomNumber} from ${checkInDate} to ${checkOutDate} has been created. Ref: ${newRoomBooking.bookingCode}`,
+        message: `Your booking for room ${roomNumber} ${dateMsg} has been created. Ref: ${newRoomBooking.bookingCode}`,
       });
       await newNotification.save();
 
@@ -142,7 +146,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           managers.map((manager) => ({
             userId: manager._id,
             title: "New Room Booking Created",
-            message: `${name} booked room ${roomNumber} from ${checkInDate} to ${checkOutDate}. Ref: ${newRoomBooking.bookingCode}.`,
+            message: `${name} booked room ${roomNumber} ${dateMsg}. Ref: ${newRoomBooking.bookingCode}.`,
           })),
         );
       } else {
