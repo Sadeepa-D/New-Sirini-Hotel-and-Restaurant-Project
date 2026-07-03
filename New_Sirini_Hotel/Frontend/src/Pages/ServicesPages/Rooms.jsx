@@ -23,6 +23,8 @@ import {
   Droplets,
   Monitor,
   Refrigerator,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 function Rooms() {
@@ -37,6 +39,22 @@ function Rooms() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedRoomForDetails, setSelectedRoomForDetails] = useState(null);
+  const scrollContainerRef = React.useRef(null);
+
+  const scroll = (direction) => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      const scrollAmount = 380; // Card width + gap
+      const newPosition =
+        direction === "left"
+          ? container.scrollLeft - scrollAmount
+          : container.scrollLeft + scrollAmount;
+      container.scrollTo({
+        left: newPosition,
+        behavior: "smooth",
+      });
+    }
+  };
 
   //Slide show in main room page
   const backgroundImages = [Room_1, Room_2, Room_3];
@@ -170,13 +188,34 @@ function Rooms() {
             <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
           </div>
         ) : (
-          <div className="flex flex-col">
-            <div className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-6 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:overflow-visible md:pb-0">
+          <div className="relative group/slider max-w-full">
+            {/* Left Scroll Button */}
+            <button
+              onClick={() => scroll("left")}
+              className="absolute left-1 md:-left-6 lg:-left-12 top-1/2 -translate-y-1/2 z-10 p-2 sm:p-3 bg-white/90 hover:bg-white text-orange-600 rounded-full shadow-lg border border-orange-200 transition-all duration-300 hover:scale-110 active:scale-95 flex items-center justify-center"
+              title="Scroll left"
+            >
+              <ChevronLeft size={20} className="sm:w-6 sm:h-6" />
+            </button>
+
+            {/* Cards Container */}
+            <div
+              ref={scrollContainerRef}
+              className="flex overflow-x-auto gap-6 pb-6 px-12 scroll-smooth snap-x snap-mandatory 
+                         [&::-webkit-scrollbar]:h-2 
+                         [&::-webkit-scrollbar-track]:bg-orange-500/10 
+                         [&::-webkit-scrollbar-track]:rounded-full 
+                         [&::-webkit-scrollbar-thumb]:bg-orange-500/60 
+                         [&::-webkit-scrollbar-thumb]:rounded-full 
+                         hover:[&::-webkit-scrollbar-thumb]:bg-orange-600 
+                         [scrollbar-width:thin] 
+                         [scrollbar-color:#f97316_rgba(249,115,22,0.1)]"
+            >
               {roomList.map((room) => (
                 <div
                   key={room._id}
                   onClick={() => handleViewRoomDetails(room)}
-                  className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:scale-[1.02] transition-all duration-500 border border-gray-100 flex flex-col h-full w-[85%] shrink-0 snap-start md:w-auto md:shrink md:snap-none cursor-pointer"
+                  className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:scale-[1.02] transition-all duration-500 border border-gray-100 flex flex-col h-full w-80 sm:w-[350px] shrink-0 snap-start cursor-pointer"
                 >
                   {/* Image Section */}
                   <div className="relative h-56 overflow-hidden">
@@ -347,9 +386,15 @@ function Rooms() {
                 </div>
               ))}
             </div>
-            <p className="mt-2 text-center text-[10px] text-gray-400 font-medium tracking-wider md:hidden">
-              ← Swipe to browse →
-            </p>
+
+            {/* Right Scroll Button */}
+            <button
+              onClick={() => scroll("right")}
+              className="absolute right-1 md:-right-6 lg:-right-12 top-1/2 -translate-y-1/2 z-10 p-2 sm:p-3 bg-white/90 hover:bg-white text-orange-600 rounded-full shadow-lg border border-orange-200 transition-all duration-300 hover:scale-110 active:scale-95 flex items-center justify-center"
+              title="Scroll right"
+            >
+              <ChevronRight size={20} className="sm:w-6 sm:h-6" />
+            </button>
           </div>
         )}
 
