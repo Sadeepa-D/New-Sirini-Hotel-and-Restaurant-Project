@@ -293,13 +293,7 @@ const NewSiriniHotel = () => {
 
             {/* Main Map Container */}
             <div className="relative bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-xl sm:shadow-2xl hover:shadow-2xl sm:hover:shadow-3xl transition-all duration-500 h-64 md:h-96 border border-gray-100">
-              {/* Decorative Top Badge */}
-              <div className="absolute top-2 sm:top-4 left-1/2 -translate-x-1/2 z-20 bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-widest shadow-lg flex items-center gap-1 sm:gap-2">
-                <span className="text-sm sm:text-lg">📍</span>
-                <span className="hidden sm:inline">Our Location</span>
-                <span className="sm:hidden">Location</span>
-              </div>
-
+        
               {/* Map */}
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1015647.6659904498!2d79.35278087812499!3d6.080244600000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae14581018f8001%3A0x5b446489a6e6e3ef!2sNew%20Sirini%20Hotel!5e0!3m2!1sen!2slk!4v1778137116664!5m2!1sen!2slk"
@@ -310,20 +304,7 @@ const NewSiriniHotel = () => {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 title="Google Map Location"
-                className="pt-6 sm:pt-8"
               ></iframe>
-
-              {/* Decorative Corner Elements - Hide on Mobile */}
-              <div className="hidden sm:block absolute top-2 right-2 w-6 h-6 sm:w-8 sm:h-8 border-t-2 border-r-2 border-amber-500 rounded-tr-lg"></div>
-              <div className="hidden sm:block absolute bottom-2 left-2 w-6 h-6 sm:w-8 sm:h-8 border-b-2 border-l-2 border-amber-500 rounded-bl-lg"></div>
-
-              {/* Subtle Animation Pulse */}
-              <div
-                className="absolute top-2 sm:top-4 left-1/2 -translate-x-1/2 w-2 sm:w-3 h-2 sm:h-3 bg-red-500 rounded-full animate-pulse z-10 shadow-lg"
-                style={{
-                  boxShadow: "0 0 15px sm:0 0 20px rgba(239, 68, 68, 0.6)",
-                }}
-              ></div>
             </div>
           </div>
         </section>
