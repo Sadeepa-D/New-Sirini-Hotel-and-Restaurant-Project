@@ -54,7 +54,6 @@ const createReceptionHallPackage = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-
 const getReceptionHallPackages = async (req, res) => {
   try {
     const packages = await ReceptionHallPackage.find();
