@@ -49,7 +49,7 @@ export default function RestaurantCard({
 
             {/* Button Skeleton */}
             <div className="mt-auto pt-6 flex justify-center">
-              <div className="h-10 bg-neutral-200 rounded-full w-[60%]"></div>
+              <div className="h-10 bg-neutral-200 w-[60%]" style={{ borderRadius: "10px" }}></div>
             </div>
           </div>
         </div>
@@ -132,9 +132,10 @@ export default function RestaurantCard({
             <button
               onClick={handleAddClick}
               disabled={item.availability === false}
-              className={`w-[60%] mx-auto py-2.5 text-white text-sm font-semibold rounded-full transition-all duration-300 shadow-sm hover:shadow-md ${
+              style={{ borderRadius: "10px" }}
+              className={`w-[60%] mx-auto py-2.5 text-white text-sm font-semibold transition-all duration-500 transform shadow-sm hover:shadow-md ${
                 item.availability !== false
-                  ? "bg-amber-600 hover:bg-amber-700"
+                  ? "bg-amber-600 hover:bg-amber-700 hover:scale-105 active:scale-95"
                   : "bg-gray-400 cursor-not-allowed opacity-70"
               }`}
             >

@@ -247,13 +247,13 @@ export default function Restaurant() {
         {/* Category Navigation Bar */}
         <div className="sticky top-[75px] z-30 bg-neutral-50/80 backdrop-blur-md py-6 mb-8 border-b border-neutral-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex overflow-x-auto gap-2 pb-2 hide-scrollbar scroll-smooth justify-start md:justify-center">
+            <div className="flex overflow-x-auto gap-2 pb-2 hide-scrollbar [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth justify-start md:justify-center">
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
                   style={{ borderRadius: "10px" }}
-                  className={`px-6 py-2.5 text-sm font-bold transition-all duration-300 whitespace-nowrap shadow-sm border
+                  className={`px-6 py-2.5 text-sm font-bold transition-all duration-300 whitespace-nowrap shadow-sm border transform hover:scale-105 active:scale-95
                     ${
                       selectedCategory === cat
                         ? "bg-amber-600 text-white border-amber-600 shadow-md shadow-amber-200 scale-105"
