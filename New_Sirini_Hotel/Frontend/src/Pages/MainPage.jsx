@@ -136,7 +136,7 @@ const NewSiriniHotel = () => {
           </div>
 
           <div className="z-10 flex flex-col items-center justify-center gap-2 md:gap-4">
-            <h1 className="text-3xl sm:text-4xl md:text-6xl font-light">
+            <h1 className="font-light" style={{ fontSize: "clamp(2rem, 6vw, 5rem)", lineHeight: "1.1" }}>
               New Sirini Hotel
             </h1>
             <img
