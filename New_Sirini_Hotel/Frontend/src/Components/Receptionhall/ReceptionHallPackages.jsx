@@ -80,25 +80,62 @@ export default function ReceptionHallPackages() {
           <div className="h-[1px] w-12 bg-amber-300" />
         </div>
       </div>
+      {/* Special Offer Card CSS Animations */}
+      <style>
+        {`
+          @keyframes borderGlow {
+            0%, 100% {
+              border-color: rgba(245, 158, 11, 0.25);
+              box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.04);
+            }
+            50% {
+              border-color: rgba(245, 158, 11, 0.6);
+              box-shadow: 0 20px 35px -5px rgba(245, 158, 11, 0.15);
+            }
+          }
+          @keyframes shimmers {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+          }
+          .animate-special-card {
+            animation: borderGlow 3s infinite ease-in-out;
+          }
+          .shine-effect {
+            background: linear-gradient(
+              120deg,
+              rgba(255, 255, 255, 0) 30%,
+              rgba(255, 255, 255, 0.3) 40%,
+              rgba(255, 255, 255, 0.3) 45%,
+              rgba(255, 255, 255, 0) 55%
+            );
+            background-size: 200% 100%;
+            animation: shimmers 4s infinite linear;
+          }
+        `}
+      </style>
+
       {/* Special Offer Card */}
       <div className="max-w-3xl mx-auto mb-16 px-4">
-        <div className="relative overflow-hidden bg-gradient-to-br from-amber-500/[0.08] via-amber-500/[0.02] to-transparent border border-amber-500/25 p-6 sm:p-8 rounded-3xl shadow-xl shadow-amber-500/[0.02] backdrop-blur-md flex flex-col sm:flex-row items-center gap-5 sm:gap-6 text-center sm:text-left group">
+        <div className="relative overflow-hidden bg-gradient-to-br from-amber-500/[0.08] via-amber-500/[0.02] to-transparent border p-6 sm:p-8 rounded-3xl backdrop-blur-md flex flex-col sm:flex-row items-center gap-5 sm:gap-6 text-center sm:text-left group transition-all duration-500 ease-out hover:-translate-y-1.5 hover:scale-[1.01] animate-special-card">
+          {/* Shimmer overlay */}
+          <div className="absolute inset-0 shine-effect opacity-40 pointer-events-none" />
+          
           {/* Glowing background circles for premium depth */}
-          <div className="absolute -top-12 -right-12 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-amber-500/15 transition-colors duration-300" />
+          <div className="absolute -top-12 -right-12 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-amber-500/20 transition-colors duration-500" />
           <div className="absolute -bottom-12 -left-12 w-24 h-24 bg-amber-500/5 rounded-full blur-2xl pointer-events-none" />
 
           {/* Premium Glowing Icon Box */}
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-500 text-black flex items-center justify-center shadow-lg shadow-amber-500/20 shrink-0 transform group-hover:scale-105 transition-transform duration-300">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-500 text-black flex items-center justify-center shadow-lg shadow-amber-500/20 shrink-0 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
             <Gift size={26} className="stroke-[2]" />
           </div>
 
           {/* Offer Content */}
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 z-10">
             <div className="flex flex-col sm:flex-row sm:items-center justify-center sm:justify-start gap-2">
               <h4 className="font-serif italic font-bold text-amber-950 text-lg sm:text-xl tracking-tight">
                 Special Offer on Hall Charges
               </h4>
-              <span className="self-center sm:self-start bg-amber-500/10 text-amber-700 text-[10px] uppercase font-bold tracking-widest px-2.5 py-0.5 rounded-full border border-amber-500/20">
+              <span className="self-center sm:self-start bg-amber-500/10 text-amber-700 text-[10px] uppercase font-bold tracking-widest px-2.5 py-0.5 rounded-full border border-amber-500/20 animate-pulse">
                 Exclusive
               </span>
             </div>
