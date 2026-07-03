@@ -34,7 +34,7 @@ const ReceptionHallBookMng = () => {
   const [showcalander, setShowCalander] = useState(false);
   const [bookedDates, setBookedDates] = useState([]);
   const [loadingDates, setLoadingDates] = useState(true);
-  const [statusFilter, setStatusFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("Confirmed");
   const [packages, setPackages] = useState([]);
 
   const fetchBookedDates = async () => {
@@ -106,7 +106,7 @@ const ReceptionHallBookMng = () => {
       b.refnumber?.toLowerCase().includes(search.toLowerCase()) ||
       b._id?.toLowerCase().includes(search.toLowerCase());
 
-    const matchesStatus = statusFilter === "All" || b.status === statusFilter;
+    const matchesStatus = b.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
@@ -213,7 +213,7 @@ const ReceptionHallBookMng = () => {
 
       {/* Stats */}
       <div className="flex items-center overflow-x-auto sm:flex-wrap gap-2 no-scrollbar pb-1 sm:pb-0">
-        {["All", "Confirmed", "Booked", "Cancelled"].map((status) => (
+        {["Confirmed", "Booked", "Cancelled"].map((status) => (
           <button
             key={status}
             onClick={() => {

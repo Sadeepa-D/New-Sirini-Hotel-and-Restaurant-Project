@@ -51,8 +51,6 @@ const createFoodItem = async (req, res) => {
       full_price = null;
     }
 
-    normal_price = sellingPrice;
-
     const image = req.file ? req.file.secure_url || req.file.path : null;
     const imagePublicId = req.file
       ? req.file.public_id || req.file.filename

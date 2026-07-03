@@ -188,6 +188,21 @@ const RestaurantSection = ({ data }) => {
     return "bg-amber-50 text-amber-600 border-amber-200";
   };
 
+  const canModifyOrder = (order) => {
+    if (!order.pickupDate || !order.pickupTime) return false;
+
+    // order.pickupDate is likely an ISO date string; extract just YYYY-MM-DD
+    const datePart = new Date(order.pickupDate).toISOString().split("T")[0];
+
+    // Combine with pickupTime using Sri Lanka's fixed UTC+5:30 offset
+    const pickupDateTime = new Date(`${datePart}T${order.pickupTime}:00+05:30`);
+
+    const now = new Date();
+    const diffMinutes = (pickupDateTime.getTime() - now.getTime()) / 60000;
+
+    return diffMinutes >= 45;
+  };
+
   return (
     <div className="space-y-6 font-sans relative">
       {/* ── Header ── */}
@@ -314,19 +329,24 @@ const RestaurantSection = ({ data }) => {
                         </div>
                       </div>
 
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${order.status === "Complete"
-                        ? "bg-green-50 text-green-600"
-                        : order.status === "Accepted"
-                          ? "bg-[#013155] text-white"
-                          : order.status === "Preparing"
-                            ? "bg-purple-50 text-purple-600"
-                            : order.status === "delete"
-                              ? "bg-red-50 text-red-600"
-                              : order.status === "Overdue"
-                                ? "bg-orange-100 text-orange-700"
-                                : "bg-amber-50 text-amber-600"
-                        }`}>
-                        {order.status === "delete" ? "DELETED" : order.status.toUpperCase()}
+                      <span
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                          order.status === "Complete"
+                            ? "bg-green-50 text-green-600"
+                            : order.status === "Accepted"
+                              ? "bg-[#013155] text-white"
+                              : order.status === "Preparing"
+                                ? "bg-purple-50 text-purple-600"
+                                : order.status === "delete"
+                                  ? "bg-red-50 text-red-600"
+                                  : order.status === "Overdue"
+                                    ? "bg-orange-100 text-orange-700"
+                                    : "bg-amber-50 text-amber-600"
+                        }`}
+                      >
+                        {order.status === "delete"
+                          ? "DELETED"
+                          : order.status.toUpperCase()}
                       </span>
                     </div>
 
@@ -373,22 +393,27 @@ const RestaurantSection = ({ data }) => {
                     </div>
 
                     {/* Actions */}
-                    {order.status === "Pending" && (
-                      <div className="flex gap-3 mt-6">
-                        <button
-                          onClick={() => handleEdit(order)}
-                          className="flex-1 py-1.5 bg-gradient-to-r from-blue-900 to-blue-500 text-white rounded-full font-bold text-[10px] tracking-widest hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 uppercase"
-                        >
-                          <Pencil size={14} strokeWidth={2.5} /> Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(order)}
-                          className="flex-1 py-1.5 bg-white text-red-700 border border-red-100 rounded-full font-bold text-[10px] tracking-widest hover:bg-red-50 hover:shadow-lg hover:shadow-red-500/10 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 uppercase"
-                        >
-                          <Trash2 size={14} strokeWidth={2.5} /> Delete
-                        </button>
-                      </div>
-                    )}
+                    {order.status === "Pending" &&
+                      (canModifyOrder(order) ? (
+                        <div className="flex gap-3 mt-6">
+                          <button
+                            onClick={() => handleEdit(order)}
+                            className="flex-1 py-1.5 bg-gradient-to-r from-blue-900 to-blue-500 text-white rounded-full font-bold text-[10px] tracking-widest hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 uppercase"
+                          >
+                            <Pencil size={14} strokeWidth={2.5} /> Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(order)}
+                            className="flex-1 py-1.5 bg-white text-red-700 border border-red-100 rounded-full font-bold text-[10px] tracking-widest hover:bg-red-50 hover:shadow-lg hover:shadow-red-500/10 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 uppercase"
+                          >
+                            <Trash2 size={14} strokeWidth={2.5} /> Delete
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="mt-6 py-2 text-center text-[10px] font-semibold text-gray-400 bg-gray-50 rounded-full border border-gray-100 uppercase tracking-wider">
+                          Locked — pickup within 45 min
+                        </div>
+                      ))}
                   </div>
                 </div>
               ))}

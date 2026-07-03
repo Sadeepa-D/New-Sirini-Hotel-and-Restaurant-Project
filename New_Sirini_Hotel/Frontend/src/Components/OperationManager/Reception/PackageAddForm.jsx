@@ -95,8 +95,11 @@ const PackageAddForm = ({ onClose, fetchpackages, editItem }) => {
         }
       }
     } catch (err) {
-      toast.error("Failed to add package. Please try again.");
       toast.dismiss(loadingToast);
+      const errorMessage =
+        err.response?.data?.message ||
+        "Failed to save package. Please try again.";
+      toast.error(errorMessage);
     }
   };
 
