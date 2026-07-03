@@ -308,9 +308,10 @@ function Rooms() {
                           handleBookNow(room);
                         }}
                         disabled={room.status !== "available"}
+                        style={{ borderRadius: "12px" }}
                         className={`group relative flex items-center justify-center 
       w-full sm:w-fit px-6 py-3 sm:py-2.5 
-      rounded-full text-[11px] sm:text-[10px] font-black uppercase tracking-[0.15em] 
+      font-semibold text-[11px] sm:text-[10px] uppercase tracking-widest 
       transition-all duration-500 overflow-hidden ${
         room.status === "available"
           ? "bg-gray-900 text-white shadow-md hover:shadow-orange-500/20 hover:-translate-y-0.5 active:scale-95"
