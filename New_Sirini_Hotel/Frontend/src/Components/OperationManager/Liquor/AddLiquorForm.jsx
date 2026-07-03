@@ -60,6 +60,19 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
     Object.keys(formData).forEach((key) => {
       data.append(key, formData[key]);
     });
+    if (
+      !formData.name ||
+      !formData.buyingPrice ||
+      !formData.sellingPrice ||
+      !formData.category ||
+      !formData.stockType ||
+      !formData.volume ||
+      !formData.brand
+    ) {
+      toast.error("Please fill in all required fields.");
+      toast.dismiss(loading);
+      return;
+    }
     try {
       await onSubmit(data);
       toast.dismiss(loading);
