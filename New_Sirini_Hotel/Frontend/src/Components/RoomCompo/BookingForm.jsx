@@ -183,6 +183,8 @@ function BookingForm({
         onClose={onClose}
         totalPrice={totalPrice}
         bookingMode={bookingMode}
+        checkInDate={formData.checkInDate}
+        checkOutDate={formData.checkOutDate}
       />
     );
 
