@@ -140,7 +140,7 @@ function RoomFullDetails({ room, isOpen, onClose, onBookNow }) {
             {/* Price */}
             <div className="rounded-2xl bg-white p-3 sm:p-4 shadow-sm ring-1 ring-slate-100">
               <p className="text-slate-500 text-[10px] sm:text-xs font-semibold mb-1 sm:mb-2 uppercase tracking-[0.22em]">
-                PRICE / NIGHT
+                NIGHT PACKAGE
               </p>
               <p className="text-lg sm:text-xl font-bold text-orange-600">
                 Rs. {room.price?.toLocaleString()}
@@ -149,7 +149,7 @@ function RoomFullDetails({ room, isOpen, onClose, onBookNow }) {
 
             <div className="rounded-2xl bg-white p-3 sm:p-4 shadow-sm ring-1 ring-slate-100">
               <p className="text-slate-500 text-[10px] sm:text-xs font-semibold mb-1 sm:mb-2 uppercase tracking-[0.22em]">
-                PRICE / MIDDAY
+                DAY PACKAGE
               </p>
               <p className="text-lg sm:text-xl font-bold text-orange-600">
                 Rs. {room.shortStayPrice?.toLocaleString()}

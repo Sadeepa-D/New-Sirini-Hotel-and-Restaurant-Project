@@ -333,12 +333,11 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
               </select>
             </div>
           </div>
-
-          {/* Price & Mid Day Stay Price Row */}
+          {/* Price & Day/Night Packages Row */}
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
-                Overnight Price (Rs.) *
+                Night Package Price (Rs.) *
               </label>
               <input
                 name="price"
@@ -351,7 +350,7 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
             </div>
             <div>
               <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
-                Mid Day Stay Price (Rs.) *
+                Day Package Price (Rs.) *
               </label>
               <input
                 name="shortStayPrice"

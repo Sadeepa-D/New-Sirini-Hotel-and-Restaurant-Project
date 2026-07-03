@@ -128,7 +128,7 @@ function BookingForm({
       setFormData({
         ...formData,
         checkInDate: dateStr,
-        checkOutDate: addDays(dateStr, 1),
+        checkOutDate: dateStr,
       });
     }
   };
