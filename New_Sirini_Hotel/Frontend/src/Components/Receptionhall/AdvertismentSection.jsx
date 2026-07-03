@@ -111,13 +111,17 @@ const AdvertisementSection = () => {
           onClick={() => {
             handleadrequest();
           }}
-          className="group flex items-center gap-3 bg-white border-2 border-amber-400 text-amber-700 hover:bg-amber-500 hover:text-amber-900 hover:border-amber-500 px-8 py-3.5 rounded-full font-semibold text-sm uppercase tracking-widest transition-all duration-300 shadow-sm hover:shadow-md"
+          style={{ borderRadius: "9999px" }}
+          className="group relative flex items-center gap-3 overflow-hidden bg-zinc-900 text-white hover:text-black hover:bg-amber-500 px-8 py-3.5 font-semibold text-xs md:text-sm uppercase tracking-widest transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-amber-500/20 border border-zinc-800"
         >
+          {/* Subtle gold line on top of the button for premium look */}
+          <span className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-amber-400 to-transparent opacity-80" />
+          
           <Megaphone
             size={16}
-            className="group-hover:scale-110 transition-transform duration-300"
+            className="text-amber-400 group-hover:text-black group-hover:scale-110 group-hover:-rotate-12 transition-all duration-300"
           />
-          Request an Advertisement
+          <span className="relative z-10">Request an Advertisement</span>
         </button>
       </div>
 
