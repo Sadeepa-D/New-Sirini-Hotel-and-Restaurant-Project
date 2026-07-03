@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { X, Trash2, Plus, Minus, TriangleAlert } from "lucide-react";
 import toast from "react-hot-toast";
 
-
 const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
   const isLoggedIn = !!localStorage.getItem("token");
 
@@ -25,7 +24,6 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
   const removeItem = (cartId) => {
     setCartItems((prev) => prev.filter((item) => item.cartId !== cartId));
   };
-
 
   const getItemPrice = (item) => {
     if (item.portion === "Full" && item.has_portions) {
@@ -77,6 +75,16 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
             </div>
           ) : (
             <div className="p-6">
+              {/* Session Warning Message */}
+              <div className="mb-3 sm:mb-4 flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-amber-100/50 border border-amber-200 rounded-lg sm:rounded-xl text-amber-800 animate-in fade-in slide-in-from-top-1 duration-500">
+                <div className="bg-amber-500 text-white rounded-full p-0.5 sm:p-1 shadow-sm shrink-0">
+                  <TriangleAlert className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                </div>
+                <p className="text-[11px] sm:text-xs md:text-sm font-medium leading-snug">
+                  Your cart is saved for this session, but it will be cleared if you log out before checking out.
+                </p>
+              </div>
+
               {/* Desktop Table View */}
               <div className="hidden md:block overflow-x-auto">
                 <table className="w-full">
@@ -217,14 +225,14 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
                     </div>
 
                     <div className="grid grid-cols-2 gap-3 mb-3">
-                        <div>
-                          <label className="text-xs font-semibold text-gray-600 block mb-1">
-                            Portion
-                          </label>
-                          <span className="text-xs text-gray-700 font-bold bg-amber-50 px-2 py-1.5 rounded-lg  block text-center">
-                            {item.portion || "Normal"}
-                          </span>
-                        </div>
+                      <div>
+                        <label className="text-xs font-semibold text-gray-600 block mb-1">
+                          Portion
+                        </label>
+                        <span className="text-xs text-gray-700 font-bold bg-amber-50 px-2 py-1.5 rounded-lg  block text-center">
+                          {item.portion || "Normal"}
+                        </span>
+                      </div>
 
                       <div>
                         <label className="text-xs font-semibold text-gray-600 block mb-1">
@@ -272,19 +280,10 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
               </div>
             </div>
           )}
-        </div>        {/* Footer */}
+        </div>
+        {/* Footer */}
         {cartItems.length > 0 && (
           <div className="border-t-2 border-gray-200 bg-linear-to-r from-gray-50 to-amber-50 p-4 sm:p-6">
-            {/* Session Warning Message */}
-            <div className="mb-3 sm:mb-4 flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-amber-100/50 border border-amber-200 rounded-lg sm:rounded-xl text-amber-800 animate-in fade-in slide-in-from-top-1 duration-500">
-              <div className="bg-amber-500 text-white rounded-full p-0.5 sm:p-1 shadow-sm shrink-0">
-                <TriangleAlert className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              </div>
-              <p className="text-[11px] sm:text-xs md:text-sm font-medium leading-snug">
-                Your cart is saved for this session, but it will be cleared if you log out before checking out.
-              </p>
-            </div>
-
             <div className="flex justify-between items-center mb-3 sm:mb-6 pb-2.5 sm:pb-4 border-b border-gray-200">
               <span className="text-base sm:text-lg font-bold text-gray-800">
                 Cart Total:
@@ -304,7 +303,9 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
               <button
                 onClick={() =>
                   !isLoggedIn
-                    ? toast.error("You should log in first to proceed to checkout.")
+                    ? toast.error(
+                        "You should log in first to proceed to checkout.",
+                      )
                     : onCheckout(cartItems)
                 }
                 className="flex-1 py-1.5 sm:py-3 px-1 sm:px-4 bg-linear-to-r from-amber-500 to-amber-600 text-white rounded-xl hover:from-amber-600 hover:to-amber-700 transition-all font-bold text-[10px] sm:text-xs md:text-base leading-tight shadow-lg hover:shadow-xl"
@@ -326,7 +327,6 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
           </div>
         )}
       </div>
-
     </div>
   );
 };

@@ -44,6 +44,21 @@ const createReceptionHallBooking = async (req, res) => {
         .status(400)
         .json({ message: "All required fields must be filled" });
     }
+    const phoneRegex = /^(?:\+94|0)?(7[0-8]\d{7}|[1-9]\d{8})$/;
+    if (!phoneRegex.test(customerPhone)) {
+      return res.status(400).json({ message: "Invalid phone number format" });
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(customerEmail)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
+    const guests = Number(numberOfGuests);
+    if (isNaN(guests) || guests <= 0 || guests > 250) {
+      return res.status(400).json({
+        message:
+          "Invalid number of guests. Please enter a value between 1 and 250.",
+      });
+    }
     const existingBooking = await receptionandHallBook.findOne({
       eventDate: eventDate,
       eventTime: eventTime,
@@ -116,6 +131,21 @@ const editReceptionHallBooking = async (req, res) => {
       selectedPackage,
       amountPayed,
     } = req.body;
+    const phoneRegex = /^(?:\+94|0)?(7[0-8]\d{7}|[1-9]\d{8})$/;
+    if (!phoneRegex.test(customerPhone)) {
+      return res.status(400).json({ message: "Invalid phone number format" });
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(customerEmail)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
+    const guests = Number(numberOfGuests);
+    if (isNaN(guests) || guests <= 0 || guests > 250) {
+      return res.status(400).json({
+        message:
+          "Invalid number of guests. Please enter a value between 1 and 250.",
+      });
+    }
     const updatedBooking = await receptionandHallBook.findByIdAndUpdate(
       id,
       {
