@@ -119,7 +119,8 @@ const LiquorStore = () => {
             <div className="flex justify-center md:justify-start">
               <button
                 onClick={() => setIsComparisonOpen(true)}
-                className="px-6 py-3 bg-yellow-500 hover:bg-amber-700 text-black rounded-lg font-medium transition-colors shadow-md whitespace-nowrap flex items-center gap-2"
+                style={{ borderRadius: "10px" }}
+                className="px-6 py-3 bg-yellow-500 hover:bg-amber-700 text-black font-medium transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md whitespace-nowrap flex items-center gap-2"
               >
                 <BarChart3 className="w-5 h-5" />
                 Compare Drinks
