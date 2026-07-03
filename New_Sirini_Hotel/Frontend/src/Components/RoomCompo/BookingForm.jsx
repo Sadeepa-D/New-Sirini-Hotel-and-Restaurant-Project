@@ -112,10 +112,11 @@ function BookingForm({
 
   const handleDateSelect = (dateStr) => {
     if (bookingMode === "fullday") {
-      if (
-        !formData.checkInDate ||
-        (formData.checkInDate && formData.checkOutDate)
-      ) {
+      if (formData.checkInDate === dateStr) {
+        setFormData({ ...formData, checkInDate: "", checkOutDate: "" });
+      } else if (formData.checkOutDate === dateStr) {
+        setFormData({ ...formData, checkOutDate: "" });
+      } else if (!formData.checkInDate || (formData.checkInDate && formData.checkOutDate)) {
         setFormData({ ...formData, checkInDate: dateStr, checkOutDate: "" });
       } else {
         if (dateStr > formData.checkInDate) {
@@ -125,11 +126,19 @@ function BookingForm({
         }
       }
     } else {
-      setFormData({
-        ...formData,
-        checkInDate: dateStr,
-        checkOutDate: dateStr,
-      });
+      if (formData.checkInDate === dateStr) {
+        setFormData({
+          ...formData,
+          checkInDate: "",
+          checkOutDate: "",
+        });
+      } else {
+        setFormData({
+          ...formData,
+          checkInDate: dateStr,
+          checkOutDate: dateStr,
+        });
+      }
     }
   };
 
@@ -174,6 +183,8 @@ function BookingForm({
         onClose={onClose}
         totalPrice={totalPrice}
         bookingMode={bookingMode}
+        checkInDate={formData.checkInDate}
+        checkOutDate={formData.checkOutDate}
       />
     );
 
