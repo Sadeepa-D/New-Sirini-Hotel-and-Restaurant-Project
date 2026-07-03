@@ -292,15 +292,21 @@ function Rooms() {
                     )}
 
                     <div className="flex flex-wrap items-center justify-between gap-y-3">
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-1.5 h-1.5 rounded-full ${room.status === "available" ? "bg-green-500 animate-pulse" : "bg-red-400"}`}
-                        />
+                      <div
+                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-wider border ${
+                          room.status === "available"
+                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                            : "bg-rose-50 text-rose-700 border-rose-200"
+                        }`}
+                      >
                         <span
-                          className={`text-[10px] font-black uppercase tracking-widest ${room.status === "available" ? "text-green-600" : "text-gray-400"}`}
-                        >
-                          {room.status}
-                        </span>
+                          className={`w-1.5 h-1.5 rounded-full ${
+                            room.status === "available"
+                              ? "bg-emerald-500 animate-pulse"
+                              : "bg-rose-500"
+                          }`}
+                        />
+                        {room.status}
                       </div>
                       <button
                         onClick={(e) => {
