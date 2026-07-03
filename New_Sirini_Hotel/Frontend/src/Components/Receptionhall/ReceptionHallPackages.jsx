@@ -5,6 +5,7 @@ import {
   ChevronLeft,
   Utensils,
   Users,
+  Gift,
 } from "lucide-react";
 import axios from "axios";
 import CateringSelectionHub from "./CateringSelectionHub";
@@ -79,22 +80,34 @@ export default function ReceptionHallPackages() {
           <div className="h-[1px] w-12 bg-amber-300" />
         </div>
       </div>
-      <div className="bg-amber-50 border-l-4 border-amber-500 p-4 mb-8 rounded-r-xl">
-        <div className="flex items-center gap-3">
-          <div className="bg-amber-500 text-white p-2 rounded-full">
-            <Users size={20} />
+      {/* Special Offer Card */}
+      <div className="max-w-3xl mx-auto mb-16 px-4">
+        <div className="relative overflow-hidden bg-gradient-to-br from-amber-500/[0.08] via-amber-500/[0.02] to-transparent border border-amber-500/25 p-6 sm:p-8 rounded-3xl shadow-xl shadow-amber-500/[0.02] backdrop-blur-md flex flex-col sm:flex-row items-center gap-5 sm:gap-6 text-center sm:text-left group">
+          {/* Glowing background circles for premium depth */}
+          <div className="absolute -top-12 -right-12 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-amber-500/15 transition-colors duration-300" />
+          <div className="absolute -bottom-12 -left-12 w-24 h-24 bg-amber-500/5 rounded-full blur-2xl pointer-events-none" />
+
+          {/* Premium Glowing Icon Box */}
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-500 text-black flex items-center justify-center shadow-lg shadow-amber-500/20 shrink-0 transform group-hover:scale-105 transition-transform duration-300">
+            <Gift size={26} className="stroke-[2]" />
           </div>
-          <div>
-            <h4 className="font-bold text-amber-900 text-sm">
-              Special Offer on Hall Charges
-            </h4>
-            <p className="text-xs text-amber-700">
-              Book for <b>100+ guests</b> and get the{" "}
-              <b>Reception Hall for FREE!</b>
-              <br />
-              <span className="italic text-[10px]">
-                Less than 100 guests will incur a additional hall fee
+
+          {/* Offer Content */}
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-center sm:justify-start gap-2">
+              <h4 className="font-serif italic font-bold text-amber-950 text-lg sm:text-xl tracking-tight">
+                Special Offer on Hall Charges
+              </h4>
+              <span className="self-center sm:self-start bg-amber-500/10 text-amber-700 text-[10px] uppercase font-bold tracking-widest px-2.5 py-0.5 rounded-full border border-amber-500/20">
+                Exclusive
               </span>
+            </div>
+            <p className="text-zinc-700 text-sm mt-2 leading-relaxed">
+              Book your event for <span className="font-extrabold text-amber-950">100+ guests</span> and enjoy the <span className="font-black text-amber-600 bg-amber-500/5 border border-amber-500/10 px-2 py-0.5 rounded-lg inline-block my-0.5">Reception Hall for FREE!</span>
+            </p>
+            <p className="text-zinc-400 text-xs mt-1.5 italic flex items-center justify-center sm:justify-start gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+              Note: Less than 100 guests will incur an additional hall fee.
             </p>
           </div>
         </div>
