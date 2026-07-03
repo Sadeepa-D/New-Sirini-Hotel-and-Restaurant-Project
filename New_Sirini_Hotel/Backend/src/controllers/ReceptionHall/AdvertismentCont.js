@@ -211,7 +211,6 @@ const updateAdvertisment = async (req, res) => {
       return res.status(400).json({ message: "Advertisment ID is required" });
     }
     const updateData = req.body;
-
     const existingAdvertisment = await Adevertisment.findById(id);
     if (!existingAdvertisment) {
       return res.status(404).json({ message: "Advertisment not found" });
