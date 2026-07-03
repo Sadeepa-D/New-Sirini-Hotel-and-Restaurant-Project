@@ -193,22 +193,23 @@ function Rooms() {
                         Room {room.roomNumber}
                       </span>
                     </div>
-                    <div className="absolute bottom-4 left-4 z-10 flex flex-col">
-                      <div className="flex items-baseline gap-1.5">
-                        <p className="text-white font-bold text-2xl drop-shadow-lg">
-                          Rs.{room.price.toLocaleString()}
-                        </p>
-                        <span className="text-white/90 text-xs font-medium italic drop-shadow-md">
-                          per night
-                        </span>
-                      </div>
-                      <div className="flex items-baseline gap-1.5 mt-0.5">
-                        <p className="text-white/90 font-semibold text-sm drop-shadow-lg">
-                          Rs.{(room.shortStayPrice || 1500).toLocaleString()}
-                        </p>
-                        <span className="text-white/80 text-[10px] font-medium italic drop-shadow-md">
-                          per 5 hours
-                        </span>
+                    {/* Price Pill Bar */}
+                    <div className="absolute bottom-3 left-3 right-3 z-10">
+                      <div className="flex items-stretch bg-black/40 backdrop-blur-xl rounded-2xl border border-white/10 shadow-xl overflow-hidden divide-x divide-white/10">
+                        {/* Night Price */}
+                        <div className="flex-1 flex flex-col px-3 py-2">
+                          <span className="text-white/50 text-[7px] uppercase tracking-[0.2em] font-semibold mb-0.5">Night Package</span>
+                          <span className="text-white font-bold text-sm leading-none">
+                            Rs. {room.price.toLocaleString()}
+                          </span>
+                        </div>
+                        {/* Short Stay Price */}
+                        <div className="flex-1 flex flex-col px-3 py-2">
+                          <span className="text-orange-300/80 text-[7px] uppercase tracking-[0.2em] font-semibold mb-0.5">Day Package</span>
+                          <span className="text-orange-300 font-bold text-sm leading-none">
+                            Rs. {(room.shortStayPrice || 1500).toLocaleString()}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
