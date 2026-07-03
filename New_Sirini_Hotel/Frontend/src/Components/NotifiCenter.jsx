@@ -45,8 +45,7 @@ const NotifiCenter = ({
   };
 
   return (
-    <div className="fixed md:absolute top-24 md:top-full left-4 md:left-0 right-4 md:right-auto mx-auto md:mx-0 mt-4 md:mt-3 w-[calc(100vw-2rem)] md:w-96 max-w-sm bg-zinc-950 border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden">
-      {/* Header */}
+    <div className="fixed md:absolute top-24 md:top-full left-4 md:left-auto right-4 md:right-0 mx-auto md:mx-0 mt-4 md:mt-3 w-[calc(100vw-2rem)] md:w-96 max-w-sm bg-zinc-950 border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden">
       <div className="p-4 pb-3 border-b border-white/5">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-2">
