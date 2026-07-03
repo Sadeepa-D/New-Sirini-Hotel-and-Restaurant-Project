@@ -131,7 +131,8 @@ const AdvertisementSection = () => {
           <button
             key={label}
             onClick={() => setActiveCategory(label)}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 border ${
+            style={{ borderRadius: "12px" }}
+            className={`flex items-center gap-2 px-5 py-2.5 text-sm font-semibold transition-all duration-300 border ${
               activeCategory === label
                 ? "bg-amber-500 text-amber-900 border-amber-500 shadow-md"
                 : "bg-white text-gray-600 border-gray-200 hover:border-amber-300 hover:text-amber-600"
