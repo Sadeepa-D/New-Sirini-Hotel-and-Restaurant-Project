@@ -53,7 +53,7 @@ const RoomPackageInfo = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
-        {/* Mid Day Stay Package */}
+        {/* Day Package */}
         <div className="flex items-start gap-4 p-6 rounded-[1.5rem] bg-gradient-to-br from-orange-50/80 to-white border border-orange-100/60 hover:border-orange-300/60 hover:shadow-lg hover:shadow-orange-500/5 hover:-translate-y-1 transition-all duration-500 group/card relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-orange-200/20 rounded-full blur-2xl -mr-10 -mt-10 transition-transform group-hover/card:scale-150 duration-700" />
           
@@ -62,7 +62,7 @@ const RoomPackageInfo = () => {
           </div>
           <div className="flex-1 relative z-10 mt-1">
             <h3 className="text-lg font-bold text-gray-900 mb-1 group-hover/card:text-orange-600 transition-colors">
-              Mid Day Stay
+              Day Package
             </h3>
             <p className="text-xs text-gray-500 mb-4 leading-relaxed font-medium">
               A quick rest or layover during the day.
@@ -76,7 +76,7 @@ const RoomPackageInfo = () => {
           </div>
         </div>
 
-        {/* Overnight Stay Package */}
+        {/* Night Package */}
         <div className="flex items-start gap-4 p-6 rounded-[1.5rem] bg-gradient-to-br from-blue-50/80 to-white border border-blue-100/60 hover:border-blue-300/60 hover:shadow-lg hover:shadow-blue-500/5 hover:-translate-y-1 transition-all duration-500 group/card relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-blue-200/20 rounded-full blur-2xl -mr-10 -mt-10 transition-transform group-hover/card:scale-150 duration-700" />
           
@@ -85,7 +85,7 @@ const RoomPackageInfo = () => {
           </div>
           <div className="flex-1 relative z-10 mt-1">
             <h3 className="text-lg font-bold text-gray-900 mb-1 group-hover/card:text-blue-600 transition-colors">
-              Overnight Stay
+              Night Package
             </h3>
             <p className="text-xs text-gray-500 mb-4 leading-relaxed font-medium">
               Full accommodation for a relaxing night.

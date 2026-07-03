@@ -132,7 +132,7 @@ const sendRoomBookingEmail = async ({
     const outDate = formatDt(checkOutDate);
 
     const slotLabel =
-      timeSlot === "day" ? "Day Package (12:00 PM - 3:00 PM)" : "Full Day";
+      timeSlot === "day" ? "Day Package (12:00 PM - 3:00 PM)" : "Night Package (4:00 PM - 10:00 AM)";
 
     const htmlTemplate = `
       <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #f0f0f0;">

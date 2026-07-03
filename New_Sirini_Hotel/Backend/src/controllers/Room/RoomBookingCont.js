@@ -81,7 +81,7 @@ const createRoomBooking = async (req, res) => {
 
     if (hasConflict) {
       const slotLabel =
-        timeSlot === "day" ? "Day Package (12:00 PM – 3:00 PM)" : "Full Day";
+        timeSlot === "day" ? "Day Package (12:00 PM – 3:00 PM)" : "Night Package (4:00 PM – 10:00 AM)";
       return res.status(400).json({
         error: `Sorry! The ${slotLabel} is not available for one or more of those dates. Please choose different dates.`,
       });

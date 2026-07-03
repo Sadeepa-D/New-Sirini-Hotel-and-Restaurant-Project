@@ -189,22 +189,25 @@ const NewSiriniHotel = () => {
         </section>
 
         {/* --- Gallery Filter --- */}
-        <section id="gallery" className="bg-gray-100 py-6 text-center">
+        <section
+          id="gallery"
+          className="bg-gray-100 py-6 text-center font-sans"
+        >
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl mb-4 font-serif text-gray-800 tracking-tight">
+            <h2 className="text-3xl mb-4 font-bold text-gray-800 tracking-tight">
               Gallery
             </h2>
 
             {/* Category Buttons */}
-            <div className="flex flex-wrap justify-center gap-2 mb-6">
+            <div className="flex flex-wrap justify-center gap-3 mb-6">
               {["Reception", "Rooms", "Restaurant"].map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActiveFilter(cat)}
-                  className={`px-6 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 border ${
+                  className={`px-6 py-3 rounded-md text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-300 border ${
                     activeFilter === cat
-                      ? "bg-slate-900 text-amber-500 border-slate-900 shadow-lg scale-105"
-                      : "bg-white text-gray-400 border-gray-200 hover:border-amber-500 hover:text-amber-600"
+                      ? "bg-slate-900 text-amber-500 border-slate-900 shadow-sm"
+                      : "bg-white text-gray-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300 hover:text-amber-500"
                   }`}
                 >
                   {cat}
@@ -293,7 +296,6 @@ const NewSiriniHotel = () => {
 
             {/* Main Map Container */}
             <div className="relative bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-xl sm:shadow-2xl hover:shadow-2xl sm:hover:shadow-3xl transition-all duration-500 h-64 md:h-96 border border-gray-100">
-        
               {/* Map */}
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1015647.6659904498!2d79.35278087812499!3d6.080244600000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae14581018f8001%3A0x5b446489a6e6e3ef!2sNew%20Sirini%20Hotel!5e0!3m2!1sen!2slk!4v1778137116664!5m2!1sen!2slk"
