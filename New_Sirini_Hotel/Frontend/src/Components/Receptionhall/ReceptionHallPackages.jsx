@@ -254,7 +254,8 @@ export default function ReceptionHallPackages() {
                           setSelectedPackage(pkg);
                           setShowCateringHub(true);
                         }}
-                        className="w-full flex items-center justify-center gap-1.5 sm:gap-2 bg-gray-900 hover:bg-amber-500 text-white font-medium py-2 sm:py-2.5 md:py-3.5 px-3 sm:px-4 rounded-xl transition-all duration-300 shadow-sm hover:shadow-lg group/btn text-xs sm:text-sm"
+                        style={{ borderRadius: "12px" }}
+                        className="mx-auto flex items-center justify-center gap-1.5 sm:gap-2 bg-gray-900 hover:bg-amber-500 text-white font-medium py-2 sm:py-2.5 md:py-3.5 px-6 sm:px-8 w-fit transition-all duration-300 shadow-sm hover:shadow-lg group/btn text-xs sm:text-sm"
                       >
                         <Utensils
                           size={14}
