@@ -136,7 +136,10 @@ const NewSiriniHotel = () => {
           </div>
 
           <div className="z-10 flex flex-col items-center justify-center gap-2 md:gap-4">
-            <h1 className="font-light" style={{ fontSize: "clamp(2rem, 6vw, 5rem)", lineHeight: "1.1" }}>
+            <h1
+              className="font-light"
+              style={{ fontSize: "clamp(2rem, 6vw, 5rem)", lineHeight: "1.1" }}
+            >
               New Sirini Hotel
             </h1>
             <img
@@ -156,7 +159,7 @@ const NewSiriniHotel = () => {
 
         {/* --- Services Section --- */}
         <section id="services" className="py-16 container mx-auto px-4">
-          <h2 className="text-4xl text-center mb-12 font-serif">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl text-center mb-12 font-serif">
             Our Services
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -204,7 +207,8 @@ const NewSiriniHotel = () => {
                 <button
                   key={cat}
                   onClick={() => setActiveFilter(cat)}
-                  className={`px-6 py-3 rounded-md text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-300 border ${
+                  style={{ borderRadius: "12px" }}
+                  className={`px-6 py-3 text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-300 border ${
                     activeFilter === cat
                       ? "bg-slate-900 text-amber-500 border-slate-900 shadow-sm"
                       : "bg-white text-gray-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300 hover:text-amber-500"
@@ -276,7 +280,7 @@ const NewSiriniHotel = () => {
           className="py-16 container mx-auto px-4 grid md:grid-cols-2 gap-10 items-center"
         >
           <div>
-            <h2 className="text-4xl mb-6 font-serif">About Us</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl mb-6 font-serif">About Us</h2>
             <p className="text-gray-700 leading-relaxed mb-4">
               New Sirni Hotel, located in Kamburupitiya, Sri Lanka, offers a
               welcoming space for comfortable stays and memorable celebrations.
