@@ -7,8 +7,28 @@ import {
   Users,
   Wind,
   Star,
+  Wifi,
+  Droplets,
+  Tv,
+  Refrigerator,
+  Coffee,
+  Car,
+  Utensils,
 } from "lucide-react";
 import StarRating from "../StarRating";
+
+const getFacilityIcon = (facility) => {
+  const name = facility.toLowerCase();
+  if (name.includes("wifi") || name.includes("internet")) return <Wifi size={14} className="text-blue-500" />;
+  if (name.includes("hot water") || name.includes("shower") || name.includes("water")) return <Droplets size={14} className="text-cyan-500" />;
+  if (name.includes("tv") || name.includes("television") || name.includes("monitor")) return <Tv size={14} className="text-purple-500" />;
+  if (name.includes("fridge") || name.includes("refrigerator")) return <Refrigerator size={14} className="text-emerald-500" />;
+  if (name.includes("ac") || name.includes("air cond") || name.includes("cooling")) return <Wind size={14} className="text-sky-500" />;
+  if (name.includes("breakfast") || name.includes("food") || name.includes("meal")) return <Coffee size={14} className="text-amber-600" />;
+  if (name.includes("parking")) return <Car size={14} className="text-slate-600" />;
+  if (name.includes("restaurant") || name.includes("dining")) return <Utensils size={14} className="text-red-500" />;
+  return <Star size={14} className="text-orange-500" />;
+};
 
 function RoomFullDetails({ room, isOpen, onClose, onBookNow }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -240,8 +260,9 @@ function RoomFullDetails({ room, isOpen, onClose, onBookNow }) {
                 {room.facilities.map((facility, index) => (
                   <span
                     key={index}
-                    className="bg-orange-50 text-orange-700 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium ring-1 ring-orange-100"
+                    className="inline-flex items-center gap-1.5 bg-orange-50 text-orange-700 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium ring-1 ring-orange-100/50"
                   >
+                    {getFacilityIcon(facility)}
                     {facility}
                   </span>
                 ))}
@@ -256,18 +277,26 @@ function RoomFullDetails({ room, isOpen, onClose, onBookNow }) {
                 STATUS
               </p>
               <div
-                className={`inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-semibold shadow-sm ${
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border shadow-sm ${
                   room.status === "available"
-                    ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100"
-                    : "bg-rose-50 text-rose-700 ring-1 ring-rose-100"
+                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                    : "bg-rose-50 text-rose-700 border-rose-200"
                 }`}
               >
-                {room.status === "available" ? "✓ Available" : "Not Available"}
+                <span
+                  className={`w-1.5 h-1.5 rounded-full ${
+                    room.status === "available"
+                      ? "bg-emerald-500 animate-pulse"
+                      : "bg-rose-500"
+                  }`}
+                />
+                {room.status === "available" ? "Available" : "Not Available"}
               </div>
             </div>
             <button
               onClick={handleBookNow}
-              className="w-full sm:w-auto bg-linear-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white px-5 sm:px-7 py-2.5 sm:py-3 rounded-xl font-semibold transition-all duration-300 text-sm sm:text-base shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 hover:-translate-y-0.5"
+              style={{ borderRadius: "12px" }}
+              className="w-full sm:w-auto bg-linear-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white px-5 sm:px-7 py-2.5 sm:py-3 font-semibold transition-all duration-300 text-sm sm:text-base shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 hover:-translate-y-0.5"
             >
               Book Now
             </button>
