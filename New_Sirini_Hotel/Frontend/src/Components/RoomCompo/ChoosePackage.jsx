@@ -62,8 +62,8 @@ function ChoosePackage({ selectedRoom, onSelectMode, onClose }) {
               <p className="text-[10px] sm:text-xs font-black text-gray-800 mt-1.5 sm:mt-2">
                 Rs.{" "}
                 {(pkg.id === "day"
-                  ? selectedRoom.shortStayPrice || 1500
-                  : selectedRoom.price
+                  ? selectedRoom.dayPackagePrice || 1500
+                  : selectedRoom.nightPackagePrice
                 ).toLocaleString()}
                 {pkg.id === "fullday" && " / Per Night"}
               </p>

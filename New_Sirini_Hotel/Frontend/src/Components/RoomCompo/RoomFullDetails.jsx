@@ -165,7 +165,7 @@ function RoomFullDetails({ room, isOpen, onClose, onBookNow }) {
                 NIGHT PACKAGE
               </p>
               <p className="text-lg sm:text-xl font-bold text-orange-600">
-                Rs. {room.price?.toLocaleString()}
+                Rs. {room.nightPackagePrice?.toLocaleString()}
               </p>
             </div>
 
@@ -174,7 +174,7 @@ function RoomFullDetails({ room, isOpen, onClose, onBookNow }) {
                 DAY PACKAGE
               </p>
               <p className="text-lg sm:text-xl font-bold text-orange-600">
-                Rs. {room.shortStayPrice?.toLocaleString()}
+                Rs. {room.dayPackagePrice?.toLocaleString()}
               </p>
             </div>
 

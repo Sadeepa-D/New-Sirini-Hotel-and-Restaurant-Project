@@ -97,7 +97,13 @@ function Rooms() {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const res = await axios.get(`${VITE_URL}/api/rooms/viewrooms`);
+        const res = await axios.get(`${VITE_URL}/api/rooms/viewrooms?t=${Date.now()}`, {
+          headers: {
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+            Expires: "0",
+          },
+        });
         setRoomList(res.data);
       } catch (err) {
         setError("Failed to load rooms.");
@@ -239,14 +245,14 @@ function Rooms() {
                         <div className="flex-1 flex flex-col px-3 py-2">
                           <span className="text-white/50 text-[7px] uppercase tracking-[0.2em] font-semibold mb-0.5">Night Package</span>
                           <span className="text-white font-bold text-sm leading-none">
-                            Rs. {room.price.toLocaleString()}
+                            Rs. {(room.nightPackagePrice || 0).toLocaleString()}
                           </span>
                         </div>
                         {/* Short Stay Price */}
                         <div className="flex-1 flex flex-col px-3 py-2">
                           <span className="text-orange-300/80 text-[7px] uppercase tracking-[0.2em] font-semibold mb-0.5">Day Package</span>
                           <span className="text-orange-300 font-bold text-sm leading-none">
-                            Rs. {(room.shortStayPrice || 1500).toLocaleString()}
+                            Rs. {(room.dayPackagePrice || 1500).toLocaleString()}
                           </span>
                         </div>
                       </div>
