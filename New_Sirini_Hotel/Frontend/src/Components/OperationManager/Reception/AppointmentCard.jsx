@@ -100,13 +100,15 @@ const AppointmentCard = ({
               appointment.status === "Overdue") && (
               <div className="mt-4 pt-3 border-t border-gray-100 flex gap-2">
                 <button
-                  className="flex-1 flex items-center justify-center gap-1.5 bg-green-50 hover:bg-green-500 text-green-600 hover:text-white border border-green-200 hover:border-green-500 text-xs font-bold py-2 rounded-xl transition-all duration-200"
+                  style={{ borderRadius: "10px" }}
+                  className="flex-1 flex items-center justify-center gap-1.5 bg-green-50 hover:bg-green-500 text-green-600 hover:text-white border border-green-200 hover:border-green-500 text-xs font-bold py-2 rounded-xl transform hover:scale-105 active:scale-95 transition-all duration-300 ease-in-out"
                   onClick={() => onUpdate(appointment._id, "completed")}
                 >
                   <CheckCircle2 size={13} /> Complete
                 </button>
                 <button
-                  className="flex-1 flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white border border-red-200 hover:border-red-500 text-xs font-bold py-2 rounded-xl transition-all duration-200"
+                  style={{ borderRadius: "10px" }}
+                  className="flex-1 flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white border border-red-200 hover:border-red-500 text-xs font-bold py-2 rounded-xl transform hover:scale-105 active:scale-95 transition-all duration-300 ease-in-out"
                   onClick={() => onUpdate(appointment._id, "canceled")}
                 >
                   <XCircle size={13} /> Cancel
@@ -116,13 +118,15 @@ const AppointmentCard = ({
           : appointment.status === "Pending" && (
               <div className="mt-4 pt-3 border-t border-gray-100 flex gap-2">
                 <button
-                  className="flex-1 flex items-center justify-center gap-1.5 bg-gray-50 hover:bg-amber-50 text-gray-600 hover:text-amber-700 border border-gray-200 hover:border-amber-200 text-xs font-bold py-2 rounded-xl transition-all duration-200"
+                  style={{ borderRadius: "10px" }}
+                  className="flex-1 flex items-center justify-center gap-1.5 bg-gray-50 hover:bg-amber-50 text-gray-600 hover:text-amber-700 border border-gray-200 hover:border-amber-200 text-xs font-bold py-2 rounded-xl transform hover:scale-105 active:scale-95 transition-all duration-300 ease-in-out"
                   onClick={() => onEdit(appointment)}
                 >
                   <Edit2 size={13} /> Edit
                 </button>
                 <button
-                  className="flex-1 flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white border border-red-200 hover:border-red-500 text-xs font-bold py-2 rounded-xl transition-all duration-200"
+                  style={{ borderRadius: "10px" }}
+                  className="flex-1 flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white border border-red-200 hover:border-red-500 text-xs font-bold py-2 rounded-xl transform hover:scale-105 active:scale-95 transition-all duration-300 ease-in-out"
                   onClick={() => onCancel(appointment._id)}
                 >
                   <XCircle size={13} /> Cancel
