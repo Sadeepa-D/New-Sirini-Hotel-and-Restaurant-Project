@@ -95,6 +95,18 @@ const createFoodOrder = async (req, res) => {
     ) {
       return res.status(400).json({ message: "Invalid pickup date format" });
     }
+    const OPEN_MINUTES = 10 * 60;
+    const CLOSE_MINUTES = 23 * 60;
+    const pickupMinutesCheck = timeToMinutes(pickupTime);
+    if (
+      pickupMinutesCheck < OPEN_MINUTES ||
+      pickupMinutesCheck > CLOSE_MINUTES
+    ) {
+      return res.status(400).json({
+        message:
+          "We're open from 10:00 AM to 11:00 PM. Please choose a pick-up time within business hours.",
+      });
+    }
     // Sri Lanka Time Validation
     const { slDate, slTime } = getCurrentSLTime();
     if (pickupDate < slDate) {
@@ -271,7 +283,18 @@ const editfoodOrder = async (req, res) => {
     ) {
       return res.status(400).json({ message: "Invalid pickup date format" });
     }
-
+    const OPEN_MINUTES = 10 * 60;
+    const CLOSE_MINUTES = 23 * 60;
+    const pickupMinutesCheck = timeToMinutes(pickupTime);
+    if (
+      pickupMinutesCheck < OPEN_MINUTES ||
+      pickupMinutesCheck > CLOSE_MINUTES
+    ) {
+      return res.status(400).json({
+        message:
+          "We're open from 10:00 AM to 11:00 PM. Please choose a pick-up time within business hours.",
+      });
+    }
     const existingOrder = await FoodOrder.findById(id);
     if (!existingOrder) {
       return res.status(404).json({ message: "Food order not found" });

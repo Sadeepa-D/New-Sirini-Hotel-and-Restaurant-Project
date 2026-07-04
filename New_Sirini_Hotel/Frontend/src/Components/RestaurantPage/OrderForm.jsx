@@ -52,6 +52,14 @@ export default function OrderForm({ item, cartItems, onClose }) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const OPEN_MINUTES = 10 * 60;
+  const CLOSE_MINUTES = 23 * 60;
+
+  const isWithinBusinessHours = (timeStr) => {
+    const minutes = timeToMinutes(timeStr);
+    return minutes >= OPEN_MINUTES && minutes <= CLOSE_MINUTES;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -71,7 +79,13 @@ export default function OrderForm({ item, cartItems, onClose }) {
         setLoading(false);
         return;
       }
-
+      if (!isWithinBusinessHours(form.pickupTime)) {
+        toast.error(
+          "We're open from 10:00 AM to 11:00 PM. Please choose a time within business hours.",
+        );
+        setLoading(false);
+        return;
+      }
       if (pickupMinutes - nowMinutes < 60) {
         toast.error("Please select a pick-up time at least 1 hour from now.");
         setLoading(false);
@@ -293,9 +307,12 @@ export default function OrderForm({ item, cartItems, onClose }) {
                   required
                   min={
                     form.pickupDate === getSLDateStr()
-                      ? getSLTimeStr()
-                      : undefined
+                      ? timeToMinutes(getSLTimeStr()) > OPEN_MINUTES
+                        ? getSLTimeStr()
+                        : "10:00"
+                      : "10:00"
                   }
+                  max="23:00"
                   className="w-full border border-neutral-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition"
                 />
               </div>
@@ -310,7 +327,8 @@ export default function OrderForm({ item, cartItems, onClose }) {
             </div>
 
             <p className="text-xs text-amber-700 text-center font-medium leading-relaxed px-4">
-              Order processing takes at least 1 hour. This time can change for special reasons. For any questions, please contact us.
+              Order processing takes at least 1 hour. This time can change for
+              special reasons. For any questions, please contact us.
             </p>
 
             <div className="mt-1">
