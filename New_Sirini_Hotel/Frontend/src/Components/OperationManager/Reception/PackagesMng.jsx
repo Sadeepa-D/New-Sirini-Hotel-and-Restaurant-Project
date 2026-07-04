@@ -358,22 +358,31 @@ const PackagesMng = () => {
         </div>
       )}
       {/* Stats footer */}
-      <div className="flex items-center gap-4 mt-5 pt-4 border-t border-gray-100">
-        <span className="text-xs text-gray-400">
-          Total: <strong className="text-gray-600">{packages.length}</strong>
-        </span>
-        <span className="text-xs text-gray-400">
-          Active:
-          <strong className="text-green-600">
+      <div className="mt-8 pt-6 border-t border-gray-100 flex flex-wrap items-center gap-3 sm:gap-4">
+        {/* Total Stat Card */}
+        <div className="flex items-center gap-2.5 bg-gray-50 border border-gray-200/80 px-4 py-2 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+          <div className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
+          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Total:</span>
+          <strong className="text-lg font-black text-gray-800 font-mono leading-none">{packages.length}</strong>
+        </div>
+
+        {/* Active Stat Card */}
+        <div className="flex items-center gap-2.5 bg-green-50/40 border border-green-100 px-4 py-2 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+          <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
+          <span className="text-xs font-bold text-green-700 uppercase tracking-wider">Active:</span>
+          <strong className="text-lg font-black text-green-700 font-mono leading-none">
             {packages.filter((p) => p.status).length}
           </strong>
-        </span>
-        <span className="text-xs text-gray-400">
-          Inactive:
-          <strong className="text-red-500">
+        </div>
+
+        {/* Inactive Stat Card */}
+        <div className="flex items-center gap-2.5 bg-red-50/40 border border-red-100 px-4 py-2 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+          <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
+          <span className="text-xs font-bold text-red-700 uppercase tracking-wider">Inactive:</span>
+          <strong className="text-lg font-black text-red-700 font-mono leading-none">
             {packages.filter((p) => !p.status).length}
           </strong>
-        </span>
+        </div>
       </div>
       {showForm && (
         <PackageAddForm
