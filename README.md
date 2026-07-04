@@ -43,6 +43,7 @@ Step 3: Configure Environment Variables
 Create a .env file inside the backend & frontend directorys and configure the required environment variables.
 
 Step 4: Run the Application
+
 Start the Backend Server
 
 cd New_Sirini_Hotel/Backend
