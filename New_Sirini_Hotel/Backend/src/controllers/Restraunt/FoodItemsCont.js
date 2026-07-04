@@ -121,7 +121,6 @@ const updateFoodItem = async (req, res) => {
     if (req.file) {
       if (existingFoodItem.imagePublicId) {
         try {
-          // Use v2 explicitly to avoid undefined errors
           await cloudinary.v2.uploader.destroy(existingFoodItem.imagePublicId);
         } catch (err) {
           console.error("Cloudinary delete error:", err);
