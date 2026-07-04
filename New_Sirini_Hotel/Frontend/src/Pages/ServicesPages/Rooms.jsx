@@ -97,7 +97,13 @@ function Rooms() {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const res = await axios.get(`${VITE_URL}/api/rooms/viewrooms`);
+        const res = await axios.get(`${VITE_URL}/api/rooms/viewrooms?t=${Date.now()}`, {
+          headers: {
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+            Expires: "0",
+          },
+        });
         setRoomList(res.data);
       } catch (err) {
         setError("Failed to load rooms.");

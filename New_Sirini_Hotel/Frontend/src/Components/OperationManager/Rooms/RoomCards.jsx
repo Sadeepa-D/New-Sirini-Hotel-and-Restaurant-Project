@@ -46,9 +46,9 @@ const RoomCards = ({ rooms, onEdit, onDelete }) => {
                 </div>
               </div>
 
-              <div className="p-4 flex-grow flex flex-col">
-                <div className="mb-3">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-[#a3801c] block mb-1">
+              <div className="p-3 flex-grow flex flex-col">
+                <div className="mb-2">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-[#a3801c] block mb-0.5">
                     Room No {room.roomNumber}
                   </span>
                   <h5 className="text-base font-bold text-gray-900 leading-tight truncate">
@@ -56,7 +56,7 @@ const RoomCards = ({ rooms, onEdit, onDelete }) => {
                   </h5>
                   <div
                     style={{ borderRadius: "8px" }}
-                    className="mt-2 space-y-1 bg-gray-50/50 p-2 border border-gray-100/50"
+                    className="mt-1.5 space-y-1 bg-gray-50/50 p-1.5 border border-gray-100/50"
                   >
                     <div className="flex justify-between items-center text-[11px]">
                       <span className="text-gray-500 font-semibold">
@@ -77,36 +77,45 @@ const RoomCards = ({ rooms, onEdit, onDelete }) => {
                   </div>
                 </div>
 
-                <div className="flex gap-2 mb-3">
-                  <div
-                    className={`flex items-center gap-1.5 px-2 py-1 rounded-md border text-[10px] font-bold uppercase ${
-                      room.condition === "AC"
-                        ? "bg-blue-50 border-blue-100 text-blue-600"
-                        : "bg-orange-50 border-orange-100 text-orange-600"
-                    }`}
-                  >
-                    {room.condition === "AC" ? (
-                      <Snowflake size={12} />
-                    ) : (
-                      <Wind size={12} />
-                    )}
-                    {room.condition || "Fan"}
+                {/* Attributes: Condition & Guests */}
+                <div className="grid grid-cols-2 gap-2 mb-2">
+                  <div>
+                    <span className="text-[9px] uppercase tracking-wider text-gray-400 block mb-0.5 font-bold">
+                      Condition
+                    </span>
+                    <div
+                      className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md border text-[10px] font-bold uppercase ${
+                        room.condition === "AC"
+                          ? "bg-blue-50 border-blue-100 text-blue-600"
+                          : "bg-orange-50 border-orange-100 text-orange-600"
+                      }`}
+                    >
+                      {room.condition === "AC" ? (
+                        <Snowflake size={12} />
+                      ) : (
+                        <Wind size={12} />
+                      )}
+                      {room.condition || "Fan"}
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-gray-100 bg-gray-50 text-gray-500 text-[10px] font-bold uppercase">
-                    <Users size={12} />
-                    {room.capacity}
+                  <div>
+                    <span className="text-[9px] uppercase tracking-wider text-gray-400 block mb-0.5 font-bold">
+                      Guests
+                    </span>
+                    <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md border border-gray-100 bg-gray-50 text-gray-500 text-[10px] font-bold uppercase">
+                      <Users size={12} />
+                      {room.capacity} {Number(room.capacity) === 1 ? "Guest" : "Guests"}
+                    </div>
                   </div>
                 </div>
 
-                {/* Description*/}
-                <p className="text-[11px] text-gray-400 line-clamp-1 italic mb-4">
-                  {room.description || "No description provided."}
-                </p>
-
                 {/* Facilities */}
                 {room.facilities && room.facilities.length > 0 && (
-                  <div className="mb-3 pb-3 border-b border-gray-100">
+                  <div className="mb-2">
+                    <span className="text-[9px] uppercase tracking-wider text-gray-400 block mb-1 font-bold">
+                      Facilities
+                    </span>
                     <div className="flex flex-wrap gap-1.5">
                       {room.facilities.includes("WiFi") && (
                         <div className="flex items-center gap-0.5 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">
@@ -143,6 +152,16 @@ const RoomCards = ({ rooms, onEdit, onDelete }) => {
                     </div>
                   </div>
                 )}
+
+                {/* Description */}
+                <div className="mb-2">
+                  <span className="text-[9px] uppercase tracking-wider text-gray-400 block mb-0.5 font-bold">
+                    Description
+                  </span>
+                  <p className="text-[11px] text-gray-500 line-clamp-1 italic">
+                    {room.description || "No description provided."}
+                  </p>
+                </div>
 
                 {/*Small Action Buttons */}
                 <div className="flex gap-2 pt-3 border-t border-gray-50">
