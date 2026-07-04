@@ -191,10 +191,10 @@ const RestaurantSection = ({ data }) => {
   const canModifyOrder = (order) => {
     if (!order.pickupDate || !order.pickupTime) return false;
 
-    // order.pickupDate is likely an ISO date string; extract just YYYY-MM-DD
+    
     const datePart = new Date(order.pickupDate).toISOString().split("T")[0];
 
-    // Combine with pickupTime using Sri Lanka's fixed UTC+5:30 offset
+    
     const pickupDateTime = new Date(`${datePart}T${order.pickupTime}:00+05:30`);
 
     const now = new Date();

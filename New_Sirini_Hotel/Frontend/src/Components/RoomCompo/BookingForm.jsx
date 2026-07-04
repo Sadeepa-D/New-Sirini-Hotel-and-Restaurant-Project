@@ -90,7 +90,7 @@ function BookingForm({
         ...prev,
         name: user.name || "",
         email: user.email || "",
-        phone: user.Phone || "", // Note: Phone is uppercase in the model
+        phone: user.Phone || "", 
       }));
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -175,7 +175,7 @@ function BookingForm({
     }
   };
 
-  // ----- Render -----
+  
   if (showSuccess)
     return (
       <BookingSuccess

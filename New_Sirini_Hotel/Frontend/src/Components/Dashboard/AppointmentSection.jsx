@@ -133,7 +133,7 @@ const AppointmentsSection = () => {
     );
   }
 
-  // Count per tab
+  
   const counts = {
     Pending: appointments.filter((a) => a.status === "Pending").length,
     Cancelled: appointments.filter((a) => a.status === "Cancelled").length,
@@ -141,7 +141,7 @@ const AppointmentsSection = () => {
     Overdue: appointments.filter((a) => a.status === "Overdue").length,
   };
 
-  // Filter to active tab
+  
   const filtered = appointments.filter((a) => a.status === activeTab);
 
   const searchappoint = (searchTerm ? appointments : filtered).filter((app) => {
@@ -155,7 +155,7 @@ const AppointmentsSection = () => {
 
   return (
     <div className="space-y-6 font-sans relative">
-      {/* ── Header + Tabs ── */}
+      
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold text-gray-900 tracking-tight">

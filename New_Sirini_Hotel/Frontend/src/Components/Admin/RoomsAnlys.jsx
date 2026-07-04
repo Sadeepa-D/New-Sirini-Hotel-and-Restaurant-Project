@@ -135,7 +135,7 @@ const RoomBookingAnalysis = () => {
       </div>
 
       <div className="flex flex-col gap-2">
-        {/* ROW 1: CONFIRMED BOOKINGS */}
+       
         <div className="flex items-center justify-between px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
           <div className="flex items-center gap-3">
             <div className="p-1.5 bg-blue-50 text-blue-500 rounded-lg border border-blue-100/50">
@@ -150,7 +150,7 @@ const RoomBookingAnalysis = () => {
           </span>
         </div>
 
-        {/* ROW 2: COMPLETED BOOKINGS */}
+        
         <div className="flex items-center justify-between px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
           <div className="flex items-center gap-3">
             <div className="p-1.5 bg-emerald-50 text-emerald-500 rounded-lg border border-emerald-100/50">
@@ -165,7 +165,7 @@ const RoomBookingAnalysis = () => {
           </span>
         </div>
 
-        {/* ROW 3: CANCELLED BOOKINGS */}
+       
         <div className="flex items-center justify-between px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
           <div className="flex items-center gap-3">
             <div className="p-1.5 bg-rose-50 text-rose-400 rounded-lg border border-rose-100/50">
@@ -180,7 +180,7 @@ const RoomBookingAnalysis = () => {
           </span>
         </div>
 
-        {/* ROW 4: OVERDUE BOOKINGS */}
+        
         <div
           className={`flex items-center justify-between px-3 py-2 border rounded-xl transition-all duration-300 ${orderStats.Overdue > 0 ? "bg-red-50/50 border-red-200/60 shadow-xs" : "bg-gray-50/60 border-gray-100 shadow-xs"}`}
         >
