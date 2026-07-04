@@ -262,7 +262,7 @@ function Header() {
         </button>
 
         {/* ── Desktop Nav ── */}
-        <nav className="hidden md:flex items-center gap-0.5 lg:gap-1">
+        <nav className="hidden md:flex items-center gap-2 lg:gap-5">
           {navLinks.map((link) => {
             const id = `desktop-${link.path}`;
             const active = isActive(link.path);
@@ -375,7 +375,8 @@ function Header() {
                 </div>
                 <button
                   onClick={handlelogout}
-                  className="flex items-center gap-1.5 px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-400 rounded-lg text-sm font-medium hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-200"
+                  style={{ borderRadius: "12px" }}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-medium hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-200"
                 >
                   <LogOut size={15} />
                   <span>Log Out</span>
@@ -546,7 +547,8 @@ function Header() {
             {isLoggedIn ? (
               <button
                 onClick={handlelogout}
-                className="w-full flex items-center justify-center gap-2 py-3 bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl text-sm font-medium hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-200"
+                style={{ borderRadius: "12px" }}
+                className="w-full flex items-center justify-center gap-2 py-3 bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-medium hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-200"
               >
                 <LogOut size={16} />
                 <span>Log Out</span>
