@@ -32,7 +32,6 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
   const [activeTab, setActiveTab] = useState("pending");
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
-  const [sliderPosition, setSliderPosition] = useState(0);
 
   const scrollRef = useRef(null);
 
@@ -74,25 +73,29 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
 
   useEffect(() => {
     fetchAllData();
-    setSliderPosition(0);
   }, [fetchAllData, refreshKey]);
 
   useEffect(() => {
-    setSliderPosition(0);
+    if (scrollRef.current) {
+      scrollRef.current.scrollLeft = 0;
+    }
   }, [activeTab, searchTerm]);
 
-  const handleSliderScroll = (e) => {
-    setSliderPosition(e.target.scrollLeft);
-  };
-
   const scroll = (direction) => {
-    if (scrollRef.current) {
-      const { scrollLeft, clientWidth } = scrollRef.current;
-      const scrollTo =
+    const container = scrollRef.current;
+    if (container) {
+      const isMobile = window.innerWidth < 640;
+      const scrollAmount = isMobile 
+        ? window.innerWidth * 0.75 + 16  // 75vw + gap
+        : 324;                           // 300px card + 24px gap (gap-6)
+      const newPosition =
         direction === "left"
-          ? scrollLeft - clientWidth
-          : scrollLeft + clientWidth;
-      scrollRef.current.scrollTo({ left: scrollTo, behavior: "smooth" });
+          ? container.scrollLeft - scrollAmount
+          : container.scrollLeft + scrollAmount;
+      container.scrollTo({
+        left: newPosition,
+        behavior: "smooth",
+      });
     }
   };
 
@@ -169,7 +172,10 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
     <div className="mt-6 sm:mt-8 space-y-4 sm:space-y-8 px-2 sm:px-0">
       {/* Search & Tabs Navigation */}
       <div className="flex flex-col gap-3 sm:gap-6">
-        <div className="flex bg-gray-100 p-1.5 rounded-2xl border border-gray-200 overflow-x-auto w-full [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div
+          style={{ borderRadius: "16px" }}
+          className="flex bg-gray-100 p-1.5 rounded-2xl border border-gray-200 overflow-x-auto w-full [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+        >
           <TabButton
             active={activeTab === "pending"}
             onClick={() => setActiveTab("pending")}
@@ -240,26 +246,28 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
           </p>
         </div>
       ) : (
-        <div className="relative group">
-          {/* Left Arrow - Visible on all devices
+        <div className="relative">
+          {/* Left Scroll Button */}
           <button
             onClick={() => scroll("left")}
-            className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-2.5 bg-white/90 backdrop-blur-md text-blue-600 rounded-lg shadow-xl border border-white/50 hover:bg-white hover:text-blue-700 hover:shadow-blue-500/20 transition-all duration-300 active:scale-90 group/btn"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 sm:p-2.5 bg-white/95 hover:bg-white text-gray-800 rounded-full shadow-lg border border-gray-200 transition-all duration-300 hover:scale-110 active:scale-95 flex items-center justify-center -translate-x-1/2"
             title="Scroll left"
           >
-            <MoveLeft
-              size={18}
-              strokeWidth={2.5}
-              className="group-hover/btn:scale-110 transition-transform"
-            />
+            <ChevronLeft size={18} />
           </button>
-           */}
 
-          {/* Slider Container - Mobile optimized */}
+          {/* Cards Container */}
           <div
             ref={scrollRef}
-            onScroll={handleSliderScroll}
-            className="flex overflow-x-auto gap-3 sm:gap-6 pb-14 sm:pb-12 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] snap-x snap-mandatory px-10 sm:px-2 scroll-smooth"
+            className="flex overflow-x-auto gap-4 pb-4 px-4 scroll-smooth snap-x snap-mandatory 
+                       [&::-webkit-scrollbar]:h-1.5 
+                       [&::-webkit-scrollbar-track]:bg-gray-100 
+                       [&::-webkit-scrollbar-track]:rounded-full 
+                       [&::-webkit-scrollbar-thumb]:bg-gray-300 
+                       [&::-webkit-scrollbar-thumb]:rounded-full 
+                       hover:[&::-webkit-scrollbar-thumb]:bg-gray-400 
+                       [scrollbar-width:thin] 
+                       [scrollbar-color:#d1d5db_#f3f4f6]"
           >
             {filteredList.map((req) => (
               <div
@@ -350,12 +358,14 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
                     <>
                       <button
                         onClick={() => handleBookingAction(req._id, "confirm")}
+                        style={{ borderRadius: "9999px" }}
                         className="flex-1 bg-green-500 text-white py-1.5 sm:py-2.5 rounded-full font-bold text-[7px] sm:text-[9px] uppercase tracking-widest hover:bg-green-600 transition-all shadow-md hover:shadow-lg hover:shadow-green-500/30 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-1"
                       >
                         <Check size={9} strokeWidth={3} /> Approve
                       </button>
                       <button
                         onClick={() => handleBookingAction(req._id, "cancel")}
+                        style={{ borderRadius: "9999px" }}
                         className="flex-1 bg-red-50 text-red-500 py-1.5 sm:py-2.5 rounded-full font-bold text-[7px] sm:text-[9px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all active:scale-95 flex items-center justify-center gap-1 border border-red-100/50"
                       >
                         <X size={9} strokeWidth={3} /> Reject
@@ -367,12 +377,14 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
                     <>
                       <button
                         onClick={() => handleBookingAction(req._id, "complete")}
+                        style={{ borderRadius: "9999px" }}
                         className="flex-1 bg-blue-500 text-white py-1.5 sm:py-2.5 rounded-full font-bold text-[7px] sm:text-[9px] uppercase tracking-widest hover:bg-blue-600 transition-all shadow-md hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-1"
                       >
                         <Check size={9} strokeWidth={3} /> Done
                       </button>
                       <button
                         onClick={() => handleBookingAction(req._id, "cancel")}
+                        style={{ borderRadius: "9999px" }}
                         className="p-1.5 sm:p-2.5 bg-red-50 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all active:scale-95 border border-red-100/50 flex items-center justify-center flex-shrink-0"
                       >
                         <XCircle size={14} />
@@ -393,51 +405,14 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
             ))}
           </div>
 
-          {/* Right Arrow - Visible on all devices 
+          {/* Right Scroll Button */}
           <button
             onClick={() => scroll("right")}
-            className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-2.5 bg-white/90 backdrop-blur-md text-blue-600 rounded-lg shadow-xl border border-white/50 hover:bg-white hover:text-blue-700 hover:shadow-blue-500/20 transition-all duration-300 active:scale-90 group/btn"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 sm:p-2.5 bg-white/95 hover:bg-white text-gray-800 rounded-full shadow-lg border border-gray-200 transition-all duration-300 hover:scale-110 active:scale-95 flex items-center justify-center translate-x-1/2"
             title="Scroll right"
           >
-            <MoveRight
-              size={18}
-              strokeWidth={2.5}
-              className="group-hover/btn:scale-110 transition-transform"
-            />
+            <ChevronRight size={18} />
           </button>
-          */}
-
-          {/* Pagination Dots */}
-          <div className="absolute bottom-1 sm:bottom-0 left-1/2 -translate-x-1/2 flex items-center gap-1 px-2 py-1.5 sm:py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md border border-gray-200">
-            {filteredList.map((_, index) => {
-              const cardWidth = 320; // sm:w-[320px]
-              const gapWidth = 24; // sm:gap-6
-              const itemWidth = cardWidth + gapWidth;
-              const isActive =
-                sliderPosition >= index * itemWidth - 50 &&
-                sliderPosition <= (index + 1) * itemWidth - 50;
-
-              return (
-                <button
-                  key={index}
-                  onClick={() => {
-                    if (scrollRef.current) {
-                      scrollRef.current.scrollTo({
-                        left: index * itemWidth,
-                        behavior: "smooth",
-                      });
-                    }
-                  }}
-                  className={`transition-all ${
-                    isActive
-                      ? "w-5 sm:w-6 h-1.5 sm:h-2 bg-blue-500 rounded-full"
-                      : "w-1.5 sm:w-2 h-1.5 sm:h-2 bg-gray-300 rounded-full hover:bg-gray-400"
-                  }`}
-                  aria-label={`Go to booking ${index + 1}`}
-                />
-              );
-            })}
-          </div>
         </div>
       )}
     </div>
@@ -447,6 +422,7 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
 const TabButton = ({ active, onClick, icon, label, count, color }) => (
   <button
     onClick={onClick}
+    style={{ borderRadius: "10px" }}
     className={`flex items-center gap-1.5 px-3 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-[9px] sm:text-[11px] uppercase tracking-widest transition-all whitespace-nowrap font-sans antialiased
     ${active ? `bg-white ${color} shadow-md ring-1 ring-black/5 font-medium` : "text-gray-400 hover:text-gray-600 font-normal"}`}
   >
