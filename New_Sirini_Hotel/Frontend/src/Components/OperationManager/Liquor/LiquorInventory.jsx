@@ -18,7 +18,8 @@ const LiquorInventoryCard = ({ item, onSelect, isSelected }) => {
   return (
     <div
       onClick={() => onSelect(item)}
-      className={`relative overflow-hidden rounded-2xl border transition-all duration-300 group cursor-pointer flex flex-col justify-between min-h-80 ${
+      style={{ borderRadius: "16px" }}
+      className={`relative overflow-hidden border transition-all duration-300 group cursor-pointer flex flex-col justify-between min-h-80 ${
         isSelected
           ? "border-2 border-amber-500 shadow-lg scale-[0.98]"
           : "border-gray-200 hover:border-amber-400 hover:-translate-y-1 shadow-md hover:shadow-xl"
@@ -73,7 +74,10 @@ const LiquorInventoryCard = ({ item, onSelect, isSelected }) => {
           <span className="text-[15px] font-bold text-gray-200">
             LKR {item.price}
           </span>
-          <div className="bg-amber-500 text-black p-2 rounded-xl group-hover:bg-orange-500 transition-colors shadow-md">
+          <div
+            style={{ borderRadius: "10px" }}
+            className="bg-amber-500 text-black p-2 group-hover:bg-orange-500 transition-colors shadow-md cursor-pointer"
+          >
             <RefreshCw
               size={14}
               strokeWidth={3}
@@ -230,13 +234,17 @@ const LiquorInventory = ({
             {/* Category Tab Layout & Search */}
             <div className="flex overflow-x-auto gap-3 border-b border-gray-100 pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] sm:overflow-visible sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               {/* Tabs */}
-              <div className="bg-gray-50 p-1.5 rounded-xl flex gap-1 border border-gray-200 shrink-0 sm:shrink sm:w-auto">
+              <div
+                style={{ borderRadius: "12px" }}
+                className="bg-gray-50 p-1.5 flex gap-1 border border-gray-200 shrink-0 sm:shrink sm:w-auto"
+              >
                 <button
                   onClick={() => {
                     setActiveCategoryTab("Beer");
                     setSelectedItem(null);
                   }}
-                  className={`flex items-center justify-center gap-2 whitespace-nowrap px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
+                  style={{ borderRadius: "8px" }}
+                  className={`flex items-center justify-center gap-2 whitespace-nowrap px-5 py-2.5 text-xs font-black uppercase tracking-widest transition-all transform hover:scale-[1.03] active:scale-[0.97] duration-200 cursor-pointer ${
                     activeCategoryTab === "Beer"
                       ? "bg-yellow-500 text-black shadow-md"
                       : "text-gray-500 hover:text-neutral-900 hover:bg-white"
@@ -250,7 +258,8 @@ const LiquorInventory = ({
                     setActiveCategoryTab("Other");
                     setSelectedItem(null);
                   }}
-                  className={`flex items-center justify-center gap-2 whitespace-nowrap px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
+                  style={{ borderRadius: "8px" }}
+                  className={`flex items-center justify-center gap-2 whitespace-nowrap px-5 py-2.5 text-xs font-black uppercase tracking-widest transition-all transform hover:scale-[1.03] active:scale-[0.97] duration-200 cursor-pointer ${
                     activeCategoryTab === "Other"
                       ? "bg-yellow-500 text-black shadow-md"
                       : "text-gray-500 hover:text-neutral-900 hover:bg-white"
@@ -270,7 +279,8 @@ const LiquorInventory = ({
                 <input
                   type="text"
                   placeholder="Filter stock selection..."
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#FFAB00] text-neutral-800 transition-all"
+                  style={{ borderRadius: "12px" }}
+                  className="w-full bg-gray-50 border border-gray-200 pl-10 pr-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#FFAB00] text-neutral-800 transition-all hover:border-amber-400 focus:border-amber-500"
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
@@ -282,7 +292,8 @@ const LiquorInventory = ({
               <button
                 onClick={() => scrollSlider(-1)}
                 aria-label="Scroll left"
-                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 hover:shadow-amber-100 transition-all active:scale-90"
+                style={{ borderRadius: "50%" }}
+                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 hover:shadow-amber-100 transition-all active:scale-90 cursor-pointer"
               >
                 <ChevronLeft size={18} strokeWidth={2.5} />
               </button>
@@ -317,7 +328,8 @@ const LiquorInventory = ({
               <button
                 onClick={() => scrollSlider(1)}
                 aria-label="Scroll right"
-                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 hover:shadow-amber-100 transition-all active:scale-90"
+                style={{ borderRadius: "50%" }}
+                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 hover:shadow-amber-100 transition-all active:scale-90 cursor-pointer"
               >
                 <ChevronRight size={18} strokeWidth={2.5} />
               </button>
@@ -371,7 +383,8 @@ const LiquorInventory = ({
                   <div className="flex items-center gap-6 mt-1">
                     <button
                       onClick={() => setAdjustQty((p) => p - 1)}
-                      className="p-3 bg-white text-neutral-900 hover:text-red-500 rounded-xl border border-gray-200 transition-all hover:scale-105 active:scale-95 shadow-sm hover:shadow-md"
+                      style={{ borderRadius: "12px" }}
+                      className="p-3 bg-white text-neutral-900 hover:text-red-500 border border-gray-200 transition-all hover:scale-105 active:scale-95 shadow-sm hover:shadow-md cursor-pointer"
                     >
                       <Minus size={18} strokeWidth={3} />
                     </button>
@@ -389,7 +402,8 @@ const LiquorInventory = ({
                     />
                     <button
                       onClick={() => setAdjustQty((p) => p + 1)}
-                      className="p-3 bg-white text-neutral-900 hover:text-green-600 rounded-xl border border-gray-200 transition-all hover:scale-105 active:scale-95 shadow-sm hover:shadow-md"
+                      style={{ borderRadius: "12px" }}
+                      className="p-3 bg-white text-neutral-900 hover:text-green-600 border border-gray-200 transition-all hover:scale-105 active:scale-95 shadow-sm hover:shadow-md cursor-pointer"
                     >
                       <Plus size={18} strokeWidth={3} />
                     </button>
@@ -402,7 +416,8 @@ const LiquorInventory = ({
                 {/* Submit Button */}
                 <button
                   onClick={handleApplyUpdate}
-                  className="w-full bg-yellow-500 hover:bg-orange-500 active:scale-[0.98] transition-all text-black font-black py-3.5 rounded-xl uppercase tracking-widest text-xs shadow-lg shadow-amber-500/20"
+                  style={{ borderRadius: "12px" }}
+                  className="w-5/6 mx-auto bg-yellow-500 hover:bg-orange-500 active:scale-[0.98] transition-all transform hover:scale-[1.02] text-black font-black py-3 uppercase tracking-widest text-xs shadow-lg shadow-amber-500/20 cursor-pointer"
                 >
                   Confirm &amp; Update Stock
                 </button>

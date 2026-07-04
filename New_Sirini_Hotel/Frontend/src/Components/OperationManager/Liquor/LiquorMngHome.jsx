@@ -172,7 +172,8 @@ const LiquorManager = () => {
       <DrinkCard drink={item} onClick={() => handlCardClick(item)} />
       <div className="absolute top-4 right-4 flex flex-col gap-2 z-50">
         <button
-          className={`p-2 rounded-full shadow-md transition ${
+          style={{ borderRadius: "15%" }}
+          className={`p-2 shadow-md transition-all duration-300 hover:scale-115 active:scale-95 cursor-pointer ${
             item.isAvailable !== false
               ? "bg-green-100 text-green-600 hover:bg-green-600 hover:text-white"
               : "bg-red-100 text-red-600 hover:bg-red-600 hover:text-white"
@@ -190,7 +191,8 @@ const LiquorManager = () => {
           <Power size={16} />
         </button>
         <button
-          className="p-2 bg-white/90 rounded-full text-blue-600 shadow-md hover:bg-blue-600 hover:text-white transition"
+          style={{ borderRadius: "15%" }}
+          className="p-2 bg-white/90 text-blue-600 shadow-md hover:bg-blue-600 hover:text-white transition-all duration-300 hover:scale-115 active:scale-95 cursor-pointer"
           onClick={(e) => {
             e.stopPropagation();
             handleEdit(item);
@@ -199,7 +201,8 @@ const LiquorManager = () => {
           <Edit2 size={16} />
         </button>
         <button
-          className="p-2 bg-white/90 rounded-full text-red-600 shadow-md hover:bg-red-600 hover:text-white transition"
+          style={{ borderRadius: "15%" }}
+          className="p-2 bg-white/90 text-red-600 shadow-md hover:bg-red-600 hover:text-white transition-all duration-300 hover:scale-115 active:scale-95 cursor-pointer"
           onClick={(e) => {
             e.stopPropagation();
             handleDelete(item._id);
@@ -223,7 +226,8 @@ const LiquorManager = () => {
             <button
               onClick={() => scrollSection(sliderRef, -1)}
               aria-label="Scroll left"
-              className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
+              style={{ borderRadius: "50%" }}
+              className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all duration-300 hover:scale-115 active:scale-95 cursor-pointer"
             >
               <ChevronLeft size={18} strokeWidth={2.5} />
             </button>
@@ -248,7 +252,8 @@ const LiquorManager = () => {
             <button
               onClick={() => scrollSection(sliderRef, 1)}
               aria-label="Scroll right"
-              className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
+              style={{ borderRadius: "50%" }}
+              className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all duration-300 hover:scale-115 active:scale-95 cursor-pointer"
             >
               <ChevronRight size={18} strokeWidth={2.5} />
             </button>

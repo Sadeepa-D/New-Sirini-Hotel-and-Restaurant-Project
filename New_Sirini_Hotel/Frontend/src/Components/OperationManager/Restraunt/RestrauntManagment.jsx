@@ -216,7 +216,8 @@ const RestaurantManager = () => {
             setEditingItem(null);
             setIsFormOpen(true);
           }}
-          className="w-full md:w-auto flex items-center justify-center gap-2 bg-yellow-500 text-black font-bold px-6 py-3 rounded-xl shadow-lg hover:bg-orange-500 hover:text-black transition-all"
+          style={{ borderRadius: "12px" }}
+          className="w-full md:w-auto flex items-center justify-center gap-2 bg-yellow-500 text-black font-bold px-6 py-3 shadow-lg hover:bg-orange-500 hover:text-black transition-all transform hover:scale-[1.03] active:scale-[0.97] duration-200 cursor-pointer"
         >
           <Plus size={20} /> Add Food Item
         </button>
@@ -228,8 +229,9 @@ const RestaurantManager = () => {
           />
           <input
             type="text"
+            style={{ borderRadius: "12px" }}
             placeholder="Search food items..."
-            className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#FFAB00] shadow-sm bg-gray-50 outline-none"
+            className="w-full pl-10 pr-4 py-3 border border-gray-200 focus:ring-2 focus:ring-[#FFAB00] shadow-sm bg-gray-50 outline-none transition-all focus-within:scale-[1.01]"
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
@@ -237,12 +239,13 @@ const RestaurantManager = () => {
 
       {/* Category Navigation Bar */}
       <div className="bg-white rounded-xl p-3 sm:p-4 shadow-sm mb-4 md:mb-8 border border-gray-100">
-        <div className="flex overflow-x-auto gap-3 pb-2 hide-scrollbar scroll-smooth">
+        <div className="flex flex-wrap items-center justify-center gap-2 pb-1">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 whitespace-nowrap shadow-sm border
+              style={{ borderRadius: "10px" }}
+              className={`px-4 sm:px-5 py-2 text-xs sm:text-sm font-bold transition-all duration-300 whitespace-nowrap shadow-sm border transform hover:scale-105 active:scale-95 cursor-pointer
                 ${
                   selectedCategory === cat
                     ? "bg-amber-500 text-black border-amber-500 shadow-md scale-105"
@@ -269,7 +272,8 @@ const RestaurantManager = () => {
                   <div className="absolute top-4 right-4 flex flex-col gap-2 z-50">
                     {/* Toggle Availability */}
                     <button
-                      className={`p-2 rounded-full shadow-lg transition transform hover:scale-110 ${
+                      style={{ borderRadius: "15%" }}
+                      className={`p-2 shadow-lg transition-all duration-300 transform hover:scale-115 active:scale-95 cursor-pointer ${
                         item.availability !== false
                           ? "bg-green-100 text-green-600 hover:bg-green-600 hover:text-white"
                           : "bg-red-100 text-red-600 hover:bg-red-600 hover:text-white"
@@ -288,7 +292,8 @@ const RestaurantManager = () => {
                     </button>
                     {/* Edit */}
                     <button
-                      className="p-2 bg-white rounded-full text-blue-600 shadow-lg hover:bg-blue-600 hover:text-white transition transform hover:scale-110"
+                      style={{ borderRadius: "15%" }}
+                      className="p-2 bg-white text-blue-600 shadow-lg hover:bg-blue-600 hover:text-white transition-all duration-300 transform hover:scale-115 active:scale-95 cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleEdit(item);
@@ -299,7 +304,8 @@ const RestaurantManager = () => {
                     </button>
                     {/* Delete */}
                     <button
-                      className="p-2 bg-white rounded-full text-red-600 shadow-lg hover:bg-red-600 hover:text-white transition transform hover:scale-110"
+                      style={{ borderRadius: "15%" }}
+                      className="p-2 bg-white text-red-600 shadow-lg hover:bg-red-600 hover:text-white transition-all duration-300 transform hover:scale-115 active:scale-95 cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDelete(item._id);
