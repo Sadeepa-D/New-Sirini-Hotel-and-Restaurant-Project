@@ -30,7 +30,7 @@ const RoomandReception = () => {
         `${VITE_URL}/api/receptionhall/appointment/view`,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
       setApointmentdata(response.data);
     } catch (error) {
@@ -377,11 +377,11 @@ const RoomandReception = () => {
             Room {mostBookedRoom[0]}
           </p>
           <p className="text-xs font-medium text-gray-500">
-            Occupied
+            <span className="mr-1">Occupied</span>
             <span className="text-amber-600 font-bold">
               {mostBookedRoom[1]} times
             </span>
-            this month
+            <span className="ml-1">this month</span>
           </p>
           <div className="absolute -bottom-4 -right-4 text-amber-500/5 rotate-12 group-hover:scale-110 transition-transform">
             <Zap size={120} />
