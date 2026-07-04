@@ -22,7 +22,7 @@ const RoomCards = ({ rooms, onEdit, onDelete }) => {
   const scroll = (direction) => {
     const container = scrollContainerRef.current;
     if (container) {
-      const scrollAmount = 306; // card width (290px) + gap (16px)
+      const scrollAmount = 336; // card width (320px) + gap (16px)
       const newPosition =
         direction === "left"
           ? container.scrollLeft - scrollAmount
@@ -67,7 +67,7 @@ const RoomCards = ({ rooms, onEdit, onDelete }) => {
             {rooms.map((room) => (
               <div
                 key={room._id}
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300 flex flex-col group shrink-0 w-[290px] snap-start"
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300 flex flex-col group shrink-0 w-[320px] snap-start"
               >
                 <div className="relative h-40 w-full bg-gray-100 overflow-hidden">
                   {room.image ? (
