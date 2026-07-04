@@ -202,7 +202,7 @@ const RoomsSection = () => {
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-xl font-bold text-gray-900 tracking-tight">
+          <h2 className="text-xl font-bold text-gray-900 tracking-tight whitespace-nowrap">
             My Room Bookings
           </h2>
 
@@ -272,166 +272,175 @@ const RoomsSection = () => {
         </div>
       ) : (
         <div className="relative group">
-         
-
           {/* Slider Container */}
           <div
             ref={scrollRef}
             onScroll={handleSliderScroll}
             className="flex overflow-x-auto gap-5 pb-14 sm:pb-12 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] snap-x snap-mandatory px-2 scroll-smooth"
           >
-            {searchrooms.map((room) => (
-              <div
-                key={room.id || room._id}
-                className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group shrink-0 w-[75vw] sm:w-[320px] snap-center flex flex-col"
-              >
-                {/* Card top accent bar */}
-                <div className="h-1 w-full bg-linear-to-r from-amber-400 to-amber-300 shrink-0" />
+            {searchrooms.map((room) => {
+              const status = room.status?.toLowerCase();
 
-                <div className="p-5 flex-1 flex flex-col justify-between">
-                  <div>
-                    {/* Header: Room & Status */}
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center group-hover:bg-amber-500 transition-colors duration-300">
-                          <Bed
-                            size={20}
-                            className="text-amber-500 group-hover:text-white transition-colors duration-300"
-                          />
+              // Use inline styles for dynamic colors — avoids Tailwind JIT purge issues
+              const t = (() => {
+                if (status === "confirmed" || status === "approved")
+                  return { barFrom: "#10b981", barTo: "#14b8a6", icon: "#10b981", refBg: "#f0fdf4", refBorder: "#bbf7d0", refLabel: "#059669", codeBg: "#ffffff", codeBorder: "#a7f3d0", codeText: "#065f46", calColor: "#10b981", priceColor: "#059669", btnBg: "#f0fdf4", btnBorder: "#86efac", btnText: "#15803d" };
+                if (status === "completed")
+                  return { barFrom: "#3b82f6", barTo: "#6366f1", icon: "#3b82f6", refBg: "#eff6ff", refBorder: "#bfdbfe", refLabel: "#1d4ed8", codeBg: "#ffffff", codeBorder: "#93c5fd", codeText: "#1e3a8a", calColor: "#3b82f6", priceColor: "#1d4ed8", btnBg: "#fffbeb", btnBorder: "#fde68a", btnText: "#b45309" };
+                if (status === "cancelled" || status === "canceled")
+                  return { barFrom: "#ef4444", barTo: "#f43f5e", icon: "#ef4444", refBg: "#fef2f2", refBorder: "#fecaca", refLabel: "#dc2626", codeBg: "#ffffff", codeBorder: "#fca5a5", codeText: "#991b1b", calColor: "#ef4444", priceColor: "#dc2626", btnBg: "#fef2f2", btnBorder: "#fca5a5", btnText: "#dc2626" };
+                if (status === "overdue")
+                  return { barFrom: "#f97316", barTo: "#ef4444", icon: "#f97316", refBg: "#fff7ed", refBorder: "#fed7aa", refLabel: "#c2410c", codeBg: "#ffffff", codeBorder: "#fdba74", codeText: "#9a3412", calColor: "#f97316", priceColor: "#c2410c", btnBg: "#fef2f2", btnBorder: "#fca5a5", btnText: "#dc2626" };
+                // pending
+                return { barFrom: "#f59e0b", barTo: "#f97316", icon: "#f59e0b", refBg: "#fffbeb", refBorder: "#fde68a", refLabel: "#b45309", codeBg: "#ffffff", codeBorder: "#fcd34d", codeText: "#78350f", calColor: "#f59e0b", priceColor: "#d97706", btnBg: "#fef2f2", btnBorder: "#fca5a5", btnText: "#dc2626" };
+              })();
+
+              return (
+                <div
+                  key={room.id || room._id}
+                  className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 shrink-0 w-[80vw] sm:w-[320px] snap-center flex flex-col"
+                >
+                  {/* Gradient top bar */}
+                  <div style={{ height: "6px", background: `linear-gradient(to right, ${t.barFrom}, ${t.barTo})` }} className="w-full shrink-0" />
+
+                  <div className="p-4 flex flex-col gap-2 flex-1">
+
+                    {/* ── Header row: icon + room no + status badge ── */}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-start gap-3 mt-0.5">
+                        {/* Colored square icon */}
+                        <div
+                          style={{ background: `linear-gradient(135deg, ${t.barFrom}, ${t.barTo})` }}
+                          className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
+                        >
+                          <Bed size={18} className="text-white" />
                         </div>
-                        <div>
-                          <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest leading-none mb-1">
+                        <div className="pt-0.5">
+                          <p className="text-[9px] text-gray-400 uppercase font-bold tracking-widest leading-none mb-0">
                             Room No.
                           </p>
-                          <p className="text-xl font-black text-gray-900 leading-none">
+                          <p className="text-[1.6rem] font-black text-gray-900 leading-none">
                             {room.roomNumber}
                           </p>
-                          {room.timeSlot && (
-                            <span
-                              className={`inline-block mt-1.5 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-md ${
-                                room.timeSlot === "day"
-                                  ? "bg-blue-50 text-blue-500 border border-blue-100"
-                                  : "bg-purple-50 text-purple-500 border border-purple-100"
-                              }`}
-                            >
-                              {room.timeSlot === "day"
-                                ? "Day Package"
-                                : "Night Package"}
-                            </span>
-                          )}
                         </div>
                       </div>
                       <StatusBadge status={room.status} />
                     </div>
 
-                    {/* Reference Number */}
+                    {/* ── Package badge ── */}
+                    {room.timeSlot && (
+                      <div>
+                        <span
+                          className="inline-block px-3 py-1 text-xs font-semibold rounded-full"
+                          style={
+                            room.timeSlot === "day"
+                              ? { background: "#dbeafe", color: "#1d4ed8" }
+                              : { background: "#f3e8ff", color: "#7c3aed" }
+                          }
+                        >
+                          {room.timeSlot === "day" ? "Day package" : "Night package"}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* ── Booking Reference ── */}
                     {room.bookingCode && (
-                      <div className="mb-4 flex items-center gap-2 p-2.5 bg-amber-50 rounded-lg border border-amber-100">
-                        <p className="text-[8px] text-amber-600 uppercase font-bold tracking-widest leading-none">
-                          Booking Ref:
+                      <div
+                        className="flex items-center justify-between px-3 py-2 rounded-xl"
+                        style={{ background: t.refBg, border: `1px solid ${t.refBorder}` }}
+                      >
+                        <p
+                          className="text-[9px] uppercase font-black tracking-widest"
+                          style={{ color: t.refLabel }}
+                        >
+                          Booking Ref
                         </p>
-                        <span className="bg-white text-amber-700 border border-amber-200 font-mono font-black tracking-wider text-[10px] px-3 py-1 rounded-md">
+                        <span
+                          className="font-mono font-black text-xs px-3 py-1 rounded-lg"
+                          style={{ background: t.codeBg, border: `1px solid ${t.codeBorder}`, color: t.codeText }}
+                        >
                           {room.bookingCode}
                         </span>
                       </div>
                     )}
 
-                    {/* Check-in / Check-out */}
-                    <div className="bg-gray-50 rounded-xl p-3 sm:p-4 flex items-center justify-between mb-4 border border-gray-100 overflow-hidden">
-                      <div className="flex items-center gap-2">
-                        <CalendarDays
-                          size={14}
-                          className="text-amber-500 shrink-0"
-                        />
-                        <div>
-                          <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
-                            Check In
-                          </p>
-                          <p className="text-xs font-bold text-gray-800">
-                            {new Date(room.checkInDate).toLocaleDateString(
-                              "en-GB",
-                            )}
+                    {/* ── Check-in / Check-out ── */}
+                    <div className="grid grid-cols-2 gap-2.5">
+                      <div className="bg-gray-50 border border-gray-100 rounded-xl px-3 py-2">
+                        <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest mb-1">
+                          Check In
+                        </p>
+                        <div className="flex items-center gap-1.5">
+                          <CalendarDays size={13} style={{ color: t.calColor }} />
+                          <p className="text-xs font-black text-gray-800">
+                            {new Date(room.checkInDate).toLocaleDateString("en-GB")}
                           </p>
                         </div>
                       </div>
-                      <div className="h-8 w-px bg-gray-200" />
-                      <div className="flex items-center gap-2 text-right">
-                        <div>
-                          <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
-                            Check Out
-                          </p>
-                          <p className="text-xs font-bold text-gray-800">
+                      <div className="bg-gray-50 border border-gray-100 rounded-xl px-3 py-2">
+                        <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest mb-1">
+                          Check Out
+                        </p>
+                        <div className="flex items-center gap-1.5">
+                          <CalendarDays size={13} style={{ color: t.calColor }} />
+                          <p className="text-xs font-black text-gray-800">
                             {room.timeSlot === "day"
-                              ? new Date(room.checkInDate).toLocaleDateString(
-                                  "en-GB",
-                                )
-                              : new Date(room.checkOutDate).toLocaleDateString(
-                                  "en-GB",
-                                )}
+                              ? new Date(room.checkInDate).toLocaleDateString("en-GB")
+                              : new Date(room.checkOutDate).toLocaleDateString("en-GB")}
                           </p>
                         </div>
-                        <CalendarDays
-                          size={14}
-                          className="text-amber-500 shrink-0"
-                        />
                       </div>
                     </div>
-                  </div>
 
-                  {/* Footer: Price & Action Button */}
-                  <div className="flex flex-col gap-3 pt-3 border-t border-gray-100 mt-auto">
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <BadgeDollarSign size={16} className="text-amber-500" />
-                        <div>
-                          <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
-                            Total Paid
-                          </p>
-                          <p className="text-lg font-black text-amber-600 leading-none">
+                    {/* ── Price row ── */}
+                    <div className="flex items-center justify-between pt-1.5 border-t border-gray-100">
+                      <div>
+                        <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">
+                          Total Paid
+                        </p>
+                        <div className="flex items-center gap-1 whitespace-nowrap">
+                          <span className="flex items-center">
+                            <BadgeDollarSign size={18} style={{ color: t.priceColor }} className="shrink-0" />
+                          </span>
+                          <span className="text-lg font-black leading-none" style={{ color: t.priceColor }}>
                             Rs.{room.totalAmount?.toLocaleString()}
-                          </p>
+                          </span>
                         </div>
                       </div>
-                      <p className="text-[9px] text-gray-300 font-bold uppercase tracking-widest italic">
+                      <p className="text-[9px] text-gray-300 italic font-medium">
                         New Sirini Hotel
                       </p>
                     </div>
 
-                    {/* Cancel Button for Pending Bookings Only */}
+                    {/* ── Buttons ── */}
                     {room.status?.toLowerCase() === "pending" && (
                       <button
                         onClick={() => handlecancelconfrim(room._id)}
                         disabled={cancellationLoading === room._id}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-sm transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed border border-red-200 hover:border-red-300"
+                        style={{ borderRadius: "10px", background: t.btnBg, border: `1px solid ${t.btnBorder}`, color: t.btnText }}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-2 font-semibold text-sm transition-all duration-200 hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <Trash2 size={16} />
-                        <span className="tracking-wider uppercase text-xs">
-                          {cancellationLoading === room._id
-                            ? "Cancelling..."
-                            : "Cancel Booking"}
-                        </span>
+                        <Trash2 size={15} />
+                        <span>{cancellationLoading === room._id ? "Cancelling..." : "Cancel Booking"}</span>
                       </button>
                     )}
 
-                    {/* Feedback Button for Completed Bookings */}
                     {room.status?.toLowerCase() === "completed" && (
                       <button
                         onClick={() => handleOpenFeedbackModal(room)}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-600 font-semibold text-sm transition-all duration-300 border border-amber-200 hover:border-amber-300"
+                        style={{ borderRadius: "10px", background: t.btnBg, border: `1px solid ${t.btnBorder}`, color: t.btnText }}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-2 font-semibold text-sm transition-all duration-200 hover:opacity-80"
                       >
-                        <MessageCircle size={16} />
-                        <span className="tracking-wider uppercase text-xs">
-                          Leave Feedback
-                        </span>
+                        <MessageCircle size={15} />
+                        <span>Leave Feedback</span>
                       </button>
                     )}
+
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
-
-          
 
           {/* Pagination Dots */}
           <div className="absolute bottom-1 sm:bottom-0 left-1/2 -translate-x-1/2 flex items-center gap-1 px-2 py-1.5 sm:py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md border border-gray-200">
@@ -492,7 +501,8 @@ const RoomsSection = () => {
 const TabBtn = ({ active, onClick, label, icon, count }) => (
   <button
     onClick={onClick}
-    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-[10px] uppercase tracking-wider transition-all whitespace-nowrap font-sans font-semibold ${
+    style={{ borderRadius: "10px" }}
+    className={`flex items-center gap-1.5 px-3 py-2 text-[10px] uppercase tracking-wider transition-all whitespace-nowrap font-sans font-semibold ${
       active
         ? "bg-white text-amber-600 shadow-sm ring-1 ring-black/5"
         : "text-gray-400 hover:text-gray-600 font-normal"
