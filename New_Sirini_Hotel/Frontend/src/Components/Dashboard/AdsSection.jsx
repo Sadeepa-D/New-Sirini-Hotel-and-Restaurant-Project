@@ -129,7 +129,8 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
           </p>
         </div>
         <button
-          className="flex items-center gap-1.5 px-3 sm:px-5 py-2 sm:py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-full text-[10px] sm:text-xs uppercase tracking-wider transition-all duration-200 shadow-md shadow-amber-500/25 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap shrink-0"
+          style={{ borderRadius: "14px" }}
+          className="flex items-center gap-1.5 px-3 sm:px-5 py-2 sm:py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-bold text-[10px] sm:text-xs uppercase tracking-wider transition-all duration-300 shadow-md shadow-amber-500/25 hover:shadow-lg hover:scale-105 active:scale-95 whitespace-nowrap shrink-0"
           onClick={() => navigate("/ads")}
         >
           <Plus size={14} className="shrink-0" />
@@ -146,7 +147,8 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
           </p>
           <button
             onClick={() => navigate("/ads")}
-            className="mt-4 flex items-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold rounded-full transition-all duration-200"
+            style={{ borderRadius: "14px" }}
+            className="mt-4 flex items-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold transition-all duration-300 hover:scale-105 active:scale-95"
           >
             <Plus size={13} /> Place Your First Ad
           </button>
