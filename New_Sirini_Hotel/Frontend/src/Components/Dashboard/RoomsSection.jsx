@@ -13,6 +13,7 @@ import {
   MoveLeft,
   MoveRight,
   MessageCircle,
+  Search,
 } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -209,11 +210,14 @@ const RoomsSection = () => {
           <p className="text-gray-400 text-xs mt-0.5">
             Track all your room reservation statuses
           </p>
-          <div>
+          <div className="relative mt-2 w-full sm:w-64">
+            <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
+              <Search size={15} className="text-gray-400" />
+            </span>
             <input
               type="text"
               placeholder="Search by booking ref..."
-              className="mt-2 w-full sm:w-64 px-4 py-2 bg-gray-100 placeholder:text-gray-400 text-gray-700 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-400 focus:outline-none transition-colors"
+              className="w-full pl-9 pr-4 py-2 bg-gray-100 placeholder:text-gray-400 text-gray-700 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-400 focus:outline-none transition-colors"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -418,7 +422,7 @@ const RoomsSection = () => {
                         onClick={() => handlecancelconfrim(room._id)}
                         disabled={cancellationLoading === room._id}
                         style={{ borderRadius: "10px", background: t.btnBg, border: `1px solid ${t.btnBorder}`, color: t.btnText }}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-2 font-semibold text-sm transition-all duration-200 hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-[88%] mx-auto flex items-center justify-center gap-2 px-4 py-2 font-semibold text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Trash2 size={15} />
                         <span>{cancellationLoading === room._id ? "Cancelling..." : "Cancel Booking"}</span>
@@ -429,7 +433,7 @@ const RoomsSection = () => {
                       <button
                         onClick={() => handleOpenFeedbackModal(room)}
                         style={{ borderRadius: "10px", background: t.btnBg, border: `1px solid ${t.btnBorder}`, color: t.btnText }}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-2 font-semibold text-sm transition-all duration-200 hover:opacity-80"
+                        className="w-[88%] mx-auto flex items-center justify-center gap-2 px-4 py-2 font-semibold text-sm transition-all duration-300 transform hover:scale-105 active:scale-95"
                       >
                         <MessageCircle size={15} />
                         <span>Leave Feedback</span>
