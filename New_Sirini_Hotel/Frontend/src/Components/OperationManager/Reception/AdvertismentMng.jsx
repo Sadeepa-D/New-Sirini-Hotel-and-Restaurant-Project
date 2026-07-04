@@ -22,19 +22,25 @@ const statusConfig = {
     label: "Pending",
     bg: "bg-yellow-100",
     text: "text-yellow-700",
+    activeClass: "bg-amber-500 text-white border-amber-500 shadow-md shadow-amber-500/20",
     icon: Clock,
+    iconColor: "text-amber-500",
   },
   approved: {
     label: "Approved",
     bg: "bg-green-100",
     text: "text-green-700",
+    activeClass: "bg-green-500 text-white border-green-500 shadow-md shadow-green-500/20",
     icon: CheckCircle,
+    iconColor: "text-green-500",
   },
   rejected: {
     label: "Rejected",
     bg: "bg-red-100",
     text: "text-red-600",
+    activeClass: "bg-red-500 text-white border-red-500 shadow-md shadow-red-500/20",
     icon: XCircle,
+    iconColor: "text-red-500",
   },
 };
 
@@ -284,27 +290,27 @@ const AdvertismentMng = () => {
             setSearch("");
           }}
           style={{ borderRadius: "10px" }}
-          className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 transition-all cursor-pointer whitespace-nowrap transform hover:scale-105 active:scale-95 duration-300 ease-in-out ${
+          className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-2 transition-all cursor-pointer whitespace-nowrap transform hover:scale-105 active:scale-95 duration-300 ease-in-out border ${
             selectedStatus === null
-              ? "bg-blue-100 text-blue-700 border-2 border-blue-400"
-              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              ? "bg-blue-500 text-white border-blue-500 shadow-md shadow-blue-500/20"
+              : "bg-gray-50 text-gray-600 border-gray-200/80 hover:bg-gray-100 hover:text-gray-900"
           }`}
         >
           All ({allAds.length})
         </button>
         {Object.entries(statusConfig).map(
-          ([key, { label, bg, text, icon: Icon }]) => (
+          ([key, { label, activeClass, icon: Icon, iconColor }]) => (
             <button
               key={key}
               onClick={() => fetchAdsByStatus(key)}
               style={{ borderRadius: "10px" }}
-              className={`flex items-center gap-1.5 ${
+              className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-2 transition-all cursor-pointer whitespace-nowrap transform hover:scale-105 active:scale-95 duration-300 ease-in-out border ${
                 selectedStatus === key
-                  ? `${bg} ${text} border-2 border-current shadow-md`
-                  : `${bg} ${text} opacity-60 hover:opacity-100`
-              } text-xs font-semibold px-3 py-1.5 transition-all cursor-pointer whitespace-nowrap transform hover:scale-105 active:scale-95 duration-300 ease-in-out`}
+                  ? activeClass
+                  : "bg-gray-50 text-gray-600 border-gray-200/80 hover:bg-gray-100 hover:text-gray-900"
+              }`}
             >
-              <Icon size={12} />
+              <Icon size={12} className={selectedStatus === key ? "text-white" : iconColor} />
               {label}: {allAds.filter((a) => a.status === key).length}
             </button>
           ),
@@ -367,28 +373,53 @@ const AdvertismentMng = () => {
         </div>
       )}
 
-      <div className="flex items-center gap-4 mt-5 pt-4 border-t border-gray-100">
-        <span className="text-xs text-gray-400">
-          Total: <strong className="text-gray-600">{allAds.length}</strong>
-        </span>
-        <span className="text-xs text-gray-400">
-          Pending:{" "}
-          <strong className="text-yellow-600">
+      {/* Footer stats */}
+      <div className="mt-8 pt-6 border-t border-gray-100 flex flex-wrap items-center gap-3 sm:gap-4">
+        {/* Total Stat Card */}
+        <div
+          style={{ borderRadius: "12px" }}
+          className="flex items-center gap-2.5 bg-gray-50 border border-gray-200/80 px-4 py-2 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
+        >
+          <div className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
+          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Total:</span>
+          <strong className="text-lg font-black text-gray-800 font-mono leading-none">{allAds.length}</strong>
+        </div>
+
+        {/* Pending Stat Card */}
+        <div
+          style={{ borderRadius: "12px" }}
+          className="flex items-center gap-2.5 bg-yellow-50/40 border border-yellow-100 px-4 py-2 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
+        >
+          <div className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
+          <span className="text-xs font-bold text-yellow-700 uppercase tracking-wider">Pending:</span>
+          <strong className="text-lg font-black text-yellow-700 font-mono leading-none">
             {allAds.filter((a) => a.status === "pending").length}
           </strong>
-        </span>
-        <span className="text-xs text-gray-400">
-          Approved:{" "}
-          <strong className="text-green-600">
+        </div>
+
+        {/* Approved Stat Card */}
+        <div
+          style={{ borderRadius: "12px" }}
+          className="flex items-center gap-2.5 bg-green-50/40 border border-green-100 px-4 py-2 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
+        >
+          <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
+          <span className="text-xs font-bold text-green-700 uppercase tracking-wider">Approved:</span>
+          <strong className="text-lg font-black text-green-700 font-mono leading-none">
             {allAds.filter((a) => a.status === "approved").length}
           </strong>
-        </span>
-        <span className="text-xs text-gray-400">
-          Rejected:{" "}
-          <strong className="text-red-500">
+        </div>
+
+        {/* Rejected Stat Card */}
+        <div
+          style={{ borderRadius: "12px" }}
+          className="flex items-center gap-2.5 bg-red-50/40 border border-red-100 px-4 py-2 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
+        >
+          <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
+          <span className="text-xs font-bold text-red-700 uppercase tracking-wider">Rejected:</span>
+          <strong className="text-lg font-black text-red-700 font-mono leading-none">
             {allAds.filter((a) => a.status === "rejected").length}
           </strong>
-        </span>
+        </div>
       </div>
 
       <ConfirmDialog
