@@ -94,6 +94,7 @@ const LiquorInventory = ({
   const VITE_URL = import.meta.env.VITE_API_URL;
   const [activeCategoryTab, setActiveCategoryTab] = useState("Beer");
   const [selectedItem, setSelectedItem] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const [adjustQty, setAdjustQty] = useState(0);
   const sliderRef = useRef(null);
 
@@ -111,6 +112,10 @@ const LiquorInventory = ({
     activeCategoryTab === "Beer"
       ? item.category === "Beer"
       : item.category !== "Beer",
+  );
+
+  const searchFilteredItems = filteredItems.filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handleApplyUpdate = async () => {
@@ -266,6 +271,7 @@ const LiquorInventory = ({
                   type="text"
                   placeholder="Filter stock selection..."
                   className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#FFAB00] text-neutral-800 transition-all"
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
             </div>
@@ -286,12 +292,12 @@ const LiquorInventory = ({
                 ref={sliderRef}
                 className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-1"
               >
-                {filteredItems.length === 0 ? (
+                {searchFilteredItems.length === 0 ? (
                   <div className="w-full flex items-center justify-center py-12">
                     <p className="text-sm text-gray-400">No items found.</p>
                   </div>
                 ) : (
-                  filteredItems.map((item) => (
+                  searchFilteredItems.map((item) => (
                     <div
                       key={item._id}
                       data-slider-card

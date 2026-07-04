@@ -64,7 +64,8 @@ const AdvertisementCard = ({
         {onDelete && (
           <button
             onClick={() => onDelete(ad._id)}
-            className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-red-500/15 border border-red-500/30 text-red-400 hover:bg-red-500 hover:text-white flex items-center justify-center shadow transition-all duration-200 backdrop-blur-sm"
+            style={{ borderRadius: "50%" }}
+            className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-red-500/15 border border-red-500/30 text-red-400 hover:bg-red-500 hover:text-white flex items-center justify-center shadow transform hover:scale-110 active:scale-95 transition-all duration-200 backdrop-blur-sm"
           >
             <Trash2 size={13} />
           </button>
@@ -112,13 +113,15 @@ const AdvertisementCard = ({
           <div className="flex gap-2 mt-1">
             <button
               onClick={() => onApprove(ad._id)}
-              className="flex-1 flex items-center justify-center gap-1.5 bg-green-50 hover:bg-green-500 text-green-600 hover:text-white border border-green-200 hover:border-green-500 text-xs font-bold py-2 rounded-xl transition-all duration-200"
+              style={{ borderRadius: "10px" }}
+              className="flex-1 flex items-center justify-center gap-1.5 bg-green-50 hover:bg-green-500 text-green-600 hover:text-white border border-green-200 hover:border-green-500 text-xs font-bold py-2 rounded-xl transform hover:scale-105 active:scale-95 transition-all duration-300 ease-in-out"
             >
               <CheckCircle size={13} /> Approve
             </button>
             <button
               onClick={() => onReject(ad._id)}
-              className="flex-1 flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white border border-red-200 hover:border-red-500 text-xs font-bold py-2 rounded-xl transition-all duration-200"
+              style={{ borderRadius: "10px" }}
+              className="flex-1 flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white border border-red-200 hover:border-red-500 text-xs font-bold py-2 rounded-xl transform hover:scale-105 active:scale-95 transition-all duration-300 ease-in-out"
             >
               <XCircle size={13} /> Reject
             </button>
@@ -128,7 +131,8 @@ const AdvertisementCard = ({
         {showAdminActions && ad.status !== "pending" && (
           <button
             onClick={() => onResetPending(ad._id)}
-            className="mt-1 w-full flex items-center justify-center gap-1.5 bg-gray-50 hover:bg-gray-100 text-gray-500 border border-gray-200 text-xs font-bold py-2 rounded-xl transition-all duration-200"
+            style={{ borderRadius: "10px" }}
+            className="mt-1 w-full flex items-center justify-center gap-1.5 bg-gray-50 hover:bg-gray-100 text-gray-500 border border-gray-200 text-xs font-bold py-2 rounded-xl transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 ease-in-out"
           >
             <Clock size={12} /> Reset to Pending
           </button>
@@ -140,7 +144,8 @@ const AdvertisementCard = ({
             {onEdit && (
               <button
                 onClick={() => onEdit(ad)}
-                className="flex-1 flex items-center justify-center gap-1.5 bg-gray-50 hover:bg-amber-50 text-gray-600 hover:text-amber-700 border border-gray-200 hover:border-amber-200 text-xs font-bold py-2 rounded-xl transition-all duration-200"
+                style={{ borderRadius: "10px" }}
+                className="flex-1 flex items-center justify-center gap-1.5 bg-gray-50 hover:bg-amber-50 text-gray-600 hover:text-amber-700 border border-gray-200 hover:border-amber-200 text-xs font-bold py-2 rounded-xl transform hover:scale-105 active:scale-95 transition-all duration-300 ease-in-out"
               >
                 <Pencil size={13} /> Edit
               </button>

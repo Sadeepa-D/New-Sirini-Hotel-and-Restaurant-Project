@@ -14,10 +14,26 @@ router.get(
   RoleBaseMiddleware(["Admin", "Operation Manager 1 (Restraunt,Liquor)"]),
   FoodOrderCont.getFoodOrders,
 );
-router.put("/updateorder/:id", FoodOrderCont.editfoodOrder);
+router.put(
+  "/updateorder/:id",
+  authMiddleware,
+  RoleBaseMiddleware([
+    "Admin",
+    "Operation Manager 1 (Restraunt,Liquor)",
+    "Operation Manager 2 (Reception, Room)",
+    "User",
+  ]),
+  FoodOrderCont.editfoodOrder,
+);
 router.delete(
   "/deleteorder/:id",
   authMiddleware,
+  RoleBaseMiddleware([
+    "Admin",
+    "Operation Manager 1 (Restraunt,Liquor)",
+    "Operation Manager 2 (Reception, Room)",
+    "User",
+  ]),
   FoodOrderCont.deleteFoodOrder,
 );
 router.put(
@@ -58,8 +74,18 @@ router.put(
   upload.single("image"),
   FoodItemsCont.updateFoodItem,
 );
-router.put("/toggleavailability/:id",authMiddleware, RoleBaseMiddleware(["Admin", "Operation Manager 1 (Restraunt,Liquor)"]), FoodItemsCont.toggleFoodItemAvailability);
-router.delete("/deletefooditem/:id", authMiddleware, RoleBaseMiddleware(["Admin", "Operation Manager 1 (Restraunt,Liquor)"]), FoodItemsCont.deleteFoodItem);
+router.put(
+  "/toggleavailability/:id",
+  authMiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 1 (Restraunt,Liquor)"]),
+  FoodItemsCont.toggleFoodItemAvailability,
+);
+router.delete(
+  "/deletefooditem/:id",
+  authMiddleware,
+  RoleBaseMiddleware(["Admin", "Operation Manager 1 (Restraunt,Liquor)"]),
+  FoodItemsCont.deleteFoodItem,
+);
 
 router.get("/orders/userspecific", authMiddleware, FoodOrderCont.getUserOrders);
 router.post("/orders/stats", RestrauntAnlysCont.getRestaurantOrderStats);

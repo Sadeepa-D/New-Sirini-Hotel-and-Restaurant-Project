@@ -29,6 +29,7 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
     category: "",
     description: "",
     portfolio: "",
+    EmailAddress: "",
     price: "",
     location: "",
     TPNumber: "",
@@ -45,6 +46,7 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
         category: editData.category || "",
         description: editData.description || "",
         portfolio: editData.portfolio || "",
+        EmailAddress: editData.EmailAddress || "",
         price: editData.price || "",
         location: editData.location || "",
         TPNumber: editData.TPNumber || "",
@@ -75,6 +77,7 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
         ? "Updating advertisement..."
         : "Submitting your advertisement request...",
     );
+
     try {
       const submitData = new FormData();
       submitData.append("BuissnesName", formData.BuissnesName);
@@ -84,6 +87,7 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
       submitData.append("category", formData.category);
       submitData.append("description", formData.description);
       submitData.append("portfolio", formData.portfolio);
+      submitData.append("EmailAddress", formData.EmailAddress);
       submitData.append("price", formData.price);
       submitData.append("location", formData.location);
       // Normalize TPNumber - remove spaces and dashes
@@ -133,21 +137,30 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
     } catch (error) {
       toast.dismiss(loadingtoast);
       console.error("Advertisement submission error:", error);
-      
+
       // Log detailed error information
       if (error.response) {
         console.error("Error response data:", error.response.data);
         console.error("Error status:", error.response.status);
-        const errorMessage = error.response.data?.error || error.response.data?.message || "Server error occurred";
-        const errorDetails = error.response.data?.details ? JSON.stringify(error.response.data.details, null, 2) : "";
-        
-        toast.error(`Failed: ${errorMessage}${errorDetails ? `\n${errorDetails}` : ""}`);
+        const errorMessage =
+          error.response.data?.error ||
+          error.response.data?.message ||
+          "Server error occurred";
+        const errorDetails = error.response.data?.details
+          ? JSON.stringify(error.response.data.details, null, 2)
+          : "";
+
+        toast.error(
+          `${errorMessage}${errorDetails ? `\n${errorDetails}` : ""}`,
+        );
       } else if (error.request) {
         console.error("No response received:", error.request);
         toast.error("No response from server. Check your connection.");
       } else {
         console.error("Error message:", error.message);
-        toast.error(error.message || "Failed to submit advertisement. Please try again.");
+        toast.error(
+          error.message || "Failed to submit advertisement. Please try again.",
+        );
       }
     } finally {
       toast.dismiss(loadingtoast);
@@ -288,6 +301,24 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
                 value={formData.portfolio}
                 onChange={handleChange}
                 placeholder="e.g. www.facebook.com/yourbusiness"
+                className="w-full text-sm text-gray-700 outline-none placeholder-gray-300"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs text-gray-400 uppercase tracking-widest mb-1.5 font-medium">
+              Email Address
+            </label>
+            <div className="flex items-center gap-3 border border-gray-200 rounded-2xl px-4 py-3 focus-within:border-amber-400 transition-colors">
+              <User size={15} className="text-amber-400 shrink-0" />
+              <input
+                type="text"
+                name="EmailAddress"
+                value={formData.EmailAddress}
+                onChange={handleChange}
+                placeholder="e.g. john.doe@example.com"
+                required
                 className="w-full text-sm text-gray-700 outline-none placeholder-gray-300"
               />
             </div>

@@ -1,5 +1,10 @@
 const FoodOrder = require("../../models/Restraunt/FoodItemBookModel");
-const { sendRestaurantOrderEmail } = require("../EmailCont");
+const User = require("../../models/UserModel");
+
+const {
+  sendRestaurantOrderEmail,
+  sendmultiplerestrauntitemsEmail,
+} = require("../EmailCont");
 const NotifiModel = require("../../models/NotifiModel");
 
 const getCurrentSLTime = () => {
@@ -20,7 +25,17 @@ const getCurrentSLTime = () => {
 
   return { slDate, slTime };
 };
+const timeToMinutes = (timeStr) => {
+  const [h, m] = timeStr.split(":").map(Number);
+  return h * 60 + m;
+};
 
+const canModifyOrder = (order) => {
+  const datePart = new Date(order.pickupDate).toISOString().split("T")[0];
+  const pickupDateTime = new Date(`${datePart}T${order.pickupTime}:00+05:30`);
+  const diffMinutes = (pickupDateTime.getTime() - Date.now()) / 60000;
+  return diffMinutes >= 45;
+};
 const GenarateFoodOrderCode = async () => {
   const prefix = "SH";
   const randomNumber = Math.floor(1000 + Math.random() * 9000);
@@ -37,30 +52,49 @@ const GenarateFoodOrderCode = async () => {
 const createFoodOrder = async (req, res) => {
   try {
     const userId = req.userData.id;
-    const {
-      foodName,
-      fullName,
-      email,
-      quantity,
-      phoneNumber,
-      pickupDate,
-      pickupTime,
-      Price,
-      portion,
-    } = req.body;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (!user.Phone) {
+      return res.status(400).json({
+        message:
+          "Please update your profile with a phone number before creating Order.",
+      });
+    }
+    const { items, fullName, email, phoneNumber, pickupDate, pickupTime } =
+      req.body;
 
     if (
       !fullName ||
       !email ||
-      !quantity ||
       !phoneNumber ||
       !pickupDate ||
       !pickupTime ||
-      !portion
+      !items?.length
     ) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    const phoneRegex = /^(?:\+94|0)?(7[0-8]\d{7}|[1-9]\d{8})$/;
+    if (!phoneRegex.test(phoneNumber)) {
+      return res.status(400).json({ message: "Invalid phone number format" });
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
+    const timeFormatRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+    if (!timeFormatRegex.test(pickupTime)) {
+      return res.status(400).json({ message: "Invalid pickup time format" });
+    }
+    const dateFormatRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (
+      !dateFormatRegex.test(pickupDate) ||
+      isNaN(new Date(pickupDate).getTime())
+    ) {
+      return res.status(400).json({ message: "Invalid pickup date format" });
+    }
     // Sri Lanka Time Validation
     const { slDate, slTime } = getCurrentSLTime();
     if (pickupDate < slDate) {
@@ -69,52 +103,108 @@ const createFoodOrder = async (req, res) => {
           "Selected date is in the past. Please choose today or a future date.",
       });
     }
-    if (pickupDate === slDate && pickupTime <= slTime) {
-      return res.status(400).json({
-        message:
-          "Selected time has already passed for today. Please choose a future time.",
+    if (pickupDate === slDate) {
+      const nowMinutes = timeToMinutes(slTime);
+      const pickupMinutes = timeToMinutes(pickupTime);
+
+      if (pickupMinutes <= nowMinutes) {
+        return res.status(400).json({
+          message:
+            "Selected time has already passed for today. Please choose a future time.",
+        });
+      }
+
+      if (pickupMinutes - nowMinutes < 60) {
+        return res.status(400).json({
+          message:
+            "Pick-up time must be at least 1 hour from now. Please choose a later time.",
+        });
+      }
+    }
+    const orderCode = await GenarateFoodOrderCode();
+    const savedOrders = [];
+    for (const item of items) {
+      const newFoodOrder = new FoodOrder({
+        userId,
+        foodName: item.foodName,
+        fullName,
+        email,
+        quantity: item.quantity,
+        phoneNumber,
+        pickupDate,
+        pickupTime,
+        orderCode,
+        status: "Pending",
+        Price: item.Price,
+        portion: item.portion,
+      });
+      savedOrders.push(await newFoodOrder.save());
+    }
+
+    if (savedOrders.length > 1) {
+      await sendmultiplerestrauntitemsEmail({
+        email,
+        fullName,
+        phoneNumber,
+        pickupDate,
+        pickupTime,
+        orders: savedOrders,
+      });
+    } else {
+      const savedOrder = savedOrders[0];
+      await sendRestaurantOrderEmail({
+        email,
+        fullName,
+        savedOrder,
+        foodName: savedOrder.foodName,
+        portion: savedOrder.portion,
+        quantity: savedOrder.quantity,
+        Price: savedOrder.Price,
+        pickupDate,
+        pickupTime,
+        phoneNumber,
       });
     }
 
-    const newFoodOrder = new FoodOrder({
-      userId,
-      foodName,
-      fullName,
-      email,
-      quantity,
-      phoneNumber,
-      pickupDate,
-      pickupTime,
-      orderCode: await GenarateFoodOrderCode(),
-      status: "Pending",
-      Price,
-      portion,
-    });
-    const savedOrder = await newFoodOrder.save();
+    const refNumbers = savedOrders.map((o) => o.orderCode).join(", ");
+    try {
+      const newNotification = new NotifiModel({
+        userId,
+        title: savedOrders.length > 1 ? "New Food Orders" : "New Food Order",
+        message: `A new food order has been placed. Your Ref Number(s): ${refNumbers}.`,
+      });
+      await newNotification.save();
 
-    await sendRestaurantOrderEmail({
-      email,
-      fullName,
-      savedOrder,
-      foodName,
-      portion,
-      quantity,
-      Price,
-      pickupDate,
-      pickupTime,
-      phoneNumber,
-    });
+      // Notify managers
+      const managers = await User.find({
+        Role: "Operation Manager 1 (Restraunt,Liquor)",
+      }).select("_id");
 
-    const newNotification = new NotifiModel({
-      userId,
-      title: "New Food Order",
-      message: `A new food order has been placed. Your Ref Number: ${savedOrder.orderCode}.`,
-    });
-    await newNotification.save();
+      if (managers.length > 0) {
+        await NotifiModel.insertMany(
+          managers.map((manager) => ({
+            userId: manager._id,
+            title:
+              savedOrders.length > 1 ? "New Food Orders" : "New Food Order",
+            message: `${fullName} placed a new food order. Ref Number(s): ${refNumbers}.`,
+          })),
+        );
+      } else {
+        console.warn("No managers found for new order notification");
+      }
+    } catch (notifError) {
+      console.error("Notification error (non-blocking):", notifError);
+    }
 
-    res.status(201).json(savedOrder);
+    res.status(201).json(savedOrders.length > 1 ? savedOrders : savedOrders[0]);
   } catch (error) {
-    res.status(500).json({ message: "Failed to create food order", error });
+    console.error("Error creating food order:", error);
+    if (error.code === 11000) {
+      return res
+        .status(400)
+        .json({ message: "A duplicate entry was detected. Please try again." });
+    }
+    res.status(500).json({ message: "Failed to create food order" });
   }
 };
 const getFoodOrders = async (req, res) => {
@@ -125,11 +215,25 @@ const getFoodOrders = async (req, res) => {
     }
     res.status(200).json(foodOrders);
   } catch (error) {
-    res.status(500).json({ message: "Failed to retrieve food orders", error });
+    console.error("Error retrieving food order:", error);
+    res
+      .status(500)
+      .json({ message: "Failed to retrieve food order", error: error.message });
   }
 };
 const editfoodOrder = async (req, res) => {
   try {
+    const userId = req.userData.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (!user.Phone) {
+      return res.status(400).json({
+        message:
+          "Please update your profile with a phone number before Updating Order.",
+      });
+    }
     const { id } = req.params;
     const {
       fullName,
@@ -156,6 +260,37 @@ const editfoodOrder = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    const timeFormatRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+    if (!timeFormatRegex.test(pickupTime)) {
+      return res.status(400).json({ message: "Invalid pickup time format" });
+    }
+    const dateFormatRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (
+      !dateFormatRegex.test(pickupDate) ||
+      isNaN(new Date(pickupDate).getTime())
+    ) {
+      return res.status(400).json({ message: "Invalid pickup date format" });
+    }
+
+    const existingOrder = await FoodOrder.findById(id);
+    if (!existingOrder) {
+      return res.status(404).json({ message: "Food order not found" });
+    }
+    if (!canModifyOrder(existingOrder)) {
+      return res.status(400).json({
+        message:
+          "You can only modify the order at least 45 minutes before the pickup time.",
+      });
+    }
+
+    const phoneRegex = /^(?:\+94|0)?(7[0-8]\d{7}|[1-9]\d{8})$/;
+    if (!phoneRegex.test(phoneNumber)) {
+      return res.status(400).json({ message: "Invalid phone number format" });
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
     // Sri Lanka Time Validation
     const { slDate, slTime } = getCurrentSLTime();
     if (pickupDate < slDate) {
@@ -164,11 +299,23 @@ const editfoodOrder = async (req, res) => {
           "Selected date is in the past. Please choose today or a future date.",
       });
     }
-    if (pickupDate === slDate && pickupTime <= slTime) {
-      return res.status(400).json({
-        message:
-          "Selected time has already passed for today. Please choose a future time.",
-      });
+    if (pickupDate === slDate) {
+      const nowMinutes = timeToMinutes(slTime);
+      const pickupMinutes = timeToMinutes(pickupTime);
+
+      if (pickupMinutes <= nowMinutes) {
+        return res.status(400).json({
+          message:
+            "Selected time has already passed for today. Please choose a future time.",
+        });
+      }
+
+      if (pickupMinutes - nowMinutes < 60) {
+        return res.status(400).json({
+          message:
+            "Pick-up time must be at least 1 hour from now. Please choose a later time.",
+        });
+      }
     }
     const updatedOrder = await FoodOrder.findByIdAndUpdate(
       id,
@@ -188,16 +335,37 @@ const editfoodOrder = async (req, res) => {
       return res.status(404).json({ message: "Food order not found" });
     }
 
-    const newNotification = new NotifiModel({
-      userId: updatedOrder.userId,
-      title: "Food Order Updated",
-      message: `Your food order with Ref Number: ${updatedOrder.orderCode} has been updated.`,
-    });
-    await newNotification.save();
+    try {
+      await NotifiModel.create({
+        userId: updatedOrder.userId,
+        title: "Food Order Updated",
+        message: `Your food order with Ref Number: ${updatedOrder.orderCode} has been updated.`,
+      });
+
+      const managers = await User.find({
+        Role: "Operation Manager 1 (Restraunt,Liquor)",
+      }).select("_id");
+
+      if (managers.length > 0) {
+        await NotifiModel.insertMany(
+          managers.map((manager) => ({
+            userId: manager._id,
+            title: "Food Order Updated",
+            message: `The food order ${updatedOrder.orderCode} has been updated. Please review the changes.`,
+          })),
+        );
+      }
+    } catch (notifError) {
+      console.error("Notification error (non-blocking):", notifError);
+    }
 
     res.status(200).json(updatedOrder);
   } catch (error) {
-    res.status(500).json({ message: "Failed to update food order", error });
+    console.error("Error updating food order:", error); // full detail in server terminal
+    res.status(500).json({
+      message: "Failed to update food order",
+      error: error.message, // explicitly extract the string, not the Error object
+    });
   }
 };
 const deleteFoodOrder = async (req, res) => {
@@ -214,6 +382,12 @@ const deleteFoodOrder = async (req, res) => {
       return res.status(404).json({ message: "Food order not found" });
     }
 
+    if (!canModifyOrder(order)) {
+      return res.status(400).json({
+        message: "Cannot delete order within 45 minutes of pickup time",
+      });
+    }
+
     const newNotification = new NotifiModel({
       userId: order.userId,
       title: "Food Order Deleted",
@@ -226,7 +400,10 @@ const deleteFoodOrder = async (req, res) => {
 
     res.status(200).json({ message: "Food order marked as deleted" });
   } catch (error) {
-    res.status(500).json({ message: "Failed to delete food order", error });
+    console.error("Error deleting food order:", error);
+    res
+      .status(500)
+      .json({ message: "Failed to delete food order", error: error.message });
   }
 };
 

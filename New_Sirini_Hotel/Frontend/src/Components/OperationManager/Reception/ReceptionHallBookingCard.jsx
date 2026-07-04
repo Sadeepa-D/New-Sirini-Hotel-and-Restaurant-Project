@@ -41,7 +41,7 @@ const ReceptionHallBookingCard = ({ booking, onEdit, onCancel }) => {
     : "N/A";
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col">
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col h-full w-full">
       {/* Top color bar by event type */}
       <div className="h-1.5 w-full rounded-t-2xl bg-amber-400" />
 
@@ -81,7 +81,6 @@ const ReceptionHallBookingCard = ({ booking, onEdit, onCancel }) => {
         </div>
         {/* Divider */}
         <div className="h-px bg-gray-100" />
-
         {/* Details */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div className="flex items-center gap-2">
@@ -123,7 +122,6 @@ const ReceptionHallBookingCard = ({ booking, onEdit, onCancel }) => {
             </span>
           </div>
         </div>
-
         {/* Special requests - Now with a min-height and consistent spacing */}
         <div className="min-h-16 mb-2">
           {/* Wraps the requests in a fixed-height container */}
@@ -144,25 +142,29 @@ const ReceptionHallBookingCard = ({ booking, onEdit, onCancel }) => {
         </div>
 
         {/* Action buttons */}
-        <div className="flex gap-2 mt-auto pt-2 border-t border-gray-100">
-          {booking.status === "Confirmed" ||
-            (booking.status === "Booked" && (
+        <div className="flex gap-2 mt-auto pt-2 border-t border-gray-100 min-h-[45px] items-center">
+          {booking.status === "Cancelled" ? (
+            <div className="w-full text-center py-2 text-xs text-red-500 font-semibold italic bg-transparent">
+              The request is cancelled
+            </div>
+          ) : (
+            <>
               <button
                 onClick={() => onEdit(booking)}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 text-xs font-semibold transition-colors"
+                style={{ borderRadius: "10px" }}
+                className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 text-xs font-semibold transform hover:scale-105 active:scale-95 transition-all duration-300 ease-in-out cursor-pointer"
               >
                 <Pencil size={13} /> Edit
               </button>
-            ))}
-          {booking.status === "Confirmed" ||
-            (booking.status === "Booked" && (
               <button
                 onClick={() => onCancel(booking._id)}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 text-xs font-semibold transition-colors"
+                style={{ borderRadius: "10px" }}
+                className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 text-xs font-semibold transform hover:scale-105 active:scale-95 transition-all duration-300 ease-in-out cursor-pointer"
               >
                 <X size={13} /> Cancel
               </button>
-            ))}
+            </>
+          )}
         </div>
       </div>
     </div>

@@ -14,6 +14,27 @@ export default function OrderForm({ item, cartItems, onClose }) {
   });
   const [loading, setLoading] = useState(false);
 
+  const getSLDateStr = () =>
+    new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Colombo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(new Date());
+
+  const getSLTimeStr = () =>
+    new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Colombo",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    }).format(new Date());
+
+  const timeToMinutes = (timeStr) => {
+    const [h, m] = timeStr.split(":").map(Number);
+    return h * 60 + m;
+  };
+
   const items = cartItems && cartItems.length > 0 ? cartItems : [item];
 
   const getTotalPrice = () => {
@@ -36,79 +57,79 @@ export default function OrderForm({ item, cartItems, onClose }) {
     setLoading(true);
     const token = localStorage.getItem("token");
 
-    const now = new Date();
-    const slDateStr = new Intl.DateTimeFormat("en-CA", {
-      timeZone: "Asia/Colombo",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    }).format(now);
+    const slDateStr = getSLDateStr();
+    const slTimeStr = getSLTimeStr();
 
-    const slTimeStr = new Intl.DateTimeFormat("en-GB", {
-      timeZone: "Asia/Colombo",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    }).format(now);
+    if (form.pickupDate === slDateStr) {
+      const nowMinutes = timeToMinutes(slTimeStr);
+      const pickupMinutes = timeToMinutes(form.pickupTime);
 
-    if (form.pickupDate === slDateStr && form.pickupTime <= slTimeStr) {
-      toast.error(
-        "Selected time has already passed for today. Please choose a future time.",
-      );
-      setLoading(false);
-      return;
+      if (pickupMinutes <= nowMinutes) {
+        toast.error(
+          "Selected time has already passed for today. Please choose a future time.",
+        );
+        setLoading(false);
+        return;
+      }
+
+      if (pickupMinutes - nowMinutes < 60) {
+        toast.error("Please select a pick-up time at least 1 hour from now.");
+        setLoading(false);
+        return;
+      }
     }
-
     try {
       const userDataStr = localStorage.getItem("user");
       let userId = null;
       if (userDataStr) {
         try {
-          const userData = JSON.parse(userDataStr);
-          userId = userData._id;
+          userId = JSON.parse(userDataStr)._id;
         } catch (e) {}
       }
 
-      // Save all cart items as separate orders
-      const orderPromises = items.map((cartItem) => {
+      const orderItems = items.map((cartItem) => {
         const itemPrice =
           cartItem.portion === "Full" && cartItem.full_price
             ? cartItem.full_price
             : cartItem.normal_price;
-
+        const quantity = cartItem.quantity || 1;
         const portionValue = cartItem.has_portions
           ? cartItem.portion || "Normal"
           : "Normal";
-
-        const orderData = {
-          fullName: form.name,
-          email: form.email,
-          phoneNumber: form.phone.replace(/\D/g, ""),
-          pickupDate: form.pickupDate,
-          pickupTime: form.pickupTime,
-          quantity: cartItem.quantity || 1,
-          portion: portionValue,
+        return {
           foodName: cartItem.name,
-          userId: userId,
-          Price: itemPrice * cartItem.quantity,
+          quantity,
+          portion: portionValue,
+          Price: itemPrice * quantity,
         };
-        return axios.post(
-          `${import.meta.env.VITE_API_URL}/api/restraunt/placeorder`,
-          orderData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
       });
 
-      await Promise.all(orderPromises);
+      const orderData = {
+        fullName: form.name,
+        email: form.email,
+        phoneNumber: form.phone.replace(/\D/g, ""),
+        pickupDate: form.pickupDate,
+        pickupTime: form.pickupTime,
+        userId,
+        items: orderItems,
+      };
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/restraunt/placeorder`,
+        orderData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
       toast.success(`Order placed successfully!`);
       onClose(true);
     } catch (error) {
       console.error("Error placing order:", error);
-      toast.error(`Failed to place order. Please try again.`);
+      const errorMessage =
+        error.response?.data?.message ||
+        "Failed to place order. Please try again.";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -270,6 +291,11 @@ export default function OrderForm({ item, cartItems, onClose }) {
                   value={form.pickupTime}
                   onChange={handleChange}
                   required
+                  min={
+                    form.pickupDate === getSLDateStr()
+                      ? getSLTimeStr()
+                      : undefined
+                  }
                   className="w-full border border-neutral-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition"
                 />
               </div>
@@ -283,7 +309,11 @@ export default function OrderForm({ item, cartItems, onClose }) {
               </div>
             </div>
 
-            <div className="mt-6">
+            <p className="text-xs text-amber-700 text-center font-medium leading-relaxed px-4">
+              Order processing takes at least 1 hour. This time can change for special reasons. For any questions, please contact us.
+            </p>
+
+            <div className="mt-1">
               <button
                 type="submit"
                 disabled={loading}

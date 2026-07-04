@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const foodItemBookSchema = new mongoose.Schema(
   {
     userId: {
-      type: mongoose.Schema.Types.ObjectId, ref: "User"
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
     foodName: {
       type: String,
@@ -38,7 +39,7 @@ const foodItemBookSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    orderCode: { type: String, unique: true },
+    orderCode: { type: String, required: true },
     portion: {
       type: String,
       //  required: true,
@@ -47,7 +48,14 @@ const foodItemBookSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Pending", "Accepted", "Preparing", "Complete", "delete", "Overdue"],
+      enum: [
+        "Pending",
+        "Accepted",
+        "Preparing",
+        "Complete",
+        "delete",
+        "Overdue",
+      ],
       default: "Pending",
     },
   },

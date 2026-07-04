@@ -111,13 +111,17 @@ const AdvertisementSection = () => {
           onClick={() => {
             handleadrequest();
           }}
-          className="group flex items-center gap-3 bg-white border-2 border-amber-400 text-amber-700 hover:bg-amber-500 hover:text-amber-900 hover:border-amber-500 px-8 py-3.5 rounded-full font-semibold text-sm uppercase tracking-widest transition-all duration-300 shadow-sm hover:shadow-md"
+          style={{ borderRadius: "9999px" }}
+          className="group relative flex items-center gap-3 overflow-hidden bg-zinc-900 text-white hover:text-black hover:bg-amber-500 px-8 py-3.5 font-semibold text-xs md:text-sm uppercase tracking-widest transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-amber-500/20 border border-zinc-800"
         >
+          {/* Subtle gold line on top of the button for premium look */}
+          <span className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-amber-400 to-transparent opacity-80" />
+          
           <Megaphone
             size={16}
-            className="group-hover:scale-110 transition-transform duration-300"
+            className="text-amber-400 group-hover:text-black group-hover:scale-110 group-hover:-rotate-12 transition-all duration-300"
           />
-          Request an Advertisement
+          <span className="relative z-10">Request an Advertisement</span>
         </button>
       </div>
 
@@ -127,7 +131,8 @@ const AdvertisementSection = () => {
           <button
             key={label}
             onClick={() => setActiveCategory(label)}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 border ${
+            style={{ borderRadius: "12px" }}
+            className={`flex items-center gap-2 px-5 py-2.5 text-sm font-semibold transition-all duration-300 border ${
               activeCategory === label
                 ? "bg-amber-500 text-amber-900 border-amber-500 shadow-md"
                 : "bg-white text-gray-600 border-gray-200 hover:border-amber-300 hover:text-amber-600"
@@ -140,12 +145,12 @@ const AdvertisementSection = () => {
       </div>
 
       {/* Divider */}
-      <div className="flex items-center gap-4 max-w-7xl mx-auto mb-8">
-        <div className="h-px flex-1 bg-gray-200" />
-        <span className="text-xs text-gray-400 uppercase tracking-widest font-medium whitespace-nowrap">
+      <div className="flex items-center gap-4 max-w-7xl mx-auto mb-8 px-4">
+        <div className="h-[1.5px] flex-1 bg-black/40" />
+        <span className="text-xs sm:text-sm md:text-base text-amber-950 font-cinzel font-bold tracking-widest whitespace-nowrap bg-amber-500/10 px-4 py-1.5 rounded-full border border-amber-500/20 shadow-sm">
           {activeCategory}
         </span>
-        <div className="h-px flex-1 bg-gray-200" />
+        <div className="h-[1.5px] flex-1 bg-black/40" />
       </div>
 
       {/* Cards Grid */}

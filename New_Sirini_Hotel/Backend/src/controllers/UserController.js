@@ -12,6 +12,10 @@ const registerUser = async (req, res) => {
     if (!name || !email || !Phone || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
+    const phoneRegex = /^(?:\+94|0)?(7[0-8]\d{7}|[1-9]\d{8})$/;
+    if (!phoneRegex.test(Phone)) {
+      return res.status(400).json({ message: "Invalid phone number format" });
+    }
     const user = await User.findOne({ email });
     const hashedPassword = await bcrypt.hash(password, 10);
     if (user) {
@@ -77,6 +81,7 @@ const loginUser = async (req, res) => {
       {
         id: user._id,
         email: user.email,
+        phone: user.Phone,
         name: user.name,
         Role: user.Role,
         Status: user.Status,
@@ -138,6 +143,10 @@ const updateUserProfile = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized User" });
     }
     const { name, email, Phone } = req.body;
+    const phoneRegex = /^(?:\+94|0)?(7[0-8]\d{7}|[1-9]\d{8})$/;
+    if (!phoneRegex.test(Phone)) {
+      return res.status(400).json({ message: "Invalid phone number format" });
+    }
     const updates = { name, email, Phone };
     if (req.file) {
       const existingUser = await User.findById(userId);
@@ -159,7 +168,7 @@ const updateUserProfile = async (req, res) => {
     res.status(200).json(updatedUser);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Failed to update user profile" });
   }
 };
 

@@ -1,4 +1,6 @@
 const Liquor = require("../models/Liquor");
+const User = require("../models/UserModel");
+const NotifiModel = require("../models/NotifiModel");
 const cloudinary = require("cloudinary");
 
 const addLiquor = async (req, res) => {
@@ -21,10 +23,18 @@ const addLiquor = async (req, res) => {
       lowStockThreshold,
     } = req.body;
 
-    if (!name || !buyingPrice || !sellingPrice || !category || !stockType) {
+    if (
+      !name ||
+      !buyingPrice ||
+      !sellingPrice ||
+      !category ||
+      !stockType ||
+      !volume ||
+      !brand
+    ) {
       return res.status(400).json({
         message:
-          "Name, Buying Price, Selling Price, Category, and Stock Type are required",
+          "Name, Buying Price, Selling Price, Category, Volume, and Brand are required",
       });
     }
     if (isNaN(buyingPrice) || buyingPrice <= 0) {
@@ -38,6 +48,11 @@ const addLiquor = async (req, res) => {
         .json({ message: "Selling Price must be a positive number" });
     }
 
+    if (sellingPrice <= buyingPrice) {
+      return res
+        .status(400)
+        .json({ message: "Selling Price must be greater than Buying Price" });
+    }
     if (!req.file) {
       return res.status(400).json({ message: "Please upload an image" });
     }
@@ -208,6 +223,29 @@ const decreaseLiquorInventory = async (req, res) => {
     }
     liquor.currentQuantityInBottles -= quantity;
     await liquor.save();
+
+    const lowStockThreshold = liquor.lowStockThreshold;
+    if (liquor.currentQuantityInBottles <= lowStockThreshold) {
+      try {
+        const managers = await User.find({
+          Role: "Operation Manager 1 (Restraunt,Liquor)",
+        }).select("_id");
+
+        if (managers.length > 0) {
+          await NotifiModel.insertMany(
+            managers.map((manager) => ({
+              userId: manager._id,
+              title: "Low Liquor Stock Alert",
+              message: `${liquor.name} stock is low. Remaining: ${liquor.currentQuantityInBottles} bottle(s). Please restock soon.`,
+            })),
+          );
+        } else {
+          console.warn("No managers found for low stock notification");
+        }
+      } catch (notifError) {
+        console.error("Notification error (non-blocking):", notifError);
+      }
+    }
     res.status(200).json(liquor);
   } catch (error) {
     res.status(500).json({

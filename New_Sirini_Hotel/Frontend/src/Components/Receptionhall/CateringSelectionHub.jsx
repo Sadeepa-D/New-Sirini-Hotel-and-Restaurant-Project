@@ -334,7 +334,8 @@ const CateringSelectionHub = ({ onClose, selectedPackage, isAdd = true }) => {
                 </div>
                 <button
                   onClick={onClose}
-                  className="w-full bg-gray-900 hover:bg-gray-800 text-white py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold transition-colors shadow-md text-sm sm:text-base"
+                  style={{ borderRadius: "12px" }}
+                  className="w-full bg-gray-900 hover:bg-gray-800 text-white py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold shadow-md text-sm sm:text-base transform hover:scale-102 active:scale-98 transition-all duration-300 ease-in-out"
                 >
                   Done
                 </button>

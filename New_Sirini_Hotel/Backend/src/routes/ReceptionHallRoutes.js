@@ -21,12 +21,9 @@ router.get(
   RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
   ReceptionHallAppoint.getReceptionAppointments,
 );
-// router.delete(
-//   "/appointment/delete/:id",
-//   ReceptionHallAppoint.deleteReceptionAppointment,
-// );
 router.put(
   "/appointment/update/:id",
+  authmiddleware,
   ReceptionHallAppoint.updateReceptionAppointment,
 );
 router.put(
@@ -38,7 +35,12 @@ router.put(
 router.put(
   "/appointment/update/canceled/:id",
   authmiddleware,
-  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
+  RoleBaseMiddleware([
+    "Admin",
+    "Operation Manager 2 (Reception, Room)",
+    "User",
+    "Operation Manager 1 (Restraunt,Liquor)",
+  ]),
   ReceptionHallAppoint.updateReceptionAppointmentasCancelled,
 );
 router.get(
@@ -149,12 +151,24 @@ router.get("/advertisment/view", AdvertismentCont.getAdvertisments);
 router.delete(
   "/advertisment/delete/:id",
   authmiddleware,
-  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
+  RoleBaseMiddleware([
+    "Admin",
+    "Operation Manager 2 (Reception, Room)",
+    "User",
+    "Operation Manager 1 (Restraunt,Liquor)",
+  ]),
   AdvertismentCont.deleteAdvertisment,
 );
 router.put(
   "/advertisment/update/:id",
   upload.single("image"),
+  authmiddleware,
+  RoleBaseMiddleware([
+    "Admin",
+    "Operation Manager 2 (Reception, Room)",
+    "User",
+    "Operation Manager 1 (Restraunt,Liquor)",
+  ]),
   AdvertismentCont.updateAdvertisment,
 );
 router.put(
@@ -172,7 +186,11 @@ router.put(
 router.put(
   "/advertisment/toggle/pending/:id",
   authmiddleware,
-  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
+  RoleBaseMiddleware([
+    "Admin",
+    "Operation Manager 2 (Reception, Room)",
+    "Operation Manager 1 (Restraunt,Liquor)",
+  ]),
   AdvertismentCont.toggleAdvertismentStatustoPending,
 );
 router.get(

@@ -8,8 +8,11 @@ import {
   Trash2,
   RefreshCw,
   ChefHat,
+  Bell,
+  X,
 } from "lucide-react";
 import moment from "moment";
+
 const NotifiCenter = ({
   notifications,
   onMarkAsRead,
@@ -17,116 +20,144 @@ const NotifiCenter = ({
   onClearAll,
   onClose,
 }) => {
-  const getIcon = (title) => {
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
+
+  // icon + accent color pairing per notification type
+  const getIconConfig = (title) => {
     const t = title.toLowerCase();
-    if (t.includes("new")) {
-      return <PlusCircle className="text-blue-500 shrink-0" size={18} />;
-    }
-    if (t.includes("cancel")) {
-      return <XCircle className="text-red-500 shrink-0" size={18} />;
-    }
-    if (t.includes("delete")) {
-      return <Trash2 className="text-rose-600 shrink-0" size={18} />;
-    }
-    if (t.includes("update")) {
-      return <RefreshCw className="text-sky-400 shrink-0" size={18} />;
-    }
-    if (t.includes("preparing")) {
-      return <ChefHat className="text-indigo-400 shrink-0" size={18} />;
-    }
-    if (t.includes("accepted") || t.includes("success")) {
-      return <CheckCheck className="text-emerald-500 shrink-0" size={18} />;
-    }
-    if (t.includes("complete")) {
-      return <CheckCheck className="text-teal-500 shrink-0" size={18} />;
-    }
-    if (t.includes("overdue")) {
-      return <Clock className="text-amber-500 shrink-0" size={18} />;
-    }
-    return <AlertCircle className="text-zinc-400 shrink-0" size={18} />;
+    if (t.includes("new"))
+      return { icon: PlusCircle, color: "text-blue-400", bg: "bg-blue-500/10" };
+    if (t.includes("cancel"))
+      return { icon: XCircle, color: "text-red-400", bg: "bg-red-500/10" };
+    if (t.includes("delete"))
+      return { icon: Trash2, color: "text-rose-400", bg: "bg-rose-500/10" };
+    if (t.includes("update"))
+      return { icon: RefreshCw, color: "text-sky-400", bg: "bg-sky-500/10" };
+    if (t.includes("preparing"))
+      return { icon: ChefHat, color: "text-indigo-400", bg: "bg-indigo-500/10" };
+    if (t.includes("accepted") || t.includes("success"))
+      return { icon: CheckCheck, color: "text-emerald-400", bg: "bg-emerald-500/10" };
+    if (t.includes("complete") || t.includes("checkout"))
+      return { icon: CheckCheck, color: "text-teal-400", bg: "bg-teal-500/10" };
+    if (t.includes("overdue"))
+      return { icon: Clock, color: "text-amber-400", bg: "bg-amber-500/10" };
+    return { icon: AlertCircle, color: "text-zinc-400", bg: "bg-zinc-500/10" };
   };
 
   return (
-    <div className="fixed md:absolute top-24 md:top-full left-4 md:left-0 right-4 md:right-auto mx-auto md:mx-0 mt-4 md:mt-4 w-[calc(100vw-2rem)] md:w-85 max-w-sm bg-zinc-950 border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden backdrop-blur-xl">
-      <div className="p-4 border-b border-white/5 flex items-center justify-between bg-white/2">
-        <div>
-          <h3 className="text-white font-medium text-sm sm:text-base">
-            Notifications
-          </h3>
-          <p className="text-zinc-500 text-xs mt-0.5">
-            You have {notifications.filter((n) => !n.isRead).length} unread
-            messages
-          </p>
-        </div>
-        {notifications.some((n) => !n.isRead) && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onMarkAllAsRead();
-            }}
-            className="text-xs font-semibold text-yellow-500 hover:text-yellow-400 transition-colors cursor-pointer bg-yellow-500/10 px-2.5 py-1 rounded-lg"
-          >
-            Mark all as read
-          </button>
-        )}
-      </div>
-      {/* Notifications List */}
-      <div className="max-h-87.5 overflow-y-auto divide-y divide-white/5 custom-scrollbar">
-        {notifications.length === 0 ? (
-          <div className="p-8 text-center text-zinc-500 text-sm">
-            No notifications yet.
+    <div className="fixed md:absolute top-24 md:top-full left-4 md:left-auto right-4 md:right-0 mx-auto md:mx-0 mt-4 md:mt-3 w-[calc(100vw-2rem)] md:w-96 max-w-sm bg-zinc-950 border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden">
+      <div className="p-4 pb-3 border-b border-white/5">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-2">
+            <h3 className="text-white font-medium text-sm">Notifications</h3>
+            {unreadCount > 0 && (
+              <span className="text-[11px] font-medium text-blue-300 bg-blue-500/15 px-2 py-0.5 rounded-full">
+                {unreadCount} new
+              </span>
+            )}
           </div>
-        ) : (
-          notifications.map((n) => (
-            <div
-              key={n._id}
+          {onClose && (
+            <button
               onClick={(e) => {
                 e.stopPropagation();
-                if (!n.isRead) onMarkAsRead(n._id);
+                onClose();
               }}
-              className={`p-4 flex gap-3.5 items-start transition-all duration-200 cursor-pointer text-left select-none
-                ${n.isRead ? "bg-transparent hover:bg-white/2" : "bg-yellow-500/3 hover:bg-yellow-500/5"}`}
+              className="text-zinc-500 hover:text-white transition-colors cursor-pointer p-1 -m-1 rounded-lg hover:bg-white/5"
+              aria-label="Close notifications"
             >
-              {/* Icon */}
-              <div className="mt-0.5">{getIcon(n.title)}</div>
+              <X size={16} />
+            </button>
+          )}
+        </div>
+        <p className="text-zinc-500 text-xs mt-1">Stay on top of your orders</p>
 
-              {/* Content */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-2">
-                  <p
-                    className={`text-xs sm:text-sm font-medium truncate ${n.isRead ? "text-zinc-300" : "text-white font-semibold"}`}
-                  >
-                    {n.title}
-                  </p>
-                  {!n.isRead && (
-                    <span className="w-2 h-2 rounded-full bg-yellow-500 shrink-0" />
-                  )}
-                </div>
-                <p className="text-xs text-zinc-400 mt-1 leading-relaxed wrap-break-word">
-                  {n.message}
-                </p>
-                <span className="text-[12px] text-zinc-600 block mt-1.5">
-                  {moment(n.createdAt).fromNow()}
-                </span>
-              </div>
-            </div>
-          ))
+        {/* Action row */}
+        {notifications.length > 0 && (
+          <div className="flex gap-2 mt-3">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onMarkAllAsRead();
+              }}
+              disabled={unreadCount === 0}
+              className="flex-1 flex items-center justify-center gap-1.5 text-xs font-medium text-zinc-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1.5 rounded-lg transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white/5"
+            >
+              <CheckCheck size={13} />
+              <span>Mark all read</span>
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onClearAll();
+              }}
+              className="flex-1 flex items-center justify-center gap-1.5 text-xs font-medium text-rose-400 hover:text-rose-300 bg-white/5 hover:bg-rose-500/10 border border-white/10 hover:border-rose-500/30 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+            >
+              <Trash2 size={13} />
+              <span>Clear all</span>
+            </button>
+          </div>
         )}
       </div>
-      {notifications.length > 0 && (
-        <div className="absolute bottom-0 left-0 right-0 p-3 bg-linear-to-t from-zinc-950 via-zinc-950/95 to-transparent flex justify-center pointer-events-none">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onClearAll();
-            }}
-            className="pointer-events-auto flex items-center justify-center gap-2 text-xs font-semibold text-zinc-300 hover:text-white bg-zinc-900 hover:bg-rose-600 border border-white/10 hover:border-rose-500 shadow-xl px-4 py-2 rounded-xl transition-all duration-300 scale-100 hover:scale-105 active:scale-95 cursor-pointer"
-          >
-            <Trash2 size={14} />
-            <span>Clear All Notifications</span>
-          </button>
-        </div>
-      )}
+
+      {/* Notifications list */}
+      <div className="max-h-87.5 overflow-y-auto custom-scrollbar">
+        {notifications.length === 0 ? (
+          <div className="p-10 text-center">
+            <Bell size={22} className="text-zinc-700 mx-auto mb-2" />
+            <p className="text-zinc-500 text-sm">No notifications yet.</p>
+          </div>
+        ) : (
+          <div className="p-2 flex flex-col gap-1.5">
+            {notifications.map((n) => {
+              const { icon: Icon, color, bg } = getIconConfig(n.title);
+              return (
+                <div
+                  key={n._id}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!n.isRead) onMarkAsRead(n._id);
+                  }}
+                  className={`p-3 rounded-xl flex gap-3 items-start cursor-pointer select-none transition-colors
+                    ${
+                      n.isRead
+                        ? "bg-transparent border border-transparent hover:bg-white/3"
+                        : "bg-white/3 border border-blue-500/20 hover:bg-white/5"
+                    }`}
+                >
+                  {/* Icon avatar */}
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${bg}`}
+                  >
+                    <Icon size={16} className={color} />
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <p
+                        className={`text-xs sm:text-sm truncate ${
+                          n.isRead ? "text-zinc-300 font-normal" : "text-white font-medium"
+                        }`}
+                      >
+                        {n.title}
+                      </p>
+                      {!n.isRead && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                      )}
+                    </div>
+                    <p className="text-xs text-zinc-400 mt-1 leading-relaxed break-words">
+                      {n.message}
+                    </p>
+                    <span className="text-[11px] text-zinc-600 block mt-1.5">
+                      {moment(n.createdAt).fromNow()}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

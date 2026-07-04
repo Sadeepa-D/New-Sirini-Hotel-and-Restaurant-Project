@@ -2,20 +2,27 @@ import React, { useState } from "react";
 import { X, Upload } from "lucide-react";
 
 const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
-  const [form, setForm] = useState(
-    initialData || {
+  const [form, setForm] = useState(() => {
+    if (initialData) {
+      return {
+        ...initialData,
+        nightPackagePrice: initialData.nightPackagePrice || initialData.price || "",
+        dayPackagePrice: initialData.dayPackagePrice || initialData.shortStayPrice || "1500",
+      };
+    }
+    return {
       roomNumber: "",
       roomType: "Single",
-      price: "",
-      shortStayPrice: "1500",
+      nightPackagePrice: "",
+      dayPackagePrice: "1500",
       bedType: "Single Bed",
       capacity: "1",
       description: "",
       condition: "Fan",
       status: "available",
       facilities: [],
-    },
-  );
+    };
+  });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(initialData?.image || null);
   const [galleryImages, setGalleryImages] = useState([]);
@@ -75,7 +82,16 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
 
   const handleGalleryFilesChange = (e) => {
     const files = Array.from(e.target.files);
-    setGalleryImages(files);
+    if (files.length === 0) return;
+
+    // Max limit is 4 images (existing + new)
+    const currentCount = keptGalleryImages.length + galleryImages.length;
+    if (currentCount + files.length > 4) {
+      alert(`You can upload a maximum of 4 gallery images. (Already selected: ${currentCount}, trying to add: ${files.length})`);
+      return;
+    }
+
+    setGalleryImages((prevImages) => [...prevImages, ...files]);
 
     // Create previews for all gallery images
     const newPreviews = [];
@@ -87,8 +103,8 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
         newPreviews.push(reader.result);
         loadedCount++;
         if (loadedCount === files.length) {
-          // Combine existing images with new previews
-          setGalleryPreviews([...keptGalleryImages, ...newPreviews]);
+          // Combine existing previews with new previews
+          setGalleryPreviews((prevPreviews) => [...prevPreviews, ...newPreviews]);
         }
       };
       reader.readAsDataURL(file);
@@ -137,9 +153,9 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
   const handleSubmit = () => {
     if (
       !form.roomNumber ||
-      !form.price ||
+      !form.nightPackagePrice ||
       !form.capacity ||
-      !form.shortStayPrice
+      !form.dayPackagePrice
     ) {
       alert("Please fill in all required fields.");
       return;
@@ -184,7 +200,8 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
           </h2>
           <button
             onClick={onClose}
-            className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition"
+            style={{ borderRadius: "8px" }}
+            className="p-1.5 sm:p-2 hover:bg-gray-100 transform hover:scale-110 transition-all duration-300 ease-in-out"
           >
             <X size={18} className="text-gray-500" />
           </button>
@@ -196,9 +213,9 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
             <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 block">
               Room Image *
             </label>
-            <div className="flex flex-row gap-4 items-center">
+            <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
               {imagePreview && (
-                <div className="w-32 h-32 shrink-0 relative rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+                <div className="w-full sm:w-32 h-32 shrink-0 relative rounded-xl overflow-hidden border border-gray-200 shadow-sm">
                   <img
                     src={imagePreview}
                     alt="Preview"
@@ -324,17 +341,16 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
               </select>
             </div>
           </div>
-
-          {/* Price & Mid Day Stay Price Row */}
+          {/* Price & Day/Night Packages Row */}
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
-                Overnight Price (Rs.) *
+                Night Package Price (Rs.) *
               </label>
               <input
-                name="price"
+                name="nightPackagePrice"
                 type="number"
-                value={form.price}
+                value={form.nightPackagePrice}
                 onChange={handleChange}
                 placeholder="3000"
                 className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
@@ -342,12 +358,12 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
             </div>
             <div>
               <label className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">
-                Mid Day Stay Price (Rs.) *
+                Day Package Price (Rs.) *
               </label>
               <input
-                name="shortStayPrice"
+                name="dayPackagePrice"
                 type="number"
-                value={form.shortStayPrice}
+                value={form.dayPackagePrice}
                 onChange={handleChange}
                 placeholder="1500"
                 className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
@@ -428,7 +444,7 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
               {facilitiesOptions.map((facility) => (
                 <label
                   key={facility}
-                  className="group flex items-center gap-5 px-3 py-1.5 border border-gray-200 rounded-full hover:border-yellow-400 hover:bg-yellow-50 cursor-pointer transition transform hover:scale-110 hover:shadow-md text-xs sm:text-sm"
+                  className="group flex items-center gap-2 px-3 py-1.5 border border-gray-200 rounded-full hover:border-yellow-400 hover:bg-yellow-50 cursor-pointer transition transform hover:scale-110 hover:shadow-md text-xs sm:text-sm"
                 >
                   <input
                     type="checkbox"
@@ -436,7 +452,7 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
                     onChange={() => handleFacilityChange(facility)}
                     className="w-3 h-3 text-yellow-500 rounded cursor-pointer accent-yellow-500"
                   />
-                  <span className="text-gray-700 font-medium text-[11px] sm:text-xs group-hover:text-gray-900 group-hover:font-semibold transition ml-2">
+                  <span className="text-gray-700 font-medium text-[11px] sm:text-xs group-hover:text-gray-900 group-hover:font-semibold transition">
                     {facility}
                   </span>
                 </label>
@@ -464,13 +480,15 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
         <div className="flex gap-2 sm:gap-3 px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-100 sticky bottom-0 bg-white">
           <button
             onClick={onClose}
-            className="flex-1 py-2 sm:py-2.5 rounded-xl border border-gray-200 text-gray-600 font-semibold text-xs sm:text-sm hover:bg-gray-50 transition"
+            style={{ borderRadius: "8px" }}
+            className="flex-1 py-2 sm:py-2.5 border border-red-500 text-red-500 font-semibold text-xs sm:text-sm hover:bg-red-500 hover:text-white transform hover:scale-105 transition-all duration-300 ease-in-out"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className="flex-1 py-2 sm:py-2.5 rounded-xl bg-yellow-500 text-black font-bold text-xs sm:text-sm hover:bg-yellow-400 transition"
+            style={{ borderRadius: "8px" }}
+            className="flex-1 py-2 sm:py-2.5 bg-yellow-500 text-black font-bold text-xs sm:text-sm hover:bg-yellow-400 transform hover:scale-105 transition-all duration-300 ease-in-out"
           >
             {initialData ? "Update Room" : "Add Room"}
           </button>

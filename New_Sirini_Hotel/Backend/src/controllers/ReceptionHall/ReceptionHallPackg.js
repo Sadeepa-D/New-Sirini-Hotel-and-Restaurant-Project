@@ -7,6 +7,19 @@ const createReceptionHallPackage = async (req, res) => {
     if (!name || !description || !price || !features || !seatings) {
       return res.status(400).json({ message: "All fields are required" });
     }
+    const guests = Number(seatings);
+    if (isNaN(guests) || guests <= 0 || guests > 250) {
+      return res.status(400).json({
+        message:
+          "Invalid number of seatings. Please enter a value between 1 and 250.",
+      });
+    }
+    const priceValue = Number(price);
+    if (isNaN(priceValue) || priceValue <= 0) {
+      return res
+        .status(400)
+        .json({ message: "Invalid price. Please enter a positive number." });
+    }
     const image = req.file ? req.file.secure_url : null;
     const imagePublicId = req.file ? req.file.public_id : null;
     if (!image) {
@@ -29,7 +42,16 @@ const createReceptionHallPackage = async (req, res) => {
     });
   } catch (error) {
     console.error("Error creating reception hall package:", error);
-    res.status(500).json({ message: "Server error" });
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((e) => e.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+    if (error.code === 11000) {
+      return res
+        .status(400)
+        .json({ message: "A package with this name already exists." });
+    }
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 const getReceptionHallPackages = async (req, res) => {
@@ -53,7 +75,24 @@ const updateReceptionHallPackage = async (req, res) => {
       return res.status(400).json({ message: "Package ID is required" });
     }
     const updates = req.body;
+    if (updates.seatings !== undefined) {
+      const guests = Number(updates.seatings);
+      if (isNaN(guests) || guests <= 0 || guests > 250) {
+        return res.status(400).json({
+          message:
+            "Invalid number of seatings. Please enter a value between 1 and 250.",
+        });
+      }
+    }
+    if (updates.price !== undefined) {
+      const priceValue = Number(updates.price);
 
+      if (isNaN(priceValue) || priceValue <= 0) {
+        return res.status(400).json({
+          message: "Invalid price. Please enter a positive number.",
+        });
+      }
+    }
     const existingPackage = await ReceptionHallPackage.findById(id);
     if (!existingPackage) {
       return res.status(404).json({ message: "Package not found" });
@@ -78,7 +117,16 @@ const updateReceptionHallPackage = async (req, res) => {
     res.status(200).json({ message: "Package updated successfully" });
   } catch (error) {
     console.error("Error updating reception hall package:", error);
-    res.status(500).json({ message: "Server error" });
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((e) => e.message);
+      return res.status(400).json({ message: messages.join(", ") });
+    }
+    if (error.code === 11000) {
+      return res
+        .status(400)
+        .json({ message: "A package with this name already exists." });
+    }
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 const deleteReceptionHallPackage = async (req, res) => {
