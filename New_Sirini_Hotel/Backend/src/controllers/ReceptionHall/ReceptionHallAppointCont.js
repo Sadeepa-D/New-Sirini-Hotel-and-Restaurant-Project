@@ -58,6 +58,7 @@ const createReceptionAppointment = async (req, res) => {
       appointcode: await genarateReceptionAppointmentCode(),
       status: "Pending",
     });
+    
     await newAppointment.save();
 
     await sendAppointmentEmail({
@@ -99,7 +100,6 @@ const createReceptionAppointment = async (req, res) => {
     } catch (notifError) {
       console.error("Notification error (non-blocking):", notifError);
     }
-
     res
       .status(201)
       .json({ message: "Reception appointment created successfully" });

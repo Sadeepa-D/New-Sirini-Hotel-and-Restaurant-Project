@@ -41,12 +41,7 @@ export default function EditOrderForm({ item = {}, editingOrder, onClose }) {
       hour12: false,
     }).format(now);
 
-    // Validation
-    // if (form.pickupDate < slDateStr) {
-    //   toast.error("Selected date is in the past. Please choose today or a future date.");
-    //   return;
-    // }
-
+    // Validation: If same day, time must be in the future
     if (form.pickupDate === slDateStr && form.pickupTime <= slTimeStr) {
       toast.error(
         "Selected time has already passed for today. Please choose a future time.",
@@ -174,7 +169,7 @@ export default function EditOrderForm({ item = {}, editingOrder, onClose }) {
           )}
         </div>
 
-        {/* Form / Success content */}
+        {/* Form  Success content */}
         <div className="p-6 md:p-8">
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {/* Row 1 */}
