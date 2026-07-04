@@ -272,19 +272,7 @@ const RoomsSection = () => {
         </div>
       ) : (
         <div className="relative group">
-          {/* Left Arrow - Visible on all devices
-          <button
-            onClick={() => scroll("left")}
-            className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-2.5 bg-white/90 backdrop-blur-md text-amber-600 rounded-lg shadow-xl border border-white/50 hover:bg-white hover:text-amber-700 hover:shadow-amber-500/20 transition-all duration-300 active:scale-90 group/btn"
-            title="Scroll left"
-          >
-            <MoveLeft
-              size={18}
-              strokeWidth={2.5}
-              className="group-hover/btn:scale-110 transition-transform"
-            />
-          </button>
-          */}
+         
 
           {/* Slider Container */}
           <div
@@ -443,19 +431,7 @@ const RoomsSection = () => {
             ))}
           </div>
 
-          {/* Right Arrow - Visible on all devices
-          <button
-            onClick={() => scroll("right")}
-            className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-2.5 bg-white/90 backdrop-blur-md text-amber-600 rounded-lg shadow-xl border border-white/50 hover:bg-white hover:text-amber-700 hover:shadow-amber-500/20 transition-all duration-300 active:scale-90 group/btn"
-            title="Scroll right"
-          >
-            <MoveRight
-              size={18}
-              strokeWidth={2.5}
-              className="group-hover/btn:scale-110 transition-transform"
-            />
-          </button>
-          */}
+          
 
           {/* Pagination Dots */}
           <div className="absolute bottom-1 sm:bottom-0 left-1/2 -translate-x-1/2 flex items-center gap-1 px-2 py-1.5 sm:py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md border border-gray-200">

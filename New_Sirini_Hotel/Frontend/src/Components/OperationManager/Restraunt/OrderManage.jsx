@@ -51,8 +51,6 @@ const OrderManage = () => {
     fetchOrders();
   }, []);
 
-
-
   const handleStatusChange = async (id, status) => {
     try {
       const token = localStorage.getItem("token");
@@ -67,7 +65,7 @@ const OrderManage = () => {
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
       toast.success(`Order marked as ${status}`);
       fetchOrders();
@@ -117,7 +115,17 @@ const OrderManage = () => {
   const overdueOrders = orders.filter((o) => o.status === "Overdue");
 
   const getFilteredHistory = () => {
-    let list =
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+    const allOrders = [
+      ...pendingOrders,
+      ...acceptedOrders,
+      ...preparingOrders,
+      ...completeOrders,
+      ...deletedOrders,
+      ...overdueOrders,
+    ];
+
+    const getTabOrders = () =>
       activeTab === "Accepted"
         ? acceptedOrders
         : activeTab === "Preparing"
@@ -130,13 +138,15 @@ const OrderManage = () => {
                 ? overdueOrders
                 : pendingOrders;
 
-    if (searchTerm) {
+    let list = normalizedSearch ? allOrders : getTabOrders();
+
+    if (normalizedSearch) {
       list = list.filter(
         (o) =>
-          o.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          o.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          o.orderCode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          o.foodName?.toLowerCase().includes(searchTerm.toLowerCase()),
+          o.fullName?.toLowerCase().includes(normalizedSearch) ||
+          o.email?.toLowerCase().includes(normalizedSearch) ||
+          o.orderCode?.toLowerCase().includes(normalizedSearch) ||
+          o.foodName?.toLowerCase().includes(normalizedSearch),
       );
     }
 
@@ -171,7 +181,6 @@ const OrderManage = () => {
             : "bg-white border-gray-100 hover:shadow-xl hover:border-amber-200/50"
       }`}
     >
-      
       {/* Customer Header */}
       <div className="flex justify-between items-start mb-4 gap-2">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
@@ -283,7 +292,8 @@ const OrderManage = () => {
             onClick={() => handleStatusChange(order._id, "Complete")}
             className="flex-1 py-2 sm:py-2.5 bg-gradient-to-r from-green-900 to-green-500 text-white rounded-full font-bold text-[9px] sm:text-[10px] tracking-wider sm:tracking-widest hover:shadow-lg hover:shadow-green-500/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 uppercase"
           >
-            <CheckCircle size={14} strokeWidth={2.5} className="shrink-0" /> Complete
+            <CheckCircle size={14} strokeWidth={2.5} className="shrink-0" />{" "}
+            Complete
           </button>
         )}
         {order.status !== "Complete" &&
@@ -321,7 +331,10 @@ const OrderManage = () => {
           ].map((tab) => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => {
+                setActiveTab(tab);
+                setSearchTerm("");
+              }}
               className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors whitespace-nowrap ${
                 activeTab === tab
                   ? tab === "Deleted"
@@ -397,17 +410,15 @@ const OrderManage = () => {
           </div>
         )}
 
-       
-
-      <ConfirmDialog
-        isOpen={confirmDialog.isOpen}
-        type={confirmDialog.type}
-        title={confirmDialog.title}
-        message={confirmDialog.message}
-        onConfirm={handleConfirmDelete}
-        onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
-      />
-    </div>
+        <ConfirmDialog
+          isOpen={confirmDialog.isOpen}
+          type={confirmDialog.type}
+          title={confirmDialog.title}
+          message={confirmDialog.message}
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
+        />
+      </div>
     </div>
   );
 };
