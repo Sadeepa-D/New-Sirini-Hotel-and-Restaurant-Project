@@ -3,7 +3,7 @@ import { Star, X } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const FeedbackModal = ({ isOpen, onClose, booking, userName }) => {
+const FeedbackModal = ({ isOpen, onClose, booking, userName, onSuccess }) => {
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -43,6 +43,7 @@ const FeedbackModal = ({ isOpen, onClose, booking, userName }) => {
       toast.success("Thank you for your feedback!", { id: toastId });
       setRating(0);
       setComment("");
+      if (onSuccess) onSuccess();
       onClose();
     } catch (error) {
       console.error("Error submitting feedback:", error);

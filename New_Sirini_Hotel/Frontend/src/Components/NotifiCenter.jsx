@@ -10,6 +10,7 @@ import {
   ChefHat,
   Bell,
   X,
+  MessageSquare,
 } from "lucide-react";
 import moment from "moment";
 
@@ -19,6 +20,7 @@ const NotifiCenter = ({
   onMarkAllAsRead,
   onClearAll,
   onClose,
+  onFeedback,
 }) => {
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
@@ -151,6 +153,19 @@ const NotifiCenter = ({
                     <span className="text-[11px] text-zinc-600 block mt-1.5">
                       {moment(n.createdAt).fromNow()}
                     </span>
+                    {/* Leave Feedback button for checkout notifications */}
+                    {n.title?.toLowerCase().includes("checkout") && n.bookingId && !n.hasFeedback && onFeedback && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onFeedback(n);
+                        }}
+                        className="mt-2 flex items-center gap-1.5 text-[11px] font-bold text-amber-400 hover:text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 px-2.5 py-1 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95"
+                      >
+                        <MessageSquare size={11} />
+                        Leave Feedback
+                      </button>
+                    )}
                   </div>
                 </div>
               );

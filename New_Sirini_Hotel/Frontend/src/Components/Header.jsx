@@ -15,6 +15,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import Footer from "./Footer";
 import NotifiCenter from "./NotifiCenter";
+import FeedbackModal from "./FeedbackModal";
 
 function Header() {
   const VITE_URL = import.meta.env.VITE_API_URL;
@@ -30,6 +31,7 @@ function Header() {
   );
   const [userData, setUserData] = useState([]);
   const [notifications, setNotifications] = useState([]);
+  const [feedbackBooking, setFeedbackBooking] = useState(null);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
   const handlelogout = () => {
@@ -236,6 +238,7 @@ function Header() {
   }, [notifiOpen]);
 
   return (
+    <>
     <header className="bg-black/95 backdrop-blur-md sticky top-0 z-50 border-b border-white/5">
       <div className="w-full px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
         {/* ── Logo ── */}
@@ -381,12 +384,16 @@ function Header() {
 
               {/* Dropdown Card */}
               {notifiOpen && (
-                <NotifiCenter
+              <NotifiCenter
                   notifications={notifications}
                   onMarkAsRead={handleMarkAsRead}
                   onMarkAllAsRead={handleMarkAllAsRead}
                   onClearAll={handleClearAll}
                   onClose={() => setNotifiOpen(false)}
+                  onFeedback={(n) => {
+                    setFeedbackBooking({ _id: n.bookingId, roomNumber: n.roomNumber });
+                    setNotifiOpen(false);
+                  }}
                 />
               )}
             </>
@@ -438,6 +445,10 @@ function Header() {
                     onMarkAllAsRead={handleMarkAllAsRead}
                     onClearAll={handleClearAll}
                     onClose={() => setNotifiOpen(false)}
+                    onFeedback={(n) => {
+                      setFeedbackBooking({ _id: n.bookingId, roomNumber: n.roomNumber });
+                      setNotifiOpen(false);
+                    }}
                   />
                 )}
               </div>
@@ -568,6 +579,22 @@ function Header() {
         </div>
       )}
     </header>
+
+    {/* Global FeedbackModal — triggered from notification Leave Feedback button */}
+    <FeedbackModal
+      isOpen={!!feedbackBooking}
+      onClose={() => setFeedbackBooking(null)}
+      booking={feedbackBooking}
+      userName={userData?.name || "Guest"}
+      onSuccess={() => {
+        if (feedbackBooking) {
+          setNotifications(prev =>
+            prev.map(n => n.bookingId === feedbackBooking._id ? { ...n, hasFeedback: true } : n)
+          );
+        }
+      }}
+    />
+    </>
   );
 }
 
