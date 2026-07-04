@@ -191,10 +191,8 @@ const RestaurantSection = ({ data }) => {
   const canModifyOrder = (order) => {
     if (!order.pickupDate || !order.pickupTime) return false;
 
-    
     const datePart = new Date(order.pickupDate).toISOString().split("T")[0];
 
-    
     const pickupDateTime = new Date(`${datePart}T${order.pickupTime}:00+05:30`);
 
     const now = new Date();
@@ -293,130 +291,233 @@ const RestaurantSection = ({ data }) => {
                     }
               }
             >
-              {searchOrders.map((order) => (
-                <div
-                  key={order._id}
-                  className={`flex-shrink-0 ${isMobile ? "w-[90%] snap-start" : ""}`}
-                  style={
-                    isMobile
-                      ? {}
-                      : {
-                          width: `calc(${100 / itemsPerView}% - ${
-                            ((itemsPerView - 1) * 24) / itemsPerView
-                          }px)`,
-                        }
-                  }
-                >
+              {searchOrders.map((order) => {
+                const s = order.status?.toLowerCase();
+
+                // Status-based color tokens via inline styles
+                const t = (() => {
+                  if (s === "accepted")
+                    return {
+                      barFrom: "#3b82f6",
+                      barTo: "#6366f1",
+                      badgeBg: "#eff6ff",
+                      badgeBorder: "#bfdbfe",
+                      badgeText: "#1d4ed8",
+                      priceColor: "#1d4ed8",
+                    };
+                  if (s === "preparing")
+                    return {
+                      barFrom: "#a855f7",
+                      barTo: "#7c3aed",
+                      badgeBg: "#faf5ff",
+                      badgeBorder: "#e9d5ff",
+                      badgeText: "#7c3aed",
+                      priceColor: "#7c3aed",
+                    };
+                  if (s === "complete")
+                    return {
+                      barFrom: "#10b981",
+                      barTo: "#14b8a6",
+                      badgeBg: "#f0fdf4",
+                      badgeBorder: "#bbf7d0",
+                      badgeText: "#059669",
+                      priceColor: "#059669",
+                    };
+                  if (s === "delete")
+                    return {
+                      barFrom: "#ef4444",
+                      barTo: "#f43f5e",
+                      badgeBg: "#fef2f2",
+                      badgeBorder: "#fecaca",
+                      badgeText: "#dc2626",
+                      priceColor: "#dc2626",
+                    };
+                  if (s === "overdue")
+                    return {
+                      barFrom: "#f97316",
+                      barTo: "#ef4444",
+                      badgeBg: "#fff7ed",
+                      badgeBorder: "#fed7aa",
+                      badgeText: "#c2410c",
+                      priceColor: "#c2410c",
+                    };
+                  // pending
+                  return {
+                    barFrom: "#f59e0b",
+                    barTo: "#f97316",
+                    badgeBg: "#fffbeb",
+                    badgeBorder: "#fde68a",
+                    badgeText: "#b45309",
+                    priceColor: "#f97316",
+                  };
+                })();
+
+                return (
                   <div
-                    className={`p-5 rounded-[1.75rem] shadow-sm border transition-all duration-300 flex flex-col h-full group ${
-                      order.status === "delete"
-                        ? "bg-red-50/30 border-red-100 hover:border-red-200"
-                        : order.status === "Overdue"
-                          ? "bg-orange-50/30 border-orange-100 hover:border-orange-200"
-                          : "bg-white border-gray-100 hover:shadow-xl hover:border-amber-200/50"
-                    }`}
+                    key={order._id}
+                    className={`flex-shrink-0 ${isMobile ? "w-[90%] snap-start" : ""}`}
+                    style={
+                      isMobile
+                        ? {}
+                        : {
+                            width: `calc(${100 / itemsPerView}% - ${((itemsPerView - 1) * 24) / itemsPerView}px)`,
+                          }
+                    }
                   >
-                    {/* Card Header */}
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className="flex flex-col">
-                          <h5 className="font-bold text-gray-900 text-[12px] leading-snug">
+                    {/* ── Card ── */}
+                    <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col">
+                      {/* Gradient top bar */}
+                      <div
+                        style={{
+                          height: "6px",
+                          background: `linear-gradient(to right, ${t.barFrom}, ${t.barTo})`,
+                        }}
+                        className="w-full shrink-0"
+                      />
+
+                      <div className="p-3.5 flex flex-col gap-3">
+                        {/* ── Header: icon + name ── */}
+                        <div className="flex items-center gap-3 min-w-0">
+                          {/* Colored icon square */}
+                          <div
+                            className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
+                            style={{
+                              background: `linear-gradient(135deg, ${t.barFrom}, ${t.barTo})`,
+                            }}
+                          >
+                            <UtensilsCrossed size={18} className="text-white" />
+                          </div>
+                          <p className="font-black text-gray-900 text-[14px] leading-none truncate pr-2">
                             {order.foodName}
-                          </h5>
-                          <span className="text-[10px] font-mono font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded-md w-fit mt-1">
+                          </p>
+                        </div>
+
+                        {/* Order code & Status badge row */}
+                        <div className="flex items-center justify-between mt-0.5">
+                          <span
+                            className="inline-block text-[10px] font-black font-mono px-2 py-0.5 rounded-md"
+                            style={{
+                              background: t.badgeBg,
+                              border: `1px solid ${t.badgeBorder}`,
+                              color: t.badgeText,
+                            }}
+                          >
                             {order.orderCode}
                           </span>
-                        </div>
-                      </div>
-
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                          order.status === "Complete"
-                            ? "bg-green-50 text-green-600"
-                            : order.status === "Accepted"
-                              ? "bg-[#013155] text-white"
-                              : order.status === "Preparing"
-                                ? "bg-purple-50 text-purple-600"
-                                : order.status === "delete"
-                                  ? "bg-red-50 text-red-600"
-                                  : order.status === "Overdue"
-                                    ? "bg-orange-100 text-orange-700"
-                                    : "bg-amber-50 text-amber-600"
-                        }`}
-                      >
-                        {order.status === "delete"
-                          ? "DELETED"
-                          : order.status.toUpperCase()}
-                      </span>
-                    </div>
-
-                    {/* Order Details */}
-                    <div className="flex-1 space-y-2.5 px-1">
-                      <div className="flex justify-between items-center pb-2 border-b border-gray-50">
-                        <span className="text-[13px] text-gray-500 font-medium">
-                          Pickup Date
-                        </span>
-                        <span className="text-[13px] font-semibold text-gray-800">
-                          {new Date(order.pickupDate).toLocaleDateString(
-                            "en-GB",
-                            { day: "2-digit", month: "short", year: "numeric" },
-                          )}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center pb-2 border-b border-gray-50">
-                        <span className="text-[13px] text-gray-500 font-medium">
-                          Pickup Time
-                        </span>
-                        <span className="text-[13px] font-semibold text-gray-800">
-                          {order.pickupTime}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center pb-2 border-b border-gray-50">
-                        <span className="text-[13px] text-gray-500 font-medium">
-                          Quantity
-                        </span>
-                        <span className="text-[13px] font-bold text-gray-900">
-                          {order.quantity}{" "}
-                          <span className="text-gray-400 font-medium text-[11px]">
-                            items
+                          <span
+                            className="shrink-0 text-[10px] font-bold px-3 py-1 rounded-full border"
+                            style={{
+                              background: t.badgeBg,
+                              border: `1px solid ${t.badgeBorder}`,
+                              color: t.badgeText,
+                            }}
+                          >
+                            {order.status === "delete"
+                              ? "Deleted"
+                              : order.status}
                           </span>
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center pt-1">
-                        <span className="text-[13px] text-gray-500 font-medium">
-                          Total Price
-                        </span>
-                        <span className="text-[15px] font-bold text-amber-600 font-sans">
-                          Rs. {order.Price?.toLocaleString()}
-                        </span>
+                        </div>
+
+                        {/* ── Info box: single gray container with rows ── */}
+                        <div className="bg-gray-50 rounded-xl border border-gray-100 divide-y divide-gray-100 overflow-hidden">
+                          {/* Pickup date */}
+                          <div className="flex items-center justify-between px-3 py-1.5">
+                            <div className="flex items-center gap-2.5 text-gray-400">
+                              <CalendarDays size={14} />
+                              <span className="text-[12px] font-medium text-gray-500">
+                                Pickup date
+                              </span>
+                            </div>
+                            <span className="text-[12px] font-bold text-gray-900">
+                              {new Date(order.pickupDate).toLocaleDateString(
+                                "en-GB",
+                                {
+                                  day: "2-digit",
+                                  month: "short",
+                                  year: "numeric",
+                                },
+                              )}
+                            </span>
+                          </div>
+                          {/* Pickup time */}
+                          <div className="flex items-center justify-between px-3 py-1.5">
+                            <div className="flex items-center gap-2 text-gray-400">
+                              <Clock size={14} />
+                              <span className="text-[12px] font-medium text-gray-500">
+                                Pickup time
+                              </span>
+                            </div>
+                            <span className="text-[12px] font-bold text-gray-900">
+                              {order.pickupTime}
+                            </span>
+                          </div>
+                          {/* Quantity */}
+                          <div className="flex items-center justify-between px-3 py-1.5">
+                            <div className="flex items-center gap-2 text-gray-400">
+                              <ShoppingBag size={14} />
+                              <span className="text-[12px] font-medium text-gray-500">
+                                Quantity
+                              </span>
+                            </div>
+                            <span className="text-[12px] font-bold text-gray-900">
+                              {order.quantity}{" "}
+                              <span className="text-gray-400 font-normal text-xs">
+                                item
+                              </span>
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* ── Total price row ── */}
+                        <div className="flex items-center justify-between px-1">
+                          <span className="text-[12px] font-semibold text-gray-500">
+                            Total price
+                          </span>
+                          <span
+                            className="text-[15px] font-black"
+                            style={{ color: t.priceColor }}
+                          >
+                            Rs. {order.Price?.toLocaleString()}
+                          </span>
+                        </div>
+
+                        {/* ── Action buttons ── */}
+                        {order.status === "Pending" &&
+                          (canModifyOrder(order) ? (
+                            <div className="flex gap-3">
+                              <button
+                                onClick={() => handleEdit(order)}
+                                className="flex-1 py-2 font-bold text-sm text-white flex items-center justify-center gap-2 hover:scale-105 active:scale-95 transition-all duration-300 shadow-sm"
+                                style={{
+                                  background: "linear-gradient(to right, #1e40af, #3b82f6)",
+                                  borderRadius: "14px",
+                                }}
+                              >
+                                <Pencil size={15} /> Edit
+                              </button>
+                              <button
+                                onClick={() => handleDelete(order)}
+                                className="flex-1 py-2 font-bold text-sm flex items-center justify-center gap-2 hover:scale-105 active:scale-95 transition-all duration-300"
+                                style={{
+                                  background: "#fef2f2",
+                                  border: "1px solid #fecaca",
+                                  color: "#dc2626",
+                                  borderRadius: "14px",
+                                }}
+                              >
+                                <Trash2 size={15} /> Delete
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="py-2.5 text-center text-[10px] font-semibold text-gray-400 bg-gray-50 rounded-xl border border-gray-100 tracking-wider">
+                              Locked — pickup within 45 min
+                            </div>
+                          ))}
                       </div>
                     </div>
-
-                    {/* Actions */}
-                    {order.status === "Pending" &&
-                      (canModifyOrder(order) ? (
-                        <div className="flex gap-3 mt-6">
-                          <button
-                            onClick={() => handleEdit(order)}
-                            className="flex-1 py-1.5 bg-gradient-to-r from-blue-900 to-blue-500 text-white rounded-full font-bold text-[10px] tracking-widest hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 uppercase"
-                          >
-                            <Pencil size={14} strokeWidth={2.5} /> Edit
-                          </button>
-                          <button
-                            onClick={() => handleDelete(order)}
-                            className="flex-1 py-1.5 bg-white text-red-700 border border-red-100 rounded-full font-bold text-[10px] tracking-widest hover:bg-red-50 hover:shadow-lg hover:shadow-red-500/10 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 uppercase"
-                          >
-                            <Trash2 size={14} strokeWidth={2.5} /> Delete
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="mt-6 py-2 text-center text-[10px] font-semibold text-gray-400 bg-gray-50 rounded-full border border-gray-100 uppercase tracking-wider">
-                          Locked — pickup within 45 min
-                        </div>
-                      ))}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
