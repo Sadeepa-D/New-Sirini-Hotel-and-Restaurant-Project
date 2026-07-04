@@ -51,8 +51,6 @@ const OrderManage = () => {
     fetchOrders();
   }, []);
 
-
-
   const handleStatusChange = async (id, status) => {
     try {
       const token = localStorage.getItem("token");
@@ -67,7 +65,7 @@ const OrderManage = () => {
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
       toast.success(`Order marked as ${status}`);
       fetchOrders();
@@ -171,7 +169,6 @@ const OrderManage = () => {
             : "bg-white border-gray-100 hover:shadow-xl hover:border-amber-200/50"
       }`}
     >
-      
       {/* Customer Header */}
       <div className="flex justify-between items-start mb-4 gap-2">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
@@ -283,7 +280,8 @@ const OrderManage = () => {
             onClick={() => handleStatusChange(order._id, "Complete")}
             className="flex-1 py-2 sm:py-2.5 bg-gradient-to-r from-green-900 to-green-500 text-white rounded-full font-bold text-[9px] sm:text-[10px] tracking-wider sm:tracking-widest hover:shadow-lg hover:shadow-green-500/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 uppercase"
           >
-            <CheckCircle size={14} strokeWidth={2.5} className="shrink-0" /> Complete
+            <CheckCircle size={14} strokeWidth={2.5} className="shrink-0" />{" "}
+            Complete
           </button>
         )}
         {order.status !== "Complete" &&
@@ -322,14 +320,15 @@ const OrderManage = () => {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors whitespace-nowrap ${
+              style={{ borderRadius: "10px" }}
+              className={`px-4 sm:px-5 py-2 text-xs sm:text-sm font-bold transition-all duration-300 whitespace-nowrap shadow-sm border transform hover:scale-105 active:scale-95 cursor-pointer ${
                 activeTab === tab
                   ? tab === "Deleted"
-                    ? "bg-red-100 text-red-600"
+                    ? "bg-red-500 text-white border-red-500 shadow-md scale-105"
                     : tab === "Overdue"
-                      ? "bg-orange-100 text-orange-600 shadow-sm ring-1 ring-orange-200"
-                      : "bg-amber-100 text-amber-600"
-                  : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                      ? "bg-orange-500 text-white border-orange-500 shadow-md scale-105"
+                      : "bg-amber-500 text-black border-amber-500 shadow-md scale-105"
+                  : "bg-gray-50 text-neutral-600 hover:bg-gray-100 border-neutral-200"
               }`}
             >
               {tab}
@@ -397,17 +396,15 @@ const OrderManage = () => {
           </div>
         )}
 
-       
-
-      <ConfirmDialog
-        isOpen={confirmDialog.isOpen}
-        type={confirmDialog.type}
-        title={confirmDialog.title}
-        message={confirmDialog.message}
-        onConfirm={handleConfirmDelete}
-        onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
-      />
-    </div>
+        <ConfirmDialog
+          isOpen={confirmDialog.isOpen}
+          type={confirmDialog.type}
+          title={confirmDialog.title}
+          message={confirmDialog.message}
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
+        />
+      </div>
     </div>
   );
 };
