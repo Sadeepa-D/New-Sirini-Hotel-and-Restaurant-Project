@@ -11,23 +11,64 @@ import {
   Droplets,
   Monitor,
   Refrigerator,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import StatusBadge from "./StatusBadge";
 
 const RoomCards = ({ rooms, onEdit, onDelete }) => {
+  const scrollContainerRef = React.useRef(null);
+
+  const scroll = (direction) => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      const scrollAmount = 306; // card width (290px) + gap (16px)
+      const newPosition =
+        direction === "left"
+          ? container.scrollLeft - scrollAmount
+          : container.scrollLeft + scrollAmount;
+      container.scrollTo({
+        left: newPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
-    <div className="p-4 bg-gray-50">
+    <div className="p-4 bg-gray-50 relative">
       {rooms.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 bg-white rounded-2xl border-2 border-dashed border-gray-200">
           <p className="text-gray-500 font-medium">No rooms in inventory</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-          {rooms.map((room) => (
-            <div
-              key={room._id}
-              className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300 flex flex-col group"
-            >
+        <div className="relative">
+          {/* Left Scroll Button */}
+          <button
+            onClick={() => scroll("left")}
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 sm:p-2.5 bg-white/95 hover:bg-white text-gray-800 rounded-full shadow-lg border border-gray-200 transition-all duration-300 hover:scale-110 active:scale-95 flex items-center justify-center -translate-x-1/2"
+            title="Scroll left"
+          >
+            <ChevronLeft size={18} />
+          </button>
+
+          {/* Cards Container */}
+          <div
+            ref={scrollContainerRef}
+            className="flex overflow-x-auto gap-4 pb-4 px-4 scroll-smooth snap-x snap-mandatory 
+                       [&::-webkit-scrollbar]:h-1.5 
+                       [&::-webkit-scrollbar-track]:bg-gray-100 
+                       [&::-webkit-scrollbar-track]:rounded-full 
+                       [&::-webkit-scrollbar-thumb]:bg-gray-300 
+                       [&::-webkit-scrollbar-thumb]:rounded-full 
+                       hover:[&::-webkit-scrollbar-thumb]:bg-gray-400 
+                       [scrollbar-width:thin] 
+                       [scrollbar-color:#d1d5db_#f3f4f6]"
+          >
+            {rooms.map((room) => (
+              <div
+                key={room._id}
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300 flex flex-col group shrink-0 w-[290px] snap-start"
+              >
               <div className="relative h-40 w-full bg-gray-100 overflow-hidden">
                 {room.image ? (
                   <img
@@ -183,6 +224,16 @@ const RoomCards = ({ rooms, onEdit, onDelete }) => {
               </div>
             </div>
           ))}
+          </div>
+
+          {/* Right Scroll Button */}
+          <button
+            onClick={() => scroll("right")}
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 sm:p-2.5 bg-white/95 hover:bg-white text-gray-800 rounded-full shadow-lg border border-gray-200 transition-all duration-300 hover:scale-110 active:scale-95 flex items-center justify-center translate-x-1/2"
+            title="Scroll right"
+          >
+            <ChevronRight size={18} />
+          </button>
         </div>
       )}
     </div>
