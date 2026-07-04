@@ -274,25 +274,27 @@ const OrderManage = () => {
         {order.status === "Pending" && (
           <button
             onClick={() => handleStatusChange(order._id, "Accepted")}
-            className="flex-1 py-2 sm:py-2.5 bg-gradient-to-r from-blue-900 to-blue-500 text-white rounded-full font-bold text-[9px] sm:text-[10px] tracking-wider sm:tracking-widest hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 uppercase"
+            style={{ borderRadius: "12px" }}
+            className="flex-1 py-2 sm:py-2.5 bg-gradient-to-r from-blue-900 to-blue-500 text-white font-bold text-[8px] sm:text-[9px] tracking-wider sm:tracking-widest hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center uppercase"
           >
-            <Check size={14} strokeWidth={2.5} className="shrink-0" /> Accept
+            Accept
           </button>
         )}
         {order.status === "Accepted" && (
           <button
             onClick={() => handleStatusChange(order._id, "Preparing")}
-            className="flex-1 py-2 sm:py-2.5 bg-gradient-to-r from-purple-900 to-purple-500 text-white rounded-full font-bold text-[9px] sm:text-[10px] tracking-wider sm:tracking-widest hover:shadow-lg hover:shadow-purple-500/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 uppercase"
+            style={{ borderRadius: "12px" }}
+            className="flex-1 py-2 sm:py-2.5 bg-gradient-to-r from-purple-900 to-purple-500 text-white font-bold text-[8px] sm:text-[9px] tracking-wider sm:tracking-widest hover:shadow-lg hover:shadow-purple-500/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center uppercase"
           >
-            <Clock size={14} strokeWidth={2.5} className="shrink-0" /> Prepare
+            Prepare
           </button>
         )}
         {order.status === "Preparing" && (
           <button
             onClick={() => handleStatusChange(order._id, "Complete")}
-            className="flex-1 py-2 sm:py-2.5 bg-gradient-to-r from-green-900 to-green-500 text-white rounded-full font-bold text-[9px] sm:text-[10px] tracking-wider sm:tracking-widest hover:shadow-lg hover:shadow-green-500/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 uppercase"
+            style={{ borderRadius: "12px" }}
+            className="flex-1 py-2 sm:py-2.5 bg-gradient-to-r from-green-900 to-green-500 text-white font-bold text-[8px] sm:text-[9px] tracking-wider sm:tracking-widest hover:shadow-lg hover:shadow-green-500/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center uppercase"
           >
-            <CheckCircle size={14} strokeWidth={2.5} className="shrink-0" />{" "}
             Complete
           </button>
         )}
@@ -301,10 +303,11 @@ const OrderManage = () => {
           order.status !== "Overdue" && (
             <button
               onClick={() => confirmDeleteOrder(order._id)}
-              className="flex-1 py-2 sm:py-2.5 bg-white text-red-700 border border-red-100 rounded-full font-bold text-[9px] sm:text-[10px] tracking-wider sm:tracking-widest hover:bg-red-50 hover:shadow-lg hover:shadow-red-500/10 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 uppercase"
+              style={{ borderRadius: "12px" }}
+              className="flex-1 py-2 sm:py-2.5 bg-white text-red-700 border border-red-100 font-bold text-[8px] sm:text-[9px] tracking-wider sm:tracking-widest hover:bg-red-50 hover:shadow-lg hover:shadow-red-500/10 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center uppercase"
               title="Delete Order"
             >
-              <X size={14} strokeWidth={2.5} className="shrink-0" /> Delete
+              Delete
             </button>
           )}
       </div>
@@ -331,18 +334,16 @@ const OrderManage = () => {
           ].map((tab) => (
             <button
               key={tab}
-              onClick={() => {
-                setActiveTab(tab);
-                setSearchTerm("");
-              }}
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors whitespace-nowrap ${
+              onClick={() => setActiveTab(tab)}
+              style={{ borderRadius: "10px" }}
+              className={`px-4 sm:px-5 py-2 text-xs sm:text-sm font-bold transition-all duration-300 whitespace-nowrap shadow-sm border transform hover:scale-105 active:scale-95 cursor-pointer ${
                 activeTab === tab
                   ? tab === "Deleted"
-                    ? "bg-red-100 text-red-600"
+                    ? "bg-red-500 text-white border-red-500 shadow-md scale-105"
                     : tab === "Overdue"
-                      ? "bg-orange-100 text-orange-600 shadow-sm ring-1 ring-orange-200"
-                      : "bg-amber-100 text-amber-600"
-                  : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                      ? "bg-orange-500 text-white border-orange-500 shadow-md scale-105"
+                      : "bg-amber-500 text-black border-amber-500 shadow-md scale-105"
+                  : "bg-gray-50 text-neutral-600 hover:bg-gray-100 border-neutral-200"
               }`}
             >
               {tab}
