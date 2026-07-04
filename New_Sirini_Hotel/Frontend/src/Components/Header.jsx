@@ -413,7 +413,7 @@ function Header() {
           )}
         </div>
 
-        {/* ── Mobile: avatar (if logged in) + hamburger ── */}
+        
         <div className="md:hidden flex items-center gap-2 sm:gap-3">
           {isLoggedIn && (
             <div className="flex items-center gap-2">

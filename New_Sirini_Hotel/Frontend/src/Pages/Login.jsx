@@ -131,22 +131,7 @@ const Login = () => {
     }
   };
 
-  // const handleGoogleLoginSuccess = async (credentialResponse) => {
-  //   try {
-  //     const response = await axios.post(`${API_URL}/api/users/googlelogin`, {
-  //       token: credentialResponse.credential,
-  //     });
-  //     localStorage.setItem("token", response.data.token);
-  //     toast.success(
-  //       "Google Sign-In successful. Welcome, " + response.data.user.name,
-  //     );
-  //     navigate("/");
-  //   } catch (error) {
-  //     console.error("Google Sign-In error:", error);
-  //     const message = error.response?.data?.message || "Something went wrong";
-  //     toast.error(message);
-  //   }
-  // };
+  
 
   return (
     <div className="min-h-screen relative flex items-center justify-center bg-linear-to-br from-slate-900 via-neutral-900 to-amber-950 px-4 py-7">
@@ -202,22 +187,7 @@ const Login = () => {
               )}
             </div>
 
-            {/* <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center text-amber-100/70 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 rounded border-amber-900/30 bg-white/5 text-amber-500 focus:ring-amber-500/50"
-                />
-                <span className="ml-2">Remember me</span>
-              </label>
-              <Link
-                to="/forgot-password"
-                size={12}
-                className="text-amber-400 hover:text-amber-300"
-              >
-                Forgot password?
-              </Link>
-            </div> */}
+            
 
             {errors.submit && (
               <p className="text-sm text-red-400 text-center bg-red-400/10 py-2 rounded-lg">
@@ -234,14 +204,7 @@ const Login = () => {
             </button>
           </form>
           <GoogleLoginBtn />
-          {/* <div className="pt-2">
-            <GoogleLogin
-              onSuccess={handleGoogleLoginSuccess}
-              onError={() => {
-                toast.error("Google Sign-In failed. Please try again.");
-              }}
-            />
-          </div> */}
+          
           <div className="mt-8 text-center">
             <p className="text-amber-100/60 text-sm">
               Don't have an account?{" "}

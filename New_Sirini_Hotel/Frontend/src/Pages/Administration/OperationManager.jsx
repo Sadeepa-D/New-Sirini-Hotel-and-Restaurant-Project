@@ -173,9 +173,9 @@ const OperationManager = () => {
           </div>
         </div>
 
-        {/* ── TABLET layout (md to lg): two rows ── */}
+        
         <div className="hidden md:flex lg:hidden flex-col gap-3">
-          {/* Row 1: Logo & Brand (left) and Action Buttons + Profile (right) */}
+          
           <div className="flex items-center justify-between">
             {/* Left: Logo & Brand */}
             <div className="flex items-center gap-3">
@@ -269,7 +269,7 @@ const OperationManager = () => {
           </div>
         </div>
 
-        {/* ── DESKTOP layout (≥ lg): single row, 3-column grid ── */}
+        
         <div className="hidden lg:grid lg:grid-cols-3 lg:items-center lg:gap-4">
           {/* Left: Logo */}
           <div className="flex items-center gap-3">
