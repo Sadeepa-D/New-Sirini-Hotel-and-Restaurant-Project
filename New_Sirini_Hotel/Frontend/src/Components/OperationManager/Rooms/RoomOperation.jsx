@@ -21,7 +21,13 @@ const RoomOperation = () => {
 
   const fetchRooms = async () => {
     try {
-      const res = await axios.get(`${VITE_URL}/api/rooms/viewrooms`);
+      const res = await axios.get(`${VITE_URL}/api/rooms/viewrooms?t=${Date.now()}`, {
+        headers: {
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+          Expires: "0",
+        },
+      });
       setRooms(res.data);
     } catch (err) {
       console.error("Error fetching rooms:", err);
@@ -53,7 +59,6 @@ const RoomOperation = () => {
     setEditingRoom(room);
     setIsFormOpen(true);
   };
-
   const handleDelete = async (id) => {
     const token = localStorage.getItem("token");
     if (!token) throw new Error("Unauthorized");
@@ -62,7 +67,7 @@ const RoomOperation = () => {
         await axios.delete(`${VITE_URL}/api/rooms/deleteroom/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        fetchRooms();
+        await fetchRooms();
       } catch (err) {
         alert("Delete failed");
       }
@@ -74,8 +79,8 @@ const RoomOperation = () => {
     const data = new FormData();
     data.append("roomNumber", formData.roomNumber);
     data.append("roomType", formData.roomType);
-    data.append("price", formData.price);
-    data.append("shortStayPrice", formData.shortStayPrice || "1500");
+    data.append("nightPackagePrice", formData.nightPackagePrice);
+    data.append("dayPackagePrice", formData.dayPackagePrice || "1500");
     data.append("bedType", formData.bedType);
     data.append("capacity", formData.capacity);
     data.append("status", formData.status);
@@ -129,7 +134,7 @@ const RoomOperation = () => {
       }
       toast.dismiss(loadingtoast);
       toast.success("Room saved successfully!");
-      fetchRooms();
+      await fetchRooms();
       setIsFormOpen(false);
       setEditingRoom(null);
     } catch (err) {

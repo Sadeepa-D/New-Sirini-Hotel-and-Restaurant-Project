@@ -1,4 +1,5 @@
 import React from "react";
+import { DoorOpen, CalendarCheck, Wrench } from "lucide-react";
 
 const RoomStatsRow = ({ stats }) => {
   const items = [
@@ -7,18 +8,21 @@ const RoomStatsRow = ({ stats }) => {
       value: stats.available || 0,
       color: "bg-green-50 text-green-700 border border-green-100",
       dot: "bg-green-500",
+      icon: <DoorOpen className="w-5 h-5 sm:w-6 sm:h-6 text-green-500/80" />,
     },
     {
       label: "Reserved", 
       value: stats.reserved || 0, 
       color: "bg-red-50 text-red-700 border border-red-100",
       dot: "bg-red-500",
+      icon: <CalendarCheck className="w-5 h-5 sm:w-6 sm:h-6 text-red-500/80" />,
     },
     {
       label: "Maintenance",
       value: stats.maintenance || 0,
       color: "bg-yellow-50 text-yellow-700 border border-yellow-100", 
       dot: "bg-yellow-500",
+      icon: <Wrench className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500/80" />,
     },
   ];
 
@@ -27,23 +31,30 @@ const RoomStatsRow = ({ stats }) => {
       {items.map((item) => (
         <div
           key={item.label}
-          className={`rounded-2xl p-3 sm:p-5 ${item.color} flex items-center gap-3 sm:gap-4 transition-all duration-300 hover:shadow-md`}
+          className={`rounded-2xl p-3 sm:p-5 ${item.color} flex items-center justify-between gap-3 sm:gap-4 transition-all duration-300 hover:shadow-md`}
         >
-          {/* Status Dot*/}
-          <div className="relative flex items-center justify-center">
-            {item.label === "Available" && (
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-20"></span>
-            )}
-            <span className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full flex-shrink-0 ${item.dot}`} />
+          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+            {/* Status Dot*/}
+            <div className="relative flex items-center justify-center flex-shrink-0">
+              {item.label === "Available" && (
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-20"></span>
+              )}
+              <span className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full flex-shrink-0 ${item.dot}`} />
+            </div>
+
+            <div className="min-w-0">
+              <p className="text-xl sm:text-3xl font-black leading-tight tracking-tight text-gray-900">
+                {item.value}
+              </p>
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest opacity-80 truncate">
+                {item.label}
+              </p>
+            </div>
           </div>
 
-          <div className="min-w-0">
-            <p className="text-xl sm:text-3xl font-black leading-tight tracking-tight text-gray-900">
-              {item.value}
-            </p>
-            <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest opacity-80 truncate">
-              {item.label}
-            </p>
+          {/* Right Status Icon */}
+          <div className="flex-shrink-0">
+            {item.icon}
           </div>
         </div>
       ))}

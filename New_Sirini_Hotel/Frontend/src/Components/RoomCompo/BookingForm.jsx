@@ -41,8 +41,8 @@ function BookingForm({
     if (!pkg) return;
     const basePrice =
       bookingMode === "day"
-        ? selectedRoom.shortStayPrice || 1500
-        : selectedRoom.price;
+        ? selectedRoom.dayPackagePrice || 1500
+        : selectedRoom.nightPackagePrice;
     if (
       bookingMode === "fullday" &&
       formData.checkInDate &&
@@ -62,8 +62,8 @@ function BookingForm({
     bookingMode,
     formData.checkInDate,
     formData.checkOutDate,
-    selectedRoom.price,
-    selectedRoom.shortStayPrice,
+    selectedRoom.nightPackagePrice,
+    selectedRoom.dayPackagePrice,
   ]);
 
   // Fetch user data when step 2 is reached
@@ -191,8 +191,8 @@ function BookingForm({
   const selectedPkg = PACKAGES.find((p) => p.id === bookingMode);
   const nightBasePrice = selectedPkg
     ? selectedPkg.id === "day"
-      ? selectedRoom.shortStayPrice || 1500
-      : selectedRoom.price
+      ? selectedRoom.dayPackagePrice || 1500
+      : selectedRoom.nightPackagePrice
     : 0;
 
   return (
