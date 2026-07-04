@@ -281,7 +281,8 @@ const LiquorManager = () => {
       <div className="bg-white rounded-xl p-4 shadow-xl mb-8 flex flex-col md:flex-row justify-between items-center gap-4 border border-gray-100">
         <button
           onClick={openAddForm}
-          className="w-full md:w-auto flex items-center justify-center gap-2 bg-yellow-500 text-black font-bold px-6 py-3 rounded-xl shadow-lg hover:bg-orange-500 hover:text-black transition-all"
+          style={{ borderRadius: "12px" }}
+          className="w-full md:w-auto flex items-center justify-center gap-2 bg-yellow-500 hover:bg-orange-500 text-black font-bold px-6 py-3 shadow-lg transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 cursor-pointer"
         >
           <Plus size={20} /> Add Liquor
         </button>
@@ -294,7 +295,8 @@ const LiquorManager = () => {
           <input
             type="text"
             placeholder="Search liquor..."
-            className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#FFAB00] shadow-sm bg-gray-50"
+            style={{ borderRadius: "12px" }}
+            className="w-full pl-10 pr-4 py-3 border border-gray-200 focus:ring-2 focus:ring-[#FFAB00] shadow-sm bg-gray-50 outline-none transition-all duration-300 hover:border-amber-400 focus:border-amber-500"
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
