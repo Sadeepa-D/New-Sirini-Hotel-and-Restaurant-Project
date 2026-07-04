@@ -1,12 +1,22 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import {
+  User,
+  Mail,
+  Phone,
+  CalendarDays,
+  Users,
+  Tag,
+} from "lucide-react";
 
 export default function BookingForm({ editData = null, onSuccess }) {
   const VITE_URL = import.meta.env.VITE_API_URL;
 
   const inputClass =
-    "w-full border border-gray-300 px-4 py-3 text-lg text-gray-700 focus:border-amber-400 outline-none transition-colors";
+    "w-full text-sm text-gray-700 outline-none placeholder-gray-400 bg-transparent transition-colors focus:text-amber-600";
+  const wrapClass =
+    "flex items-center gap-3 border border-gray-200 rounded-2xl px-4 py-3 focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-500/10 hover:border-amber-400/80 hover:scale-[1.01] transition-all duration-300 ease-in-out bg-white shadow-sm";
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -49,13 +59,13 @@ export default function BookingForm({ editData = null, onSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const loadingtoast = toast.loading(
-      editData ? "Updating booking..." : "Submitting booking...",
+      editData ? "Updating appointment..." : "Submitting appointment...",
     );
     const token = localStorage.getItem("token");
 
     if (!token) {
       toast.dismiss(loadingtoast);
-      toast.error("You must be logged in to submit a booking request.");
+      toast.error("You must be logged in to submit an appointment request.");
       return;
     }
 
@@ -79,7 +89,7 @@ export default function BookingForm({ editData = null, onSuccess }) {
           },
         );
         toast.dismiss(loadingtoast);
-        toast.success("Booking updated successfully!");
+        toast.success("Appointment updated successfully!");
         if (onSuccess) onSuccess(); // Closes the modal in the dashboard
       } else {
         // ================= ADD NEW APPOINTMENT =================
@@ -94,7 +104,7 @@ export default function BookingForm({ editData = null, onSuccess }) {
         if (response.status === 201) {
           toast.dismiss(loadingtoast);
           toast.success(
-            "Booking request submitted successfully! We will contact you soon.",
+            "Appointment request submitted successfully! We will contact you soon.",
           );
           // Clear form after successful new addition
           setName("");
@@ -107,7 +117,7 @@ export default function BookingForm({ editData = null, onSuccess }) {
       }
     } catch (error) {
       toast.dismiss(loadingtoast);
-      console.error("Error submitting booking:", error);
+      console.error("Error submitting appointment:", error);
 
       if (error.response) {
         console.error("Error response data:", error.response.data);
@@ -119,7 +129,7 @@ export default function BookingForm({ editData = null, onSuccess }) {
         } else {
           const errorMessage =
             error.response.data?.message ||
-            "Failed to process booking request. Please try again.";
+            "Failed to process appointment request. Please try again.";
           toast.error(errorMessage);
         }
       } else if (error.request) {
@@ -127,90 +137,125 @@ export default function BookingForm({ editData = null, onSuccess }) {
       } else {
         toast.error(
           error.message ||
-            "Failed to process booking request. Please try again.",
+            "Failed to process appointment request. Please try again.",
         );
       }
     }
   };
   const today = new Date().toISOString().split("T")[0];
   return (
-    <section className="bg-white py-16 px-4 sm:px-8 border-t border-gray-100">
-      <div className="text-center mb-10">
+    <div
+      style={{ borderRadius: "24px" }}
+      className="bg-white p-6 sm:p-10 shadow-xl border border-gray-100/50 max-w-4xl mx-auto"
+    >
+      <div className="text-center mb-8">
         <h2 className="font-cormorant italic text-3xl sm:text-5xl text-amber-500 font-semibold mb-2">
           {editData ? "Update Your Request" : "Place Your Reception Hall Visit"}
         </h2>
-        <p className="text-gray-400 text-sm uppercase tracking-widest">
+        <p className="text-gray-400 text-xs sm:text-sm uppercase tracking-widest font-medium">
           {editData ? "Edit Details" : "plan your visit"}
         </p>
       </div>
 
-      <div className="max-w-4xl mx-auto">
-        <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">
-                Name :
-              </label>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          {/* Name */}
+          <div>
+            <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+              Name
+            </label>
+            <div className={wrapClass}>
+              <User size={16} className="text-amber-500 shrink-0" />
               <input
                 type="text"
                 className={inputClass}
                 placeholder="John Doe"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                required
               />
             </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">
-                Event Type :
-              </label>
+          </div>
+
+          {/* Event Type */}
+          <div>
+            <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+              Event Type
+            </label>
+            <div className={wrapClass}>
+              <Tag size={16} className="text-amber-500 shrink-0" />
               <input
                 type="text"
                 className={inputClass}
-                placeholder="e.g., Wedding, Birthday"
+                placeholder="e.g. Wedding, Birthday"
                 value={eventType}
                 onChange={(e) => setEventType(e.target.value)}
+                required
               />
             </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">
-                Mobile No :
-              </label>
+          </div>
+
+          {/* Mobile No */}
+          <div>
+            <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+              Mobile No
+            </label>
+            <div className={wrapClass}>
+              <Phone size={16} className="text-amber-500 shrink-0" />
               <input
                 type="tel"
                 className={inputClass}
-                placeholder="077 123 4567"
+                placeholder="e.g. 077 123 4567"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
+                required
               />
             </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">
-                Email Address:
-              </label>
+          </div>
+
+          {/* Email */}
+          <div>
+            <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+              Email Address
+            </label>
+            <div className={wrapClass}>
+              <Mail size={16} className="text-amber-500 shrink-0" />
               <input
                 type="email"
                 className={inputClass}
                 placeholder="your.email@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
               />
             </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">
-                Pre Visit Date :
-              </label>
+          </div>
+
+          {/* Pre Visit Date */}
+          <div>
+            <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+              Pre Visit Date
+            </label>
+            <div className={wrapClass}>
+              <CalendarDays size={16} className="text-amber-500 shrink-0" />
               <input
                 type="date"
                 className={inputClass}
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 min={today}
+                required
               />
             </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">
-                No of Expected Guests :
-              </label>
+          </div>
+
+          {/* Expected Guests */}
+          <div>
+            <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+              Expected Guests (Min 40 - Max 200)
+            </label>
+            <div className={wrapClass}>
+              <Users size={16} className="text-amber-500 shrink-0" />
               <input
                 type="number"
                 min="40"
@@ -219,20 +264,22 @@ export default function BookingForm({ editData = null, onSuccess }) {
                 placeholder="40"
                 value={noOfGuests}
                 onChange={(e) => setNoOfGuests(e.target.value)}
+                required
               />
             </div>
           </div>
+        </div>
 
-          <div className="text-center mt-12">
-            <button
-              type="submit"
-              className="bg-amber-400 hover:bg-amber-500 text-black text-lg font-bold px-16 py-3.5 transition-all duration-300 shadow-md hover:shadow-lg active:scale-[0.98]"
-            >
-              {editData ? "Save Changes" : "Submit Request"}
-            </button>
-          </div>
-        </form>
-      </div>
-    </section>
+        <div className="text-center pt-4">
+          <button
+            type="submit"
+            style={{ borderRadius: "12px" }}
+            className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold uppercase tracking-widest px-16 py-3.5 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+          >
+            {editData ? "Save Changes" : "Submit Request"}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
