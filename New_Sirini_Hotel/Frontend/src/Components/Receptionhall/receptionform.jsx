@@ -8,6 +8,7 @@ import {
   CalendarDays,
   Users,
   Tag,
+  Clock3,
 } from "lucide-react";
 
 export default function BookingForm({ editData = null, onSuccess }) {
@@ -148,6 +149,16 @@ export default function BookingForm({ editData = null, onSuccess }) {
       style={{ borderRadius: "24px" }}
       className="bg-white p-6 sm:p-10 shadow-xl border border-gray-100/50 max-w-4xl mx-auto"
     >
+      <div className="mb-6 flex justify-center">
+        <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-[11px] sm:text-sm font-medium text-amber-900 shadow-sm">
+          <Clock3 className="h-4 w-4 text-amber-600 shrink-0" />
+          <span className="whitespace-nowrap">
+            Working Hours For Pre-Visit:
+            <span className="font-semibold"> 09:00 AM - 07:00 PM</span>
+          </span>
+        </div>
+      </div>
+
       <div className="text-center mb-8">
         <h2 className="font-cormorant italic text-3xl sm:text-5xl text-amber-500 font-semibold mb-2">
           {editData ? "Update Your Request" : "Place Your Reception Hall Visit"}

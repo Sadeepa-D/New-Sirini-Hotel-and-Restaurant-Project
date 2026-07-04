@@ -6,7 +6,7 @@ import resturantImg from "../../assets/resturant.png";
 import OrderForm from "../../Components/RestaurantPage/OrderForm";
 import RestaurantCard from "../../Components/RestaurantPage/RestaurantCard";
 import ProcessFlow from "../../Components/RestaurantPage/processflow";
-import { ShoppingCart } from "lucide-react";
+import { Clock3, ShoppingCart } from "lucide-react";
 import CartComp from "../../Components/RestaurantPage/CartComp";
 
 const CATEGORIES = [
@@ -211,13 +211,19 @@ export default function Restaurant() {
           />
           <div className="absolute inset-0 bg-black/50"></div>
         </div>
-
         {/* Content */}
         <div className="z-10 flex flex-col items-center justify-center gap-4">
           <h1 className="text-4xl md:text-6xl font-light">Our Restaurant</h1>
           <p className="text-lg md:text-xl italic tracking-widest border-t border-b border-white py-2 px-4">
             Eat well, laugh often, enjoy life
           </p>
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/45 px-4 py-2 text-xs sm:text-sm font-medium text-white shadow-lg backdrop-blur-md">
+            <Clock3 className="h-4 w-4 text-amber-200" />
+            <span className="whitespace-nowrap">
+              Opening Hours:{" "}
+              <span className="font-semibold">10:00 AM - 11:00 PM</span>
+            </span>
+          </div>
         </div>
 
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
