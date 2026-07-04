@@ -272,7 +272,7 @@ const RestaurantManager = () => {
                   <div className="absolute top-4 right-4 flex flex-col gap-2 z-50">
                     {/* Toggle Availability */}
                     <button
-                      style={{ borderRadius: "50%" }}
+                      style={{ borderRadius: "15%" }}
                       className={`p-2 shadow-lg transition-all duration-300 transform hover:scale-115 active:scale-95 cursor-pointer ${
                         item.availability !== false
                           ? "bg-green-100 text-green-600 hover:bg-green-600 hover:text-white"
@@ -292,7 +292,7 @@ const RestaurantManager = () => {
                     </button>
                     {/* Edit */}
                     <button
-                      style={{ borderRadius: "50%" }}
+                      style={{ borderRadius: "15%" }}
                       className="p-2 bg-white text-blue-600 shadow-lg hover:bg-blue-600 hover:text-white transition-all duration-300 transform hover:scale-115 active:scale-95 cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -304,7 +304,7 @@ const RestaurantManager = () => {
                     </button>
                     {/* Delete */}
                     <button
-                      style={{ borderRadius: "50%" }}
+                      style={{ borderRadius: "15%" }}
                       className="p-2 bg-white text-red-600 shadow-lg hover:bg-red-600 hover:text-white transition-all duration-300 transform hover:scale-115 active:scale-95 cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
