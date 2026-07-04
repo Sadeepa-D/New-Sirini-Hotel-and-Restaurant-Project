@@ -56,7 +56,7 @@ const createAdvertisment = async (req, res) => {
     }
 
     // Validate TPNumber format (should be 10 digits)
-    const phoneRegex =  /^(?:\+94|0)?(7[0-8]\d{7}|[1-9]\d{8})$/;
+    const phoneRegex = /^(?:\+94|0)?(7[0-8]\d{7}|[1-9]\d{8})$/;
     if (!phoneRegex.test(TPNumber)) {
       return res.status(400).json({
         message: "Invalid phone number format. Should be exactly 10 digits",
@@ -210,8 +210,6 @@ const updateAdvertisment = async (req, res) => {
     if (!id) {
       return res.status(400).json({ message: "Advertisment ID is required" });
     }
-    const updateData = req.body;
-
     const existingAdvertisment = await Adevertisment.findById(id);
     if (!existingAdvertisment) {
       return res.status(404).json({ message: "Advertisment not found" });

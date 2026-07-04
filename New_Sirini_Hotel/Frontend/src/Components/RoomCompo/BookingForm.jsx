@@ -41,8 +41,8 @@ function BookingForm({
     if (!pkg) return;
     const basePrice =
       bookingMode === "day"
-        ? selectedRoom.shortStayPrice || 1500
-        : selectedRoom.price;
+        ? selectedRoom.dayPackagePrice || 1500
+        : selectedRoom.nightPackagePrice;
     if (
       bookingMode === "fullday" &&
       formData.checkInDate &&
@@ -62,8 +62,8 @@ function BookingForm({
     bookingMode,
     formData.checkInDate,
     formData.checkOutDate,
-    selectedRoom.price,
-    selectedRoom.shortStayPrice,
+    selectedRoom.nightPackagePrice,
+    selectedRoom.dayPackagePrice,
   ]);
 
   // Fetch user data when step 2 is reached
@@ -112,10 +112,11 @@ function BookingForm({
 
   const handleDateSelect = (dateStr) => {
     if (bookingMode === "fullday") {
-      if (
-        !formData.checkInDate ||
-        (formData.checkInDate && formData.checkOutDate)
-      ) {
+      if (formData.checkInDate === dateStr) {
+        setFormData({ ...formData, checkInDate: "", checkOutDate: "" });
+      } else if (formData.checkOutDate === dateStr) {
+        setFormData({ ...formData, checkOutDate: "" });
+      } else if (!formData.checkInDate || (formData.checkInDate && formData.checkOutDate)) {
         setFormData({ ...formData, checkInDate: dateStr, checkOutDate: "" });
       } else {
         if (dateStr > formData.checkInDate) {
@@ -125,11 +126,19 @@ function BookingForm({
         }
       }
     } else {
-      setFormData({
-        ...formData,
-        checkInDate: dateStr,
-        checkOutDate: addDays(dateStr, 1),
-      });
+      if (formData.checkInDate === dateStr) {
+        setFormData({
+          ...formData,
+          checkInDate: "",
+          checkOutDate: "",
+        });
+      } else {
+        setFormData({
+          ...formData,
+          checkInDate: dateStr,
+          checkOutDate: dateStr,
+        });
+      }
     }
   };
 
@@ -174,14 +183,16 @@ function BookingForm({
         onClose={onClose}
         totalPrice={totalPrice}
         bookingMode={bookingMode}
+        checkInDate={formData.checkInDate}
+        checkOutDate={formData.checkOutDate}
       />
     );
 
   const selectedPkg = PACKAGES.find((p) => p.id === bookingMode);
   const nightBasePrice = selectedPkg
     ? selectedPkg.id === "day"
-      ? selectedRoom.shortStayPrice || 1500
-      : selectedRoom.price
+      ? selectedRoom.dayPackagePrice || 1500
+      : selectedRoom.nightPackagePrice
     : 0;
 
   return (

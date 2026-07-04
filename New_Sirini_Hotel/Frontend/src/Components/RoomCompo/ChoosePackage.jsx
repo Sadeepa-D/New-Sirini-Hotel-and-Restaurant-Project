@@ -3,18 +3,18 @@ import React from "react";
 export const PACKAGES = [
   {
     id: "day",
-    label: "Mid Day Stay",
-    timeRange: "12:00 PM – 3:00 PM",
+    label: "Day Package",
+    timeRange: "10:00 AM – 3:00 PM",
     icon: "☀️",
-    description: "3-hour daytime access. Cannot be booked on Full Day dates.",
+    description: "5-hour daytime access. Cannot be booked on Full Day dates.",
   },
   {
     id: "fullday",
-    label: "Overnight Stay",
-    timeRange: "4:00 PM – 10:00 AM",
+    label: "Night Package",
+    timeRange: "4:00 PM – 9:00 AM",
     icon: "🏨",
     description:
-      "Check in at 4 PM, check out at 10 AM. Select your date range.",
+      "Check in at 4 PM, check out at 9 AM. Select your date range.",
   },
 ];
 
@@ -62,8 +62,8 @@ function ChoosePackage({ selectedRoom, onSelectMode, onClose }) {
               <p className="text-[10px] sm:text-xs font-black text-gray-800 mt-1.5 sm:mt-2">
                 Rs.{" "}
                 {(pkg.id === "day"
-                  ? selectedRoom.shortStayPrice || 1500
-                  : selectedRoom.price
+                  ? selectedRoom.dayPackagePrice || 1500
+                  : selectedRoom.nightPackagePrice
                 ).toLocaleString()}
                 {pkg.id === "fullday" && " / Per Night"}
               </p>

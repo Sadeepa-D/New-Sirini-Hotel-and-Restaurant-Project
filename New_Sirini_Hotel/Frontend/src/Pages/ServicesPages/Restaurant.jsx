@@ -86,7 +86,10 @@ export default function Restaurant() {
       const userData = localStorage.getItem("user");
       if (userData) {
         const user = JSON.parse(userData);
-        localStorage.setItem(`cart_items_${user._id}`, JSON.stringify(cartItems));
+        localStorage.setItem(
+          `cart_items_${user._id}`,
+          JSON.stringify(cartItems),
+        );
       } else {
         localStorage.setItem("guest_cart", JSON.stringify(cartItems));
       }
@@ -162,8 +165,6 @@ export default function Restaurant() {
     setOpenorderform(true);
   };
 
-
-
   const foodSectionRef = useRef(null);
   const [isFabVisible, setIsFabVisible] = useState(false);
   const [fabBottomOffset, setFabBottomOffset] = useState(32);
@@ -173,16 +174,16 @@ export default function Restaurant() {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
 
-      // Show FAB after scrolling past hero 
+      // Show FAB after scrolling past hero
       setIsFabVisible(scrollY > windowHeight * 0.7);
 
       if (foodSectionRef.current) {
         const rect = foodSectionRef.current.getBoundingClientRect();
         const foodBottom = rect.bottom;
-        
+
         const isMobile = window.innerWidth < 768;
         const fabMargin = 32;
-        
+
         // If bottom of food items section enters viewport
         if (foodBottom < windowHeight) {
           const offset = windowHeight - foodBottom + fabMargin;
@@ -233,9 +234,9 @@ export default function Restaurant() {
               Menu
             </h1>
             <p className="text-gray-700 text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto font-light">
-              We believe good food starts with good ingredients. Our menu includes
-              fresh, balanced dishes made using simple cooking methods to keep
-              flavors natural and satisfying.
+              We believe good food starts with good ingredients. Our menu
+              includes fresh, balanced dishes made using simple cooking methods
+              to keep flavors natural and satisfying.
             </p>
           </div>
         </div>
@@ -246,12 +247,13 @@ export default function Restaurant() {
         {/* Category Navigation Bar */}
         <div className="sticky top-[75px] z-30 bg-neutral-50/80 backdrop-blur-md py-6 mb-8 border-b border-neutral-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex overflow-x-auto gap-3 pb-2 hide-scrollbar scroll-smooth">
+            <div className="flex overflow-x-auto gap-2 pb-2 hide-scrollbar [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth justify-start md:justify-center">
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 whitespace-nowrap shadow-sm border
+                  style={{ borderRadius: "10px" }}
+                  className={`px-6 py-2.5 text-sm font-bold transition-all duration-300 whitespace-nowrap shadow-sm border transform hover:scale-105 active:scale-95
                     ${
                       selectedCategory === cat
                         ? "bg-amber-600 text-white border-amber-600 shadow-md shadow-amber-200 scale-105"
@@ -266,7 +268,10 @@ export default function Restaurant() {
         </div>
 
         {/* Food Items Grid Section */}
-        <div ref={foodSectionRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-[400px]">
+        <div
+          ref={foodSectionRef}
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-[400px]"
+        >
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
               {/* Modern elegant spinner */}
@@ -303,8 +308,13 @@ export default function Restaurant() {
               <div className="w-20 h-20 bg-neutral-100 rounded-full flex items-center justify-center mb-4">
                 <ShoppingCart className="w-10 h-10 text-neutral-300" />
               </div>
-              <h3 className="text-xl font-semibold text-neutral-800 mb-2">No food items available in this category.</h3>
-              <p className="text-neutral-500 max-w-xs">We couldn't find any dishes in the "{selectedCategory}" category at the moment.</p>
+              <h3 className="text-xl font-semibold text-neutral-800 mb-2">
+                No food items available in this category.
+              </h3>
+              <p className="text-neutral-500 max-w-xs">
+                We couldn't find any dishes in the "{selectedCategory}" category
+                at the moment.
+              </p>
             </div>
           )}
         </div>
@@ -312,19 +322,19 @@ export default function Restaurant() {
         {/* Floating Action Button (FAB) - Smart visibility */}
         <div
           className={`fixed z-[60] right-8 
-            ${(isFabVisible && !showCart) ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-10 pointer-events-none'}`}
+            ${isFabVisible && !showCart ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-10 pointer-events-none"}`}
           style={{
             bottom: `${fabBottomOffset}px`,
-            transition: 'opacity 500ms ease-in-out, transform 500ms ease-in-out',
+            transition:
+              "opacity 500ms ease-in-out, transform 500ms ease-in-out",
           }}
         >
-         <button 
-           className="relative group transition-all duration-300"
+          <button
+            className="relative group transition-all duration-300"
             onClick={() => {
-            setShowCart(prev => !prev);
-            
+              setShowCart((prev) => !prev);
             }}
-        >
+          >
             <div
               className="w-16 h-16 md:w-20 md:h-20 bg-amber-500 text-white flex items-center justify-center rounded-full shadow-2xl group-hover:bg-amber-600 group-hover:scale-110 transition-all duration-300"
               style={{ boxShadow: "0 10px 25px -5px rgba(245, 158, 11, 0.4)" }}

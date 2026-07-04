@@ -327,8 +327,8 @@ const RoomsSection = () => {
                               }`}
                             >
                               {room.timeSlot === "day"
-                                ? "Mid Day Stay"
-                                : "Overnight Stay"}
+                                ? "Day Package"
+                                : "Night Package"}
                             </span>
                           )}
                         </div>

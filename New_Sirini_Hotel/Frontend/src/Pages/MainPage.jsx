@@ -136,7 +136,10 @@ const NewSiriniHotel = () => {
           </div>
 
           <div className="z-10 flex flex-col items-center justify-center gap-2 md:gap-4">
-            <h1 className="text-3xl sm:text-4xl md:text-6xl font-light">
+            <h1
+              className="font-light"
+              style={{ fontSize: "clamp(2rem, 6vw, 5rem)", lineHeight: "1.1" }}
+            >
               New Sirini Hotel
             </h1>
             <img
@@ -156,7 +159,7 @@ const NewSiriniHotel = () => {
 
         {/* --- Services Section --- */}
         <section id="services" className="py-16 container mx-auto px-4">
-          <h2 className="text-4xl text-center mb-12 font-serif">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl text-center mb-12 font-serif">
             Our Services
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -189,22 +192,26 @@ const NewSiriniHotel = () => {
         </section>
 
         {/* --- Gallery Filter --- */}
-        <section id="gallery" className="bg-gray-100 py-6 text-center">
+        <section
+          id="gallery"
+          className="bg-gray-100 py-6 text-center font-sans"
+        >
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl mb-4 font-serif text-gray-800 tracking-tight">
+            <h2 className="text-3xl mb-4 font-bold text-gray-800 tracking-tight">
               Gallery
             </h2>
 
             {/* Category Buttons */}
-            <div className="flex flex-wrap justify-center gap-2 mb-6">
+            <div className="flex flex-wrap justify-center gap-3 mb-6">
               {["Reception", "Rooms", "Restaurant"].map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActiveFilter(cat)}
-                  className={`px-6 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 border ${
+                  style={{ borderRadius: "12px" }}
+                  className={`px-6 py-3 text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-300 border ${
                     activeFilter === cat
-                      ? "bg-slate-900 text-amber-500 border-slate-900 shadow-lg scale-105"
-                      : "bg-white text-gray-400 border-gray-200 hover:border-amber-500 hover:text-amber-600"
+                      ? "bg-slate-900 text-amber-500 border-slate-900 shadow-sm"
+                      : "bg-white text-gray-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300 hover:text-amber-500"
                   }`}
                 >
                   {cat}
@@ -273,7 +280,7 @@ const NewSiriniHotel = () => {
           className="py-16 container mx-auto px-4 grid md:grid-cols-2 gap-10 items-center"
         >
           <div>
-            <h2 className="text-4xl mb-6 font-serif">About Us</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl mb-6 font-serif">About Us</h2>
             <p className="text-gray-700 leading-relaxed mb-4">
               New Sirni Hotel, located in Kamburupitiya, Sri Lanka, offers a
               welcoming space for comfortable stays and memorable celebrations.
@@ -293,13 +300,6 @@ const NewSiriniHotel = () => {
 
             {/* Main Map Container */}
             <div className="relative bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-xl sm:shadow-2xl hover:shadow-2xl sm:hover:shadow-3xl transition-all duration-500 h-64 md:h-96 border border-gray-100">
-              {/* Decorative Top Badge */}
-              <div className="absolute top-2 sm:top-4 left-1/2 -translate-x-1/2 z-20 bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-widest shadow-lg flex items-center gap-1 sm:gap-2">
-                <span className="text-sm sm:text-lg">📍</span>
-                <span className="hidden sm:inline">Our Location</span>
-                <span className="sm:hidden">Location</span>
-              </div>
-
               {/* Map */}
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1015647.6659904498!2d79.35278087812499!3d6.080244600000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae14581018f8001%3A0x5b446489a6e6e3ef!2sNew%20Sirini%20Hotel!5e0!3m2!1sen!2slk!4v1778137116664!5m2!1sen!2slk"
@@ -310,20 +310,7 @@ const NewSiriniHotel = () => {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 title="Google Map Location"
-                className="pt-6 sm:pt-8"
               ></iframe>
-
-              {/* Decorative Corner Elements - Hide on Mobile */}
-              <div className="hidden sm:block absolute top-2 right-2 w-6 h-6 sm:w-8 sm:h-8 border-t-2 border-r-2 border-amber-500 rounded-tr-lg"></div>
-              <div className="hidden sm:block absolute bottom-2 left-2 w-6 h-6 sm:w-8 sm:h-8 border-b-2 border-l-2 border-amber-500 rounded-bl-lg"></div>
-
-              {/* Subtle Animation Pulse */}
-              <div
-                className="absolute top-2 sm:top-4 left-1/2 -translate-x-1/2 w-2 sm:w-3 h-2 sm:h-3 bg-red-500 rounded-full animate-pulse z-10 shadow-lg"
-                style={{
-                  boxShadow: "0 0 15px sm:0 0 20px rgba(239, 68, 68, 0.6)",
-                }}
-              ></div>
             </div>
           </div>
         </section>
