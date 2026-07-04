@@ -49,13 +49,13 @@ export default function BookingForm({ editData = null, onSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const loadingtoast = toast.loading(
-      editData ? "Updating booking..." : "Submitting booking...",
+      editData ? "Updating appointment..." : "Submitting appointment...",
     );
     const token = localStorage.getItem("token");
 
     if (!token) {
       toast.dismiss(loadingtoast);
-      toast.error("You must be logged in to submit a booking request.");
+      toast.error("You must be logged in to submit an appointment request.");
       return;
     }
 
@@ -79,7 +79,7 @@ export default function BookingForm({ editData = null, onSuccess }) {
           },
         );
         toast.dismiss(loadingtoast);
-        toast.success("Booking updated successfully!");
+        toast.success("Appointment updated successfully!");
         if (onSuccess) onSuccess(); // Closes the modal in the dashboard
       } else {
         // ================= ADD NEW APPOINTMENT =================
@@ -94,7 +94,7 @@ export default function BookingForm({ editData = null, onSuccess }) {
         if (response.status === 201) {
           toast.dismiss(loadingtoast);
           toast.success(
-            "Booking request submitted successfully! We will contact you soon.",
+            "Appointment request submitted successfully! We will contact you soon.",
           );
           // Clear form after successful new addition
           setName("");
@@ -107,7 +107,7 @@ export default function BookingForm({ editData = null, onSuccess }) {
       }
     } catch (error) {
       toast.dismiss(loadingtoast);
-      console.error("Error submitting booking:", error);
+      console.error("Error submitting appointment:", error);
 
       if (error.response) {
         console.error("Error response data:", error.response.data);
@@ -119,7 +119,7 @@ export default function BookingForm({ editData = null, onSuccess }) {
         } else {
           const errorMessage =
             error.response.data?.message ||
-            "Failed to process booking request. Please try again.";
+            "Failed to process appointment request. Please try again.";
           toast.error(errorMessage);
         }
       } else if (error.request) {
@@ -127,7 +127,7 @@ export default function BookingForm({ editData = null, onSuccess }) {
       } else {
         toast.error(
           error.message ||
-            "Failed to process booking request. Please try again.",
+            "Failed to process appointment request. Please try again.",
         );
       }
     }
