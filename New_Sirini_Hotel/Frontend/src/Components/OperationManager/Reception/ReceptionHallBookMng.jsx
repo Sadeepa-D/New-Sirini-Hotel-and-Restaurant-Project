@@ -174,16 +174,16 @@ const ReceptionHallBookMng = () => {
             Bookings
           </h2>
         </div>
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
           {/* Search */}
-          <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2 focus-within:border-amber-400 transition-colors bg-white">
+          <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2 focus-within:border-amber-400 transition-colors bg-white w-full sm:w-auto">
             <Search size={15} className="text-gray-400 shrink-0" />
             <input
               type="text"
               placeholder="Search bookings..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="text-sm text-gray-600 outline-none w-44 placeholder-gray-300"
+              className="text-sm text-gray-600 outline-none w-full sm:w-44 placeholder-gray-300 bg-transparent"
             />
             {search && (
               <button onClick={() => setSearch("")}>
@@ -197,13 +197,15 @@ const ReceptionHallBookMng = () => {
               setEditData(null);
               setShowForm(true);
             }}
-            className="flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors shadow-sm"
+            style={{ borderRadius: "10px" }}
+            className="flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all shadow-sm transform hover:scale-105 active:scale-95 duration-300 ease-in-out w-full sm:w-auto cursor-pointer"
           >
             <Plus size={16} /> Add Bookings
           </button>
           <button
             onClick={() => setShowCalander(!showcalander)}
-            className="flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors shadow-sm"
+            style={{ borderRadius: "10px" }}
+            className="flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all shadow-sm transform hover:scale-105 active:scale-95 duration-300 ease-in-out w-full sm:w-auto cursor-pointer"
           >
             {showcalander ? <X size={16} /> : <Calendar size={16} />}
             {showcalander ? "Hide Calendar" : "Show Calendar"}
@@ -219,10 +221,11 @@ const ReceptionHallBookMng = () => {
             onClick={() => {
               setStatusFilter(status);
             }}
-            className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-300 shadow-sm border whitespace-nowrap ${
+            style={{ borderRadius: "10px" }}
+            className={`px-4 py-2 text-xs font-bold uppercase tracking-widest transition-all duration-300 shadow-sm border whitespace-nowrap transform hover:scale-105 active:scale-95 ease-in-out cursor-pointer ${
               statusFilter === status
-                ? "bg-slate-800 text-white border-slate-800"
-                : "bg-white text-slate-500 border-gray-100 hover:bg-gray-50"
+                ? "bg-slate-800 text-white border-slate-800 shadow-md shadow-slate-800/10"
+                : "bg-gray-50 text-slate-500 border-gray-200/50 hover:bg-gray-100 hover:text-slate-700"
             }`}
           >
             {status} (
@@ -250,7 +253,8 @@ const ReceptionHallBookMng = () => {
           <button
             onClick={() => scrollSlider(-1)}
             aria-label="Scroll left"
-            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
+            style={{ borderRadius: "50%" }}
+            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all hover:scale-110 active:scale-90 cursor-pointer"
           >
             <ChevronLeft size={18} strokeWidth={2.5} />
           </button>
@@ -264,7 +268,7 @@ const ReceptionHallBookMng = () => {
               <div
                 key={booking._id}
                 data-slider-card
-                className="w-full shrink-0 snap-start md:w-[calc(25%-12px)]"
+                className="w-full shrink-0 snap-start md:w-[calc(25%-12px)] flex"
               >
                 <ReceptionHallBookingCard
                   booking={booking}
@@ -279,7 +283,8 @@ const ReceptionHallBookMng = () => {
           <button
             onClick={() => scrollSlider(1)}
             aria-label="Scroll right"
-            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
+            style={{ borderRadius: "50%" }}
+            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all hover:scale-110 active:scale-90 cursor-pointer"
           >
             <ChevronRight size={18} strokeWidth={2.5} />
           </button>

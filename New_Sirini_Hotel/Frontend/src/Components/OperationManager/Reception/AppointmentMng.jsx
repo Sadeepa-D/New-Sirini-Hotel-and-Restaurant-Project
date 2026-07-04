@@ -99,15 +99,16 @@ const AppointmentMng = () => {
             className="w-full px-4 py-2.5 bg-gray-50/50 hover:bg-gray-50 text-gray-800 border border-gray-200 rounded-xl font-medium placeholder-gray-400 focus:ring-2 focus:ring-amber-400/20 focus:border-amber-400 focus:bg-white focus:outline-none text-xs transition-all duration-200"
           />
         </div>
-        <div className="flex items-center gap-2 bg-gray-50 p-1.5 rounded-2xl overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
+              style={{ borderRadius: "10px" }}
+              className={`px-4 py-2.5 text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap transform hover:scale-105 active:scale-95 duration-300 ease-in-out ${
                 activeTab === tab
-                  ? "bg-white text-amber-600 shadow-sm"
-                  : "text-gray-400 hover:text-gray-600"
+                  ? "bg-amber-500 text-white shadow-md shadow-amber-500/20"
+                  : "bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-700 border border-gray-200/50"
               }`}
             >
               {tab}
@@ -134,7 +135,8 @@ const AppointmentMng = () => {
           <button
             onClick={() => scrollSlider(-1)}
             aria-label="Scroll left"
-            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
+            style={{ borderRadius: "50%" }}
+            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all hover:scale-110 active:scale-90"
           >
             <ChevronLeft size={18} strokeWidth={2.5} />
           </button>
@@ -174,7 +176,8 @@ const AppointmentMng = () => {
           <button
             onClick={() => scrollSlider(1)}
             aria-label="Scroll right"
-            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
+            style={{ borderRadius: "50%" }}
+            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all hover:scale-110 active:scale-90"
           >
             <ChevronRight size={18} strokeWidth={2.5} />
           </button>
