@@ -115,7 +115,17 @@ const OrderManage = () => {
   const overdueOrders = orders.filter((o) => o.status === "Overdue");
 
   const getFilteredHistory = () => {
-    let list =
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+    const allOrders = [
+      ...pendingOrders,
+      ...acceptedOrders,
+      ...preparingOrders,
+      ...completeOrders,
+      ...deletedOrders,
+      ...overdueOrders,
+    ];
+
+    const getTabOrders = () =>
       activeTab === "Accepted"
         ? acceptedOrders
         : activeTab === "Preparing"
@@ -128,13 +138,15 @@ const OrderManage = () => {
                 ? overdueOrders
                 : pendingOrders;
 
-    if (searchTerm) {
+    let list = normalizedSearch ? allOrders : getTabOrders();
+
+    if (normalizedSearch) {
       list = list.filter(
         (o) =>
-          o.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          o.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          o.orderCode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          o.foodName?.toLowerCase().includes(searchTerm.toLowerCase()),
+          o.fullName?.toLowerCase().includes(normalizedSearch) ||
+          o.email?.toLowerCase().includes(normalizedSearch) ||
+          o.orderCode?.toLowerCase().includes(normalizedSearch) ||
+          o.foodName?.toLowerCase().includes(normalizedSearch),
       );
     }
 

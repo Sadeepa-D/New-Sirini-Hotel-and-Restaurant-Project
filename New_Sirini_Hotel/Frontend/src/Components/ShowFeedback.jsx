@@ -138,7 +138,7 @@ const ShowFeedback = () => {
           (t) => String(t.roomNumber) === String(selectedRoomFilter),
         );
 
-  // Reset filter to "All" if selected room no longer has testimonials (e.g. after deletion)
+  
   useEffect(() => {
     if (
       selectedRoomFilter !== "All" &&

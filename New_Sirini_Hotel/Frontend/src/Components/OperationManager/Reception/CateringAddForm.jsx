@@ -163,7 +163,7 @@ const CateringAddForm = ({ onClose, fetchitems, editItem }) => {
                 className="w-full text-sm outline-none bg-transparent resize-none"
               />
             </div>
-            {/* Visual Ingredient Pills - Prevents Crash with typeof check */}
+            
             {typeof formData.ingredients === "string" &&
               formData.ingredients && (
                 <div className="flex flex-wrap gap-1.5 px-1">
