@@ -39,7 +39,14 @@ const createRoomBooking = async (req, res) => {
       totalAmount,
       timeSlot,
     } = req.body;
-
+    const phoneRegex = /^(?:\+94|0)?(7[0-8]\d{7}|[1-9]\d{8})$/;
+    if (!phoneRegex.test(phone)) {
+      return res.status(400).json({ message: "Invalid phone number format" });
+    }
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
     if (!timeSlot || !["day", "fullday"].includes(timeSlot)) {
       return res
         .status(400)
@@ -197,6 +204,14 @@ const editRoomBooking = async (req, res) => {
     const { name, email, phone, checkInDate, checkOutDate } = req.body;
     if (!name || !email || !phone || !checkInDate || !checkOutDate) {
       return res.status(400).json({ error: "All fields are required" });
+    }
+    const phoneRegex = /^(?:\+94|0)?(7[0-8]\d{7}|[1-9]\d{8})$/;
+    if (!phoneRegex.test(phone)) {
+      return res.status(400).json({ message: "Invalid phone number format" });
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format" });
     }
     const updatedRoomBooking = await RoomBooking.findByIdAndUpdate(
       id,

@@ -14,6 +14,27 @@ export default function OrderForm({ item, cartItems, onClose }) {
   });
   const [loading, setLoading] = useState(false);
 
+  const getSLDateStr = () =>
+    new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Colombo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(new Date());
+
+  const getSLTimeStr = () =>
+    new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Colombo",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    }).format(new Date());
+
+  const timeToMinutes = (timeStr) => {
+    const [h, m] = timeStr.split(":").map(Number);
+    return h * 60 + m;
+  };
+
   const items = cartItems && cartItems.length > 0 ? cartItems : [item];
 
   const getTotalPrice = () => {
@@ -36,29 +57,27 @@ export default function OrderForm({ item, cartItems, onClose }) {
     setLoading(true);
     const token = localStorage.getItem("token");
 
-    const now = new Date();
-    const slDateStr = new Intl.DateTimeFormat("en-CA", {
-      timeZone: "Asia/Colombo",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    }).format(now);
+    const slDateStr = getSLDateStr();
+    const slTimeStr = getSLTimeStr();
 
-    const slTimeStr = new Intl.DateTimeFormat("en-GB", {
-      timeZone: "Asia/Colombo",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    }).format(now);
+    if (form.pickupDate === slDateStr) {
+      const nowMinutes = timeToMinutes(slTimeStr);
+      const pickupMinutes = timeToMinutes(form.pickupTime);
 
-    if (form.pickupDate === slDateStr && form.pickupTime <= slTimeStr) {
-      toast.error(
-        "Selected time has already passed for today. Please choose a future time.",
-      );
-      setLoading(false);
-      return;
+      if (pickupMinutes <= nowMinutes) {
+        toast.error(
+          "Selected time has already passed for today. Please choose a future time.",
+        );
+        setLoading(false);
+        return;
+      }
+
+      if (pickupMinutes - nowMinutes < 60) {
+        toast.error("Please select a pick-up time at least 1 hour from now.");
+        setLoading(false);
+        return;
+      }
     }
-
     try {
       const userDataStr = localStorage.getItem("user");
       let userId = null;
@@ -272,6 +291,11 @@ export default function OrderForm({ item, cartItems, onClose }) {
                   value={form.pickupTime}
                   onChange={handleChange}
                   required
+                  min={
+                    form.pickupDate === getSLDateStr()
+                      ? getSLTimeStr()
+                      : undefined
+                  }
                   className="w-full border border-neutral-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition"
                 />
               </div>

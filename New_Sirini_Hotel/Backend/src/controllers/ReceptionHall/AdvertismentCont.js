@@ -56,12 +56,16 @@ const createAdvertisment = async (req, res) => {
     }
 
     // Validate TPNumber format (should be 10 digits)
-    const phoneRegex = /^[0-9]{10}$/;
+    const phoneRegex = /^(?:\+94|0)?(7[0-8]\d{7}|[1-9]\d{8})$/;
     if (!phoneRegex.test(TPNumber)) {
       return res.status(400).json({
         message: "Invalid phone number format. Should be exactly 10 digits",
         example: "0712345678",
       });
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(EmailAddress)) {
+      return res.status(400).json({ message: "Invalid email format" });
     }
 
     const image = req.file ? req.file.secure_url : null;
@@ -206,8 +210,6 @@ const updateAdvertisment = async (req, res) => {
     if (!id) {
       return res.status(400).json({ message: "Advertisment ID is required" });
     }
-    const updateData = req.body;
-
     const existingAdvertisment = await Adevertisment.findById(id);
     if (!existingAdvertisment) {
       return res.status(404).json({ message: "Advertisment not found" });
