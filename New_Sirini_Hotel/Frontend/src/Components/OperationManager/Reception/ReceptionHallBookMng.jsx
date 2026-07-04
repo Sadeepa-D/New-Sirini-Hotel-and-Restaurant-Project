@@ -268,7 +268,7 @@ const ReceptionHallBookMng = () => {
               <div
                 key={booking._id}
                 data-slider-card
-                className="w-full shrink-0 snap-start md:w-[calc(25%-12px)]"
+                className="w-full shrink-0 snap-start md:w-[calc(25%-12px)] flex"
               >
                 <ReceptionHallBookingCard
                   booking={booking}
