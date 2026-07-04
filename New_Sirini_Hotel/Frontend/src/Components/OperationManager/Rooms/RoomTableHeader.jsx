@@ -11,7 +11,7 @@ const RoomTableHeader = ({ onAdd, searchTerm, onSearch }) => {
           <button
             onClick={onAdd}
             style={{ borderRadius: "8px" }}
-            className="flex items-center justify-center gap-2 bg-yellow-500 text-black font-black px-6 py-3 rounded-lg hover:bg-yellow-400 hover:shadow-lg hover:shadow-yellow-500/20 transition-all active:scale-95 text-sm uppercase tracking-wider"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-yellow-500 text-black font-black px-6 py-3 rounded-lg hover:bg-yellow-400 hover:shadow-lg hover:shadow-yellow-500/20 transform hover:scale-105 active:scale-95 transition-all duration-300 ease-in-out text-sm uppercase tracking-wider"
           >
             <Plus size={20} strokeWidth={3} />
             Add New Room

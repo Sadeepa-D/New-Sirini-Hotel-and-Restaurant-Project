@@ -22,14 +22,12 @@ const RoomCards = ({ rooms, onEdit, onDelete }) => {
           <p className="text-gray-500 font-medium">No rooms in inventory</p>
         </div>
       ) : (
-    
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
           {rooms.map((room) => (
             <div
               key={room._id}
               className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300 flex flex-col group"
             >
-              
               <div className="relative h-40 w-full bg-gray-100 overflow-hidden">
                 {room.image ? (
                   <img
@@ -48,21 +46,37 @@ const RoomCards = ({ rooms, onEdit, onDelete }) => {
                 </div>
               </div>
 
-              
               <div className="p-4 flex-grow flex flex-col">
                 <div className="mb-3">
-                  <span className="text-[9px] font-bold uppercase tracking-wider text-[#D4AF37] block">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-[#a3801c] block mb-1">
                     Room No {room.roomNumber}
                   </span>
                   <h5 className="text-base font-bold text-gray-900 leading-tight truncate">
                     {room.roomType} Room
                   </h5>
-                  <p className="text-sm font-black text-gray-700 mt-1">
-                    Rs.{Number(room.price).toLocaleString()}
-                  </p>
+                  <div
+                    style={{ borderRadius: "8px" }}
+                    className="mt-2 space-y-1 bg-gray-50/50 p-2 border border-gray-100/50"
+                  >
+                    <div className="flex justify-between items-center text-[11px]">
+                      <span className="text-gray-500 font-semibold">
+                        Night Package:
+                      </span>
+                      <span className="font-black text-gray-800">
+                        Rs.{Number(room.nightPackagePrice || 0).toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center text-[11px]">
+                      <span className="text-gray-500 font-semibold">
+                        Day Package:
+                      </span>
+                      <span className="font-black text-gray-800">
+                        Rs.{Number(room.dayPackagePrice || 0).toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
-                
                 <div className="flex gap-2 mb-3">
                   <div
                     className={`flex items-center gap-1.5 px-2 py-1 rounded-md border text-[10px] font-bold uppercase ${
@@ -97,25 +111,33 @@ const RoomCards = ({ rooms, onEdit, onDelete }) => {
                       {room.facilities.includes("WiFi") && (
                         <div className="flex items-center gap-0.5 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">
                           <Wifi size={10} className="text-blue-500" />
-                          <span className="text-[8px] font-bold text-blue-700">WiFi</span>
+                          <span className="text-[8px] font-bold text-blue-700">
+                            WiFi
+                          </span>
                         </div>
                       )}
                       {room.facilities.includes("Hot Water") && (
                         <div className="flex items-center gap-0.5 bg-red-50 px-1.5 py-0.5 rounded border border-red-100">
                           <Droplets size={10} className="text-red-500" />
-                          <span className="text-[8px] font-bold text-red-700">H2O</span>
+                          <span className="text-[8px] font-bold text-red-700">
+                            H2O
+                          </span>
                         </div>
                       )}
                       {room.facilities.includes("TV") && (
                         <div className="flex items-center gap-0.5 bg-purple-50 px-1.5 py-0.5 rounded border border-purple-100">
                           <Monitor size={10} className="text-purple-500" />
-                          <span className="text-[8px] font-bold text-purple-700">TV</span>
+                          <span className="text-[8px] font-bold text-purple-700">
+                            TV
+                          </span>
                         </div>
                       )}
                       {room.facilities.includes("Mini Fridge") && (
                         <div className="flex items-center gap-0.5 bg-green-50 px-1.5 py-0.5 rounded border border-green-100">
                           <Refrigerator size={10} className="text-green-550" />
-                          <span className="text-[8px] font-bold text-green-700">Fridge</span>
+                          <span className="text-[8px] font-bold text-green-700">
+                            Fridge
+                          </span>
                         </div>
                       )}
                     </div>
@@ -126,12 +148,14 @@ const RoomCards = ({ rooms, onEdit, onDelete }) => {
                 <div className="flex gap-2 pt-3 border-t border-gray-50">
                   <button
                     onClick={() => onEdit(room)}
+                    style={{ borderRadius: "8px" }}
                     className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-black text-white rounded-lg hover:bg-[#D4AF37] transition-all font-bold text-[10px] uppercase tracking-wider"
                   >
                     <Edit3 size={12} /> Edit
                   </button>
                   <button
                     onClick={() => onDelete(room._id)}
+                    style={{ borderRadius: "8px" }}
                     className="w-10 flex items-center justify-center py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all border border-red-100"
                   >
                     <Trash2 size={14} />

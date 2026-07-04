@@ -7,7 +7,9 @@ const createRoom = async (req, res) => {
       roomNumber,
       roomType,
       price,
+      nightPackagePrice,
       shortStayPrice,
+      dayPackagePrice,
       bedType,
       capacity,
       status,
@@ -15,6 +17,9 @@ const createRoom = async (req, res) => {
       condition,
       facilities,
     } = req.body;
+
+    const finalNightPrice = nightPackagePrice || price;
+    const finalDayPrice = dayPackagePrice || shortStayPrice;
 
     // Parse facilities if it's a JSON string
     if (typeof facilities === "string") {
@@ -25,7 +30,7 @@ const createRoom = async (req, res) => {
       }
     }
 
-    if (!roomNumber || !roomType || !price || !bedType || !capacity) {
+    if (!roomNumber || !roomType || !finalNightPrice || !bedType || !capacity) {
       return res
         .status(400)
         .json({ message: "Please provide all required fields" });
@@ -47,8 +52,8 @@ const createRoom = async (req, res) => {
     const newRoom = new RoomModel({
       roomNumber,
       roomType,
-      price,
-      shortStayPrice: shortStayPrice || 1500,
+      nightPackagePrice: finalNightPrice,
+      dayPackagePrice: finalDayPrice || 1500,
       bedType,
       capacity,
       image,
@@ -93,6 +98,15 @@ const updateRoom = async (req, res) => {
     }
 
     let updates = req.body;
+
+    if (updates.price) {
+      updates.nightPackagePrice = updates.price;
+      delete updates.price;
+    }
+    if (updates.shortStayPrice) {
+      updates.dayPackagePrice = updates.shortStayPrice;
+      delete updates.shortStayPrice;
+    }
 
     if (updates.facilities && typeof updates.facilities === "string") {
       try {

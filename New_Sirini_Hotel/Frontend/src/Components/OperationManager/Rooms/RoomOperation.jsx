@@ -74,8 +74,8 @@ const RoomOperation = () => {
     const data = new FormData();
     data.append("roomNumber", formData.roomNumber);
     data.append("roomType", formData.roomType);
-    data.append("price", formData.price);
-    data.append("shortStayPrice", formData.shortStayPrice || "1500");
+    data.append("nightPackagePrice", formData.nightPackagePrice);
+    data.append("dayPackagePrice", formData.dayPackagePrice || "1500");
     data.append("bedType", formData.bedType);
     data.append("capacity", formData.capacity);
     data.append("status", formData.status);

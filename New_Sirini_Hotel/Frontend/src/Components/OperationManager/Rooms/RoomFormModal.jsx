@@ -2,20 +2,27 @@ import React, { useState } from "react";
 import { X, Upload } from "lucide-react";
 
 const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
-  const [form, setForm] = useState(
-    initialData || {
+  const [form, setForm] = useState(() => {
+    if (initialData) {
+      return {
+        ...initialData,
+        nightPackagePrice: initialData.nightPackagePrice || initialData.price || "",
+        dayPackagePrice: initialData.dayPackagePrice || initialData.shortStayPrice || "1500",
+      };
+    }
+    return {
       roomNumber: "",
       roomType: "Single",
-      price: "",
-      shortStayPrice: "1500",
+      nightPackagePrice: "",
+      dayPackagePrice: "1500",
       bedType: "Single Bed",
       capacity: "1",
       description: "",
       condition: "Fan",
       status: "available",
       facilities: [],
-    },
-  );
+    };
+  });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(initialData?.image || null);
   const [galleryImages, setGalleryImages] = useState([]);
@@ -146,9 +153,9 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
   const handleSubmit = () => {
     if (
       !form.roomNumber ||
-      !form.price ||
+      !form.nightPackagePrice ||
       !form.capacity ||
-      !form.shortStayPrice
+      !form.dayPackagePrice
     ) {
       alert("Please fill in all required fields.");
       return;
@@ -340,9 +347,9 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
                 Night Package Price (Rs.) *
               </label>
               <input
-                name="price"
+                name="nightPackagePrice"
                 type="number"
-                value={form.price}
+                value={form.nightPackagePrice}
                 onChange={handleChange}
                 placeholder="3000"
                 className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 outline-none"
@@ -353,9 +360,9 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
                 Day Package Price (Rs.) *
               </label>
               <input
-                name="shortStayPrice"
+                name="dayPackagePrice"
                 type="number"
-                value={form.shortStayPrice}
+                value={form.dayPackagePrice}
                 onChange={handleChange}
                 placeholder="1500"
                 className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-yellow-400 outline-none"

@@ -11,11 +11,11 @@ const RoomSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    price: {
+    nightPackagePrice: {
       type: Number,
       required: true,
     },
-    shortStayPrice: {
+    dayPackagePrice: {
       type: Number,
       default: 1500,
     },
