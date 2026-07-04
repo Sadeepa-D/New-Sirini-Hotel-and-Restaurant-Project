@@ -229,7 +229,8 @@ const RestaurantSection = ({ data }) => {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-[10px] uppercase tracking-wider transition-all whitespace-nowrap font-semibold ${
+              style={{ borderRadius: "10px" }}
+              className={`flex items-center gap-1.5 px-3 py-2 text-[10px] uppercase tracking-wider transition-all whitespace-nowrap font-semibold ${
                 activeTab === tab
                   ? "bg-white text-amber-600 shadow-sm ring-1 ring-black/5"
                   : "text-gray-400 hover:text-gray-600 font-normal"

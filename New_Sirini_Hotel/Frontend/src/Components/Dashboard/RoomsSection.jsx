@@ -225,7 +225,7 @@ const RoomsSection = () => {
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex bg-gray-100 p-1 rounded-xl border border-gray-200 w-full overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] gap-1 sm:gap-0.5 shadow-inner">
+        <div className="flex bg-gray-100 p-1 rounded-xl border border-gray-200 gap-1 sm:gap-0.5 shadow-inner overflow-x-auto">
           <TabBtn
             active={activeTab === "Pending"}
             onClick={() => setActiveTab("Pending")}

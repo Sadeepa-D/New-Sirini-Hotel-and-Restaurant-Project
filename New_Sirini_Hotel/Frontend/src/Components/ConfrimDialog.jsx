@@ -33,22 +33,26 @@ const ConfirmDialog = ({ isOpen, onConfirm, onCancel, title, message, type = "de
           )}
         </p>
 
-        {/* Buttons */}
         <div className="flex flex-col sm:flex-row gap-3">
+          {/* Cancel button — red */}
           <button
             onClick={onCancel}
-            className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 py-3 font-semibold text-sm text-white transition-all duration-300 transform hover:scale-105 active:scale-95"
+            style={{ background: "#ef4444", borderRadius: "14px" }}
           >
             <X size={16} />
             Cancel
           </button>
+          {/* Confirm button — amber or red based on type */}
           <button
             onClick={onConfirm}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm text-white transition-colors ${
-              type === "delete"
-                ? "bg-red-500 hover:bg-red-600"
-                : "bg-amber-500 hover:bg-amber-600"
-            }`}
+            className="flex-1 flex items-center justify-center gap-2 py-3 font-semibold text-sm text-white transition-all duration-300 transform hover:scale-105 active:scale-95"
+            style={{
+              background: type === "delete"
+                ? "linear-gradient(to right, #dc2626, #ef4444)"
+                : "linear-gradient(to right, #d97706, #f59e0b)",
+              borderRadius: "14px",
+            }}
           >
             {type === "delete"
               ? <><Trash2 size={16} /> Delete</>
