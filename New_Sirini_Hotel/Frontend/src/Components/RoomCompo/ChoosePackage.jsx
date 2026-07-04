@@ -3,18 +3,18 @@ import React from "react";
 export const PACKAGES = [
   {
     id: "day",
-    label: "Mid Day Stay",
-    timeRange: "12:00 PM – 3:00 PM",
+    label: "Day Package",
+    timeRange: "10:00 AM – 3:00 PM",
     icon: "☀️",
-    description: "3-hour daytime access. Cannot be booked on Full Day dates.",
+    description: "5-hour daytime access. Cannot be booked on Full Day dates.",
   },
   {
     id: "fullday",
-    label: "Overnight Stay",
-    timeRange: "4:00 PM – 10:00 AM",
+    label: "Night Package",
+    timeRange: "4:00 PM – 9:00 AM",
     icon: "🏨",
     description:
-      "Check in at 4 PM, check out at 10 AM. Select your date range.",
+      "Check in at 4 PM, check out at 9 AM. Select your date range.",
   },
 ];
 

@@ -292,10 +292,11 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
                 LKR {total.toFixed(2)}
               </span>
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-3 justify-center">
               <button
                 onClick={onClose}
-                className="flex-1 py-1.5 sm:py-3 px-1 sm:px-4 bg-gray-300 text-gray-700 rounded-xl hover:bg-gray-400 transition-colors font-bold text-[10px] sm:text-xs md:text-base leading-tight shadow-md"
+                style={{ borderRadius: "10px" }}
+                className="w-[44%] py-2 sm:py-3 px-2 sm:px-4 bg-gray-300 text-gray-700 hover:bg-gray-400 transition-all duration-300 transform hover:scale-105 active:scale-95 font-bold text-[10px] sm:text-xs md:text-sm leading-tight shadow-md"
               >
                 Find more dishes
               </button>
@@ -308,7 +309,8 @@ const CartComp = ({ onClose, cartItems = [], setCartItems, onCheckout }) => {
                       )
                     : onCheckout(cartItems)
                 }
-                className="flex-1 py-1.5 sm:py-3 px-1 sm:px-4 bg-linear-to-r from-amber-500 to-amber-600 text-white rounded-xl hover:from-amber-600 hover:to-amber-700 transition-all font-bold text-[10px] sm:text-xs md:text-base leading-tight shadow-lg hover:shadow-xl"
+                style={{ borderRadius: "10px" }}
+                className="w-[44%] py-2 sm:py-3 px-2 sm:px-4 bg-linear-to-r from-amber-500 to-amber-600 text-white hover:from-amber-600 hover:to-amber-700 transition-all duration-300 transform hover:scale-105 active:scale-95 font-bold text-[10px] sm:text-xs md:text-sm leading-tight shadow-lg hover:shadow-xl"
               >
                 Proceed to Checkout
               </button>

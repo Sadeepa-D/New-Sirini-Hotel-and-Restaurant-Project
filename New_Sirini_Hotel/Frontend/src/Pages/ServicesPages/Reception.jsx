@@ -26,6 +26,7 @@ export default function Reception() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isFabVisible, setIsFabVisible] = useState(false);
   const formSectionRef = useRef(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   const fetchBookedDates = async () => {
     try {
@@ -127,7 +128,14 @@ export default function Reception() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-2 md:mt-3 lg:mt-4">
             <button
               onClick={() => handleadrequest()}
-              className="bg-yellow-500 hover:bg-amber-700 text-black px-5 py-2 text-xs md:px-7 md:py-2.5 md:text-sm lg:px-8 lg:py-3 lg:text-sm rounded-full font-semibold uppercase tracking-widest transition-all duration-300 shadow-lg mt-2 md:mt-3 lg:mt-4"
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              style={{
+                backgroundColor: isHovered ? "#facc15" : "#ffffff",
+                color: "#000000",
+                borderRadius: "9999px",
+              }}
+              className="px-5 py-2 text-xs md:px-7 md:py-2.5 md:text-sm lg:px-8 lg:py-3 lg:text-sm font-semibold uppercase tracking-widest transition-all duration-300 shadow-lg mt-2 md:mt-3 lg:mt-4"
             >
               {showForm ? "Close " : "Book Your Pre-Visit"}
             </button>

@@ -7,11 +7,32 @@ import {
   Users,
   Wind,
   Star,
+  Wifi,
+  Droplets,
+  Tv,
+  Refrigerator,
+  Coffee,
+  Car,
+  Utensils,
 } from "lucide-react";
 import StarRating from "../StarRating";
 
+const getFacilityIcon = (facility) => {
+  const name = facility.toLowerCase();
+  if (name.includes("wifi") || name.includes("internet")) return <Wifi size={14} className="text-blue-500" />;
+  if (name.includes("hot water") || name.includes("shower") || name.includes("water")) return <Droplets size={14} className="text-cyan-500" />;
+  if (name.includes("tv") || name.includes("television") || name.includes("monitor")) return <Tv size={14} className="text-purple-500" />;
+  if (name.includes("fridge") || name.includes("refrigerator")) return <Refrigerator size={14} className="text-emerald-500" />;
+  if (name.includes("ac") || name.includes("air cond") || name.includes("cooling")) return <Wind size={14} className="text-sky-500" />;
+  if (name.includes("breakfast") || name.includes("food") || name.includes("meal")) return <Coffee size={14} className="text-amber-600" />;
+  if (name.includes("parking")) return <Car size={14} className="text-slate-600" />;
+  if (name.includes("restaurant") || name.includes("dining")) return <Utensils size={14} className="text-red-500" />;
+  return <Star size={14} className="text-orange-500" />;
+};
+
 function RoomFullDetails({ room, isOpen, onClose, onBookNow }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   if (!isOpen || !room) return null;
 
@@ -69,10 +90,11 @@ function RoomFullDetails({ room, isOpen, onClose, onBookNow }) {
               <img
                 src={images[currentImageIndex]}
                 alt="Room"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover cursor-zoom-in transition-transform duration-500 hover:scale-105"
+                onClick={() => setIsLightboxOpen(true)}
               />
 
-              <div className="absolute inset-0 bg-linear-to-t from-slate-950/45 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-slate-950/45 via-transparent to-transparent pointer-events-none" />
 
               {/* Navigation Arrows */}
               <button
@@ -95,7 +117,7 @@ function RoomFullDetails({ room, isOpen, onClose, onBookNow }) {
               </button>
 
               {/* Image Counter */}
-              <div className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 bg-slate-950/70 text-white px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-sm font-medium tracking-wide backdrop-blur-sm ring-1 ring-white/10">
+              <div className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 bg-slate-950/70 text-white px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-sm font-medium tracking-wide backdrop-blur-sm ring-1 ring-white/10 pointer-events-none">
                 {currentImageIndex + 1} / {images.length}
               </div>
             </div>
@@ -140,7 +162,7 @@ function RoomFullDetails({ room, isOpen, onClose, onBookNow }) {
             {/* Price */}
             <div className="rounded-2xl bg-white p-3 sm:p-4 shadow-sm ring-1 ring-slate-100">
               <p className="text-slate-500 text-[10px] sm:text-xs font-semibold mb-1 sm:mb-2 uppercase tracking-[0.22em]">
-                PRICE / NIGHT
+                NIGHT PACKAGE
               </p>
               <p className="text-lg sm:text-xl font-bold text-orange-600">
                 Rs. {room.price?.toLocaleString()}
@@ -149,7 +171,7 @@ function RoomFullDetails({ room, isOpen, onClose, onBookNow }) {
 
             <div className="rounded-2xl bg-white p-3 sm:p-4 shadow-sm ring-1 ring-slate-100">
               <p className="text-slate-500 text-[10px] sm:text-xs font-semibold mb-1 sm:mb-2 uppercase tracking-[0.22em]">
-                PRICE / MIDDAY
+                DAY PACKAGE
               </p>
               <p className="text-lg sm:text-xl font-bold text-orange-600">
                 Rs. {room.shortStayPrice?.toLocaleString()}
@@ -238,8 +260,9 @@ function RoomFullDetails({ room, isOpen, onClose, onBookNow }) {
                 {room.facilities.map((facility, index) => (
                   <span
                     key={index}
-                    className="bg-orange-50 text-orange-700 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium ring-1 ring-orange-100"
+                    className="inline-flex items-center gap-1.5 bg-orange-50 text-orange-700 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium ring-1 ring-orange-100/50"
                   >
+                    {getFacilityIcon(facility)}
                     {facility}
                   </span>
                 ))}
@@ -254,24 +277,110 @@ function RoomFullDetails({ room, isOpen, onClose, onBookNow }) {
                 STATUS
               </p>
               <div
-                className={`inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-semibold shadow-sm ${
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border shadow-sm ${
                   room.status === "available"
-                    ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100"
-                    : "bg-rose-50 text-rose-700 ring-1 ring-rose-100"
+                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                    : "bg-rose-50 text-rose-700 border-rose-200"
                 }`}
               >
-                {room.status === "available" ? "✓ Available" : "Not Available"}
+                <span
+                  className={`w-1.5 h-1.5 rounded-full ${
+                    room.status === "available"
+                      ? "bg-emerald-500 animate-pulse"
+                      : "bg-rose-500"
+                  }`}
+                />
+                {room.status === "available" ? "Available" : "Not Available"}
               </div>
             </div>
             <button
               onClick={handleBookNow}
-              className="w-full sm:w-auto bg-linear-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white px-5 sm:px-7 py-2.5 sm:py-3 rounded-xl font-semibold transition-all duration-300 text-sm sm:text-base shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 hover:-translate-y-0.5"
+              style={{ borderRadius: "12px" }}
+              className="w-full sm:w-auto bg-linear-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white px-5 sm:px-7 py-2.5 sm:py-3 font-semibold transition-all duration-300 text-sm sm:text-base shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 hover:-translate-y-0.5"
             >
               Book Now
             </button>
           </div>
         </div>
       </div>
+
+      {/* Fullscreen Lightbox Overlay */}
+      {isLightboxOpen && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center p-2 sm:p-4 select-none cursor-pointer"
+          onClick={() => setIsLightboxOpen(false)}
+        >
+          <style>{`
+            @keyframes lightboxFadeInZoom {
+              from {
+                opacity: 0;
+                transform: scale(0.93);
+              }
+              to {
+                opacity: 1;
+                transform: scale(1);
+              }
+            }
+          `}</style>
+
+          {/* Close button */}
+          <button
+            onClick={() => setIsLightboxOpen(false)}
+            className="absolute top-4 right-4 z-10 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 p-3 rounded-full transition-all duration-300 backdrop-blur-md shadow-lg"
+            aria-label="Close fullscreen view"
+          >
+            <X size={24} />
+          </button>
+
+          {/* Left Arrow */}
+          {images.length > 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handlePrevImage();
+              }}
+              className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-all duration-300 backdrop-blur-md shadow-lg hover:scale-105"
+              aria-label="Previous image"
+            >
+              <ChevronLeft size={24} />
+            </button>
+          )}
+
+          {/* Large Image Container */}
+          <div
+            className="w-full max-w-[95vw] h-full max-h-[90vh] flex items-center justify-center relative cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={images[currentImageIndex]}
+              alt="Room Fullscreen"
+              className="max-w-full max-h-full object-contain rounded-xl shadow-2xl transition-all duration-300 select-none"
+              style={{
+                animation: "lightboxFadeInZoom 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+              }}
+            />
+          </div>
+
+          {/* Right Arrow */}
+          {images.length > 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleNextImage();
+              }}
+              className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-all duration-300 backdrop-blur-md shadow-lg hover:scale-105"
+              aria-label="Next image"
+            >
+              <ChevronRight size={24} />
+            </button>
+          )}
+
+          {/* Image Counter Badge */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/90 text-xs sm:text-sm font-semibold tracking-widest uppercase bg-black/60 px-4 py-2 rounded-full border border-white/10 backdrop-blur-md shadow-md">
+            {currentImageIndex + 1} / {images.length}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
