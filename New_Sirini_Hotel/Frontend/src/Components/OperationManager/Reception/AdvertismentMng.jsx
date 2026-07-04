@@ -283,7 +283,8 @@ const AdvertismentMng = () => {
             setAds(allAds);
             setSearch("");
           }}
-          className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full transition-colors cursor-pointer whitespace-nowrap ${
+          style={{ borderRadius: "10px" }}
+          className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 transition-all cursor-pointer whitespace-nowrap transform hover:scale-105 active:scale-95 duration-300 ease-in-out ${
             selectedStatus === null
               ? "bg-blue-100 text-blue-700 border-2 border-blue-400"
               : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -296,11 +297,12 @@ const AdvertismentMng = () => {
             <button
               key={key}
               onClick={() => fetchAdsByStatus(key)}
+              style={{ borderRadius: "10px" }}
               className={`flex items-center gap-1.5 ${
                 selectedStatus === key
                   ? `${bg} ${text} border-2 border-current shadow-md`
                   : `${bg} ${text} opacity-60 hover:opacity-100`
-              } text-xs font-semibold px-3 py-1.5 rounded-full transition-all cursor-pointer whitespace-nowrap`}
+              } text-xs font-semibold px-3 py-1.5 transition-all cursor-pointer whitespace-nowrap transform hover:scale-105 active:scale-95 duration-300 ease-in-out`}
             >
               <Icon size={12} />
               {label}: {allAds.filter((a) => a.status === key).length}
