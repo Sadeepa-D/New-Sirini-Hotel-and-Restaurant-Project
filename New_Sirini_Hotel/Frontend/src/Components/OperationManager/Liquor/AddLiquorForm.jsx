@@ -25,7 +25,7 @@ const AddLiquorForm = ({ onClose, initialData, onSubmit }) => {
 
   useEffect(() => {
     if (initialData) {
-      // Ensure all values are strings, never null or undefined
+      
       const cleanedData = Object.keys(initialData).reduce((acc, key) => {
         acc[key] = initialData[key] ?? "";
         return acc;

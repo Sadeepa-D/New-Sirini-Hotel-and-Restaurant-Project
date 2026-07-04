@@ -75,12 +75,10 @@ const AppointmentAnalysis = () => {
 
   return (
     <div className="bg-white w-full h-full rounded-3xl p-4 shadow-xl border border-gray-100 flex flex-col gap-3">
-      {/* Top Header Layer: Compact Icon & Month Dropdown Select */}
       <div className="flex flex-col gap-3">
         <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-wider">
           Appointments
         </h3>
-        {/* Right Side: High-End Minimalist Custom Dropdown */}
         <div className="relative inline-block self-end group">
           <select
             value={selectedMonth}
@@ -108,9 +106,7 @@ const AppointmentAnalysis = () => {
         </div>
       </div>
 
-      {/* Main Rows Area Container */}
       <div className="flex flex-col gap-2">
-        {/* ROW 1: PENDING APPOINTMENTS */}
         <div className="flex items-center justify-between px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
           <div className="flex items-center gap-3">
             <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-xs animate-pulse" />
@@ -123,7 +119,6 @@ const AppointmentAnalysis = () => {
           </span>
         </div>
 
-        {/* ROW 2: COMPLETED */}
         <div className="flex items-center justify-between px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
           <div className="flex items-center gap-3">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-xs" />
@@ -136,7 +131,6 @@ const AppointmentAnalysis = () => {
           </span>
         </div>
 
-        {/* ROW 3: CANCELLED */}
         <div className="flex items-center justify-between px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
           <div className="flex items-center gap-3">
             <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-xs" />
@@ -149,7 +143,6 @@ const AppointmentAnalysis = () => {
           </span>
         </div>
 
-        {/* ROW 4: OVERDUE */}
         <div
           className={`flex items-center justify-between px-3 py-2 border rounded-xl transition-all duration-300 ${
             currentStats.Overdue > 0
@@ -244,7 +237,6 @@ const ReceptionHallBookingAnalysis = () => {
           Hall Bookings
         </h3>
 
-        {/* Scrollable Month Selector */}
         <div className="relative inline-block self-end">
           <select
             value={selectedMonth}
@@ -272,9 +264,8 @@ const ReceptionHallBookingAnalysis = () => {
         </div>
       </div>
 
-      {/* Main Status Category Content Rows */}
       <div className="flex flex-col gap-2">
-        {/* ROW 1: DAY - CONFIRMED */}
+      
         <div className="flex items-center justify-between px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
           <div className="flex items-center gap-3">
             <div className="p-1.5 bg-amber-50 text-amber-500 rounded-lg border border-amber-100/50">
@@ -289,7 +280,7 @@ const ReceptionHallBookingAnalysis = () => {
           </span>
         </div>
 
-        {/* ROW 2: DAY - CANCELLED */}
+      
         <div className="flex items-center justify-between px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
           <div className="flex items-center gap-3">
             <div className="p-1.5 bg-rose-50 text-rose-400 rounded-lg border border-rose-100/50">
@@ -304,7 +295,7 @@ const ReceptionHallBookingAnalysis = () => {
           </span>
         </div>
 
-        {/* ROW 3: NIGHT - CONFIRMED */}
+      
         <div className="flex items-center justify-between px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
           <div className="flex items-center gap-3">
             <div className="p-1.5 bg-indigo-50 text-indigo-500 rounded-lg border border-indigo-100/50">
@@ -319,7 +310,7 @@ const ReceptionHallBookingAnalysis = () => {
           </span>
         </div>
 
-        {/* ROW 4: NIGHT - CANCELLED */}
+      
         <div className="flex items-center justify-between px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
           <div className="flex items-center gap-3">
             <div className="p-1.5 bg-rose-50 text-rose-400 rounded-lg border border-rose-100/50">
@@ -374,9 +365,9 @@ const Receptionhallcommonalysis = () => {
         </h3>
       </div>
 
-      {/* Main Structural Content Segment Rows (Matches Image Sketch Layout) */}
+      
       <div className="flex flex-col gap-3.5">
-        {/* ROW 1: HOTEL PACKAGES ROW SECTION */}
+       
         <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2 px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
           <div className="flex items-center gap-2.5">
             <div className="p-2 bg-amber-50 text-amber-500 rounded-xl border border-amber-100/40 shrink-0">
@@ -386,7 +377,7 @@ const Receptionhallcommonalysis = () => {
               Hotel Packages
             </span>
           </div>
-          {/* Inner Counter Sub-Grids */}
+        
           <div className="flex items-center gap-2 self-end sm:self-auto">
             <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2 py-1 rounded-lg border border-emerald-100/50 text-[10px] font-black uppercase">
               <Eye size={12} /> {commonStats.activePackages} Active
@@ -397,7 +388,7 @@ const Receptionhallcommonalysis = () => {
           </div>
         </div>
 
-        {/* ROW 2: CATERING ITEMS ROW SECTION */}
+        
         <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2 px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
           <div className="flex items-center gap-2.5">
             <div className="p-2 bg-rose-50 text-rose-500 rounded-xl border border-rose-100/40 shrink-0">
@@ -417,7 +408,7 @@ const Receptionhallcommonalysis = () => {
           </div>
         </div>
 
-        {/* ROW 3: ADVERTISEMENTS ROW SECTION */}
+        
         <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2 px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
           <div className="flex items-center gap-2.5">
             <div className="p-2 bg-indigo-50 text-indigo-500 rounded-xl border border-indigo-100/40 shrink-0">
@@ -468,7 +459,6 @@ const PackageBookedCount = () => {
     fetchPackageBookingCounts();
   }, []);
 
-  // Style array matrix to give auto-generated rows unique theme variations automatically
   const badgeStyles = [
     { bg: "bg-amber-50 text-amber-500 border-amber-100/50" },
     { bg: "bg-emerald-50 text-emerald-500 border-emerald-100/50" },
@@ -478,13 +468,13 @@ const PackageBookedCount = () => {
 
   return (
     <div className="bg-white w-full max-w-sm rounded-3xl p-5 shadow-xl border border-gray-100 flex flex-col gap-4">
-      {/* Top Header Layer: Bold Title & Year Display Indicator Badge */}
+      
       <div className="flex flex-col gap-3">
         <h3 className="text-xl font-black text-slate-800 uppercase tracking-wide font-sans">
           Package Bookings
         </h3>
 
-        {/* High-End Mock Selector Container (Displays current active year space) */}
+       
         <div className="relative inline-block self-end">
           <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl pl-3 pr-6 py-2 text-xs font-bold text-gray-700 select-none">
             <CalendarDays size={14} className="text-gray-400" />
@@ -497,10 +487,10 @@ const PackageBookedCount = () => {
         </div>
       </div>
 
-      {/* Dynamic List Content Rows Container */}
+    
       <div className="flex flex-col gap-2">
         {loading ? (
-          // Skeletons loader state tracker text
+         
           <p className="text-xs font-bold text-center text-gray-400 uppercase tracking-widest py-6 animate-pulse">
             Loading packages...
           </p>
@@ -509,9 +499,9 @@ const PackageBookedCount = () => {
             No active packages found
           </p>
         ) : (
-          // AUTO-GENERATE ROWS: Loops through array returned from your backend controller
+          
           packageStats.map((item, index) => {
-            // Pick a unique badge background style using index remainder rotation math
+           
             const currentStyle = badgeStyles[index % badgeStyles.length];
 
             return (
@@ -519,7 +509,7 @@ const PackageBookedCount = () => {
                 key={item.packageName || index}
                 className="flex items-center justify-between px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200"
               >
-                {/* Left Section: Icon and Title mapping fields */}
+                
                 <div className="flex items-center gap-3">
                   <div
                     className={`p-1.5 rounded-lg border ${currentStyle.bg} shrink-0 flex items-center justify-center`}
@@ -531,7 +521,7 @@ const PackageBookedCount = () => {
                   </span>
                 </div>
 
-                {/* Right Section: Real-time Database Counts field output */}
+                
                 <span className="text-sm font-black text-neutral-900 pr-1">
                   {item.count}
                 </span>

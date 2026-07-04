@@ -234,20 +234,20 @@ const UserManagement = () => {
         </div>
       </div>
 
-      {/* Unified Responsive Grid */}
+      
       <div className="grid grid-cols-1 gap-4">
         {filteredUsers.map((user) => (
           <div
             key={user._id}
             className="bg-white rounded-3xl border border-gray-100 p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:shadow-md transition-all group"
           >
-            {/* LEFT: Identity Section (35% width on desktop) */}
+           
             <div className="flex items-center gap-4 md:w-[35%] min-w-0">
               <div
                 className={`w-1.5 h-12 rounded-full hidden md:block ${user.Status === "Active" ? "bg-green-500" : "bg-red-500"}`}
               />
               <div className="w-15 h-17 shrink-0 rounded-2xl bg-yellow-100 text-yellow-700 flex items-center justify-center font-black text-lg shadow-sm">
-                {/* {user.name?.charAt(0).toUpperCase()} */}
+                
                 {!user.image ? (
                   user.name?.charAt(0).toUpperCase()
                 ) : (
@@ -273,7 +273,7 @@ const UserManagement = () => {
               </div>
             </div>
 
-            {/* MIDDLE: Role & Status (Centered on desktop) */}
+           
             <div className="flex flex-col items-start md:items-center justify-center gap-2 px-2 md:flex-1">
               <span className="flex items-center gap-1.5 text-[10px] font-bold text-gray-600 bg-gray-50 px-3 py-1 rounded-lg border border-gray-100 whitespace-nowrap">
                 <ShieldCheck size={12} className="text-gray-400" />
@@ -290,7 +290,7 @@ const UserManagement = () => {
               </span>
             </div>
 
-            {/* RIGHT: Actions Hub (Fixed width on desktop) */}
+            
             <div className="flex items-center justify-end md:w-[30%] shrink-0">
               <div className="flex items-center bg-gray-50 p-1.5 rounded-2xl border border-gray-100 gap-1 w-full md:w-auto justify-around md:justify-end">
                 <button

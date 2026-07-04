@@ -225,7 +225,6 @@ const LiquorInventory = ({
 
         {/* Global Structural Layout Wrapper */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-          {/* LEFT/MAIN CONTAINER: Category & Explorer Panel */}
           <div className="lg:col-span-2 bg-white rounded-xl p-4 sm:p-6 border border-gray-100 shadow-xl flex flex-col gap-6 lg:self-start">
             {/* Category Tab Layout & Search */}
             <div className="flex overflow-x-auto gap-3 border-b border-gray-100 pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] sm:overflow-visible sm:flex-row sm:items-center sm:justify-between sm:gap-4">
@@ -329,7 +328,7 @@ const LiquorInventory = ({
             </div>
           </div>
 
-          {/* RIGHT SIDEBAR PANEL: Quick Stock Adjustments */}
+          {/* RIGHT/SECONDARY CONTAINER: Quick Stock Adjuster */}
           <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-100 shadow-xl flex flex-col gap-4 h-full">
             <div className="flex items-center gap-2 border-b border-gray-100 pb-2">
               <PackageCheck size={18} className="text-amber-500 shrink-0" />

@@ -311,9 +311,7 @@ const Admin = () => {
                         <div className="font-semibold">
                           Restaurant, Liquor Management
                         </div>
-                        {/* <span className="text-xs text-gray-400 group-hover:text-amber-500/70">
-                          Restaurant, Liquor
-                        </span> */}
+                        
                       </div>
                     </button>
                     <div className="h-px bg-gray-100 my-1.5"></div>
@@ -332,9 +330,7 @@ const Admin = () => {
                         <div className="font-semibold">
                           Reception, Rooms Management
                         </div>
-                        {/* <span className="text-xs text-gray-400 group-hover:text-amber-500/70">
-                          Reception, Rooms
-                        </span> */}
+                        
                       </div>
                     </button>
                   </div>

@@ -122,7 +122,7 @@ const ReceptionHallBookingCard = ({ booking, onEdit, onCancel }) => {
             </span>
           </div>
         </div>
-        {/* Special requests - Now with a min-height and consistent spacing */}
+        
         <div className="min-h-16 mb-2">
           {/* Wraps the requests in a fixed-height container */}
           {booking.specialRequests ? (
