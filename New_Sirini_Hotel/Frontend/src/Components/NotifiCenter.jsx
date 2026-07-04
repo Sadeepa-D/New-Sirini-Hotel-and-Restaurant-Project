@@ -82,7 +82,8 @@ const NotifiCenter = ({
                 onMarkAllAsRead();
               }}
               disabled={unreadCount === 0}
-              className="flex-1 flex items-center justify-center gap-1.5 text-xs font-medium text-zinc-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1.5 rounded-lg transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white/5"
+              style={{ borderRadius: "12px" }}
+              className="flex-1 flex items-center justify-center gap-1.5 text-xs font-medium text-zinc-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1.5 transition-all duration-200 hover:scale-102 active:scale-98 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white/5"
             >
               <CheckCheck size={13} />
               <span>Mark all read</span>
@@ -92,7 +93,8 @@ const NotifiCenter = ({
                 e.stopPropagation();
                 onClearAll();
               }}
-              className="flex-1 flex items-center justify-center gap-1.5 text-xs font-medium text-rose-400 hover:text-rose-300 bg-white/5 hover:bg-rose-500/10 border border-white/10 hover:border-rose-500/30 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+              style={{ borderRadius: "12px" }}
+              className="flex-1 flex items-center justify-center gap-1.5 text-xs font-medium text-rose-400 hover:text-rose-300 bg-white/5 hover:bg-rose-500/10 border border-white/10 hover:border-rose-500/30 px-3 py-1.5 transition-all duration-200 hover:scale-102 active:scale-98 cursor-pointer"
             >
               <Trash2 size={13} />
               <span>Clear all</span>
@@ -160,7 +162,8 @@ const NotifiCenter = ({
                           e.stopPropagation();
                           onFeedback(n);
                         }}
-                        className="mt-2 flex items-center gap-1.5 text-[11px] font-bold text-amber-400 hover:text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 px-2.5 py-1 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95"
+                        style={{ borderRadius: "10px" }}
+                        className="mt-2 flex items-center gap-1.5 text-[11px] font-bold text-amber-400 hover:text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 px-2.5 py-1 transition-all duration-200 hover:scale-105 active:scale-95"
                       >
                         <MessageSquare size={11} />
                         Leave Feedback
