@@ -99,15 +99,17 @@ const ReceptionHallBookMng = () => {
     });
   };
 
+  const normalizedSearch = search.trim().toLowerCase();
   const filtered = bookings.filter((b) => {
     const matchesSearch =
-      b.customerName?.toLowerCase().includes(search.toLowerCase()) ||
-      b.eventType?.toLowerCase().includes(search.toLowerCase()) ||
-      b.refnumber?.toLowerCase().includes(search.toLowerCase()) ||
-      b._id?.toLowerCase().includes(search.toLowerCase());
+      !normalizedSearch ||
+      b.customerName?.toLowerCase().includes(normalizedSearch) ||
+      b.eventType?.toLowerCase().includes(normalizedSearch) ||
+      b.refnumber?.toLowerCase().includes(normalizedSearch) ||
+      b._id?.toLowerCase().includes(normalizedSearch);
 
     const matchesStatus = b.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    return normalizedSearch ? matchesSearch : matchesStatus;
   });
 
   const handleEdit = (booking) => {
@@ -220,6 +222,7 @@ const ReceptionHallBookMng = () => {
             key={status}
             onClick={() => {
               setStatusFilter(status);
+              setSearch("");
             }}
             style={{ borderRadius: "10px" }}
             className={`px-4 py-2 text-xs font-bold uppercase tracking-widest transition-all duration-300 shadow-sm border whitespace-nowrap transform hover:scale-105 active:scale-95 ease-in-out cursor-pointer ${

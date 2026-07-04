@@ -18,7 +18,7 @@ const AppointmentMng = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `${VITE_URL}/api/receptionhall/appointment/view/${activeTab.toLowerCase()}`,
+        `${VITE_URL}/api/receptionhall/appointment/view`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -33,7 +33,7 @@ const AppointmentMng = () => {
 
   useEffect(() => {
     fetchAppointments();
-  }, [activeTab]);
+  }, []);
 
   const sliderRef = useRef(null);
   const scrollSlider = (direction) => {
@@ -69,13 +69,17 @@ const AppointmentMng = () => {
   };
 
   const tabs = ["Pending", "Completed", "Canceled", "Overdue"];
+  const normalizeStatus = (status) =>
+    status === "Cancelled" ? "Canceled" : status;
 
+  const normalizedSearch = searchTerm.trim().toLowerCase();
   const filteredAppointments = appointments.filter((app) => {
-    const search = searchTerm.toLowerCase();
-    return (
-      app.name?.toLowerCase().includes(search) ||
-      app.appointcode?.toLowerCase().includes(search)
-    );
+    const matchesSearch =
+      !normalizedSearch ||
+      app.name?.toLowerCase().includes(normalizedSearch) ||
+      app.appointcode?.toLowerCase().includes(normalizedSearch);
+    const matchesTab = normalizeStatus(app.status) === activeTab;
+    return normalizedSearch ? matchesSearch : matchesTab;
   });
 
   return (
@@ -103,7 +107,10 @@ const AppointmentMng = () => {
           {tabs.map((tab) => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => {
+                setActiveTab(tab);
+                setSearchTerm("");
+              }}
               style={{ borderRadius: "10px" }}
               className={`px-4 py-2.5 text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap transform hover:scale-105 active:scale-95 duration-300 ease-in-out ${
                 activeTab === tab

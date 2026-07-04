@@ -150,14 +150,7 @@ const AdvertisementCard = ({
                 <Pencil size={13} /> Edit
               </button>
             )}
-            {/* {onDelete && (
-              <button
-                onClick={() => onDelete(ad._id)}
-                className="flex-1 flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold py-1.5 rounded-lg transition-colors"
-              >
-                <Trash2 size={13} /> Delete
-              </button>
-            )} */}
+            
           </div>
         )}
       </div>

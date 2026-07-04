@@ -84,7 +84,7 @@ const RoomFormModal = ({ initialData, onSubmit, onClose }) => {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
 
-    // Max limit is 4 images (existing + new)
+    // Max limit is 4 images
     const currentCount = keptGalleryImages.length + galleryImages.length;
     if (currentCount + files.length > 4) {
       alert(`You can upload a maximum of 4 gallery images. (Already selected: ${currentCount}, trying to add: ${files.length})`);

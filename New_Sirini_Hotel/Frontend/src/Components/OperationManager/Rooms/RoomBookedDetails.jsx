@@ -86,8 +86,8 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
     if (container) {
       const isMobile = window.innerWidth < 640;
       const scrollAmount = isMobile 
-        ? window.innerWidth * 0.75 + 16  // 75vw + gap
-        : 324;                           // 300px card + 24px gap (gap-6)
+        ? window.innerWidth * 0.75 + 16 
+        : 324;                           
       const newPosition =
         direction === "left"
           ? container.scrollLeft - scrollAmount

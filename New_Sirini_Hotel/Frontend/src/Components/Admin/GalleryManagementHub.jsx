@@ -39,7 +39,6 @@ const GalleryManagementHub = ({ onClose }) => {
 
   const categories = ["Reception", "Rooms", "Restaurant"];
 
-  // const handleFileChange = (e) => {};
   const handleDragOver = (e) => {
     e.preventDefault();
     setIsDragging(true);
@@ -223,7 +222,6 @@ const GalleryManagementHub = ({ onClose }) => {
               </div>
             </div>
 
-            {/* RIGHT: Upload Section */}
             <div className="w-full lg:w-[380px] bg-white p-4 sm:p-6 flex flex-col shadow-[-10px_0_30px_-15px_rgba(0,0,0,0.05)] overflow-y-auto order-1 lg:order-2 border-t lg:border-t-0 lg:border-l border-gray-200">
               <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-4 sm:mb-6 flex items-center gap-2">
                 <Upload size={18} className="text-amber-500 shrink-0" />
@@ -334,7 +332,6 @@ const GalleryManagementHub = ({ onClose }) => {
                 )}
               </div>
 
-              {/* Submit Action - FIXED: Disabled logic check for array length */}
               <div className="pt-2 sm:pt-3">
                 <button
                   onClick={handleUpload}
@@ -363,7 +360,6 @@ const GalleryManagementHub = ({ onClose }) => {
         </div>
       </div>
 
-      {/* Image Preview Modal */}
       {isPreviewOpen && filteredImages.length > 0 && (
         <div className="fixed inset-0 bg-black/90 z-[200] flex items-center justify-center p-2 sm:p-4 animate-in fade-in duration-200">
           <div className="relative w-full max-w-4xl my-auto min-h-fit max-h-[95vh] flex flex-col">
@@ -394,7 +390,6 @@ const GalleryManagementHub = ({ onClose }) => {
               </button>
             </div>
 
-            {/* Thumbnail Navigation - FIXED: Brackets and filter logic */}
             <div className="mt-3 sm:mt-4 flex gap-2 overflow-x-auto pb-2 px-2 scrollbar-hide">
               {filteredImages.map((item, idx) => (
                 <button

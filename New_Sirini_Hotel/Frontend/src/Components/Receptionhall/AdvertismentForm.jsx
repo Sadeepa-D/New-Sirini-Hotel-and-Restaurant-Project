@@ -97,7 +97,7 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
       }
       const token = localStorage.getItem("token");
       if (editData) {
-        // ================= EDIT MODE =================
+        
         await axios.put(
           `${API_URL}/api/receptionhall/advertisment/update/${editData._id}`,
           submitData,
@@ -119,7 +119,7 @@ const AdvertismentForm = ({ onClose, editData = null, onSuccess }) => {
 
         toast.success("Advertisement updated successfully!");
       } else {
-        // ================= ADD MODE =================
+        
         await axios.post(
           `${API_URL}/api/receptionhall/advertisment/add`,
           submitData,
