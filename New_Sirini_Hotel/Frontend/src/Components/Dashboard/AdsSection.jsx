@@ -97,6 +97,7 @@ const AdsSection = ({ data, onEdit, onDelete }) => {
       toast.dismiss(loading);
       toast.success("Advertisement deleted successfully.");
     } catch (error) {
+      toast.dismiss(loading);
       console.error("Error deleting advertisement:", error);
       toast.error("Failed to delete the advertisement. Please try again.");
     } finally {

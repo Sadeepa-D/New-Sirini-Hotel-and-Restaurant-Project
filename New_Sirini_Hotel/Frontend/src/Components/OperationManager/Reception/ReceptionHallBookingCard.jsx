@@ -81,7 +81,6 @@ const ReceptionHallBookingCard = ({ booking, onEdit, onCancel }) => {
         </div>
         {/* Divider */}
         <div className="h-px bg-gray-100" />
-
         {/* Details */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div className="flex items-center gap-2">
@@ -123,7 +122,6 @@ const ReceptionHallBookingCard = ({ booking, onEdit, onCancel }) => {
             </span>
           </div>
         </div>
-
         {/* Special requests - Now with a min-height and consistent spacing */}
         <div className="min-h-16 mb-2">
           {/* Wraps the requests in a fixed-height container */}

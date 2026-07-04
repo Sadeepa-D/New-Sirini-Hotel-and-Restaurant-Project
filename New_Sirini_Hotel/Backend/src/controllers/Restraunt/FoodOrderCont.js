@@ -25,7 +25,17 @@ const getCurrentSLTime = () => {
 
   return { slDate, slTime };
 };
+const timeToMinutes = (timeStr) => {
+  const [h, m] = timeStr.split(":").map(Number);
+  return h * 60 + m;
+};
 
+const canModifyOrder = (order) => {
+  const datePart = new Date(order.pickupDate).toISOString().split("T")[0];
+  const pickupDateTime = new Date(`${datePart}T${order.pickupTime}:00+05:30`);
+  const diffMinutes = (pickupDateTime.getTime() - Date.now()) / 60000;
+  return diffMinutes >= 45;
+};
 const GenarateFoodOrderCode = async () => {
   const prefix = "SH";
   const randomNumber = Math.floor(1000 + Math.random() * 9000);
@@ -66,6 +76,25 @@ const createFoodOrder = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    const phoneRegex = /^(?:\+94|0)?(7[0-8]\d{7}|[1-9]\d{8})$/;
+    if (!phoneRegex.test(phoneNumber)) {
+      return res.status(400).json({ message: "Invalid phone number format" });
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
+    const timeFormatRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+    if (!timeFormatRegex.test(pickupTime)) {
+      return res.status(400).json({ message: "Invalid pickup time format" });
+    }
+    const dateFormatRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (
+      !dateFormatRegex.test(pickupDate) ||
+      isNaN(new Date(pickupDate).getTime())
+    ) {
+      return res.status(400).json({ message: "Invalid pickup date format" });
+    }
     // Sri Lanka Time Validation
     const { slDate, slTime } = getCurrentSLTime();
     if (pickupDate < slDate) {
@@ -74,11 +103,23 @@ const createFoodOrder = async (req, res) => {
           "Selected date is in the past. Please choose today or a future date.",
       });
     }
-    if (pickupDate === slDate && pickupTime <= slTime) {
-      return res.status(400).json({
-        message:
-          "Selected time has already passed for today. Please choose a future time.",
-      });
+    if (pickupDate === slDate) {
+      const nowMinutes = timeToMinutes(slTime);
+      const pickupMinutes = timeToMinutes(pickupTime);
+
+      if (pickupMinutes <= nowMinutes) {
+        return res.status(400).json({
+          message:
+            "Selected time has already passed for today. Please choose a future time.",
+        });
+      }
+
+      if (pickupMinutes - nowMinutes < 60) {
+        return res.status(400).json({
+          message:
+            "Pick-up time must be at least 1 hour from now. Please choose a later time.",
+        });
+      }
     }
     const orderCode = await GenarateFoodOrderCode();
     const savedOrders = [];
@@ -174,7 +215,10 @@ const getFoodOrders = async (req, res) => {
     }
     res.status(200).json(foodOrders);
   } catch (error) {
-    res.status(500).json({ message: "Failed to retrieve food orders", error });
+    console.error("Error retrieving food order:", error);
+    res
+      .status(500)
+      .json({ message: "Failed to retrieve food order", error: error.message });
   }
 };
 const editfoodOrder = async (req, res) => {
@@ -216,6 +260,37 @@ const editfoodOrder = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    const timeFormatRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+    if (!timeFormatRegex.test(pickupTime)) {
+      return res.status(400).json({ message: "Invalid pickup time format" });
+    }
+    const dateFormatRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (
+      !dateFormatRegex.test(pickupDate) ||
+      isNaN(new Date(pickupDate).getTime())
+    ) {
+      return res.status(400).json({ message: "Invalid pickup date format" });
+    }
+
+    const existingOrder = await FoodOrder.findById(id);
+    if (!existingOrder) {
+      return res.status(404).json({ message: "Food order not found" });
+    }
+    if (!canModifyOrder(existingOrder)) {
+      return res.status(400).json({
+        message:
+          "You can only modify the order at least 45 minutes before the pickup time.",
+      });
+    }
+
+    const phoneRegex = /^(?:\+94|0)?(7[0-8]\d{7}|[1-9]\d{8})$/;
+    if (!phoneRegex.test(phoneNumber)) {
+      return res.status(400).json({ message: "Invalid phone number format" });
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
     // Sri Lanka Time Validation
     const { slDate, slTime } = getCurrentSLTime();
     if (pickupDate < slDate) {
@@ -224,11 +299,23 @@ const editfoodOrder = async (req, res) => {
           "Selected date is in the past. Please choose today or a future date.",
       });
     }
-    if (pickupDate === slDate && pickupTime <= slTime) {
-      return res.status(400).json({
-        message:
-          "Selected time has already passed for today. Please choose a future time.",
-      });
+    if (pickupDate === slDate) {
+      const nowMinutes = timeToMinutes(slTime);
+      const pickupMinutes = timeToMinutes(pickupTime);
+
+      if (pickupMinutes <= nowMinutes) {
+        return res.status(400).json({
+          message:
+            "Selected time has already passed for today. Please choose a future time.",
+        });
+      }
+
+      if (pickupMinutes - nowMinutes < 60) {
+        return res.status(400).json({
+          message:
+            "Pick-up time must be at least 1 hour from now. Please choose a later time.",
+        });
+      }
     }
     const updatedOrder = await FoodOrder.findByIdAndUpdate(
       id,
@@ -295,6 +382,12 @@ const deleteFoodOrder = async (req, res) => {
       return res.status(404).json({ message: "Food order not found" });
     }
 
+    if (!canModifyOrder(order)) {
+      return res.status(400).json({
+        message: "Cannot delete order within 45 minutes of pickup time",
+      });
+    }
+
     const newNotification = new NotifiModel({
       userId: order.userId,
       title: "Food Order Deleted",
@@ -307,7 +400,10 @@ const deleteFoodOrder = async (req, res) => {
 
     res.status(200).json({ message: "Food order marked as deleted" });
   } catch (error) {
-    res.status(500).json({ message: "Failed to delete food order", error });
+    console.error("Error deleting food order:", error);
+    res
+      .status(500)
+      .json({ message: "Failed to delete food order", error: error.message });
   }
 };
 

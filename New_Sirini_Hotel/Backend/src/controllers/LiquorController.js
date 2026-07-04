@@ -23,10 +23,18 @@ const addLiquor = async (req, res) => {
       lowStockThreshold,
     } = req.body;
 
-    if (!name || !buyingPrice || !sellingPrice || !category || !stockType) {
+    if (
+      !name ||
+      !buyingPrice ||
+      !sellingPrice ||
+      !category ||
+      !stockType ||
+      !volume ||
+      !brand
+    ) {
       return res.status(400).json({
         message:
-          "Name, Buying Price, Selling Price, Category, and Stock Type are required",
+          "Name, Buying Price, Selling Price, Category, Volume, and Brand are required",
       });
     }
     if (isNaN(buyingPrice) || buyingPrice <= 0) {
@@ -40,6 +48,11 @@ const addLiquor = async (req, res) => {
         .json({ message: "Selling Price must be a positive number" });
     }
 
+    if (sellingPrice <= buyingPrice) {
+      return res
+        .status(400)
+        .json({ message: "Selling Price must be greater than Buying Price" });
+    }
     if (!req.file) {
       return res.status(400).json({ message: "Please upload an image" });
     }

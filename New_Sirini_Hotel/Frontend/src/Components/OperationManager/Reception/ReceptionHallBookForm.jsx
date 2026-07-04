@@ -157,7 +157,9 @@ const ReceptionHallBookForm = ({
       toast.success(`${editData ? "Updated" : "Created"} booking successfully`);
       fetchBookings();
     } catch (error) {
-      toast.error("Failed to save booking");
+      const errorMessage =
+        error.response?.data?.message || "Failed to save booking";
+      toast.error(errorMessage);
     } finally {
       toast.dismiss(loadingToast);
     }

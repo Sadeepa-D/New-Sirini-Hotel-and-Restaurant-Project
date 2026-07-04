@@ -259,7 +259,7 @@ export default function BookingForm({ editData = null, onSuccess }) {
               <input
                 type="number"
                 min="40"
-                max="200"
+                max="250"
                 className={inputClass}
                 placeholder="40"
                 value={noOfGuests}
