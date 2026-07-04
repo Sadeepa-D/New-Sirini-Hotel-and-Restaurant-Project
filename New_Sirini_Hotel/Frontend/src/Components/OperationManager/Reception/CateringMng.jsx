@@ -18,7 +18,8 @@ const ActionRibbon = ({ item, onToggle, onEdit, onDelete }) => (
   <div className="absolute right-2 top-2 flex flex-col gap-1.5 z-10">
     <button
       onClick={() => onToggle(item._id)}
-      className={`w-8 h-8 rounded-full flex items-center justify-center shadow transition-colors ${
+      style={{ borderRadius: "15%" }}
+      className={`w-8 h-8 rounded-full flex items-center justify-center shadow transform hover:scale-110 active:scale-95 transition-all duration-300 ease-in-out ${
         item.status
           ? "bg-green-100 text-green-600 hover:bg-green-200"
           : "bg-gray-100 text-gray-400 hover:bg-gray-200"
@@ -28,13 +29,15 @@ const ActionRibbon = ({ item, onToggle, onEdit, onDelete }) => (
     </button>
     <button
       onClick={() => onEdit(item)}
-      className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 flex items-center justify-center shadow transition-colors"
+      style={{ borderRadius: "15%" }}
+      className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 flex items-center justify-center shadow transform hover:scale-110 active:scale-95 transition-all duration-300 ease-in-out"
     >
       <Pencil size={14} />
     </button>
     <button
       onClick={() => onDelete(item._id)}
-      className="w-8 h-8 rounded-full bg-red-100 text-red-500 hover:bg-red-200 flex items-center justify-center shadow transition-colors"
+      style={{ borderRadius: "15%" }}
+      className="w-8 h-8 rounded-full bg-red-100 text-red-500 hover:bg-red-200 flex items-center justify-center shadow transform hover:scale-110 active:scale-95 transition-all duration-300 ease-in-out"
     >
       <Trash2 size={14} />
     </button>
@@ -200,7 +203,8 @@ const CateringMng = () => {
             )}
           </div>
           <button
-            className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors shadow-sm"
+            style={{ borderRadius: "10px" }}
+            className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-sm transform hover:scale-105 active:scale-95 transition-all duration-300 ease-in-out"
             onClick={() => {
               setShowForm(true);
               setEditItem(null);
@@ -223,7 +227,8 @@ const CateringMng = () => {
           <button
             onClick={() => scrollSlider(-1)}
             aria-label="Scroll left"
-            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
+            style={{ borderRadius: "50%" }}
+            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all hover:scale-110 active:scale-90"
           >
             <ChevronLeft size={18} strokeWidth={2.5} />
           </button>
@@ -296,7 +301,8 @@ const CateringMng = () => {
           <button
             onClick={() => scrollSlider(1)}
             aria-label="Scroll right"
-            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all active:scale-90"
+            style={{ borderRadius: "50%" }}
+            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg text-gray-600 hover:text-amber-500 hover:border-amber-400 transition-all hover:scale-110 active:scale-90"
           >
             <ChevronRight size={18} strokeWidth={2.5} />
           </button>
