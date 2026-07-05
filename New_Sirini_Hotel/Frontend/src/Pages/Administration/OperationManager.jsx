@@ -7,6 +7,7 @@ import {
   LogOut,
   LayoutDashboard,
   ExternalLink,
+  Bell,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import LiquorManage from "../../Components/OperationManager/Liquor/LiquorMngHome";
@@ -14,6 +15,7 @@ import RestaurantManager from "../../Components/OperationManager/Restraunt/Restr
 import LiqourandRestruant from "../../Components/OperationManager/Dashboard_Anlyze/LiqourandRestruant";
 import toast from "react-hot-toast";
 import axios from "axios";
+import NotifiCenter from "../../Components/NotifiCenter";
 
 // --- Main Layout Component ---
 const OperationManager = () => {
@@ -21,6 +23,8 @@ const OperationManager = () => {
 
   const [activeTab, setActiveTab] = useState("dashboard");
   const [userdata, setUserdata] = useState([]);
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
 
   const VITE_URL = import.meta.env.VITE_API_URL;
 
@@ -40,9 +44,98 @@ const OperationManager = () => {
     }
   };
 
+  const fetchNotifications = async () => {
+    try {
+      if (!token) return;
+      const response = await axios.get(`${VITE_URL}/api/users/notifications`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setNotifications(response.data || []);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+
+  const handleMarkAsRead = async (id) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n._id === id ? { ...n, isRead: true } : n)),
+    );
+    try {
+      if (!token) return;
+      await axios.put(
+        `${VITE_URL}/api/users/notifications/markasread/`,
+        { notificationId: id },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    try {
+      if (!token) return;
+      await axios.put(
+        `${VITE_URL}/api/users/notifications/markallasread`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+    }
+  };
+
+  const handleClearAll = async () => {
+    try {
+      if (!token) return;
+      await axios.delete(`${VITE_URL}/api/users/notifications/clearall`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setNotifications([]);
+    } catch (error) {
+      console.error("Error clearing all notifications:", error);
+    }
+  };
+
   useEffect(() => {
     fetchUserData();
   }, []);
+
+  useEffect(() => {
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (!e.target.closest(".notifi-container-wrapper")) {
+        setNotificationOpen(false);
+      }
+    };
+
+    if (notificationOpen) {
+      document.addEventListener("mousedown", handleOutsideClick);
+      document.addEventListener("touchstart", handleOutsideClick);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("touchstart", handleOutsideClick);
+    };
+  }, [notificationOpen]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -84,6 +177,8 @@ const OperationManager = () => {
     }
   };
 
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
+
   return (
     <div className="flex flex-col h-screen bg-black font-sans">
       {/* Top Header */}
@@ -107,7 +202,21 @@ const OperationManager = () => {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
+            <div className="relative z-40 overflow-visible notifi-container-wrapper flex items-center gap-1 sm:gap-1.5 shrink-0">
+              <button
+                onClick={() => setNotificationOpen(!notificationOpen)}
+                className="relative p-1.5 sm:p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+                title="Notifications"
+              >
+                <div className="relative">
+                  <Bell size={16} className="sm:w-5 sm:h-5" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 bg-yellow-500 text-black font-bold text-[9px] flex items-center justify-center rounded-full">
+                      {unreadCount}
+                    </span>
+                  )}
+                </div>
+              </button>
               {userdata.Role === "Admin" && (
                 <button
                   className="p-1.5 sm:p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"
@@ -142,6 +251,15 @@ const OperationManager = () => {
                   className="w-full h-full object-cover"
                 />
               </div>
+              {notificationOpen && (
+                <NotifiCenter
+                  notifications={notifications}
+                  onMarkAsRead={handleMarkAsRead}
+                  onMarkAllAsRead={handleMarkAllAsRead}
+                  onClearAll={handleClearAll}
+                  onClose={() => setNotificationOpen(false)}
+                />
+              )}
             </div>
           </div>
           {/* Row 2: Navigation Tabs - Full Width Distribution */}
@@ -173,9 +291,7 @@ const OperationManager = () => {
           </div>
         </div>
 
-        
         <div className="hidden md:flex lg:hidden flex-col gap-3">
-          
           <div className="flex items-center justify-between">
             {/* Left: Logo & Brand */}
             <div className="flex items-center gap-3">
@@ -195,7 +311,21 @@ const OperationManager = () => {
             </div>
 
             {/* Right: Actions + Profile */}
-            <div className="flex items-center gap-3">
+            <div className="relative z-40 overflow-visible notifi-container-wrapper flex items-center gap-3">
+              <button
+                onClick={() => setNotificationOpen(!notificationOpen)}
+                className="relative p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+                title="Notifications"
+              >
+                <div className="relative">
+                  <Bell size={20} />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-yellow-500 text-black font-bold text-[10px] flex items-center justify-center rounded-full">
+                      {unreadCount}
+                    </span>
+                  )}
+                </div>
+              </button>
               {userdata.Role === "Admin" && (
                 <button
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 transition-colors group"
@@ -233,8 +363,19 @@ const OperationManager = () => {
                 <p className="text-xs font-bold text-gray-800 line-clamp-1 max-w-[120px]">
                   {userdata.name || "User Name"}
                 </p>
-                <p className="text-[10px] text-gray-500 font-medium">Manager 1</p>
+                <p className="text-[10px] text-gray-500 font-medium">
+                  Manager 1
+                </p>
               </div>
+              {notificationOpen && (
+                <NotifiCenter
+                  notifications={notifications}
+                  onMarkAsRead={handleMarkAsRead}
+                  onMarkAllAsRead={handleMarkAllAsRead}
+                  onClearAll={handleClearAll}
+                  onClose={() => setNotificationOpen(false)}
+                />
+              )}
             </div>
           </div>
 
@@ -269,7 +410,6 @@ const OperationManager = () => {
           </div>
         </div>
 
-        
         <div className="hidden lg:grid lg:grid-cols-3 lg:items-center lg:gap-4">
           {/* Left: Logo */}
           <div className="flex items-center gap-3">
@@ -319,7 +459,21 @@ const OperationManager = () => {
           </div>
 
           {/* Right: Admin Portal + Home + Avatar + Name */}
-          <div className="flex items-center justify-end gap-3">
+          <div className="relative z-40 overflow-visible notifi-container-wrapper flex items-center justify-end gap-3">
+            <button
+              onClick={() => setNotificationOpen(!notificationOpen)}
+              className="relative p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+              title="Notifications"
+            >
+              <div className="relative">
+                <Bell size={22} />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-yellow-500 text-black font-bold text-[10px] flex items-center justify-center rounded-full">
+                    {unreadCount}
+                  </span>
+                )}
+              </div>
+            </button>
             {userdata.Role === "Admin" && (
               <button
                 className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 hover:bg-amber-100 transition-colors group"
@@ -359,6 +513,15 @@ const OperationManager = () => {
               </p>
               <p className="text-xs text-gray-500 font-medium">Manager 1</p>
             </div>
+            {notificationOpen && (
+              <NotifiCenter
+                notifications={notifications}
+                onMarkAsRead={handleMarkAsRead}
+                onMarkAllAsRead={handleMarkAllAsRead}
+                onClearAll={handleClearAll}
+                onClose={() => setNotificationOpen(false)}
+              />
+            )}
           </div>
         </div>
       </header>
