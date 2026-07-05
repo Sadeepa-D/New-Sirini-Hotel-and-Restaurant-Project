@@ -17,6 +17,8 @@ import {
   Home,
   User,
   Camera,
+  Store,
+  Hotel,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -133,7 +135,8 @@ const Admin = () => {
                 <>
                   {/* Backdrop for click-away */}
                   <div
-                    className="fixed inset-0 z-40 bg-transparent"
+                    className="fixed inset-0 z-40"
+                    style={{ backgroundColor: "transparent" }}
                     onClick={() => setManagerpagesselection(false)}
                   />
                   <div className="absolute right-3 top-14 sm:right-4 sm:top-16 w-52 bg-white rounded-xl shadow-xl border border-gray-100 p-2 z-50 animate-in fade-in duration-200">
@@ -294,7 +297,8 @@ const Admin = () => {
                 <>
                   {/* Backdrop for click-away */}
                   <div
-                    className="fixed inset-0 z-40 bg-transparent"
+                    className="fixed inset-0 z-40"
+                    style={{ backgroundColor: "transparent" }}
                     onClick={() => setManagerpagesselection(false)}
                   />
                   <div className="absolute right-20 top-20 w-56 bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100 p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
@@ -313,7 +317,6 @@ const Admin = () => {
                         <div className="font-semibold">
                           Restaurant, Liquor Management
                         </div>
-                        
                       </div>
                     </button>
                     <div className="h-px bg-gray-100 my-1.5"></div>
@@ -332,7 +335,6 @@ const Admin = () => {
                         <div className="font-semibold">
                           Reception, Rooms Management
                         </div>
-                        
                       </div>
                     </button>
                   </div>
