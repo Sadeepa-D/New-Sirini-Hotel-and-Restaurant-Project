@@ -1,5 +1,6 @@
 const Feedback = require("../models/FeedbackModel");
 const Room = require("../models/Rooms/RoomModel");
+const NotifiModel = require("../models/NotifiModel");
 
 // @POST /api/feedback/add
 const addFeedback = async (req, res) => {
@@ -17,7 +18,6 @@ const addFeedback = async (req, res) => {
       !roomNumber ||
       !userName ||
       !rating ||
-      !comment ||
       !bookingId
     ) {
       return res.status(400).json({ message: "All fields are required" });
@@ -27,9 +27,9 @@ const addFeedback = async (req, res) => {
         .status(400)
         .json({ message: "Rating must be between 1 and 5" });
     }
-    if (comment.length < 10 || comment.length > 500) {
+    if (comment && comment.length > 500) {
       return res.status(400).json({
-        message: "Comment must be between 10 and 500 characters",
+        message: "Comment cannot exceed 500 characters",
       });
     }
 
@@ -51,6 +51,9 @@ const addFeedback = async (req, res) => {
       comment,
       bookingId,
     });
+
+    // Update related notifications to hide the feedback button
+    await NotifiModel.updateMany({ bookingId, userId }, { hasFeedback: true });
 
     res.status(201).json({
       message: "Feedback submitted successfully",

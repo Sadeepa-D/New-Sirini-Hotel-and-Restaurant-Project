@@ -38,11 +38,12 @@ const UserDashboard = () => {
   return (
     <div className="min-h-screen bg-neutral-950 font-serif">
       {/* ── Top Header Bar ── */}
-      <div className="w-full px-4 sm:px-8 py-4 border-b border-white/8 flex items-center justify-between gap-4 bg-black/60 backdrop-blur-md sticky top-0 z-30">
+      <div className="w-full px-4 sm:px-8 py-4 border-b border-white/8 flex items-center justify-between gap-4 bg-black/60 backdrop-blur-md relative z-30">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
-            className="p-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-gray-400 hover:text-white transition-all duration-200"
+            style={{ borderRadius: "12px" }}
+            className="p-2 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-400 hover:text-white transform hover:scale-105 active:scale-95 transition-all duration-300"
           >
             <ArrowLeft size={20} />
           </button>
@@ -56,11 +57,12 @@ const UserDashboard = () => {
           </div>
         </div>
         <button
-          className="flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-400 rounded-full hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-200 text-sm font-semibold"
+          className="group flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-gradient-to-r from-red-700 via-red-600 to-rose-500 text-white hover:shadow-lg hover:shadow-red-500/40 transform hover:scale-105 active:scale-95 transition-all duration-300 text-sm font-semibold cursor-pointer border border-red-500/20"
+          style={{ borderRadius: "12px" }}
           onClick={handlelogout}
         >
-          <LogOut size={16} />
-          <span className="hidden sm:inline tracking-wider uppercase text-xs">Sign Out</span>
+          <LogOut size={15} className="transition-transform duration-300 group-hover:translate-x-0.5" />
+          <span className="hidden sm:inline tracking-widest uppercase text-[10px] font-sans font-black">Sign Out</span>
         </button>
       </div>
 
