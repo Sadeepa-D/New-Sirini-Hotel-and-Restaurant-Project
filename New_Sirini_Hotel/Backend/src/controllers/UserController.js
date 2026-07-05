@@ -209,6 +209,10 @@ const UpdatePassword = async (req, res) => {
 
 const updateUserRole = async (req, res) => {
   try {
+    const isadmin = req.userData.Role;
+    if (isadmin !== "Admin") {
+      return res.status(403).json({ message: "Access denied" });
+    }
     const { userId, newRole } = req.body;
     if (!userId || !newRole) {
       return res
@@ -232,6 +236,10 @@ const updateUserRole = async (req, res) => {
 
 const suspendUser = async (req, res) => {
   try {
+    const isadmin = req.userData.Role;
+    if (isadmin !== "Admin") {
+      return res.status(403).json({ message: "Access denied" });
+    }
     const { userId, newStatus } = req.body;
     if (!userId || !newStatus) {
       return res
@@ -254,6 +262,10 @@ const suspendUser = async (req, res) => {
 };
 const deleteUser = async (req, res) => {
   try {
+    const isadmin = req.userData.Role;
+    if (isadmin !== "Admin") {
+      return res.status(403).json({ message: "Access denied" });
+    }
     const { userId, deleteStatus } = req.body;
     if (!userId || !deleteStatus) {
       return res
@@ -274,6 +286,10 @@ const deleteUser = async (req, res) => {
 
 const updateuserdetails = async (req, res) => {
   try {
+    const isadmin = req.userData.Role;
+    if (isadmin !== "Admin") {
+      return res.status(403).json({ message: "Access denied" });
+    }
     const { userId, name, email, Phone } = req.body;
     if (!userId || !name || !email || !Phone) {
       return res
@@ -297,6 +313,10 @@ const updateuserdetails = async (req, res) => {
 
 const resetuserpassword = async (req, res) => {
   try {
+    const isadmin = req.userData.Role;
+    if (isadmin !== "Admin") {
+      return res.status(403).json({ message: "Access denied" });
+    }
     const { userId, newPassword } = req.body;
     if (!userId || !newPassword) {
       return res
