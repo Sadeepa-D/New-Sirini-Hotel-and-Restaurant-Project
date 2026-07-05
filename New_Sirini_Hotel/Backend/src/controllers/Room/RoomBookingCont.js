@@ -477,6 +477,20 @@ const updateOverdueBookings = async (req, res) => {
   }
 };
 
+const clearAllBookingsByStatus = async (req, res) => {
+  try {
+    const { status } = req.params;
+    const allowed = ["Completed", "Cancelled", "Overdue"];
+    if (!allowed.includes(status)) {
+      return res.status(400).json({ error: "Invalid status. Only Completed, Cancelled, or Overdue allowed." });
+    }
+    const result = await RoomBooking.deleteMany({ status });
+    res.status(200).json({ message: `All ${status} bookings cleared successfully.`, deletedCount: result.deletedCount });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createRoomBooking,
   deleteRoomBooking,
@@ -493,4 +507,5 @@ module.exports = {
   getspecificuserbookings,
   getUnavilableDatesForRoom,
   updateOverdueBookings,
+  clearAllBookingsByStatus,
 };

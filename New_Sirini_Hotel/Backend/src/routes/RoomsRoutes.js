@@ -103,4 +103,11 @@ router.get(
 router.post("/roomanlys/revenuemnothly", roomAnlysController.getMonthlyRevenue);
 router.post("/roomanlys/revenuebyroom", roomAnlysController.getRevenueByRoom);
 
+router.delete(
+  "/clearbookings/:status",
+  authmiddleware,
+  RoleBaseMiddleware(["Admin"]),
+  roomBookingController.clearAllBookingsByStatus,
+);
+
 module.exports = router;
