@@ -184,10 +184,11 @@ const GalleryManagementHub = ({ onClose }) => {
                   <button
                     key={cat}
                     onClick={() => setActiveCategory(cat)}
-                    className={`px-4 sm:px-8 py-2 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-200 border-2 ${
+                    style={{ borderRadius: "9999px" }}
+                    className={`px-5 sm:px-8 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-300 ease-out border-2 hover:scale-105 active:scale-95 cursor-pointer ${
                       activeCategory === cat
-                        ? "bg-amber-500 text-white border-amber-600 shadow-lg shadow-amber-200"
-                        : "bg-white text-gray-600 border-gray-200 hover:border-amber-300 hover:bg-amber-50"
+                        ? "bg-amber-500 text-white border-amber-500 shadow-md shadow-amber-500/20"
+                        : "bg-white text-gray-600 border-gray-200 hover:border-amber-400 hover:text-amber-500"
                     }`}
                   >
                     {cat}
@@ -253,7 +254,7 @@ const GalleryManagementHub = ({ onClose }) => {
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
-                  className={`group relative flex flex-col h-24 sm:h-32 w-full cursor-pointer items-center justify-center rounded-lg sm:rounded-2xl border-2 border-dashed transition-all duration-300 ${
+                  className={`group relative flex flex-col h-24 sm:h-32 w-full cursor-pointer items-center justify-center pt-2 sm:pt-4 rounded-lg sm:rounded-2xl border-2 border-dashed transition-all duration-300 ${
                     isDragging
                       ? "border-amber-500 bg-amber-100 scale-[1.02] shadow-inner"
                       : "border-amber-200 bg-amber-50/30 hover:border-amber-400 hover:bg-amber-50"
@@ -331,24 +332,24 @@ const GalleryManagementHub = ({ onClose }) => {
                   </div>
                 )}
               </div>
-
               <div className="pt-2 sm:pt-3">
                 <button
                   onClick={handleUpload}
                   disabled={previewImages.length === 0 || uploading}
-                  className="w-full relative overflow-hidden bg-[#121826] hover:bg-[#1a2335] disabled:bg-gray-100 disabled:text-gray-400 text-white font-black py-3 sm:py-4 px-4 sm:px-6 rounded-lg sm:rounded-[1.25rem] transition-all duration-300 shadow-xl shadow-gray-200 uppercase tracking-[0.2em] text-[9px] sm:text-xs flex items-center justify-center gap-2 sm:gap-3 group active:scale-[0.98] disabled:active:scale-100"
+                  style={{ borderRadius: "14px" }}
+                  className="w-full relative overflow-hidden bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-3 sm:py-3.5 px-4 sm:px-6 transition-all duration-300 ease-out shadow-lg hover:shadow-xl hover:shadow-orange-500/20 disabled:opacity-40 disabled:shadow-none disabled:cursor-not-allowed uppercase tracking-wider text-xs flex items-center justify-center gap-2 sm:gap-3 group hover:scale-[1.03] active:scale-[0.98] disabled:hover:scale-100 disabled:active:scale-100 cursor-pointer"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] transition-transform" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] transition-transform" />
                   {uploading ? (
                     <>
-                      <div className="w-3 sm:w-4 h-3 sm:h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       <span>Processing...</span>
                     </>
                   ) : (
                     <>
                       <CheckCircle2
-                        size={16}
-                        className="sm:w-4.5 sm:h-4.5 text-amber-500 group-hover:text-white transition-colors duration-300 shrink-0"
+                        size={15}
+                        className="text-white transition-colors duration-300 shrink-0"
                       />
                       <span>Publish to Gallery</span>
                     </>
