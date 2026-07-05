@@ -321,7 +321,7 @@ export default function OrderForm({ item, cartItems, onClose }) {
             <div className="mt-2 p-4 bg-amber-50 border border-amber-200 rounded-xl">
               <div className="flex justify-between items-center">
                 <span className="text-xl font-bold text-amber-700">
-                  Rs. {getTotalPrice()}
+                  Total Amount : Rs. {getTotalPrice()}
                 </span>
               </div>
             </div>
@@ -331,11 +331,12 @@ export default function OrderForm({ item, cartItems, onClose }) {
               special reasons. For any questions, please contact us.
             </p>
 
-            <div className="mt-1">
+            <div className="mt-2 flex justify-center">
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 bg-amber-600 text-white font-semibold rounded-xl hover:bg-amber-700 active:scale-[0.98] transition-all shadow-md shadow-amber-200/50 text-base disabled:opacity-60 disabled:cursor-not-allowed"
+                style={{ borderRadius: "9999px" }}
+                className="w-2/3 py-3 bg-amber-600 hover:bg-amber-700 text-white font-bold transition-all duration-300 ease-out hover:scale-105 active:scale-[0.98] shadow-md shadow-amber-200/50 text-base disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 cursor-pointer"
               >
                 {loading ? "Processing..." : "Confirm Order"}
               </button>

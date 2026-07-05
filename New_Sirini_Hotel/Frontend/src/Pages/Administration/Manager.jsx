@@ -193,7 +193,7 @@ const Manager = () => {
             <div className="relative z-40 overflow-visible notifi-container-wrapper flex items-center gap-1 sm:gap-1.5 shrink-0">
               <button
                 onClick={() => setNotificationOpen(!notificationOpen)}
-                className="relative p-1.5 sm:p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors active:scale-95"
+                className="relative p-1.5 sm:p-2 text-gray-500 hover:bg-gray-100 rounded-xl transition-colors active:scale-95"
                 title="Notifications"
               >
                 <Bell size={16} className="sm:w-5 sm:h-5" />
@@ -205,7 +205,7 @@ const Manager = () => {
               </button>
               <button
                 onClick={() => usenavigate("/")}
-                className="p-1.5 sm:p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors active:scale-95"
+                className="p-1.5 sm:p-2 text-amber-500 hover:bg-amber-50 rounded-xl transition-colors active:scale-95"
                 title="Home"
               >
                 <Home size={16} className="sm:w-5 sm:h-5" />
@@ -213,7 +213,7 @@ const Manager = () => {
               {userdata.Role === "Admin" && (
                 <button
                   onClick={() => usenavigate("/admin")}
-                  className="p-1.5 sm:p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors active:scale-95"
+                  className="p-1.5 sm:p-2 text-amber-500 hover:bg-amber-50 rounded-xl transition-colors active:scale-95"
                   title="Admin Portal"
                 >
                   <ExternalLink size={16} className="sm:w-5 sm:h-5" />
@@ -221,7 +221,7 @@ const Manager = () => {
               )}
               <button
                 onClick={handleLogout}
-                className="p-1.5 sm:p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors active:scale-95"
+                className="p-1.5 sm:p-2 text-red-500 hover:bg-red-50 rounded-xl transition-colors active:scale-95"
                 title="Logout"
               >
                 <LogOut size={16} className="sm:w-5 sm:h-5" />
@@ -317,7 +317,8 @@ const Manager = () => {
                         setIsSidebarOpen(false);
                       }
                     }}
-                    className={`flex items-center gap-2.5 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    style={{ borderRadius: "12px" }}
+                    className={`flex items-center gap-2.5 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                       isActive && !isLogout
                         ? "bg-amber-600 text-white shadow-lg scale-105 ring-2 ring-amber-400 ring-offset-1"
                         : isLogout
@@ -337,7 +338,7 @@ const Manager = () => {
           <div className="relative z-40 overflow-visible notifi-container-wrapper flex items-center justify-end gap-3">
             <button
               onClick={() => setNotificationOpen(!notificationOpen)}
-              className="relative p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+              className="relative p-2 text-gray-500 hover:bg-gray-100 rounded-xl transition-colors"
               title="Notifications"
             >
               <Bell size={22} />
@@ -349,7 +350,7 @@ const Manager = () => {
             </button>
             {userdata.Role === "Admin" && (
               <button
-                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 hover:bg-amber-100 transition-colors group"
+                className="flex items-center gap-2 px-3 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 transition-colors group"
                 onClick={() => usenavigate("/admin")}
                 title="Go to Admin Portal"
               >
@@ -364,7 +365,7 @@ const Manager = () => {
             )}
             <button
               onClick={() => usenavigate("/")}
-              className="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"
+              className="p-2 text-amber-500 hover:bg-amber-50 rounded-xl transition-colors"
               title="Home"
             >
               <Home size={22} />
