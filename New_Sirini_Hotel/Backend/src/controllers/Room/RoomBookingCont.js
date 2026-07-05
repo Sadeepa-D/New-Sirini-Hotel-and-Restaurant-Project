@@ -132,7 +132,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
       const newNotification = new NotifiModel({
         userId,
-        title: "New Room Booking Created",
+        title: "New Room Booked",
         message: `Your booking for room ${roomNumber} ${dateMsg} has been created. Ref: ${newRoomBooking.bookingCode}`,
       });
       await newNotification.save();
@@ -145,7 +145,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         await NotifiModel.insertMany(
           managers.map((manager) => ({
             userId: manager._id,
-            title: "New Room Booking Created",
+            title: "New Room Booked",
             message: `${name} booked room ${roomNumber} ${dateMsg}. Ref: ${newRoomBooking.bookingCode}.`,
           })),
         );
@@ -323,6 +323,8 @@ const setRoomBookingStatustoConfirmed = async (req, res) => {
       userId: updatedRoomBooking.userId,
       title: "Room Booking Confirmed",
       message: `Your booking for room ${updatedRoomBooking.roomNumber} Ref: ${updatedRoomBooking.bookingCode} has been confirmed.`,
+      bookingId: updatedRoomBooking._id,
+      roomNumber: String(updatedRoomBooking.roomNumber),
     });
     await newNotification.save();
     res.status(200).json(updatedRoomBooking);
@@ -378,13 +380,27 @@ const setRoomBookingStatustoCompleted = async (req, res) => {
       { status: "Completed" },
       { new: true },
     );
-    res.status(200).json(updatedBooking);
+    // Delete previous "Room Booking Confirmed" notifications for this booking
+    await NotifiModel.deleteMany({
+      $or: [
+        { bookingId: updatedBooking._id, title: "Room Booking Confirmed" },
+        { 
+          userId: updatedBooking.userId, 
+          title: "Room Booking Confirmed",
+          message: { $regex: updatedBooking.bookingCode }
+        }
+      ]
+    });
+
     const newNotification = new NotifiModel({
       userId: updatedBooking.userId,
       title: "Checkout Confirmed",
-      message: `Checkout confirmed for room ${updatedBooking.roomNumber} Ref: ${updatedBooking.bookingCode}.`,
+      message: `Checkout confirmed for room ${updatedBooking.roomNumber} Ref: ${updatedBooking.bookingCode}. How was your stay?`,
+      bookingId: updatedBooking._id,
+      roomNumber: String(updatedBooking.roomNumber),
     });
     await newNotification.save();
+    res.status(200).json(updatedBooking);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

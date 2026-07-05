@@ -144,8 +144,8 @@ const AdvertisementCard = ({
             {onEdit && (
               <button
                 onClick={() => onEdit(ad)}
-                style={{ borderRadius: "10px" }}
-                className="flex-1 flex items-center justify-center gap-1.5 bg-gray-50 hover:bg-amber-50 text-gray-600 hover:text-amber-700 border border-gray-200 hover:border-amber-200 text-xs font-bold py-2 rounded-xl transform hover:scale-105 active:scale-95 transition-all duration-300 ease-in-out"
+                className="flex-1 flex items-center justify-center gap-1.5 text-gray-600 border text-xs font-bold py-2 transform hover:scale-105 active:scale-95 transition-all duration-300 ease-in-out"
+                style={{ borderRadius: "14px", background: "#f9fafb", border: "1px solid #e5e7eb" }}
               >
                 <Pencil size={13} /> Edit
               </button>

@@ -15,6 +15,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import Footer from "./Footer";
 import NotifiCenter from "./NotifiCenter";
+import FeedbackModal from "./FeedbackModal";
 
 function Header() {
   const VITE_URL = import.meta.env.VITE_API_URL;
@@ -30,6 +31,7 @@ function Header() {
   );
   const [userData, setUserData] = useState([]);
   const [notifications, setNotifications] = useState([]);
+  const [feedbackBooking, setFeedbackBooking] = useState(null);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
   const handlelogout = () => {
@@ -236,6 +238,7 @@ function Header() {
   }, [notifiOpen]);
 
   return (
+    <>
     <header className="bg-black/95 backdrop-blur-md sticky top-0 z-50 border-b border-white/5">
       <div className="w-full px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
         {/* ── Logo ── */}
@@ -259,7 +262,7 @@ function Header() {
         </button>
 
         {/* ── Desktop Nav ── */}
-        <nav className="hidden md:flex items-center gap-0.5 lg:gap-1">
+        <nav className="hidden md:flex items-center gap-2 lg:gap-5">
           {navLinks.map((link) => {
             const id = `desktop-${link.path}`;
             const active = isActive(link.path);
@@ -372,7 +375,8 @@ function Header() {
                 </div>
                 <button
                   onClick={handlelogout}
-                  className="flex items-center gap-1.5 px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-400 rounded-lg text-sm font-medium hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-200"
+                  style={{ borderRadius: "12px" }}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-medium hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-200"
                 >
                   <LogOut size={15} />
                   <span>Log Out</span>
@@ -381,12 +385,16 @@ function Header() {
 
               {/* Dropdown Card */}
               {notifiOpen && (
-                <NotifiCenter
+              <NotifiCenter
                   notifications={notifications}
                   onMarkAsRead={handleMarkAsRead}
                   onMarkAllAsRead={handleMarkAllAsRead}
                   onClearAll={handleClearAll}
                   onClose={() => setNotifiOpen(false)}
+                  onFeedback={(n) => {
+                    setFeedbackBooking({ _id: n.bookingId, roomNumber: n.roomNumber });
+                    setNotifiOpen(false);
+                  }}
                 />
               )}
             </>
@@ -394,7 +402,8 @@ function Header() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => navigate("/login")}
-                className="flex items-center gap-1.5 px-4 py-2 text-white/80 border border-white/20 rounded-lg text-sm font-medium hover:bg-white/10 hover:text-white hover:border-white/40 transition-all duration-200"
+                style={{ borderRadius: "12px" }}
+                className="flex items-center gap-1.5 px-4 py-2 text-white/80 border border-white/20 rounded-xl text-sm font-medium hover:bg-white/10 hover:text-white hover:border-white/40 transition-all duration-200"
               >
                 <LogIn size={15} />
                 <span>Sign In</span>
@@ -404,7 +413,8 @@ function Header() {
                   navigate("/register");
                   closeMenu();
                 }}
-                className="flex items-center gap-1.5 px-4 py-2 bg-yellow-500 text-black rounded-lg text-sm font-bold hover:bg-yellow-400 transition-all duration-200 shadow-md shadow-yellow-500/20"
+                style={{ borderRadius: "12px" }}
+                className="flex items-center gap-1.5 px-4 py-2 bg-yellow-500 text-black rounded-xl text-sm font-bold hover:bg-yellow-400 transition-all duration-200 shadow-md shadow-yellow-500/20"
               >
                 <UserPlus size={15} />
                 <span>Sign Up</span>
@@ -438,6 +448,10 @@ function Header() {
                     onMarkAllAsRead={handleMarkAllAsRead}
                     onClearAll={handleClearAll}
                     onClose={() => setNotifiOpen(false)}
+                    onFeedback={(n) => {
+                      setFeedbackBooking({ _id: n.bookingId, roomNumber: n.roomNumber });
+                      setNotifiOpen(false);
+                    }}
                   />
                 )}
               </div>
@@ -535,7 +549,8 @@ function Header() {
             {isLoggedIn ? (
               <button
                 onClick={handlelogout}
-                className="w-full flex items-center justify-center gap-2 py-3 bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl text-sm font-medium hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-200"
+                style={{ borderRadius: "12px" }}
+                className="w-full flex items-center justify-center gap-2 py-3 bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-medium hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-200"
               >
                 <LogOut size={16} />
                 <span>Log Out</span>
@@ -568,6 +583,22 @@ function Header() {
         </div>
       )}
     </header>
+
+    {/* Global FeedbackModal — triggered from notification Leave Feedback button */}
+    <FeedbackModal
+      isOpen={!!feedbackBooking}
+      onClose={() => setFeedbackBooking(null)}
+      booking={feedbackBooking}
+      userName={userData?.name || "Guest"}
+      onSuccess={() => {
+        if (feedbackBooking) {
+          setNotifications(prev =>
+            prev.map(n => n.bookingId === feedbackBooking._id ? { ...n, hasFeedback: true } : n)
+          );
+        }
+      }}
+    />
+    </>
   );
 }
 
