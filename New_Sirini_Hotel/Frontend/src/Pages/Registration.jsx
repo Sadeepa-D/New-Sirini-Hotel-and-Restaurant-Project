@@ -91,19 +91,12 @@ const Registration = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post(`${API_URL}/api/users/register`, {
+      await axios.post(`${API_URL}/api/users/register`, {
         name: formData.name,
         email: formData.email,
         Phone: formData.phone,
         password: formData.password,
       });
-      const data = response.data;
-
-      if (!response.ok) {
-        setErrors({ submit: data.message || "Registration failed" });
-        toast.error(data.message || "Registration failed!");
-        return;
-      }
 
       toast.success("Registration successful!");
       navigate("/login");
