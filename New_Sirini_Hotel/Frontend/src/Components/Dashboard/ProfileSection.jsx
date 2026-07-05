@@ -318,7 +318,8 @@ const ProfileSection = () => {
       {/* ── Save Button ── */}
       <div className="flex justify-end">
         <button
-          className="px-8 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-full text-sm tracking-wider transition-all duration-200 shadow-md shadow-amber-500/25 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0"
+          className="px-8 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm tracking-wider shadow-md shadow-amber-500/25 hover:shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
+          style={{ borderRadius: "12px" }}
           onClick={handleSaveChanges}
         >
           Save Changes

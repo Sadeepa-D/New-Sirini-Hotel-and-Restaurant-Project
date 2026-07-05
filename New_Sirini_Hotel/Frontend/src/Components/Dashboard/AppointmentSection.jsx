@@ -10,6 +10,7 @@ import {
   AlertCircle,
   ChevronLeft,
   ChevronRight,
+  Search,
 } from "lucide-react";
 import AppointmentCard from "../OperationManager/Reception/AppointmentCard";
 import AppointForm from "../Receptionhall/receptionform";
@@ -164,11 +165,14 @@ const AppointmentsSection = () => {
           <p className="text-gray-400 text-xs mt-0.5">
             View and manage your reception hall bookings
           </p>
-          <div>
+          <div className="relative mt-2 w-full sm:w-64">
+            <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
+              <Search size={15} className="text-gray-400" />
+            </span>
             <input
               type="text"
-              placeholder="Search by booking ref..."
-              className="mt-2 w-full sm:w-64 px-4 py-2 bg-gray-100 placeholder:text-gray-400 text-gray-700 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-400 focus:outline-none transition-colors"
+              placeholder="Search by name or ref..."
+              className="w-full pl-9 pr-4 py-2 bg-gray-100 placeholder:text-gray-400 text-gray-700 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-400 focus:outline-none transition-colors"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -181,7 +185,8 @@ const AppointmentsSection = () => {
             <button
               key={key}
               onClick={() => setActiveTab(key)}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-[10px] uppercase tracking-wider transition-all whitespace-nowrap font-semibold ${
+              style={{ borderRadius: "10px" }}
+              className={`flex items-center gap-1.5 px-3 py-2 text-[10px] uppercase tracking-wider transition-all whitespace-nowrap font-semibold ${
                 activeTab === key
                   ? "bg-white shadow-sm ring-1 ring-black/5 text-gray-800"
                   : "text-gray-400 hover:text-gray-600 font-normal"
@@ -227,7 +232,7 @@ const AppointmentsSection = () => {
               <div
                 key={app._id}
                 data-slider-card
-                className="shrink-0 snap-start w-[90%] md:w-[calc(50%-8px)]"
+                className="shrink-0 snap-start w-[72%] md:w-[calc(33%-8px)]"
               >
                 <AppointmentCard
                   appointment={app}
@@ -257,7 +262,8 @@ const AppointmentsSection = () => {
       <div className="flex justify-end">
         <button
           onClick={() => navigate("/reception")}
-          className="flex items-center gap-2 px-6 py-2.5 bg-black text-white rounded-full font-sans text-xs font-semibold uppercase tracking-wider hover:bg-amber-500 hover:text-black transition-all duration-300 shadow-md hover:-translate-y-0.5 active:translate-y-0"
+          style={{ borderRadius: "14px" }}
+          className="flex items-center gap-2 px-6 py-2.5 bg-black text-white font-sans text-xs font-semibold uppercase tracking-wider hover:bg-amber-500 hover:text-black transition-all duration-300 shadow-md hover:-translate-y-0.5 active:translate-y-0"
         >
           + Add Appointment
         </button>

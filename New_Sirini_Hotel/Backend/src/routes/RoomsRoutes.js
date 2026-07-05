@@ -57,7 +57,7 @@ router.put(
 router.put(
   "/cancelbooking/:id",
   authmiddleware,
-  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
+  RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)", "User"]),
   roomBookingController.setRoomBookingStatustoCancelled,
 );
 
