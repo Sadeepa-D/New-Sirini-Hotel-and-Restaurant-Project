@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { BarChart3, ChevronLeft, ChevronRight, PackageX } from "lucide-react";
+import {
+  BarChart3,
+  ChevronLeft,
+  ChevronRight,
+  Clock3,
+  PackageX,
+} from "lucide-react";
 import LiqourCard from "../../Components/LiqourStore/LiqourCard";
 import LiquorComparisonComp from "../../Components/LiqourStore/LiquorComparisonComp";
 import LiquorDetailsComp from "../../Components/LiqourStore/LIquorDetailsComp";
@@ -103,6 +109,13 @@ const LiquorStore = () => {
           <p className="text-[10px] sm:text-sm md:text-lg lg:text-xl italic tracking-wider sm:tracking-widest border-t border-b border-white py-1 px-2.5 sm:py-1.5 sm:px-3 md:py-2 md:px-4">
             A perfect drink for every celebration
           </p>
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/45 px-4 py-2 text-[11px] sm:text-sm font-medium text-white shadow-lg backdrop-blur-md">
+            <Clock3 className="h-4 w-4 text-amber-200 shrink-0" />
+            <span className="whitespace-nowrap">
+              Opening Hours:{" "}
+              <span className="font-semibold">09:00 AM - 10:00 PM</span>
+            </span>
+          </div>
         </div>
 
         {/* Explore arrow pinned to bottom */}

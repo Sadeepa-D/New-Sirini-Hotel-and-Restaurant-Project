@@ -94,7 +94,7 @@ const Registration = () => {
       const response = await axios.post(`${API_URL}/api/users/register`, {
         name: formData.name,
         email: formData.email,
-        phone: formData.phone,
+        Phone: formData.phone,
         password: formData.password,
       });
       const data = response.data;

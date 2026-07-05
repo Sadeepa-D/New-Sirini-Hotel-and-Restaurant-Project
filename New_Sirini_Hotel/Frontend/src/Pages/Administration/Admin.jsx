@@ -19,6 +19,7 @@ import {
   Camera,
   Store,
   Hotel,
+  Bell,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -29,6 +30,7 @@ import LiquorManagment from "../../Components/Admin/LiquorManagment";
 import ReceptionHallAnlys from "../../Components/Admin/ReceptionHallAnlys";
 import RestrauntAnlys from "../../Components/Admin/RestrauntAnlys";
 import RoomsAnlys from "../../Components/Admin/RoomsAnlys";
+import NotifiCenter from "../../Components/NotifiCenter";
 
 const Admin = () => {
   const token = localStorage.getItem("token");
@@ -38,6 +40,8 @@ const Admin = () => {
   const [adminData, setAdminData] = useState([]);
   const [managerpagesselection, setManagerpagesselection] = useState(false);
   const [galleryselection, setGalleryselection] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -57,9 +61,99 @@ const Admin = () => {
       console.error("Error fetching admin details:", error);
     }
   };
+
+  const fetchNotifications = async () => {
+    try {
+      if (!token) return;
+      const response = await axios.get(`${VITE_URL}/api/users/notifications`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setNotifications(response.data || []);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+
+  const handleMarkAsRead = async (id) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n._id === id ? { ...n, isRead: true } : n)),
+    );
+    try {
+      if (!token) return;
+      await axios.put(
+        `${VITE_URL}/api/users/notifications/markasread/`,
+        { notificationId: id },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    try {
+      if (!token) return;
+      await axios.put(
+        `${VITE_URL}/api/users/notifications/markallasread`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+    }
+  };
+
+  const handleClearAll = async () => {
+    try {
+      if (!token) return;
+      await axios.delete(`${VITE_URL}/api/users/notifications/clearall`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setNotifications([]);
+    } catch (error) {
+      console.error("Error clearing all notifications:", error);
+    }
+  };
+
   useEffect(() => {
     fetchAdminDetails();
   }, []);
+
+  useEffect(() => {
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (!e.target.closest(".notifi-container-wrapper")) {
+        setNotificationOpen(false);
+      }
+    };
+
+    if (notificationOpen) {
+      document.addEventListener("mousedown", handleOutsideClick);
+      document.addEventListener("touchstart", handleOutsideClick);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("touchstart", handleOutsideClick);
+    };
+  }, [notificationOpen]);
 
   const menuItems = [
     { id: "restaurant", label: "Restaurant", icon: Utensils },
@@ -86,6 +180,8 @@ const Admin = () => {
     }
   };
 
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
+
   return (
     <div className="flex flex-col h-screen bg-black font-sans">
       {/* Top Header */}
@@ -109,7 +205,19 @@ const Admin = () => {
                 </h4>
               </div>
             </div>
-            <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+            <div className="relative z-40 overflow-visible notifi-container-wrapper flex items-center gap-1 sm:gap-1.5 shrink-0">
+              <button
+                onClick={() => setNotificationOpen(!notificationOpen)}
+                className="relative p-1.5 sm:p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors active:scale-95"
+                title="Notifications"
+              >
+                <Bell size={16} className="sm:w-5 sm:h-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-yellow-500 text-black font-bold text-[9px] flex items-center justify-center rounded-full">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
               <button
                 onClick={() => navigate("/")}
                 className="p-1.5 sm:p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors active:scale-95"
@@ -179,6 +287,15 @@ const Admin = () => {
                     </button>
                   </div>
                 </>
+              )}
+              {notificationOpen && (
+                <NotifiCenter
+                  notifications={notifications}
+                  onMarkAsRead={handleMarkAsRead}
+                  onMarkAllAsRead={handleMarkAllAsRead}
+                  onClearAll={handleClearAll}
+                  onClose={() => setNotificationOpen(false)}
+                />
               )}
               <button
                 onClick={handleLogout}
@@ -275,7 +392,20 @@ const Admin = () => {
           {/* Right: Action Buttons + Profile */}
           <div className="flex items-center justify-end gap-1 w-1/4">
             {/* Action Button Group */}
-            <div className="flex items-center gap-1 bg-gray-50 rounded-xl p-1.5 border border-gray-100">
+            <div className="relative z-40 overflow-visible notifi-container-wrapper flex items-center gap-1 bg-gray-50 rounded-xl p-1.5 border border-gray-100">
+              <button
+                onClick={() => setNotificationOpen(!notificationOpen)}
+                className="relative p-2 text-gray-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all duration-200 active:scale-95"
+                title="Notifications"
+              >
+                <Bell size={20} />
+                {unreadCount > 0 && (
+                  <span className="absolute top-1 right-1 w-3.5 h-3.5 bg-yellow-500 text-black font-bold text-[9px] flex items-center justify-center rounded-full">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+              <div className="w-px h-6 bg-gray-200"></div>
               <button
                 onClick={() => setGalleryselection(!galleryselection)}
                 className="p-2 text-gray-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all duration-200 active:scale-95"
@@ -349,6 +479,15 @@ const Admin = () => {
               >
                 <Home size={20} />
               </button>
+              {notificationOpen && (
+                <NotifiCenter
+                  notifications={notifications}
+                  onMarkAsRead={handleMarkAsRead}
+                  onMarkAllAsRead={handleMarkAllAsRead}
+                  onClearAll={handleClearAll}
+                  onClose={() => setNotificationOpen(false)}
+                />
+              )}
               <button
                 onClick={handleLogout}
                 title="Logout"
