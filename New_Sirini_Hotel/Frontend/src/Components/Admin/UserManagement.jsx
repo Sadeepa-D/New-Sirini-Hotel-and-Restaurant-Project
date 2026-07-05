@@ -211,6 +211,7 @@ const UserManagement = () => {
         </div>
         <button
           onClick={() => navigate("/register")}
+          style={{ borderRadius: "12px" }}
           className="flex items-center justify-center gap-2 bg-black text-yellow-500 px-6 py-3 rounded-2xl font-bold hover:scale-[1.02] transition-all shadow-lg w-full md:w-auto"
         >
           <UserPlus size={20} /> Add New User
@@ -528,13 +529,15 @@ const UserManagement = () => {
                 <button
                   type="button"
                   onClick={() => setIsEditModalOpen(false)}
-                  className="flex-1 py-3 text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors"
+                  style={{ borderRadius: "12px" }}
+                  className="flex-1 py-3 text-sm font-bold text-red-600 bg-red-500/10 border border-red-500/20 hover:bg-red-600 hover:text-white hover:border-red-600 hover:scale-105 active:scale-95 transition-all duration-300 ease-out flex items-center justify-center cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-[2] py-3 bg-black text-yellow-500 font-bold rounded-2xl shadow-lg shadow-yellow-500/10 active:scale-95 transition-all"
+                  style={{ borderRadius: "12px" }}
+                  className="flex-1 py-3 bg-black text-yellow-500 font-bold shadow-lg shadow-yellow-500/10 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
                 >
                   Save Changes
                 </button>
