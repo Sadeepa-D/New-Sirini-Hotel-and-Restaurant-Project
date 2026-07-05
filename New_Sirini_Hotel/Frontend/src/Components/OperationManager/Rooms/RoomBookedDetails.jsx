@@ -33,6 +33,11 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
 
+  // Read user role from localStorage
+  const userString = localStorage.getItem("user");
+  const userRole = userString ? JSON.parse(userString)?.Role : null;
+  const isAdmin = userRole === "Admin";
+
   const scrollRef = useRef(null);
 
   const fetchAllData = useCallback(async () => {
@@ -135,6 +140,25 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
     }
   };
 
+  const handleClearAll = async () => {
+    const statusLabel =
+      activeTab === "completed" ? "Completed" :
+      activeTab === "cancelled" ? "Cancelled" : "Overdue";
+    if (!window.confirm(`Permanently delete ALL ${statusLabel} booking records? This cannot be undone.`)) return;
+    const actionToast = toast.loading(`Clearing all ${statusLabel} records...`);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${VITE_URL}/api/rooms/clearbookings/${statusLabel}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast.success(`All ${statusLabel} records cleared!`, { id: actionToast });
+      fetchAllData();
+      if (onActionCompleted) onActionCompleted();
+    } catch (err) {
+      toast.error("Clear all failed", { id: actionToast });
+    }
+  };
+
   const getActiveList = () => {
     switch (activeTab) {
       case "pending":
@@ -230,17 +254,32 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
           />
         </div>
 
-        <div className="relative w-full sm:w-80">
-          <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-            size={14}
-          />
-          <input
-            type="text"
-            placeholder="Search bookings..."
-            className="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-black/5 transition-all font-sans"
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+        <div className="flex items-center gap-2">
+          <div className="relative w-full sm:w-80">
+            <Search
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              size={14}
+            />
+            <input
+              type="text"
+              placeholder="Search bookings..."
+              className="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-black/5 transition-all font-sans"
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          {/* Clear All button — Admin only, on Completed / Cancelled / Overdue tabs */}
+          {isAdmin && ["completed", "cancelled", "overdue"].includes(activeTab) && (
+            <button
+              onClick={handleClearAll}
+              style={{ borderRadius: "10px" }}
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-red-600 bg-red-50 border border-red-200 hover:bg-red-600 hover:text-white hover:border-red-600 hover:scale-105 active:scale-95 transition-all duration-300 ease-out whitespace-nowrap cursor-pointer flex-shrink-0"
+              title={`Clear all ${activeTab} records`}
+            >
+              <Trash2 size={13} />
+              Clear All
+            </button>
+          )}
         </div>
       </div>
 
