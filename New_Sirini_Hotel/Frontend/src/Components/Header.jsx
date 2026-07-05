@@ -402,7 +402,8 @@ function Header() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => navigate("/login")}
-                className="flex items-center gap-1.5 px-4 py-2 text-white/80 border border-white/20 rounded-lg text-sm font-medium hover:bg-white/10 hover:text-white hover:border-white/40 transition-all duration-200"
+                style={{ borderRadius: "12px" }}
+                className="flex items-center gap-1.5 px-4 py-2 text-white/80 border border-white/20 rounded-xl text-sm font-medium hover:bg-white/10 hover:text-white hover:border-white/40 transition-all duration-200"
               >
                 <LogIn size={15} />
                 <span>Sign In</span>
@@ -412,7 +413,8 @@ function Header() {
                   navigate("/register");
                   closeMenu();
                 }}
-                className="flex items-center gap-1.5 px-4 py-2 bg-yellow-500 text-black rounded-lg text-sm font-bold hover:bg-yellow-400 transition-all duration-200 shadow-md shadow-yellow-500/20"
+                style={{ borderRadius: "12px" }}
+                className="flex items-center gap-1.5 px-4 py-2 bg-yellow-500 text-black rounded-xl text-sm font-bold hover:bg-yellow-400 transition-all duration-200 shadow-md shadow-yellow-500/20"
               >
                 <UserPlus size={15} />
                 <span>Sign Up</span>
