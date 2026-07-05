@@ -265,7 +265,6 @@ const ReceptionHallBookingAnalysis = () => {
       </div>
 
       <div className="flex flex-col gap-2">
-      
         <div className="flex items-center justify-between px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
           <div className="flex items-center gap-3">
             <div className="p-1.5 bg-amber-50 text-amber-500 rounded-lg border border-amber-100/50">
@@ -280,7 +279,6 @@ const ReceptionHallBookingAnalysis = () => {
           </span>
         </div>
 
-      
         <div className="flex items-center justify-between px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
           <div className="flex items-center gap-3">
             <div className="p-1.5 bg-rose-50 text-rose-400 rounded-lg border border-rose-100/50">
@@ -295,7 +293,6 @@ const ReceptionHallBookingAnalysis = () => {
           </span>
         </div>
 
-      
         <div className="flex items-center justify-between px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
           <div className="flex items-center gap-3">
             <div className="p-1.5 bg-indigo-50 text-indigo-500 rounded-lg border border-indigo-100/50">
@@ -310,7 +307,6 @@ const ReceptionHallBookingAnalysis = () => {
           </span>
         </div>
 
-      
         <div className="flex items-center justify-between px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
           <div className="flex items-center gap-3">
             <div className="p-1.5 bg-rose-50 text-rose-400 rounded-lg border border-rose-100/50">
@@ -365,9 +361,7 @@ const Receptionhallcommonalysis = () => {
         </h3>
       </div>
 
-      
       <div className="flex flex-col gap-3.5">
-       
         <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2 px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
           <div className="flex items-center gap-2.5">
             <div className="p-2 bg-amber-50 text-amber-500 rounded-xl border border-amber-100/40 shrink-0">
@@ -377,7 +371,7 @@ const Receptionhallcommonalysis = () => {
               Hotel Packages
             </span>
           </div>
-        
+
           <div className="flex items-center gap-2 self-end sm:self-auto">
             <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2 py-1 rounded-lg border border-emerald-100/50 text-[10px] font-black uppercase">
               <Eye size={12} /> {commonStats.activePackages} Active
@@ -388,7 +382,6 @@ const Receptionhallcommonalysis = () => {
           </div>
         </div>
 
-        
         <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2 px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
           <div className="flex items-center gap-2.5">
             <div className="p-2 bg-rose-50 text-rose-500 rounded-xl border border-rose-100/40 shrink-0">
@@ -408,7 +401,6 @@ const Receptionhallcommonalysis = () => {
           </div>
         </div>
 
-        
         <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2 px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200">
           <div className="flex items-center gap-2.5">
             <div className="p-2 bg-indigo-50 text-indigo-500 rounded-xl border border-indigo-100/40 shrink-0">
@@ -468,13 +460,11 @@ const PackageBookedCount = () => {
 
   return (
     <div className="bg-white w-full max-w-sm rounded-3xl p-5 shadow-xl border border-gray-100 flex flex-col gap-4">
-      
       <div className="flex flex-col gap-3">
         <h3 className="text-xl font-black text-slate-800 uppercase tracking-wide font-sans">
           Package Bookings
         </h3>
 
-       
         <div className="relative inline-block self-end">
           <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl pl-3 pr-6 py-2 text-xs font-bold text-gray-700 select-none">
             <CalendarDays size={14} className="text-gray-400" />
@@ -487,10 +477,8 @@ const PackageBookedCount = () => {
         </div>
       </div>
 
-    
       <div className="flex flex-col gap-2">
         {loading ? (
-         
           <p className="text-xs font-bold text-center text-gray-400 uppercase tracking-widest py-6 animate-pulse">
             Loading packages...
           </p>
@@ -499,9 +487,7 @@ const PackageBookedCount = () => {
             No active packages found
           </p>
         ) : (
-          
           packageStats.map((item, index) => {
-           
             const currentStyle = badgeStyles[index % badgeStyles.length];
 
             return (
@@ -509,7 +495,6 @@ const PackageBookedCount = () => {
                 key={item.packageName || index}
                 className="flex items-center justify-between px-3 py-2 bg-gray-50/60 border border-gray-100 rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-200"
               >
-                
                 <div className="flex items-center gap-3">
                   <div
                     className={`p-1.5 rounded-lg border ${currentStyle.bg} shrink-0 flex items-center justify-center`}
@@ -521,7 +506,6 @@ const PackageBookedCount = () => {
                   </span>
                 </div>
 
-                
                 <span className="text-sm font-black text-neutral-900 pr-1">
                   {item.count}
                 </span>
