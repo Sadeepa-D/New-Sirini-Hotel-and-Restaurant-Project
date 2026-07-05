@@ -152,14 +152,26 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
     }
   };
 
-  const filteredList = getActiveList().filter((item) => {
-    const search = searchTerm.toLowerCase();
-    return (
-      item.name?.toLowerCase().includes(search) ||
-      item.roomNumber?.toString().includes(search) ||
-      item.bookingCode?.toLowerCase().includes(search)
-    );
-  });
+  const allBookings = [
+    ...pendingList,
+    ...confirmedList,
+    ...completedList,
+    ...cancelledList,
+    ...overdueList,
+  ];
+
+  const isSearching = searchTerm.trim().length > 0;
+
+  const filteredList = (isSearching ? allBookings : getActiveList()).filter(
+    (item) => {
+      const search = searchTerm.toLowerCase();
+      return (
+        item.name?.toLowerCase().includes(search) ||
+        item.roomNumber?.toString().includes(search) ||
+        item.bookingCode?.toLowerCase().includes(search)
+      );
+    },
+  );
 
   if (loading)
     return (
@@ -218,15 +230,15 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
           />
         </div>
 
-        <div className="relative w-full">
+        <div className="relative w-full sm:w-80">
           <Search
             className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-            size={16}
+            size={14}
           />
           <input
             type="text"
             placeholder="Search bookings..."
-            className="w-full pl-10 pr-4 py-2.5 sm:py-3.5 bg-white border border-gray-200 rounded-2xl text-xs sm:text-sm outline-none focus:ring-4 focus:ring-black/5 transition-all font-sans"
+            className="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-black/5 transition-all font-sans"
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
@@ -240,8 +252,8 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
             className="text-gray-300 mb-2 sm:mb-3 stroke-[1.5]"
           />
           <p className="text-gray-400 text-xs font-bold uppercase tracking-[0.2em] text-center px-2">
-            {searchTerm
-              ? `No results match "${searchTerm}"`
+            {isSearching
+              ? `No bookings match "${searchTerm}" across all tabs`
               : `No ${activeTab} bookings found.`}
           </p>
         </div>
@@ -354,7 +366,7 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
 
                 {/* Actions Footer - Mobile optimized */}
                 <div className="mt-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-1.5 sm:gap-2 pt-2">
-                  {activeTab === "pending" && (
+                  {req.status?.toLowerCase() === "pending" && (
                     <>
                       <button
                         onClick={() => handleBookingAction(req._id, "confirm")}
@@ -373,7 +385,7 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
                     </>
                   )}
 
-                  {activeTab === "approved" && (
+                  {req.status?.toLowerCase() === "confirmed" && (
                     <>
                       <button
                         onClick={() => handleBookingAction(req._id, "complete")}
@@ -392,14 +404,15 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
                     </>
                   )}
 
-                  {activeTab !== "pending" && activeTab !== "approved" && (
-                    <button
-                      onClick={() => handleDeleteRecord(req._id)}
-                      className="p-1.5 sm:p-3 text-gray-300 hover:text-red-600 transition-all ml-auto flex items-center justify-center flex-shrink-0"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  )}
+                  {req.status?.toLowerCase() !== "pending" &&
+                    req.status?.toLowerCase() !== "confirmed" && (
+                      <button
+                        onClick={() => handleDeleteRecord(req._id)}
+                        className="p-1.5 sm:p-3 text-gray-300 hover:text-red-600 transition-all ml-auto flex items-center justify-center flex-shrink-0"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    )}
                 </div>
               </div>
             ))}
