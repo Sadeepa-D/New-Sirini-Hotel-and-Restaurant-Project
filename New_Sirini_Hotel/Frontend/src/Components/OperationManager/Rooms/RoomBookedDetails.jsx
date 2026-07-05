@@ -230,15 +230,15 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
           />
         </div>
 
-        <div className="relative w-full">
+        <div className="relative w-full sm:w-80">
           <Search
             className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-            size={16}
+            size={14}
           />
           <input
             type="text"
             placeholder="Search bookings..."
-            className="w-full pl-10 pr-4 py-2.5 sm:py-3.5 bg-white border border-gray-200 rounded-2xl text-xs sm:text-sm outline-none focus:ring-4 focus:ring-black/5 transition-all font-sans"
+            className="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-black/5 transition-all font-sans"
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
