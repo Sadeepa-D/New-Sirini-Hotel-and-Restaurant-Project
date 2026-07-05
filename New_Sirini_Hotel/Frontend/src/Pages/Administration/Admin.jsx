@@ -4,9 +4,9 @@ import {
   LayoutDashboard,
   Users,
   Utensils,
-  Store,
-  Hotel,
-  Palmtree,
+  Wine,
+  BedDouble,
+  ConciergeBell,
   LogOut,
   Menu,
   X,
@@ -61,9 +61,9 @@ const Admin = () => {
 
   const menuItems = [
     { id: "restaurant", label: "Restaurant", icon: Utensils },
-    { id: "reception", label: "Reception", icon: Palmtree },
-    { id: "rooms", label: "Rooms", icon: Hotel },
-    { id: "liquor", label: "Liquor", icon: Store },
+    { id: "reception", label: "Reception", icon: ConciergeBell },
+    { id: "rooms", label: "Rooms", icon: BedDouble },
+    { id: "liquor", label: "Liquor", icon: Wine },
     { id: "users", label: "Users", icon: Users },
   ];
 
@@ -211,6 +211,7 @@ const Admin = () => {
                   key={item.id}
                   title={item.label}
                   onClick={() => setActiveTab(item.id)}
+                  style={{ borderRadius: "10px" }}
                   className={`flex-1 min-w-0 flex items-center justify-center h-9 sm:h-10 rounded-lg transition-all duration-200 active:scale-95 ${
                     isActive
                       ? "bg-amber-600 text-white shadow-lg ring-2 ring-amber-400 ring-offset-1"
@@ -253,6 +254,7 @@ const Admin = () => {
                   <button
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
+                    style={{ borderRadius: "10px" }}
                     className={`flex items-center gap-2.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-200 active:scale-95 ${
                       isActive
                         ? "bg-amber-600 text-white shadow-lg scale-105 ring-2 ring-amber-400 ring-offset-1"
