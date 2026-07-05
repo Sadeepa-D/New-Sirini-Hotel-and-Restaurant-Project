@@ -200,7 +200,10 @@ const Admin = () => {
                 <h3 className="font-serif italic text-xs sm:text-sm text-gray-900 leading-tight truncate">
                   Sirini Admin
                 </h3>
-                <h4 className="text-[8px] sm:text-[9px] text-gray-500 uppercase font-bold tracking-[0.15em] mt-0.5">
+                <h4
+                  style={{ fontFamily: "'Cinzel', serif" }}
+                  className="text-[9px] sm:text-[10px] text-amber-600 uppercase font-extrabold tracking-[0.2em] mt-0.5"
+                >
                   Admin Portal
                 </h4>
               </div>
@@ -355,7 +358,10 @@ const Admin = () => {
               className="w-16 h-16 object-contain"
             />
             <div className="text-left border-r border-gray-200 pr-4">
-              <h3 className="text-xs text-gray-500 font-bold tracking-widest uppercase">
+              <h3
+                style={{ fontFamily: "'Cinzel', serif" }}
+                className="text-xs text-amber-600 font-extrabold tracking-widest uppercase"
+              >
                 Admin Portal
               </h3>
               <h4 className="text-sm font-bold text-gray-800 mt-0.5">
