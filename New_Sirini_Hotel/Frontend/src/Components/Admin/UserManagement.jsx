@@ -209,13 +209,13 @@ const UserManagement = () => {
             Manage system access levels and staff credentials.
           </p>
         </div>
-        <button
+        {/* <button
           onClick={() => navigate("/register")}
           style={{ borderRadius: "12px" }}
           className="flex items-center justify-center gap-2 bg-black text-yellow-500 px-6 py-3 rounded-2xl font-bold hover:scale-[1.02] transition-all shadow-lg w-full md:w-auto"
         >
           <UserPlus size={20} /> Add New User
-        </button>
+        </button> */}
       </div>
 
       {/* Search Bar */}
@@ -235,20 +235,17 @@ const UserManagement = () => {
         </div>
       </div>
 
-      
       <div className="grid grid-cols-1 gap-4">
         {filteredUsers.map((user) => (
           <div
             key={user._id}
             className="bg-white rounded-3xl border border-gray-100 p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:shadow-md transition-all group"
           >
-           
             <div className="flex items-center gap-4 md:w-[35%] min-w-0">
               <div
                 className={`w-1.5 h-12 rounded-full hidden md:block ${user.Status === "Active" ? "bg-green-500" : "bg-red-500"}`}
               />
               <div className="w-15 h-17 shrink-0 rounded-2xl bg-yellow-100 text-yellow-700 flex items-center justify-center font-black text-lg shadow-sm">
-                
                 {!user.image ? (
                   user.name?.charAt(0).toUpperCase()
                 ) : (
@@ -274,7 +271,6 @@ const UserManagement = () => {
               </div>
             </div>
 
-           
             <div className="flex flex-col items-start md:items-center justify-center gap-2 px-2 md:flex-1">
               <span className="flex items-center gap-1.5 text-[10px] font-bold text-gray-600 bg-gray-50 px-3 py-1 rounded-lg border border-gray-100 whitespace-nowrap">
                 <ShieldCheck size={12} className="text-gray-400" />
@@ -291,54 +287,59 @@ const UserManagement = () => {
               </span>
             </div>
 
-            
             <div className="flex items-center justify-end md:w-[30%] shrink-0">
-              <div className="flex items-center bg-gray-50 p-1.5 rounded-2xl border border-gray-100 gap-1 w-full md:w-auto justify-around md:justify-end">
-                <button
-                  title="Edit"
-                  style={{ borderRadius: "10px" }}
-                  className="p-2 text-blue-500 hover:bg-blue-50 hover:shadow-sm hover:scale-110 active:scale-95 transition-all duration-300 ease-out cursor-pointer"
-                  onClick={() => openEditModal(user)}
-                >
-                  <Edit3 size={17} />
-                </button>
+              {user.Role !== "Admin" ? (
+                <div className="flex items-center bg-gray-50 p-1.5 rounded-2xl border border-gray-100 gap-1 w-full md:w-auto justify-around md:justify-end">
+                  <button
+                    title="Edit"
+                    style={{ borderRadius: "10px" }}
+                    className="p-2 text-blue-500 hover:bg-blue-50 hover:shadow-sm hover:scale-110 active:scale-95 transition-all duration-300 ease-out cursor-pointer"
+                    onClick={() => openEditModal(user)}
+                  >
+                    <Edit3 size={17} />
+                  </button>
 
-                <button
-                  onClick={() => toggleuserstatus(user)}
-                  title="Status"
-                  style={{ borderRadius: "10px" }}
-                  className={`p-2 transition-all hover:shadow-sm hover:scale-110 active:scale-95 duration-300 ease-out cursor-pointer ${user.Status === "Active" ? "text-orange-500 hover:bg-orange-50" : "text-green-600 hover:bg-green-50"}`}
-                >
-                  {user.Status === "Active" ? (
-                    <UserX size={17} />
-                  ) : (
-                    <UserCheck size={17} />
-                  )}
-                </button>
+                  <button
+                    onClick={() => toggleuserstatus(user)}
+                    title="Status"
+                    style={{ borderRadius: "10px" }}
+                    className={`p-2 transition-all hover:shadow-sm hover:scale-110 active:scale-95 duration-300 ease-out cursor-pointer ${user.Status === "Active" ? "text-orange-500 hover:bg-orange-50" : "text-green-600 hover:bg-green-50"}`}
+                  >
+                    {user.Status === "Active" ? (
+                      <UserX size={17} />
+                    ) : (
+                      <UserCheck size={17} />
+                    )}
+                  </button>
 
-                <button
-                  onClick={() => deleteuser(user)}
-                  title="Delete"
-                  style={{ borderRadius: "10px" }}
-                  className="p-2 text-red-500 hover:bg-red-50 hover:shadow-sm hover:scale-110 active:scale-95 transition-all duration-300 ease-out cursor-pointer"
-                >
-                  <Trash2 size={17} />
-                </button>
+                  <button
+                    onClick={() => deleteuser(user)}
+                    title="Delete"
+                    style={{ borderRadius: "10px" }}
+                    className="p-2 text-red-500 hover:bg-red-50 hover:shadow-sm hover:scale-110 active:scale-95 transition-all duration-300 ease-out cursor-pointer"
+                  >
+                    <Trash2 size={17} />
+                  </button>
 
-                <div className="w-px h-6 bg-gray-200 mx-1 hidden md:block" />
+                  <div className="w-px h-6 bg-gray-200 mx-1 hidden md:block" />
 
-                <button
-                  onClick={() => {
-                    setSelectedUser(user);
-                    setNewRole(user.Role);
-                    setIsPromoteModalOpen(true);
-                  }}
-                  style={{ borderRadius: "10px" }}
-                  className="p-2 text-indigo-600 hover:bg-indigo-50 hover:shadow-sm hover:scale-110 active:scale-95 transition-all duration-300 ease-out cursor-pointer"
-                >
-                  <UserCog size={17} />
-                </button>
-              </div>
+                  <button
+                    onClick={() => {
+                      setSelectedUser(user);
+                      setNewRole(user.Role);
+                      setIsPromoteModalOpen(true);
+                    }}
+                    style={{ borderRadius: "10px" }}
+                    className="p-2 text-indigo-600 hover:bg-indigo-50 hover:shadow-sm hover:scale-110 active:scale-95 transition-all duration-300 ease-out cursor-pointer"
+                  >
+                    <UserCog size={17} />
+                  </button>
+                </div>
+              ) : (
+                <span className="text-[10px] font-bold text-gray-400 bg-gray-50 px-3 py-1 rounded-lg border border-gray-100 whitespace-nowrap">
+                  Admin Cannot Be Edited
+                </span>
+              )}
             </div>
           </div>
         ))}
