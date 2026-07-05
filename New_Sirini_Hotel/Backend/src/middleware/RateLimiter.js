@@ -31,7 +31,7 @@ const registerLimiter = ratelimiter({
 
 const otpLimiter = ratelimiter({
   windowMs: 10 * 60 * 1000, // 10
-  max: 3,
+  max: 4,
   message: {
     message: "Too many OTP requests, please try again after 10 minutes",
   },
