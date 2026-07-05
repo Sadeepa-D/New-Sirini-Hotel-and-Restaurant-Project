@@ -173,9 +173,7 @@ const OperationManager = () => {
           </div>
         </div>
 
-        
         <div className="hidden md:flex lg:hidden flex-col gap-3">
-          
           <div className="flex items-center justify-between">
             {/* Left: Logo & Brand */}
             <div className="flex items-center gap-3">
@@ -233,7 +231,9 @@ const OperationManager = () => {
                 <p className="text-xs font-bold text-gray-800 line-clamp-1 max-w-[120px]">
                   {userdata.name || "User Name"}
                 </p>
-                <p className="text-[10px] text-gray-500 font-medium">Manager 1</p>
+                <p className="text-[10px] text-gray-500 font-medium">
+                  Manager 1
+                </p>
               </div>
             </div>
           </div>
@@ -269,7 +269,6 @@ const OperationManager = () => {
           </div>
         </div>
 
-        
         <div className="hidden lg:grid lg:grid-cols-3 lg:items-center lg:gap-4">
           {/* Left: Logo */}
           <div className="flex items-center gap-3">

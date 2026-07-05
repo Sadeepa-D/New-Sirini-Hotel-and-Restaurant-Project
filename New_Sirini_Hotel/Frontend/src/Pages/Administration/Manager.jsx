@@ -217,7 +217,6 @@ const Manager = () => {
             </div>
           </div>
 
-          
           <div className="flex items-center justify-end gap-3">
             {userdata.Role === "Admin" && (
               <button

@@ -331,24 +331,24 @@ const GalleryManagementHub = ({ onClose }) => {
                   </div>
                 )}
               </div>
-
               <div className="pt-2 sm:pt-3">
                 <button
                   onClick={handleUpload}
                   disabled={previewImages.length === 0 || uploading}
-                  className="w-full relative overflow-hidden bg-[#121826] hover:bg-[#1a2335] disabled:bg-gray-100 disabled:text-gray-400 text-white font-black py-3 sm:py-4 px-4 sm:px-6 rounded-lg sm:rounded-[1.25rem] transition-all duration-300 shadow-xl shadow-gray-200 uppercase tracking-[0.2em] text-[9px] sm:text-xs flex items-center justify-center gap-2 sm:gap-3 group active:scale-[0.98] disabled:active:scale-100"
+                  style={{ borderRadius: "14px" }}
+                  className="w-full relative overflow-hidden bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-3 sm:py-3.5 px-4 sm:px-6 transition-all duration-300 ease-out shadow-lg hover:shadow-xl hover:shadow-orange-500/20 disabled:opacity-40 disabled:shadow-none disabled:cursor-not-allowed uppercase tracking-wider text-xs flex items-center justify-center gap-2 sm:gap-3 group hover:scale-[1.03] active:scale-[0.98] disabled:hover:scale-100 disabled:active:scale-100 cursor-pointer"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] transition-transform" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] transition-transform" />
                   {uploading ? (
                     <>
-                      <div className="w-3 sm:w-4 h-3 sm:h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       <span>Processing...</span>
                     </>
                   ) : (
                     <>
                       <CheckCircle2
-                        size={16}
-                        className="sm:w-4.5 sm:h-4.5 text-amber-500 group-hover:text-white transition-colors duration-300 shrink-0"
+                        size={15}
+                        className="text-white transition-colors duration-300 shrink-0"
                       />
                       <span>Publish to Gallery</span>
                     </>

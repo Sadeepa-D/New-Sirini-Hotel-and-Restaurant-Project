@@ -443,7 +443,8 @@ function RoomBookedDetails({ refreshKey, onActionCompleted }) {
                     </>
                   )}
 
-                  {req.status?.toLowerCase() !== "pending" &&
+                  {isAdmin &&
+                    req.status?.toLowerCase() !== "pending" &&
                     req.status?.toLowerCase() !== "confirmed" && (
                       <button
                         onClick={() => handleDeleteRecord(req._id)}
