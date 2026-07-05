@@ -205,7 +205,7 @@ const OperationManager = () => {
             <div className="relative z-40 overflow-visible notifi-container-wrapper flex items-center gap-1 sm:gap-1.5 shrink-0">
               <button
                 onClick={() => setNotificationOpen(!notificationOpen)}
-                className="relative p-1.5 sm:p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+                className="relative p-1.5 sm:p-2 text-gray-500 hover:bg-gray-100 rounded-xl transition-colors"
                 title="Notifications"
               >
                 <div className="relative">
@@ -219,7 +219,7 @@ const OperationManager = () => {
               </button>
               {userdata.Role === "Admin" && (
                 <button
-                  className="p-1.5 sm:p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"
+                  className="p-1.5 sm:p-2 text-amber-500 hover:bg-amber-50 rounded-xl transition-colors"
                   onClick={() => usenavigate("/admin")}
                   title="Admin Portal"
                 >
@@ -228,14 +228,14 @@ const OperationManager = () => {
               )}
               <button
                 onClick={() => usenavigate("/")}
-                className="p-1.5 sm:p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"
+                className="p-1.5 sm:p-2 text-amber-500 hover:bg-amber-50 rounded-xl transition-colors"
                 title="Home"
               >
                 <Home size={16} className="sm:w-5 sm:h-5" />
               </button>
               <button
                 onClick={() => usenavigate("/login")}
-                className="p-1.5 sm:p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                className="p-1.5 sm:p-2 text-red-500 hover:bg-red-50 rounded-xl transition-colors"
                 title="Logout"
               >
                 <LogOut size={16} className="sm:w-5 sm:h-5" />
@@ -310,11 +310,10 @@ const OperationManager = () => {
               </div>
             </div>
 
-            {/* Right: Actions + Profile */}
             <div className="relative z-40 overflow-visible notifi-container-wrapper flex items-center gap-3">
               <button
                 onClick={() => setNotificationOpen(!notificationOpen)}
-                className="relative p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+                className="relative p-2 text-gray-500 hover:bg-gray-100 rounded-xl transition-colors"
                 title="Notifications"
               >
                 <div className="relative">
@@ -328,7 +327,7 @@ const OperationManager = () => {
               </button>
               {userdata.Role === "Admin" && (
                 <button
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 transition-colors group"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 transition-colors group"
                   onClick={() => usenavigate("/admin")}
                   title="Go to Admin Portal"
                 >
@@ -343,7 +342,7 @@ const OperationManager = () => {
               )}
               <button
                 onClick={() => usenavigate("/")}
-                className="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"
+                className="p-2 text-amber-500 hover:bg-amber-50 rounded-xl transition-colors"
                 title="Home"
               >
                 <Home size={20} />
@@ -393,7 +392,8 @@ const OperationManager = () => {
                       if (isLogout) handleLogout();
                       else setActiveTab(item.id);
                     }}
-                    className={`flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200 ${
+                    style={{ borderRadius: "12px" }}
+                    className={`flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 ${
                       isActive && !isLogout
                         ? "bg-amber-600 text-white shadow-lg scale-105 ring-2 ring-amber-400 ring-offset-1"
                         : isLogout
@@ -442,7 +442,8 @@ const OperationManager = () => {
                       if (isLogout) handleLogout();
                       else setActiveTab(item.id);
                     }}
-                    className={`flex items-center gap-2.5 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    style={{ borderRadius: "12px" }}
+                    className={`flex items-center gap-2.5 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                       isActive && !isLogout
                         ? "bg-amber-600 text-white shadow-lg scale-105 ring-2 ring-amber-400 ring-offset-1"
                         : isLogout
