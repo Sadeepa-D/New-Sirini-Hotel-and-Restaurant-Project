@@ -389,7 +389,8 @@ const UserManagement = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setIsPromoteModalOpen(false)}
-                className="flex-1 py-2.5 text-sm font-bold text-gray-500 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors"
+                style={{ borderRadius: "12px" }}
+                className="flex-1 py-2.5 text-sm font-bold text-red-600 bg-red-500/10 border border-red-500/20 hover:bg-red-600 hover:text-white hover:border-red-600 hover:scale-105 active:scale-95 transition-all duration-300 ease-out flex items-center justify-center cursor-pointer"
               >
                 Cancel
               </button>
@@ -398,7 +399,8 @@ const UserManagement = () => {
                   updateuserrole(selectedUser._id, newRole);
                   setIsPromoteModalOpen(false);
                 }}
-                className="flex-1 py-2.5 text-sm font-bold text-black bg-yellow-400 rounded-xl hover:bg-yellow-500 transition-colors shadow-md shadow-yellow-400/20"
+                style={{ borderRadius: "12px" }}
+                className="flex-1 py-2.5 text-sm font-bold text-black bg-yellow-400 hover:bg-yellow-500 hover:scale-105 active:scale-95 transition-all duration-300 ease-out shadow-md shadow-yellow-400/20 cursor-pointer"
               >
                 Update Role
               </button>
