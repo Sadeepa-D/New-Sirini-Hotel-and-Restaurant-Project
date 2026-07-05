@@ -211,6 +211,7 @@ const UserManagement = () => {
         </div>
         <button
           onClick={() => navigate("/register")}
+          style={{ borderRadius: "12px" }}
           className="flex items-center justify-center gap-2 bg-black text-yellow-500 px-6 py-3 rounded-2xl font-bold hover:scale-[1.02] transition-all shadow-lg w-full md:w-auto"
         >
           <UserPlus size={20} /> Add New User
@@ -295,7 +296,8 @@ const UserManagement = () => {
               <div className="flex items-center bg-gray-50 p-1.5 rounded-2xl border border-gray-100 gap-1 w-full md:w-auto justify-around md:justify-end">
                 <button
                   title="Edit"
-                  className="p-2 rounded-xl text-blue-500 hover:bg-white hover:shadow-sm transition-all"
+                  style={{ borderRadius: "10px" }}
+                  className="p-2 text-blue-500 hover:bg-blue-50 hover:shadow-sm hover:scale-110 active:scale-95 transition-all duration-300 ease-out cursor-pointer"
                   onClick={() => openEditModal(user)}
                 >
                   <Edit3 size={17} />
@@ -304,7 +306,8 @@ const UserManagement = () => {
                 <button
                   onClick={() => toggleuserstatus(user)}
                   title="Status"
-                  className={`p-2 rounded-xl transition-all hover:bg-white hover:shadow-sm ${user.Status === "Active" ? "text-orange-500" : "text-green-600"}`}
+                  style={{ borderRadius: "10px" }}
+                  className={`p-2 transition-all hover:shadow-sm hover:scale-110 active:scale-95 duration-300 ease-out cursor-pointer ${user.Status === "Active" ? "text-orange-500 hover:bg-orange-50" : "text-green-600 hover:bg-green-50"}`}
                 >
                   {user.Status === "Active" ? (
                     <UserX size={17} />
@@ -316,7 +319,8 @@ const UserManagement = () => {
                 <button
                   onClick={() => deleteuser(user)}
                   title="Delete"
-                  className="p-2 rounded-xl text-red-500 hover:bg-white hover:shadow-sm transition-all"
+                  style={{ borderRadius: "10px" }}
+                  className="p-2 text-red-500 hover:bg-red-50 hover:shadow-sm hover:scale-110 active:scale-95 transition-all duration-300 ease-out cursor-pointer"
                 >
                   <Trash2 size={17} />
                 </button>
@@ -329,7 +333,8 @@ const UserManagement = () => {
                     setNewRole(user.Role);
                     setIsPromoteModalOpen(true);
                   }}
-                  className="p-2 rounded-xl text-indigo-600 hover:bg-white hover:shadow-sm transition-all"
+                  style={{ borderRadius: "10px" }}
+                  className="p-2 text-indigo-600 hover:bg-indigo-50 hover:shadow-sm hover:scale-110 active:scale-95 transition-all duration-300 ease-out cursor-pointer"
                 >
                   <UserCog size={17} />
                 </button>
@@ -388,7 +393,8 @@ const UserManagement = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setIsPromoteModalOpen(false)}
-                className="flex-1 py-2.5 text-sm font-bold text-gray-500 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors"
+                style={{ borderRadius: "12px" }}
+                className="flex-1 py-2.5 text-sm font-bold text-red-600 bg-red-500/10 border border-red-500/20 hover:bg-red-600 hover:text-white hover:border-red-600 hover:scale-105 active:scale-95 transition-all duration-300 ease-out flex items-center justify-center cursor-pointer"
               >
                 Cancel
               </button>
@@ -397,7 +403,8 @@ const UserManagement = () => {
                   updateuserrole(selectedUser._id, newRole);
                   setIsPromoteModalOpen(false);
                 }}
-                className="flex-1 py-2.5 text-sm font-bold text-black bg-yellow-400 rounded-xl hover:bg-yellow-500 transition-colors shadow-md shadow-yellow-400/20"
+                style={{ borderRadius: "12px" }}
+                className="flex-1 py-2.5 text-sm font-bold text-black bg-yellow-400 hover:bg-yellow-500 hover:scale-105 active:scale-95 transition-all duration-300 ease-out shadow-md shadow-yellow-400/20 cursor-pointer"
               >
                 Update Role
               </button>
@@ -528,13 +535,15 @@ const UserManagement = () => {
                 <button
                   type="button"
                   onClick={() => setIsEditModalOpen(false)}
-                  className="flex-1 py-3 text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors"
+                  style={{ borderRadius: "12px" }}
+                  className="flex-1 py-3 text-sm font-bold text-red-600 bg-red-500/10 border border-red-500/20 hover:bg-red-600 hover:text-white hover:border-red-600 hover:scale-105 active:scale-95 transition-all duration-300 ease-out flex items-center justify-center cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-[2] py-3 bg-black text-yellow-500 font-bold rounded-2xl shadow-lg shadow-yellow-500/10 active:scale-95 transition-all"
+                  style={{ borderRadius: "12px" }}
+                  className="flex-1 py-3 bg-black text-yellow-500 font-bold shadow-lg shadow-yellow-500/10 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
                 >
                   Save Changes
                 </button>

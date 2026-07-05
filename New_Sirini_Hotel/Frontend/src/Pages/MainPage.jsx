@@ -159,7 +159,7 @@ const NewSiriniHotel = () => {
 
         {/* --- Services Section --- */}
         <section id="services" className="py-16 container mx-auto px-4">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl text-center mb-12 font-serif">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl text-center mb-20 font-sans font-bold text-gray-800 tracking-tight">
             Our Services
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
