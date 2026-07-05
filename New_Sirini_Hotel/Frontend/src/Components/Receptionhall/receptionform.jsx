@@ -263,7 +263,7 @@ export default function BookingForm({ editData = null, onSuccess }) {
           {/* Expected Guests */}
           <div>
             <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
-              Expected Guests (Min 40 - Max 200)
+              Expected Guests (Min 40 - Max 250)
             </label>
             <div className={wrapClass}>
               <Users size={16} className="text-amber-500 shrink-0" />
