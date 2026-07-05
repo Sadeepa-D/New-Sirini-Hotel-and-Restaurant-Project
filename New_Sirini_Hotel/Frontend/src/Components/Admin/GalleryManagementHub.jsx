@@ -184,10 +184,11 @@ const GalleryManagementHub = ({ onClose }) => {
                   <button
                     key={cat}
                     onClick={() => setActiveCategory(cat)}
-                    className={`px-4 sm:px-8 py-2 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-200 border-2 ${
+                    style={{ borderRadius: "9999px" }}
+                    className={`px-5 sm:px-8 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-300 ease-out border-2 hover:scale-105 active:scale-95 cursor-pointer ${
                       activeCategory === cat
-                        ? "bg-amber-500 text-white border-amber-600 shadow-lg shadow-amber-200"
-                        : "bg-white text-gray-600 border-gray-200 hover:border-amber-300 hover:bg-amber-50"
+                        ? "bg-amber-500 text-white border-amber-500 shadow-md shadow-amber-500/20"
+                        : "bg-white text-gray-600 border-gray-200 hover:border-amber-400 hover:text-amber-500"
                     }`}
                   >
                     {cat}
@@ -253,7 +254,7 @@ const GalleryManagementHub = ({ onClose }) => {
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
-                  className={`group relative flex flex-col h-24 sm:h-32 w-full cursor-pointer items-center justify-center rounded-lg sm:rounded-2xl border-2 border-dashed transition-all duration-300 ${
+                  className={`group relative flex flex-col h-24 sm:h-32 w-full cursor-pointer items-center justify-center pt-2 sm:pt-4 rounded-lg sm:rounded-2xl border-2 border-dashed transition-all duration-300 ${
                     isDragging
                       ? "border-amber-500 bg-amber-100 scale-[1.02] shadow-inner"
                       : "border-amber-200 bg-amber-50/30 hover:border-amber-400 hover:bg-amber-50"
