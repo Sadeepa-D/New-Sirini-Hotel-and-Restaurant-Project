@@ -13,6 +13,27 @@ const genarateBookingCode = async () => {
   return genarateBookingCode();
 };
 
+const getPaymentDetails = (body, file) => {
+  const paymentMethod = body.paymentMethod || "Cash";
+  const amountPayed =
+    body.amountPayed === undefined || body.amountPayed === null || body.amountPayed === ""
+      ? 0
+      : Number(body.amountPayed);
+
+  return {
+    paymentMethod,
+    amountPayed,
+    paymentProofUrl:
+      paymentMethod === "Online Transfer" && file
+        ? file.secure_url || file.path
+        : body.paymentProofUrl || "",
+    paymentProofPublicId:
+      paymentMethod === "Online Transfer" && file
+        ? file.public_id || file.filename
+        : body.paymentProofPublicId || "",
+  };
+};
+
 const createReceptionHallBooking = async (req, res) => {
   try {
     const {
@@ -28,6 +49,8 @@ const createReceptionHallBooking = async (req, res) => {
       selectedPackage,
       amountPayed,
     } = req.body;
+    const { paymentMethod, amountPayed: normalizedAmount, paymentProofUrl, paymentProofPublicId } = getPaymentDetails(req.body, req.file);
+
     if (
       !customerName ||
       !customerEmail ||
@@ -38,12 +61,17 @@ const createReceptionHallBooking = async (req, res) => {
       !numberOfGuests ||
       !status ||
       !selectedPackage ||
-      !amountPayed
+      (paymentMethod === "Cash" && (!normalizedAmount || Number(normalizedAmount) <= 0))
     ) {
       return res
         .status(400)
         .json({ message: "All required fields must be filled" });
     }
+
+    if (paymentMethod === "Online Transfer" && !paymentProofUrl) {
+      return res.status(400).json({ message: "Payment proof image is required for online transfer payments" });
+    }
+
     const phoneRegex = /^(?:\+94|0)?(7[0-8]\d{7}|[1-9]\d{8})$/;
     if (!phoneRegex.test(customerPhone)) {
       return res.status(400).json({ message: "Invalid phone number format" });
@@ -80,7 +108,10 @@ const createReceptionHallBooking = async (req, res) => {
       specialRequests,
       status: status || "Confirmed",
       selectedPackage,
-      amountPayed,
+      amountPayed: normalizedAmount,
+      paymentMethod,
+      paymentProofUrl,
+      paymentProofPublicId,
       refnumber: await genarateBookingCode(),
     });
     await newBooking.save();
@@ -131,6 +162,12 @@ const editReceptionHallBooking = async (req, res) => {
       selectedPackage,
       amountPayed,
     } = req.body;
+    const { paymentMethod, amountPayed: normalizedAmount, paymentProofUrl, paymentProofPublicId } = getPaymentDetails(req.body, req.file);
+
+    if (paymentMethod === "Online Transfer" && !paymentProofUrl) {
+      return res.status(400).json({ message: "Payment proof image is required for online transfer payments" });
+    }
+
     const phoneRegex = /^(?:\+94|0)?(7[0-8]\d{7}|[1-9]\d{8})$/;
     if (!phoneRegex.test(customerPhone)) {
       return res.status(400).json({ message: "Invalid phone number format" });
@@ -159,7 +196,10 @@ const editReceptionHallBooking = async (req, res) => {
         specialRequests,
         status,
         selectedPackage,
-        amountPayed,
+        amountPayed: normalizedAmount,
+        paymentMethod,
+        paymentProofUrl,
+        paymentProofPublicId,
       },
       { new: true },
     );
