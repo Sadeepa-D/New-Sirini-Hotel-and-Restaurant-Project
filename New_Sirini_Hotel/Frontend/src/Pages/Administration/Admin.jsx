@@ -20,6 +20,7 @@ import {
   Store,
   Hotel,
   Bell,
+  PieChart,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -31,6 +32,7 @@ import ReceptionHallAnlys from "../../Components/Admin/ReceptionHallAnlys";
 import RestrauntAnlys from "../../Components/Admin/RestrauntAnlys";
 import RoomsAnlys from "../../Components/Admin/RoomsAnlys";
 import NotifiCenter from "../../Components/NotifiCenter";
+import OverallChart from "../../Components/LiqourStore/OverallChart";
 
 const Admin = () => {
   const token = localStorage.getItem("token");
@@ -156,6 +158,7 @@ const Admin = () => {
   }, [notificationOpen]);
 
   const menuItems = [
+    { id: "overall", label: "Overall", icon: PieChart },
     { id: "restaurant", label: "Restaurant", icon: Utensils },
     { id: "reception", label: "Reception", icon: ConciergeBell },
     { id: "rooms", label: "Rooms", icon: BedDouble },
@@ -175,6 +178,8 @@ const Admin = () => {
         return <LiquorManagment />;
       case "users":
         return <UserManagement />;
+      case "overall":
+        return <OverallChart />;
       default:
         return <RestrauntAnlys />;
     }
