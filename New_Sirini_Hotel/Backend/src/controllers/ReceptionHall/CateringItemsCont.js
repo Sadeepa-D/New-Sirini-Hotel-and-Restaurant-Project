@@ -35,6 +35,7 @@ const getCateringItems = async (req, res) => {
     res.status(500).json({ message: "Error fetching catering items", error });
   }
 };
+
 const updateCateringItem = async (req, res) => {
   try {
     const { id } = req.params;

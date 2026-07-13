@@ -68,6 +68,7 @@ const getReceptionHallPackages = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 const updateReceptionHallPackage = async (req, res) => {
   try {
     const { id } = req.params;

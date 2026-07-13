@@ -18,7 +18,6 @@ const createAdvertisment = async (req, res) => {
           "Please update your profile with a phone number before creating an advertisement.",
       });
     }
-
     const {
       BuissnesName,
       BuissnessOwnerName,

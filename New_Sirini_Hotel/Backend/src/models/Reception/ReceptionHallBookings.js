@@ -40,7 +40,21 @@ const receptionHallBookingSchema = new mongoose.Schema(
     },
     amountPayed: {
       type: Number,
-      required: true,
+      required: false,
+      default: 0,
+    },
+    paymentMethod: {
+      type: String,
+      enum: ["Cash", "Online Transfer"],
+      default: "Cash",
+    },
+    paymentProofUrl: {
+      type: String,
+      default: "",
+    },
+    paymentProofPublicId: {
+      type: String,
+      default: "",
     },
     selectedPackage: {
       type: String,
