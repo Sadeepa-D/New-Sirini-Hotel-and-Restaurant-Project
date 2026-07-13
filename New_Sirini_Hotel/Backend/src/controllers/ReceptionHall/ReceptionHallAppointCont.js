@@ -61,6 +61,7 @@ const createReceptionAppointment = async (req, res) => {
     
     await newAppointment.save();
 
+    /*
     await sendAppointmentEmail({
       name,
       email,
@@ -71,6 +72,7 @@ const createReceptionAppointment = async (req, res) => {
       status: "Pending",
       newAppointment,
     });
+    */
 
     try {
       const newNotifi = new NotifiModel({

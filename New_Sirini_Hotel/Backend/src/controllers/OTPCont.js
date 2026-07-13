@@ -16,12 +16,15 @@ const sendOTPEmail = async (req, res) => {
       },
       { upsert: true },
     );
+    /*
     await transpoter.sendMail({
       from: process.env.EMAIL_ADDRES,
       to: email,
       subject: "Your one-time OTP Code for Sirini Hotel registration",
       html: `<h2>Your code is: ${otp} It will expire in 10 minutes.</h2>`,
     });
+    */
+    console.log(`[BYPASSED EMAIL] OTP Code for ${email} is: ${otp}`);
     res.status(200).json({ message: "OTP email sent successfully" });
   } catch (error) {
     console.error("Error sending OTP email:", error);
