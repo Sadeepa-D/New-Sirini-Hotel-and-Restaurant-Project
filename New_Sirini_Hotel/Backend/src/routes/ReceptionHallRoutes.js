@@ -215,6 +215,7 @@ router.post(
   "/booking/add",
   authmiddleware,
   RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
+  upload.single("paymentProof"),
   ReceptionHallBookCont.createReceptionHallBooking,
 );
 router.get(
@@ -233,6 +234,7 @@ router.put(
   "/booking/update/:id",
   authmiddleware,
   RoleBaseMiddleware(["Admin", "Operation Manager 2 (Reception, Room)"]),
+  upload.single("paymentProof"),
   ReceptionHallBookCont.editReceptionHallBooking,
 );
 router.put(

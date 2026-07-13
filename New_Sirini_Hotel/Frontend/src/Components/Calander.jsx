@@ -1,9 +1,58 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 
-const Calander = ({ BookedDates = [], loading = false }) => {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(null);
+const parseLocalDate = (value) => {
+  if (!value) return null;
+
+  if (value instanceof Date) {
+    return new Date(value.getFullYear(), value.getMonth(), value.getDate());
+  }
+
+  if (typeof value === "string") {
+    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (match) {
+      const [, year, month, day] = match;
+      return new Date(Number(year), Number(month) - 1, Number(day));
+    }
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return null;
+
+  return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+};
+
+const formatLocalDate = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+const Calander = ({
+  BookedDates = [],
+  loading = false,
+  selectedDateValue = null,
+  onDateSelect = null,
+  title = "Select Date",
+  subtitle = "Choose a date",
+}) => {
+  const [currentDate, setCurrentDate] = useState(() => {
+    const parsed = parseLocalDate(selectedDateValue);
+    return parsed || new Date();
+  });
+  const [selectedDate, setSelectedDate] = useState(() => parseLocalDate(selectedDateValue));
+
+  useEffect(() => {
+    const parsed = parseLocalDate(selectedDateValue);
+    if (parsed) {
+      parsed.setHours(0, 0, 0, 0);
+      setSelectedDate(parsed);
+      setCurrentDate(parsed);
+    } else {
+      setSelectedDate(null);
+    }
+  }, [selectedDateValue]);
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -71,37 +120,44 @@ const Calander = ({ BookedDates = [], loading = false }) => {
 
     if (isPast(day)) return "text-gray-300 cursor-not-allowed";
 
+    if (isSelected(day))
+      return "bg-amber-500 text-white font-bold shadow-md cursor-pointer";
+
     if (isToday(day))
       return "bg-green-100 text-green-700 border-2 border-green-500 font-bold cursor-pointer";
 
     if (status === "Full")
-      return "bg-red-500 text-white font-bold cursor-not-allowed shadow-inner";
+      return "bg-red-500 text-white font-bold cursor-pointer shadow-inner";
     if (status === "DayOnly")
       return "bg-blue-500 text-white font-bold cursor-pointer hover:opacity-80";
     if (status === "NightOnly")
       return "bg-purple-500 text-white font-bold cursor-pointer hover:opacity-80";
 
-    if (isSelected(day))
-      return "bg-amber-500 text-white font-bold shadow-md cursor-pointer";
-
     return "text-gray-700 hover:bg-amber-50 hover:text-amber-700 cursor-pointer";
   };
 
   const handleDayClick = (day) => {
-    const status = getBookingStatus(day);
+    if (isPast(day)) return;
 
-    if (isPast(day) || status === "Full") return;
+    const nextDate = new Date(year, month, day);
+    nextDate.setHours(0, 0, 0, 0);
 
-    setSelectedDate(new Date(year, month, day));
+    setSelectedDate(nextDate);
+    setCurrentDate(new Date(year, month, day));
+
+    if (onDateSelect) onDateSelect(nextDate);
   };
 
   return (
     <div className="bg-white rounded-3xl shadow-2xl border border-gray-200 p-4 w-[340px] max-w-[95vw]">
-      <div className="flex items-center gap-2 mb-2">
-        <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
-          <CalendarDays size={16} className="text-amber-600" />
+      <div className="flex items-center gap-2 mb-2 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-3 py-2 text-white">
+        <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
+          <CalendarDays size={16} className="text-white" />
         </div>
-        <h2 className="text-xs font-bold text-gray-900">Select Date</h2>
+        <div>
+          <h2 className="text-xs font-bold">{title}</h2>
+          <p className="text-[10px] text-white/80">{subtitle}</p>
+        </div>
       </div>
       {loading ? (
         <div className="flex items-center justify-center h-24">
@@ -156,6 +212,22 @@ const Calander = ({ BookedDates = [], loading = false }) => {
           </div>
         </>
       )}
+      {selectedDate && (
+        <div className="mt-3 rounded-xl border border-amber-100 bg-amber-50 px-3 py-2">
+          <p className="text-[9px] font-semibold uppercase tracking-[0.2em] text-amber-600">
+            Selected Date
+          </p>
+          <p className="text-xs font-bold text-gray-900">
+            {selectedDate.toLocaleDateString("en-US", {
+              weekday: "short",
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </p>
+        </div>
+      )}
+
       {/* Legend */}
       <div className="grid grid-cols-2 gap-2 mt-3 pt-2 border-t border-gray-100 text-[9px]">
         <div className="flex items-center gap-1.5">
