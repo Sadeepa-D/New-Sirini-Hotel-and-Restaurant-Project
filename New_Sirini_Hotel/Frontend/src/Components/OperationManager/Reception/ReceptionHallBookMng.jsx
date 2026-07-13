@@ -36,6 +36,7 @@ const ReceptionHallBookMng = () => {
   const [loadingDates, setLoadingDates] = useState(true);
   const [statusFilter, setStatusFilter] = useState("Confirmed");
   const [packages, setPackages] = useState([]);
+  const [selectedCalendarDate, setSelectedCalendarDate] = useState("");
 
   const fetchBookedDates = async () => {
     try {
@@ -161,6 +162,21 @@ const ReceptionHallBookMng = () => {
       console.error("Error fetching packages:", error);
       setPackages([]);
     }
+  };
+
+  const formatDateToInput = (dateValue) => {
+    if (!dateValue) return "";
+    const year = dateValue.getFullYear();
+    const month = String(dateValue.getMonth() + 1).padStart(2, "0");
+    const day = String(dateValue.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const handleCalendarDateSelect = (dateValue) => {
+    setSelectedCalendarDate(formatDateToInput(dateValue));
+    setShowCalander(false);
+    setShowForm(true);
+    setEditData(null);
   };
 
   return (
@@ -310,6 +326,7 @@ const ReceptionHallBookMng = () => {
           fetchBookings={fetchBookings}
           AllBookings={bookings}
           packages={packages}
+          initialEventDate={selectedCalendarDate}
         />
       )}
 
@@ -331,7 +348,14 @@ const ReceptionHallBookMng = () => {
 
           {/* Popup Calendar */}
           <div className="relative z-101 animate-in fade-in zoom-in-95 duration-300">
-            <Calander BookedDates={bookedDates} loading={loadingDates} />
+            <Calander
+              BookedDates={bookedDates}
+              loading={loadingDates}
+              selectedDateValue={selectedCalendarDate || null}
+              onDateSelect={handleCalendarDateSelect}
+              title="Choose Event Date"
+              subtitle="This date will fill the booking form"
+            />
           </div>
         </div>
       )}

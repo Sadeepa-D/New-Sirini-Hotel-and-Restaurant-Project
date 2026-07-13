@@ -11,12 +11,42 @@ import {
   Tag,
   Clock,
   ChevronDown,
+  Upload,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
+import Calander from "../../Calander";
 
 const eventTypes = ["Wedding", "Birthday", "Corporate", "Anniversary", "Other"];
 const eventTimes = ["Day (9am - 4pm)", "Night (7pm - 1am)"];
+
+const parseLocalDate = (value) => {
+  if (!value) return null;
+
+  if (value instanceof Date) {
+    return new Date(value.getFullYear(), value.getMonth(), value.getDate());
+  }
+
+  if (typeof value === "string") {
+    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (match) {
+      const [, year, month, day] = match;
+      return new Date(Number(year), Number(month) - 1, Number(day));
+    }
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return null;
+
+  return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+};
+
+const formatLocalDate = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
 
 const CustomSelect = ({ value, onChange, options, placeholder, icon: Icon }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -92,8 +122,15 @@ const ReceptionHallBookForm = ({
   editData = null,
   AllBookings = [],
   packages = [],
+  initialEventDate = "",
 }) => {
   const VITE_URL = import.meta.env.VITE_API_URL;
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [bookedDates, setBookedDates] = useState([]);
+  const [loadingBookedDates, setLoadingBookedDates] = useState(true);
+  const datePickerRef = useRef(null);
+  const [paymentProofFile, setPaymentProofFile] = useState(null);
+  const [paymentProofPreview, setPaymentProofPreview] = useState("");
   const [formData, setFormData] = useState({
     customerName: "",
     customerEmail: "",
@@ -105,11 +142,57 @@ const ReceptionHallBookForm = ({
     specialRequests: "",
     amountPayed: "",
     selectedPackage: "",
+    paymentMethod: "Cash",
+    paymentProofUrl: "",
+    paymentProofPublicId: "",
     status: "Confirmed",
   });
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (datePickerRef.current && !datePickerRef.current.contains(event.target)) {
+        setShowDatePicker(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const fetchBookedDates = async () => {
+      try {
+        const response = await axios.get(
+          `${VITE_URL}/api/receptionhall/booking/dates`,
+        );
+
+        const normalized = response.data.map((item) => {
+          const date = new Date(item.eventDate);
+          const y = date.getUTCFullYear();
+          const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+          const d = String(date.getUTCDate()).padStart(2, "0");
+          return { dateStr: `${y}-${m}-${d}`, time: item.eventTime };
+        });
+
+        setBookedDates(normalized);
+      } catch (error) {
+        console.error("Error fetching booked dates:", error);
+      } finally {
+        setLoadingBookedDates(false);
+      }
+    };
+
+    fetchBookedDates();
+  }, [VITE_URL]);
+
   const handlesubmit = async (e) => {
     e.preventDefault();
+
+    if (formData.paymentMethod === "Cash" && (!formData.amountPayed || Number(formData.amountPayed) <= 0)) {
+      toast.error("Please enter the amount paid for cash payments.");
+      return;
+    }
+
     const isconflict = AllBookings.some((booking) => {
       if (booking.status === "Cancelled") return false;
       if (editData && booking._id === editData._id) return false;
@@ -126,6 +209,7 @@ const ReceptionHallBookForm = ({
       toast.error("Selected date and time slot is already booked");
       return;
     }
+
     onClose();
     const loadingToast = toast.loading(
       `${editData ? "Updating" : "Creating"} booking...`,
@@ -133,23 +217,45 @@ const ReceptionHallBookForm = ({
 
     try {
       const token = localStorage.getItem("token");
+      const payload = new FormData();
+
+      Object.entries(formData).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          payload.append(key, value);
+        }
+      });
+
+      if (formData.paymentMethod === "Cash") {
+        payload.set("amountPayed", formData.amountPayed || 0);
+      } else {
+        payload.set("amountPayed", formData.amountPayed || 0);
+        if (paymentProofFile) {
+          payload.append("paymentProof", paymentProofFile);
+        } else if (formData.paymentProofUrl) {
+          payload.append("paymentProofUrl", formData.paymentProofUrl);
+          payload.append("paymentProofPublicId", formData.paymentProofPublicId || "");
+        }
+      }
+
       if (editData) {
         await axios.put(
           `${VITE_URL}/api/receptionhall/booking/update/${editData._id}`,
-          formData,
+          payload,
           {
             headers: {
               Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
             },
           },
         );
       } else {
         await axios.post(
           `${VITE_URL}/api/receptionhall/booking/add`,
-          formData,
+          payload,
           {
             headers: {
               Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
             },
           },
         );
@@ -178,10 +284,48 @@ const ReceptionHallBookForm = ({
         specialRequests: editData.specialRequests,
         amountPayed: editData.amountPayed,
         selectedPackage: editData.selectedPackage,
+        paymentMethod: editData.paymentMethod || "Cash",
+        paymentProofUrl: editData.paymentProofUrl || "",
+        paymentProofPublicId: editData.paymentProofPublicId || "",
         status: editData.status,
       });
+      setPaymentProofPreview(editData.paymentProofUrl || "");
+      setPaymentProofFile(null);
+    } else if (initialEventDate) {
+      setFormData((prev) => ({
+        ...prev,
+        eventDate: initialEventDate,
+      }));
     }
-  }, [editData]);
+  }, [editData, initialEventDate]);
+
+  const handleDateSelect = (selectedDate) => {
+    const formatted = formatLocalDate(selectedDate);
+    setFormData((prev) => ({ ...prev, eventDate: formatted }));
+    setShowDatePicker(false);
+  };
+
+  const handlePaymentMethodChange = (value) => {
+    setFormData((prev) => ({
+      ...prev,
+      paymentMethod: value,
+      paymentProofUrl: value === "Cash" ? "" : prev.paymentProofUrl,
+      paymentProofPublicId: value === "Cash" ? "" : prev.paymentProofPublicId,
+    }));
+
+    if (value === "Cash") {
+      setPaymentProofFile(null);
+      setPaymentProofPreview("");
+    }
+  };
+
+  const handlePaymentProofChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setPaymentProofFile(file);
+    setPaymentProofPreview(URL.createObjectURL(file));
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -305,20 +449,43 @@ const ReceptionHallBookForm = ({
 
           {/* Event Date + Time */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
+            <div ref={datePickerRef}>
               <label className="block text-xs text-gray-400 uppercase tracking-widest mb-1.5 font-medium">
                 Event Date
               </label>
-              <div className={wrapClass}>
-                <CalendarDays size={15} className="text-amber-400 shrink-0" />
-                <input
-                  type="date"
-                  name="eventDate"
-                  value={formData.eventDate}
-                  onChange={handleChange}
-                  required
-                  className={inputClass}
-                />
+              <div className="relative">
+                <div className={wrapClass}>
+                  <CalendarDays size={15} className="text-amber-400 shrink-0" />
+                  <input
+                    type="text"
+                    name="eventDate"
+                    value={formData.eventDate}
+                    readOnly
+                    placeholder="YYYY-MM-DD"
+                    required
+                    className={`${inputClass} pr-10`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowDatePicker((prev) => !prev)}
+                    className="ml-auto text-amber-500 hover:text-amber-600"
+                    aria-label="Open calendar"
+                  >
+                    <CalendarDays size={16} />
+                  </button>
+                </div>
+                {showDatePicker && (
+                  <div className="absolute z-[60] mt-2 w-full rounded-2xl border border-gray-200 bg-white p-2 shadow-xl">
+                    <Calander
+                      BookedDates={bookedDates}
+                      loading={loadingBookedDates}
+                      selectedDateValue={formData.eventDate ? parseLocalDate(formData.eventDate) : null}
+                      onDateSelect={handleDateSelect}
+                      title="Choose Event Date"
+                      subtitle="Only open dates can be selected"
+                    />
+                  </div>
+                )}
               </div>
             </div>
             <div>
@@ -397,21 +564,70 @@ const ReceptionHallBookForm = ({
             </div>
             <div>
               <label className="block text-xs text-gray-400 uppercase tracking-widest mb-1.5 font-medium">
-                Amount payed
+                Payment Method
               </label>
-              <div className={wrapClass}>
-                <Users size={15} className="text-amber-400 shrink-0" />
-                <input
-                  type="number"
-                  name="amountPayed"
-                  value={formData.amountPayed}
-                  onChange={handleChange}
-                  placeholder="Rs: 50000"
-                  required
-                  className={inputClass}
-                />
-              </div>
+              <CustomSelect
+                value={formData.paymentMethod}
+                onChange={handlePaymentMethodChange}
+                options={["Cash", "Online Transfer"]}
+                placeholder="Select Payment Method"
+                icon={Tag}
+              />
             </div>
+            {formData.paymentMethod === "Cash" ? (
+              <div>
+                <label className="block text-xs text-gray-400 uppercase tracking-widest mb-1.5 font-medium">
+                  Amount paid
+                </label>
+                <div className={wrapClass}>
+                  <Users size={15} className="text-amber-400 shrink-0" />
+                  <input
+                    type="number"
+                    name="amountPayed"
+                    value={formData.amountPayed}
+                    onChange={handleChange}
+                    placeholder="Rs: 50000"
+                    required
+                    className={inputClass}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div>
+                <label className="block text-xs text-gray-400 uppercase tracking-widest mb-1.5 font-medium">
+                  Upload Payment Proof
+                </label>
+                <div className={`${wrapClass} flex-col items-start`}>
+                  <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-amber-300 bg-amber-50 px-3 py-2 text-sm font-medium text-amber-600">
+                    <Upload size={15} />
+                    {paymentProofFile ? paymentProofFile.name : "Choose image"}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePaymentProofChange}
+                      className="hidden"
+                    />
+                  </label>
+                  {paymentProofPreview && (
+                    <img
+                      src={paymentProofPreview}
+                      alt="Payment proof preview"
+                      className="mt-3 h-24 w-full rounded-xl border border-gray-200 object-cover"
+                    />
+                  )}
+                  {!paymentProofPreview && formData.paymentProofUrl && (
+                    <a
+                      href={formData.paymentProofUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-2 text-xs font-semibold text-amber-600 underline"
+                    >
+                      View existing payment proof
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
             <div>
               <label className="block text-xs text-gray-400 uppercase tracking-widest mb-1.5 font-medium">
                 Request Status
