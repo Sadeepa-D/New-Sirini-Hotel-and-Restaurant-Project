@@ -82,11 +82,14 @@ const Registration = () => {
     if (!validateForm()) {
       return;
     }
+    // Email verification check bypassed for now
+    /*
     if (!isVerified) {
       setErrors({ email: "Please verify your email before registering" });
       toast.error("Please verify your email before registering!");
       return;
     }
+    */
 
     setIsLoading(true);
 
@@ -205,15 +208,15 @@ const Registration = () => {
               </label>
               <div className="relative w-full">
                 <input
-                  disabled={isVerified}
                   type="email"
                   id="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full pl-4 pr-28 py-3 bg-white/5 border border-amber-900/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-transparent transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-3 bg-white/5 border border-amber-900/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-transparent transition-all"
                   placeholder="Enter your email"
                 />
+                {/* Email verification button turned off for now
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center">
                   {!isVerified ? (
                     <button
@@ -266,6 +269,7 @@ const Registration = () => {
                     </span>
                   )}
                 </div>
+                */}
               </div>
               {errors.email && (
                 <p className="mt-1 text-sm text-red-400">{errors.email}</p>

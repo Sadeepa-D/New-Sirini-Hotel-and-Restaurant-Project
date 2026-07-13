@@ -112,6 +112,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     await newRoomBooking.save();
 
+    /*
     await sendRoomBookingEmail({
       name,
       email,
@@ -125,6 +126,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       status: "Pending",
       newRoomBooking,
     });
+    */
     try {
       const dateMsg = timeSlot === "day"
         ? `on ${checkInDate}`

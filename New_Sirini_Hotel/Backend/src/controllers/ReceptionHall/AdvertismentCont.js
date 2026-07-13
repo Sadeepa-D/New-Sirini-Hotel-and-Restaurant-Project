@@ -91,6 +91,7 @@ const createAdvertisment = async (req, res) => {
     });
     await newAdvertisment.save();
 
+    /*
     await sendAdvertismentEmail({
       email: EmailAddress,
       BuissnesName,
@@ -103,6 +104,7 @@ const createAdvertisment = async (req, res) => {
       TPNumber,
       newAdvertisment,
     });
+    */
 
     try {
       const newnotification = new NotifiModel({

@@ -154,6 +154,7 @@ const createFoodOrder = async (req, res) => {
     }
 
     if (savedOrders.length > 1) {
+      /*
       await sendmultiplerestrauntitemsEmail({
         email,
         fullName,
@@ -162,8 +163,10 @@ const createFoodOrder = async (req, res) => {
         pickupTime,
         orders: savedOrders,
       });
+      */
     } else {
       const savedOrder = savedOrders[0];
+      /*
       await sendRestaurantOrderEmail({
         email,
         fullName,
@@ -176,6 +179,7 @@ const createFoodOrder = async (req, res) => {
         pickupTime,
         phoneNumber,
       });
+      */
     }
 
     const refNumbers = savedOrders.map((o) => o.orderCode).join(", ");
